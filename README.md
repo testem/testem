@@ -1,4 +1,4 @@
-Test'em 'Scripts!
+Test&rsquo;em &rsquo;Scripts!
 =================
 
 Unit testing Javascripts shouldn't be an effing PITA. `testem` is a command-line tool which aims to make cross browser Javascript unit testing much more tolerable.
