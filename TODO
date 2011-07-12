@@ -1,0 +1,2 @@
+- get socketioclient to work
+    - currently next step is to test remotely and figure out how the heartbeat handshake works

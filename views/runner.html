@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em Runner</title>
+{{#scripts}}<script src="{{.}}"></script>{{/scripts}}
+{{#css}}<link rel="stylesheet" href="{{.}}"/>{{/css}}
+</head>
+<body>
+<script>
+jasmine.getEnv().addReporter(new jasmine.TrivialReporter)
+jasmine.getEnv().addReporter(new JasmineAdapterReporter)
+jasmine.getEnv().execute()
+</script>
+</body>
+</html>
