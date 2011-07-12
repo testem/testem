@@ -4,13 +4,13 @@
    "keywords": [
        "javascript",
        "testing",
+       "unittest",
        "browser"
    ],
    "version": "0.0.1",
    "author": {
       "name" : "Toby Ho", 
-      "email" : "airportyh@gmail.com",
-      "url" : "http://testemjs.com"  
+      "email" : "airportyh@gmail.com"
    },
    "repository": {
        "type": "git",
@@ -22,10 +22,13 @@
    ],
    "license" : "MIT",
    "dependencies": {
-       "guid": ">= 0.0.6"
+       "guid": "*",
+       "express": ">= 2.4.2",
+       "mkdirp": "*",
+       "mustache": "*",
+       "socket.io": ">= 0.7.6"
    },
    "bin" : {
-       "testem" : "./cmd.js",
-       "testemserver" : "./server.js"
+       "testem" : "./cmd.js"
    }
 }
