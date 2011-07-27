@@ -12,6 +12,14 @@ function AppView(app){
     this.win = new this.curses.Window()
     this.curses.showCursor = false
     this.win.on('inputChar', this.onInputChar.bind(this))
+    process.on('uncaughtException', function(err){
+        this.win.close()
+        console.log(err.stack)
+    }.bind(this))
+    process.on('SIGINT', function(err){
+        this.win.close()
+        process.exit()
+    }.bind(this))
     this.cbs = []
 }
 AppView.prototype = {
