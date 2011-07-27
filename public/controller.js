@@ -39,10 +39,12 @@ var socket, runnerFrame
 window.onload = function(){
     socket = io.connect()
     runnerFrame = document.getElementById('runner')
+    runnerFrame.src = ''
     socket.on('connect', function(){
-        socket.emit('browserlogin', browserName)
-        socket.on('starttests', function(data){
-            runnerFrame.setAttribute('src', '/runner/')
-        })
+        socket.emit('browser-login', browserName)
     })
+    socket.on('start-tests', function(data){
+        runnerFrame.setAttribute('src', '/runner/')
+    })
+    console.log('TESTEM: done with setup')
 }

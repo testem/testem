@@ -1,125 +1,125 @@
 #!/usr/bin/env node
-
 require.paths.unshift(__dirname + '/lib')
 
-require('socket.io.patch')
-
-// Required modules
-var Io = require('socket.io'),
-    Express = require('express'),
-    BrowserClient = require('browserclient'),
-    SocketIO = require('socket.io'),
-    Mustache = require('mustache.exp')
-    
-// Convience functions
-var json = JSON.stringify,
-    log = console.log,
-    getMyIp = require('getipaddr')
-    
+var Server = require('server').Server,
+    Fs = require('fs'),
+    Log = require('log')
 
 
-// Build the server
-var server = Express.createServer()
-// a list of connected browser clients
-server.browsers = []
+function AppView(app){
+    this.app = app
+    this.curses = require('ncurses')
+    this.win = new this.curses.Window()
+    this.curses.showCursor = false
+    this.win.on('inputChar', this.onInputChar.bind(this))
+    this.cbs = []
+}
+AppView.prototype = {
+    on: function(event, cb){
+        if (event === 'inputChar')
+            this.cbs.push(cb)
+    },
+    onInputChar: function(chr, i){
+        this.cbs.forEach(function(cb){
+            cb(chr, i)
+        })
+    },
+    renderTitle: function(){
+        this.win.addstr(0, 0, "LET\u0027S TEST\u0027EM \u0027SCRIPTS!")
+    },
+    renderTopInstructions: function(){
+        this.win.addstr(1, 0, 'Open http://' + this.app.server.ipaddr + ':' + 
+            this.app.server.config.port + '/ in a browser to connect.')
+    },
+    renderBrowserHeaders: function(){
+        this.app.log.info('num browsers: ' + this.app.server.browsers.length)
+        var text = this.app.server.browsers.map(function(browser){
+            return browser.name
+        }).join('  ')
+        this.app.log.info('text: ' + text)
+        this.win.addstr(3, 0, text)
+    },
+    renderTestResults: function(){
+        var text = this.app.server.browsers.map(function(b){
+            if (b.results)
+                return b.results.passed + '/' + b.results.total
+            else
+                return ''
+        }).join('  ')
+        this.win.addstr(4, 0, text)
+    },
+    renderBottomInstructions: function(){
+        var text
+        if (this.app.server.browsers.length === 0)
+            text = '[q to quit]'
+        else
+            text = '[Press Enter to run tests; q to quit]'
+        this.win.addstr(this.curses.lines - 1, 0, text)
+    },
+    renderAll: function(){
+        this.renderTitle()
+        this.renderTopInstructions()
+        this.renderBrowserHeaders()
+        this.renderTestResults()
+        this.renderBottomInstructions()
+    },
+    refresh: function(){
+        setTimeout(function(){
+            this.win.refresh()
+        }.bind(this), 1)
+    },
+    cleanup: function(){
+        this.win.close()
+    }
+}
+
+function App(config){
+    this.log = new Log(Log.INFO, Fs.createWriteStream('app.log'))
+    this.config = config
+    this.server = new Server(this)
+    this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
+    this.server.on('test-result', this.onTestResult.bind(this))
+    this.server.on('all-test-results', this.onAllTestResults.bind(this))
+    this.server.on('server-start', this.initView.bind(this))
+}
+
+App.prototype = {
+    initView: function(){
+        this.view = new AppView(this)
+        this.view.renderAll()
+        this.view.refresh()
+        this.view.on('inputChar', this.onInputChar.bind(this))
+    },
+    onInputChar: function(chr, i) {
+        if (chr === 'q'){
+            this.view.cleanup()
+            process.exit()
+        }else if (i === 10){ // ENTER
+            this.startTests()
+        }
+    },
+    startTests: function(){
+        this.server.startTests()
+    },
+    onBrowsersChanged: function(){
+        this.view.renderBrowserHeaders()
+        this.view.renderTestResults()
+        this.view.renderBottomInstructions()
+        this.view.refresh()
+    },
+    onTestResult: function(){
+        this.view.renderTestResults()
+        this.view.refresh()
+    },
+    onAllTestResults: function(){
+        this.view.renderTestResults()
+        this.view.refresh()
+    }
+}
 
 // App config
-var config = server.config = {
-    dotfile: process.env.HOME + '/.testem',
+var config = {
     port: 3580
 }
 
-// serve static files on ./public
-server.configure(function(){
-    server.register(".html", Mustache)
-    server.set("view options", {layout: false})
-    server.use(Express.static(__dirname + '/public'))
-})
-
-server.get('/runner/', function(req, res){
-    var scripts = ['/jasmine.js', '/jasmine-html.js', 
-        '/jasmine_adapter.js',
-        'hello.js', 'hello_spec.js'],
-        css = ['/jasmine.css']
-    res.render('runner.html', {
-        locals: {scripts: scripts, css: css}
-    })
-})
-
-server.get(/^\/runner\/(.+)$/, function(req, res){
-    var path = req.params[0]
-    res.sendfile(path)
-})
-
-// Create socket.io sockets
-var io = SocketIO.listen(server)
-io.sockets.on('connection', function(client){
-    client.emit('connect')
-    client.on('browserlogin', function(browserName){
-        process.stdout.write('\r' + browserName + ' joined.           \n')
-        promptToRunTests()
-        client.testsCompleted = 0
-        client.name = browserName
-        server.browsers.push(client)
-        //client.emit('starttests')
-    })
-    client.on('tests-start', function(){
-        console.log('\nProgress')
-        console.log(server.browsers.map(function(b){
-            return b.name
-        }).join('\t'))
-    })
-    client.on('test-result', function(result){
-        client.testsCompleted++
-        process.stdout.write('\r' + server.browsers.map(function(b){
-            return b.testsCompleted
-        }).join('\t\t') + '\n')
-    })
-    client.on('all-test-results', function(results){
-        client.results = results
-        console.log('\nTest Results')
-        server.browsers.forEach(function(b){
-            if (!b.results) return
-            console.log(b.name)
-            console.log('  ', b.results.total, 'tests ran.', b.results.failed, 'failed.')
-        })
-        console.log()
-        promptToRunTests()
-    })
-})
-
-// Start the server!
-server.listen(config.port)
-getMyIp(function(err, ip){
-    config.myIp = ip
-    log("Howdy! Let's test'em 'scripts!\n")
-    log('Open this URL in the browser(s) you want to test')
-    log('    http://' + ip + ':' + config.port + '/\n')
-    
-    promptToRunTests()
-}, false)
-
-// Thank you <http://st-on-it.blogspot.com/2011/05/how-to-read-user-input-with-nodejs.html>
-function ask(question, callback) {
-    var stdin = process.stdin, 
-        stdout = process.stdout
-    
-    stdin.resume()
-    stdout.write(question)
-    
-    stdin.once('data', function(data) {
-        data = data.toString().trim()
-        callback(data)
-    })
-}
-
-function promptToRunTests(){
-    ask('[Press ENTER to run tests]', function(data){
-        console.log('Running tests.')
-        server.browsers.forEach(function(b){
-            b.emit('starttests')
-        })
-    })
-}
-
-
+new App(config)
