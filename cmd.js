@@ -11,6 +11,8 @@ function AppView(app){
     this.curses = require('ncurses')
     this.curses.showCursor = false
     this.win = new this.curses.Window()
+    this.win.leaveok(true)
+    this.setupErrorWindow()
     this.setupColorPairs()
     this._currentTab = -1
     this.win.on('inputChar', this.onInputChar.bind(this))
@@ -26,6 +28,17 @@ function AppView(app){
     this.cbs = []
 }
 AppView.prototype = {
+    setupErrorWindow: function(){
+        var height = this.curses.lines - 7
+        var width = this.curses.cols
+        this.errorWin = new this.curses.Window(height, width, 6, 0)
+        this.errorWin.scrollok(true)
+        this.errorWin.idlok(true)
+        this.errorWin.leaveok(true)
+        this.errorWin.on('inputChar', this.onInputChar.bind(this))
+        this.errorWin.frame()
+        this.errorWin.refresh()
+    },
     setupColorPairs: function(){
         var idx = 0
         this.curses.colorPair(idx, this.curses.colors.WHITE, this.curses.colors.BLACK)
@@ -61,10 +74,15 @@ AppView.prototype = {
     },
     onInputChar: function(chr, i){
         try{
+            this.app.log.info('i: ' + i)
             if (i === 261) // right arrow
                 this.nextTab()
             else if (i === 260) // left arrow
                 this.prevTab()
+            else if (i === 258) // down arrow
+                this.scrollDown()
+            else if (i === 259) // up arrow
+                this.scrollUp()
             this.cbs.forEach(function(cb){
                 cb(chr, i)
             })
@@ -92,6 +110,16 @@ AppView.prototype = {
         this.renderBrowserHeaders()
         this.renderLogPanel()
     },
+    scrollDown: function(){
+        this.errorWin.scroll(1)
+        this.errorWin.frame()
+        this.refreshErrorWin()
+    },
+    scrollUp: function(){
+        this.errorWin.scroll(-1)
+        this.errorWin.frame()
+        this.refreshErrorWin()
+    },
     renderTitle: function(){
         this.writeLine(0, "LET\u0027S TEST\u0027EM \u0027SCRIPTS!")
     },
@@ -99,9 +127,6 @@ AppView.prototype = {
         this.writeLine(1, 'Open the URL below in a browser to connect.')
         this.writeLine(2, 'http://' + this.app.server.ipaddr + ':' + 
             this.app.server.config.port + '/')
-    },
-    writeLine: function(row, str){
-        this.win.addstr(row, 0, this.pad(str, this.curses.cols, ' ', 1))
     },
     renderBrowserHeaders: function(){
         this.app.server.browsers.forEach(function(browser, idx){
@@ -138,22 +163,31 @@ AppView.prototype = {
     renderBottomInstructions: function(){
         this.win.addstr(this.curses.lines - 1, 0, this.bottomInstructions())
     },
-    print: function(win, ln, str){
+    writeLine: function(row, str, col, win){
+        if (!win)
+            win = this.win
+        if (col === undefined)
+            col = 0
+        win.addstr(row, col, this.pad(str, this.curses.cols, ' ', 1))
+    },
+    print: function(str, ln, col, win){
         str.split('\n').forEach(function(line){
-            this.writeLine(ln++, line)
+            this.writeLine(ln++, line, col, win)
         }.bind(this))
     },
     renderLogPanel: function(){
         var browser = this.app.server.browsers[this.currentTab()]
-        if (browser)
-            this.app.log.info('error msg for ' + browser.name)
         if (!browser || !browser.results) return
         if (browser.results.items){
             browser.results.items.forEach(function(item){
                 var out = item.name + '\n    ' + 
-                    item.message
-                this.print(this.win, 7, out)
+                    item.message//q + '\n' +
+                    //(item.stackTrace ? item.stackTrace : '')
+                
+                this.print(out, 1, 1, this.errorWin)
             }.bind(this))
+            this.errorWin.frame()
+            this.refreshErrorWin()
         }
     },
     renderAll: function(){
@@ -167,6 +201,11 @@ AppView.prototype = {
         setTimeout(function(){
             this.stashCursor()
             this.win.refresh()
+        }.bind(this), 1)
+    },
+    refreshErrorWin: function(){
+        setTimeout(function(){
+            this.errorWin.refresh()
         }.bind(this), 1)
     },
     cleanup: function(){
