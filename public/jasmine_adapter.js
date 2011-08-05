@@ -61,13 +61,13 @@ JasmineAdapterReporter.prototype.reportRunnerResults = function(runner){
                         type: 'log', message: result.toString()})
                 else if (result.type == 'expect' && 
                     result.passed && !result.passed()){
+                    if (result.trace.stack)
+                        parent.result = result
                     msg.items.push({
                         type: 'fail',
                         name: spec.getFullName(),
                         message: result.message,
-                        stackTrace: result.trace.stack ?
-                            result.trace.stack.split('\n').slice(0, 2).join('\n'):
-                            undefined
+                        stackTrace: result.trace.stack
                     })
                 }
             }

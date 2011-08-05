@@ -3,7 +3,8 @@ require.paths.unshift(__dirname + '/lib')
 
 var Server = require('server').Server,
     Fs = require('fs'),
-    Log = require('log')
+    Log = require('log'),
+    TextWindow = require('textwindow')
 
 
 function AppView(app){
@@ -29,15 +30,16 @@ function AppView(app){
 }
 AppView.prototype = {
     setupErrorWindow: function(){
-        var height = this.curses.lines - 7
+        var height = this.curses.lines - 8
         var width = this.curses.cols
-        this.errorWin = new this.curses.Window(height, width, 6, 0)
-        this.errorWin.scrollok(true)
-        this.errorWin.idlok(true)
-        this.errorWin.leaveok(true)
+        this.errorWin = new TextWindow({
+            title: 'Errors',
+            height: height,
+            width: width,
+            x: 7,
+            y: 0
+        })
         this.errorWin.on('inputChar', this.onInputChar.bind(this))
-        this.errorWin.frame()
-        this.errorWin.refresh()
     },
     setupColorPairs: function(){
         var idx = 0
@@ -74,20 +76,16 @@ AppView.prototype = {
     },
     onInputChar: function(chr, i){
         try{
-            this.app.log.info('i: ' + i)
-            if (i === 261) // right arrow
+            this.app.log.info('chr: ' + chr + ', i: ' + i)
+            if (i === 261)
                 this.nextTab()
             else if (i === 260) // left arrow
                 this.prevTab()
-            else if (i === 258) // down arrow
-                this.scrollDown()
-            else if (i === 259) // up arrow
-                this.scrollUp()
             this.cbs.forEach(function(cb){
                 cb(chr, i)
             })
         }catch(e){
-            this.app.log.error('In onInputChar: ' + e)
+            this.app.log.error('In onInputChar: ' + e + '\n' + e.stack)
         }
     },
     nextTab: function(){
@@ -109,16 +107,6 @@ AppView.prototype = {
         }
         this.renderBrowserHeaders()
         this.renderLogPanel()
-    },
-    scrollDown: function(){
-        this.errorWin.scroll(1)
-        this.errorWin.frame()
-        this.refreshErrorWin()
-    },
-    scrollUp: function(){
-        this.errorWin.scroll(-1)
-        this.errorWin.frame()
-        this.refreshErrorWin()
     },
     renderTitle: function(){
         this.writeLine(0, "LET\u0027S TEST\u0027EM \u0027SCRIPTS!")
@@ -181,13 +169,11 @@ AppView.prototype = {
         if (browser.results.items){
             browser.results.items.forEach(function(item){
                 var out = item.name + '\n    ' + 
-                    item.message//q + '\n' +
-                    //(item.stackTrace ? item.stackTrace : '')
-                
-                this.print(out, 1, 1, this.errorWin)
+                    item.message + '\n' +
+                    (item.stackTrace ? item.stackTrace : '')
+                this.app.log.info(out)
+                this.errorWin.setText(out)
             }.bind(this))
-            this.errorWin.frame()
-            this.refreshErrorWin()
         }
     },
     renderAll: function(){
@@ -201,11 +187,6 @@ AppView.prototype = {
         setTimeout(function(){
             this.stashCursor()
             this.win.refresh()
-        }.bind(this), 1)
-    },
-    refreshErrorWin: function(){
-        setTimeout(function(){
-            this.errorWin.refresh()
         }.bind(this), 1)
     },
     cleanup: function(){
