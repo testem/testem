@@ -54,12 +54,12 @@ AppView.prototype = {
         })
     },
     currentTab: function(){
-        if (this._currentTab === -1)
+        if (this.failedBrowsers().length === 0)
+            this._currentTab = -1
+        else if (this._currentTab === -1)
             if (this.app.server.browsers.length > 0)
                 if (this.failedBrowsers().length > 0)
                     this._currentTab = 0
-        else if (this.failedBrowsers().length === 0)
-            this._currentTab = -1
         return this._currentTab
     },
     colWidth: function(){
@@ -117,13 +117,14 @@ AppView.prototype = {
             this.app.server.config.port + '/')
     },
     renderBrowserHeaders: function(){
+        this.app.log.info('currentTab: ' + this.currentTab())
         this.app.server.browsers.forEach(function(browser, idx){
             if (this.currentTab() === idx)
                 this.win.attrset(this.CURRENT_TAB)
             this.win.addstr(4, this.colWidth() * idx,
                 this.pad(browser.name || '', this.colWidth(), ' ', 2))
-                if (this.currentTab() === idx)
-                    this.win.attrset(this.NORMAL)
+            if (this.currentTab() === idx)
+                this.win.attrset(this.NORMAL)
         }.bind(this))
     },
     renderTestResults: function(){
@@ -165,13 +166,15 @@ AppView.prototype = {
     },
     renderLogPanel: function(){
         var browser = this.app.server.browsers[this.currentTab()]
-        if (!browser || !browser.results) return
+        if (!browser || !browser.results){
+            this.errorWin.setText('')
+            return
+        }
         if (browser.results.items){
             browser.results.items.forEach(function(item){
                 var out = item.name + '\n    ' + 
                     item.message + '\n' +
                     (item.stackTrace ? item.stackTrace : '')
-                this.app.log.info(out)
                 this.errorWin.setText(out)
             }.bind(this))
         }
@@ -247,4 +250,10 @@ var config = {
     port: 3580
 }
 
-new App(config)
+Fs.readdir('./', function(err, files){
+    var jsFiles = files.filter(function(file){
+        return file.match(/\.js$/)
+    }).sort()
+    config.files = jsFiles
+    new App(config)
+})
