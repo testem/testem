@@ -3,7 +3,7 @@ require.paths.unshift(__dirname + '/lib')
 
 var Server = require('server').Server,
     Fs = require('fs'),
-    Log = require('log'),
+    log = require('winston'),
     TextWindow = require('textwindow')
 
 
@@ -75,7 +75,7 @@ AppView.prototype = {
     },
     onInputChar: function(chr, i){
         try{
-            this.app.log.info('chr: ' + chr + ', i: ' + i)
+            log.info('chr: ' + chr + ', i: ' + i)
             if (i === 261)
                 this.nextTab()
             else if (i === 260) // left arrow
@@ -84,7 +84,7 @@ AppView.prototype = {
                 cb(chr, i)
             })
         }catch(e){
-            this.app.log.error('In onInputChar: ' + e + '\n' + e.stack)
+            log.error('In onInputChar: ' + e + '\n' + e.stack)
         }
     },
     nextTab: function(){
@@ -227,7 +227,6 @@ AppView.prototype = {
 }
 
 function App(config){
-    this.log = new Log(Log.INFO, Fs.createWriteStream('app.log'))
     this.config = config
     this.server = new Server(this)
     this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
@@ -292,6 +291,9 @@ function listFiles(cb){
     })    
 }
 config.files = listFiles
+
+log.add(log.transports.File, {filename: 'app.log'})
+log.remove(log.transports.Console)
 
 new App(config)
 

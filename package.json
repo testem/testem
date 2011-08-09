@@ -22,11 +22,10 @@
    ],
    "license" : "MIT",
    "dependencies": {
-       "guid": "*",
        "express": ">= 2.4.2",
-       "mkdirp": "*",
-       "mustache": "*",
-       "socket.io": ">= 0.7.6"
+       "mustache": "0.3.1",
+       "socket.io": ">= 0.7.6",
+       "winston": "0.3.4"
    },
    "bin" : {
        "testem" : "./cmd.js"
