@@ -30,13 +30,13 @@ function AppView(app){
 }
 AppView.prototype = {
     setupErrorWindow: function(){
-        var height = this.curses.lines - 8
+        var height = this.curses.lines - 7
         var width = this.curses.cols
         this.errorWin = new TextWindow({
             title: 'Errors',
             height: height,
             width: width,
-            x: 7,
+            x: 6,
             y: 0
         })
         this.errorWin.on('inputChar', this.onInputChar.bind(this))
@@ -45,21 +45,20 @@ AppView.prototype = {
         var idx = 0
         this.curses.colorPair(idx, this.curses.colors.WHITE, this.curses.colors.BLACK)
         this.NORMAL = this.curses.colorPair(idx++)
+        this.curses.colorPair(idx, this.curses.colors.GREEN, this.curses.colors.BLACK)
+        this.SUCCESS_TAB = this.curses.colorPair(idx++)
         this.curses.colorPair(idx, this.curses.colors.RED, this.curses.colors.BLACK)
-        this.CURRENT_TAB = this.curses.colorPair(idx++)
+        this.FAILURE_TAB = this.curses.colorPair(idx++)
     },
     failedBrowsers: function(){
-        return this.app.server.browsers.filter(function(b){
+        return this.browsers().filter(function(b){
             return b.results && b.results.failed > 0
         })
     },
+    browsers: function(){
+        return this.app.server.browsers
+    },
     currentTab: function(){
-        if (this.failedBrowsers().length === 0)
-            this._currentTab = -1
-        else if (this._currentTab === -1)
-            if (this.app.server.browsers.length > 0)
-                if (this.failedBrowsers().length > 0)
-                    this._currentTab = 0
         return this._currentTab
     },
     colWidth: function(){
@@ -91,21 +90,25 @@ AppView.prototype = {
     nextTab: function(){
         if (this.currentTab() >= 0){
             this._currentTab++
-            var fb = this.failedBrowsers()
-            if (this._currentTab >= fb.length)
+            if (this._currentTab >= this.browsers().length)
               this._currentTab = 0
-        }
+        }else if (this.currentTab() === -1 && 
+            this.browsers().length > 0)
+            this._currentTab = 0
         this.renderBrowserHeaders()
+        this.renderTestResults()
         this.renderLogPanel()
     },
     prevTab: function(){
         if (this.currentTab() >= 0){
             this._currentTab--
-            var fb = this.failedBrowsers()
             if (this._currentTab < 0)
-                this._currentTab = fb.length - 1
-        }
+                this._currentTab = this.browsers().length - 1
+        }else if (this.currentTab() === -1 && 
+            this.browsers().length > 0)
+            this._currentTab = 0
         this.renderBrowserHeaders()
+        this.renderTestResults()
         this.renderLogPanel()
     },
     renderTitle: function(){
@@ -117,10 +120,12 @@ AppView.prototype = {
             this.app.server.config.port + '/')
     },
     renderBrowserHeaders: function(){
-        this.app.log.info('currentTab: ' + this.currentTab())
         this.app.server.browsers.forEach(function(browser, idx){
             if (this.currentTab() === idx)
-                this.win.attrset(this.CURRENT_TAB)
+                if (browser.results.failed === 0)
+                    this.win.attrset(this.SUCCESS_TAB)
+                else
+                    this.win.attrset(this.FAILURE_TAB)
             this.win.addstr(4, this.colWidth() * idx,
                 this.pad(browser.name || '', this.colWidth(), ' ', 2))
             if (this.currentTab() === idx)
@@ -128,17 +133,22 @@ AppView.prototype = {
         }.bind(this))
     },
     renderTestResults: function(){
-        var text = this.app.server.browsers.map(function(b){
-            var ret
-            if (b.results)
-                ret = b.results.passed + '/' + b.results.total
+        this.app.server.browsers.forEach(function(browser, idx){
+            if (this.currentTab() === idx)
+                if (browser.results.failed === 0)
+                    this.win.attrset(this.SUCCESS_TAB)
+                else
+                    this.win.attrset(this.FAILURE_TAB)
+            var out
+            if (browser.results)
+                out = browser.results.passed + '/' + browser.results.total
             else
-                ret = ''
-            return this.pad(ret, this.colWidth(), ' ', 2)
-        }.bind(this)).join('  ')
-        
-        this.writeLine(5, text)
-        
+                out = 'N/A'
+            this.win.addstr(5, this.colWidth() * idx,
+                this.pad(out, this.colWidth(), ' ', 2))
+            if (this.currentTab() === idx)
+                this.win.attrset(this.NORMAL)
+        }.bind(this))
     },
     bottomInstructions: function(){
         if (this.app.server.browsers.length === 0)
@@ -171,12 +181,12 @@ AppView.prototype = {
             return
         }
         if (browser.results.items){
-            browser.results.items.forEach(function(item){
-                var out = item.name + '\n    ' + 
+            var out = browser.results.items.map(function(item){
+                return item.name + '\n    ' + 
                     item.message + '\n' +
                     (item.stackTrace ? item.stackTrace : '')
-                this.errorWin.setText(out)
-            }.bind(this))
+            }.bind(this)).join('\n')
+            this.errorWin.setText(out)
         }
     },
     renderAll: function(){
@@ -191,6 +201,25 @@ AppView.prototype = {
             this.stashCursor()
             this.win.refresh()
         }.bind(this), 1)
+    },
+    currentBrowser: function(){
+        return this.browsers()[this.currentTab()]
+    },
+    onAllTestResults: function(){
+        var browser = this.currentBrowser()
+        if (!browser || 
+            (browser && browser.results && browser.results.failed === 0))
+            this.selectFirstErrorTab()
+    },
+    selectFirstErrorTab: function(){
+        var browsers = this.browsers()
+        for (var i = 0, len = browsers.length; i < len; i++){
+            var browser = browsers[i]
+            if (browser.results && browser.results.failed > 0){
+                this._currentTab = i
+                return
+            }
+        }
     },
     cleanup: function(){
         this.win.close()
@@ -234,14 +263,15 @@ App.prototype = {
     onTestResult: function(){
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
-        this.view.renderLogPanel()
         this.view.refresh()
+        this.view.renderLogPanel()
     },
     onAllTestResults: function(){
+        this.view.onAllTestResults()
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
-        this.view.renderLogPanel()
         this.view.refresh()
+        this.view.renderLogPanel()
     }
 }
 
@@ -250,10 +280,18 @@ var config = {
     port: 3580
 }
 
-Fs.readdir('./', function(err, files){
-    var jsFiles = files.filter(function(file){
-        return file.match(/\.js$/)
-    }).sort()
-    config.files = jsFiles
-    new App(config)
-})
+
+function listFiles(cb){
+    Fs.readdir('./', function(err, files){
+        if (err)
+            cb(err, files)
+        else
+            cb(null, files.filter(function(file){
+                return file.match(/\.js$/)
+            }).sort())
+    })    
+}
+config.files = listFiles
+
+new App(config)
+
