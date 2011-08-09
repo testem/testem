@@ -175,6 +175,11 @@ AppView.prototype = {
             this.writeLine(ln++, line, col, win)
         }.bind(this))
     },
+    indent: function(text){
+        return text.split('\n').map(function(line){
+            return '    ' + line
+        }).join('\n')
+    },
     renderLogPanel: function(){
         var browser = this.app.server.browsers[this.currentTab()]
         if (!browser || !browser.results){
@@ -185,7 +190,7 @@ AppView.prototype = {
             var out = browser.results.items.map(function(item){
                 return item.name + '\n    ' + 
                     item.message + '\n' +
-                    (item.stackTrace ? item.stackTrace : '')
+                    (item.stackTrace ? this.indent(item.stackTrace) : '')
             }.bind(this)).join('\n')
             this.errorWin.setText(out)
         }
