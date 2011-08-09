@@ -4,6 +4,7 @@ require.paths.unshift(__dirname + '/lib')
 var Server = require('server').Server,
     Fs = require('fs'),
     log = require('winston'),
+    argv = require('optimist').argv
     TextWindow = require('textwindow')
 
 
@@ -292,8 +293,10 @@ function listFiles(cb){
 }
 config.files = listFiles
 
-log.add(log.transports.File, {filename: 'app.log'})
 log.remove(log.transports.Console)
+if (argv.d)
+    log.add(log.transports.File, {filename: 'testem.log'})
+
 
 new App(config)
 
