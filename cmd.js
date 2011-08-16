@@ -123,7 +123,7 @@ AppView.prototype = {
     renderBrowserHeaders: function(){
         this.app.server.browsers.forEach(function(browser, idx){
             if (this.currentTab() === idx)
-                if (browser.results.failed === 0)
+                if (!browser.results || browser.results.failed === 0)
                     this.win.attrset(this.SUCCESS_TAB)
                 else
                     this.win.attrset(this.FAILURE_TAB)
@@ -136,7 +136,7 @@ AppView.prototype = {
     renderTestResults: function(){
         this.app.server.browsers.forEach(function(browser, idx){
             if (this.currentTab() === idx)
-                if (browser.results.failed === 0)
+                if (!browser.results || browser.results.failed === 0)
                     this.win.attrset(this.SUCCESS_TAB)
                 else
                     this.win.attrset(this.FAILURE_TAB)

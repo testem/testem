@@ -7,7 +7,7 @@
        "unittest",
        "browser"
    ],
-   "version": "0.0.2",
+   "version": "0.0.3",
    "author": {
       "name" : "Toby Ho", 
       "email" : "airportyh@gmail.com"
@@ -23,7 +23,7 @@
    "license" : "MIT",
    "dependencies": {
        "express": ">= 2.4.2",
-       "mustache": "0.3.1",
+       "mustache": "*",
        "socket.io": ">= 0.7.6",
        "winston": "0.3.4",
        "optimist": "0.2.6"
