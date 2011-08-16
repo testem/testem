@@ -297,11 +297,13 @@ function listFiles(cb){
     })    
 }
 config.files = listFiles
+config.autotest = true
 
 log.remove(log.transports.Console)
 if (argv.d)
     log.add(log.transports.File, {filename: 'testem.log'})
-
+if (argv.m)
+    config.autotest = false
 
 new App(config)
 
