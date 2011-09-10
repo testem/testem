@@ -5,7 +5,8 @@ var Server = require('server').Server,
     Fs = require('fs'),
     log = require('winston'),
     argv = require('optimist').argv
-    TextWindow = require('textwindow')
+    TextWindow = require('textwindow'),
+    child_process = require('child_process')
 
 
 function AppView(app){
@@ -189,7 +190,7 @@ AppView.prototype = {
         if (browser.results.items){
             var out = browser.results.items.map(function(item){
                 return item.name + '\n    ' + 
-                    item.message + '\n' +
+                    (item.message || 'failed.') + '\n' +
                     (item.stackTrace ? this.indent(item.stackTrace) : '')
             }.bind(this)).join('\n')
             this.errorWin.setText(out)
@@ -298,6 +299,7 @@ function listFiles(cb){
 }
 config.files = listFiles
 config.autotest = true
+config.phantomjs = true
 
 log.remove(log.transports.Console)
 if (argv.d)
@@ -305,5 +307,19 @@ if (argv.d)
 if (argv.m)
     config.autotest = false
 
-new App(config)
+function startPhantomJS(){
+    var path = __dirname + '/phantom.js'
+    log.info('path: ' + path)
+    var phantom = child_process.spawn('phantomjs', [path])
+    process.on('exit', function(){
+        phantom.kill('SIGHUP')
+    })
+}
+
+var app = new App(config)
+if (config.phantomjs)
+    app.server.on('server-start', function(){
+        startPhantomJS()
+    })
+
 

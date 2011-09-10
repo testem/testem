@@ -3,7 +3,7 @@ QUnit.totalTestsFailed = 0
 QUnit._logs = []
 QUnit._current = null
 QUnit.log = function(params){
-    if (!params.result && params.message)
+    if (!params.result)
         QUnit._logs.push({
             type: 'fail',
             name: QUnit._current.name,

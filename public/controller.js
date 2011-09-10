@@ -5,6 +5,7 @@ var browserName = (function(){
         /(Chrome)\/([0-9]+\.[0-9]+)/,
         /(Firefox)\/([0-9a-z]+\.[0-9a-z]+)/,
         /(Opera).*Version\/([0-9]+\.[0-9]+)/,
+        /(PhantomJS)\/([0-9]+\.[0-9]+)/,
         [/(Android).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
             return [m[1], m[3], m[2]].join(' ')
         }],
