@@ -27,7 +27,8 @@
        "socket.io": ">= 0.7.6",
        "winston": "0.3.4",
        "optimist": "0.2.6",
-       "charm": "*"
+       "charm": "*",
+       "js-yaml": "0.3.1"
    },
    "bin" : {
        "testem" : "./cmd.js"

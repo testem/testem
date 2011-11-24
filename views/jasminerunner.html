@@ -2,8 +2,14 @@
 <html>
 <head>
 <title>Test'em Runner</title>
+<script>
+window.onerror = function(msg, url, line){
+    console.log('TESTEM: onerror')
+    parent.socket.emit('error', msg, url, line)
+}
+</script>
 {{#scripts}}<script src="{{.}}"></script>{{/scripts}}
-{{#css}}<link rel="stylesheet" href="{{.}}"/>{{/css}}
+<link rel="stylesheet" href="/jasmine.css">
 </head>
 <body>
 <script>

@@ -1,0 +1,321 @@
+info: height: 9, width: 83
+info: maxx: 82, maxy: 8
+info: browser login: Chrome 13.0
+info: browser login: Safari 5.1
+info: browser login: Firefox 5.0
+info: chr: 
+, i: 10
+info: {"failed":0,"total":5,"passed":5,"items":[]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Expected false to be true.","stackTrace":"Error: Expected false to be true.\n    at new <anonymous> (http://192.168.1.102:3580/jasmine.js:102:32)\n    at [object Object].toBe (http://192.168.1.102:3580/jasmine.js:1166:29)\n    at [object Object].<anonymous> (http://192.168.1.102:3580/runner/hello_spec.js:9:56)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:996:15)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2065:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2210:14)"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Expected false to be true."}]}
+info: chr: q, i: 113
+info: height: 9, width: 83
+info: maxx: 82, maxy: 8
+info: browser login: Firefox 5.0
+info: browser login: Safari 5.1
+info: browser login: Chrome 13.0
+info: chr: 
+, i: 10
+info: {"failed":0,"total":5,"passed":5,"items":[]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Expected false to be true.","stackTrace":"Error: Expected false to be true.\n    at new <anonymous> (http://192.168.1.102:3580/jasmine.js:102:32)\n    at [object Object].toBe (http://192.168.1.102:3580/jasmine.js:1166:29)\n    at [object Object].<anonymous> (http://192.168.1.102:3580/runner/hello_spec.js:9:56)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:996:15)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2065:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2210:14)"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Expected false to be true."}]}
+info: chr: 
+, i: 10
+info: {"failed":0,"total":5,"passed":5,"items":[]}
+info: {"failed":0,"total":5,"passed":5,"items":[]}
+info: {"failed":0,"total":5,"passed":5,"items":[]}
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: 
+, i: 10
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap in http://192.168.1.102:3580/runner/hello_spec.js (line 10)","stackTrace":"()@http://192.168.1.102:3580/runner/hello_spec.js:10\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:996\n()@http://192.168.1.102:3580/jasmine.js:1785\n((function () {spec.finish(onComplete);}))@http://192.168.1.102:3580/jasmine.js:1738\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2065\n()@http://192.168.1.102:3580/jasmine.js:1785\n((function () {self.finish(onComplete);}))@http://192.168.1.102:3580/jasmine.js:1738\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2210\n()@http://192.168.1.102:3580/jasmine.js:1785\n()@http://192.168.1.102:3580/jasmine.js:1781\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2167\n()@http://192.168.1.102:3580/jasmine.js:2211\n()@http://192.168.1.102:3580/jasmine.js:1795\n()@http://192.168.1.102:3580/jasmine.js:1781\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2039\n()@http://192.168.1.102:3580/jasmine.js:2066\n()@http://192.168.1.102:3580/jasmine.js:1795\n(1)@http://192.168.1.102:3580/jasmine.js:1775\n"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap","stackTrace":"Error: Crap\n    at [object Object].<anonymous> (http://192.168.1.102:3580/runner/hello_spec.js:10:15)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:996:15)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2065:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2210:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at http://192.168.1.102:3580/jasmine.js:1781:18"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap in http://192.168.1.102:3580/runner/hello_spec.js (line 10)"}]}
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 261
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: q, i: 113
+info: height: 9, width: 83
+info: maxx: 82, maxy: 8
+info: browser login: Chrome 13.0
+info: browser login: Safari 5.1
+info: browser login: Firefox 5.0
+info: chr: 
+, i: 10
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap in http://192.168.1.102:3580/runner/hello_spec.js (line 10)","stackTrace":"()@http://192.168.1.102:3580/runner/hello_spec.js:10\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:996\n()@http://192.168.1.102:3580/jasmine.js:1785\n((function () {spec.finish(onComplete);}))@http://192.168.1.102:3580/jasmine.js:1738\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2065\n()@http://192.168.1.102:3580/jasmine.js:1785\n((function () {self.finish(onComplete);}))@http://192.168.1.102:3580/jasmine.js:1738\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2210\n()@http://192.168.1.102:3580/jasmine.js:1785\n()@http://192.168.1.102:3580/jasmine.js:1781\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2167\n()@http://192.168.1.102:3580/jasmine.js:2211\n()@http://192.168.1.102:3580/jasmine.js:1795\n()@http://192.168.1.102:3580/jasmine.js:1781\n((function () {if (jasmine.Queue.LOOP_DONT_RECURSE && calledSynchronously) {completedSynchronously = true;return;}if (self.blocks[self.index].abort) {self.abort = true;}self.offset = 0;self.index++;var now = (new Date).getTime();if (self.env.updateInterval && now - self.env.lastUpdate > self.env.updateInterval) {self.env.lastUpdate = now;self.env.setTimeout(function () {self.next_();}, 0);} else {if (jasmine.Queue.LOOP_DONT_RECURSE && completedSynchronously) {goAgain = true;} else {self.next_();}}}))@http://192.168.1.102:3580/jasmine.js:2039\n()@http://192.168.1.102:3580/jasmine.js:2066\n()@http://192.168.1.102:3580/jasmine.js:1795\n(16)@http://192.168.1.102:3580/jasmine.js:1775\n"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap in http://192.168.1.102:3580/runner/hello_spec.js (line 10)"}]}
+info: {"failed":1,"total":5,"passed":4,"items":[{"type":"fail","name":"hello should throw exception.","message":"Error: Crap","stackTrace":"Error: Crap\n    at [object Object].<anonymous> (http://192.168.1.102:3580/runner/hello_spec.js:10:15)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:996:15)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2065:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at [object Object].start (http://192.168.1.102:3580/jasmine.js:1738:8)\n    at [object Object].execute (http://192.168.1.102:3580/jasmine.js:2210:14)\n    at [object Object].next_ (http://192.168.1.102:3580/jasmine.js:1785:31)\n    at http://192.168.1.102:3580/jasmine.js:1781:18"}]}
+info: chr: , i: 261
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 261
+info: chr: , i: 261
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 27
+info: chr: [, i: 91
+info: chr: 5, i: 53
+info: chr: C, i: 67
+info: chr: , i: 27
+info: chr: [, i: 91
+info: chr: 5, i: 53
+info: chr: D, i: 68
+info: chr: , i: 27
+info: chr: [, i: 91
+info: chr: 5, i: 53
+info: chr: D, i: 68
+info: chr: , i: 260
+info: chr: , i: 260
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 258
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: , i: 259
+info: chr: q, i: 113
+info: 
+info: =========== Starting App ==================
+info: cnstr
+info: num browsers: 0
+info: writing bottom row at 12
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: num browsers: 1
+info: writing bottom row at 12
+info: browser login: PhantomJS 1.2
+info: num browsers: 1
+info: writing bottom row at 12
+info: {"failed":0,"passed":0,"total":0,"runtime":23,"items":[]}
+info: num browsers: 1

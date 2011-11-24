@@ -1,15 +1,18 @@
 #!/usr/bin/env node
-require.paths.unshift(__dirname + '/lib')
 
-var Server = require('server').Server,
-    Fs = require('fs'),
-    log = require('winston'),
-    argv = require('optimist').argv
-    TextWindow = require('textwindow'),
-    child_process = require('child_process'),
-    AppView = require('appviewcharm')
+var Server = require('./lib/server').Server
+  , Fs = require('fs')
+  , log = require('winston')
+  , argv = require('optimist').argv
+  , child_process = require('child_process')
+  , AppView = require('./lib/appviewcharm')
+  , getTermSize = require('./lib/gettermsize.js')
+
+
 
 function App(config){
+    log.info('')
+    log.info('=========== Starting App ==================')
     this.config = config
     this.server = new Server(this)
     this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
@@ -21,9 +24,7 @@ function App(config){
 App.prototype = {
     initView: function(){
         this.view = new AppView(this)
-        this.view.on('init', function(){
-                this.view.renderAll()
-            }.bind(this))
+        this.view.renderAll()
         this.view.on('inputChar', this.onInputChar.bind(this))
     },
     onInputChar: function(chr, i) {
@@ -74,15 +75,26 @@ function listFiles(cb){
             }).sort())
     })    
 }
-config.files = listFiles
 config.autotest = true
 config.phantomjs = true
+
+
 
 log.remove(log.transports.Console)
 if (argv.d)
     log.add(log.transports.File, {filename: 'testem.log'})
 if (argv.m)
     config.autotest = false
+
+!function(){
+    var conf = require('js-yaml').load(String(Fs.readFileSync('testem.yml')))
+    log.info('Config: ' + JSON.stringify(conf))
+    for (var key in conf)
+        config[key] = conf[key]
+}()
+
+if (!config.src_files)
+    config.src_files = listFiles
 
 function startPhantomJS(){
     var path = __dirname + '/phantom.js'
@@ -93,10 +105,21 @@ function startPhantomJS(){
     })
 }
 
-var app = new App(config)
-if (config.phantomjs)
-    app.server.on('server-start', function(){
-        startPhantomJS()
-    })
+log.info(JSON.stringify(config))
+
+getTermSize(function(cols, lines){
+    config.cols = cols
+    config.lines = lines
+    var app = new App(config)
+    if (config.phantomjs)
+        app.server.on('server-start', function(){
+            startPhantomJS()
+        })
+}.bind(this))
+
+
+
+
+
 
 
