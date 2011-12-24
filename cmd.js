@@ -6,7 +6,6 @@ var Server = require('./lib/server').Server
   , argv = require('optimist').argv
   , child_process = require('child_process')
   , AppView = require('./lib/appviewcharm')
-  , getTermSize = require('./lib/gettermsize.js')
 
 
 
@@ -24,18 +23,18 @@ function App(config){
 App.prototype = {
     initView: function(){
         this.view = new AppView(this)
-        this.view.renderAll()
         this.view.on('inputChar', this.onInputChar.bind(this))
     },
     onInputChar: function(chr, i) {
         if (chr === 'q'){
             this.view.cleanup()
             process.exit()
-        }else if (i === 10){ // ENTER
+        }else if (i === 13){ // ENTER
             this.startTests()
         }
     },
     startTests: function(){
+        this.view.startRunningIndicator()
         this.server.startTests()
     },
     onBrowsersChanged: function(){
@@ -51,6 +50,7 @@ App.prototype = {
         this.view.renderLogPanel()
     },
     onAllTestResults: function(){
+        this.view.stopRunningIndicator()
         this.view.onAllTestResults()
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
@@ -107,17 +107,11 @@ function startPhantomJS(){
 
 log.info(JSON.stringify(config))
 
-getTermSize(function(cols, lines){
-    config.cols = cols
-    config.lines = lines
-    var app = new App(config)
-    if (config.phantomjs)
-        app.server.on('server-start', function(){
-            startPhantomJS()
-        })
-}.bind(this))
-
-
+var app = new App(config)
+if (config.phantomjs)
+    app.server.on('server-start', function(){
+        startPhantomJS()
+    })
 
 
 
