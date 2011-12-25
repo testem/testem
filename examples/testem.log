@@ -319,3 +319,64 @@ info: num browsers: 1
 info: writing bottom row at 12
 info: {"failed":0,"passed":0,"total":0,"runtime":23,"items":[]}
 info: num browsers: 1
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: nextTab
+info: prevTab
+info: prevTab
+info: prevTab
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: cleanup

@@ -5,6 +5,28 @@ Unit testing Javascripts shouldn't be an effing PITA. `testem` is a command-line
 
 This project is a spin-off of [Tutti](https://github.com/airportyh/Tutti). I first thought I would repurpose Tutti to become a unit testing tool, but after much deliberation, decided to start a new project for this very purpose instead.
 
+Usage:
+
+***TODO***
+
+Include Snippet
+---------------
+
+Include this snippet directly after your `jasmine.js` include to enable *Testem* with your
+test page
+
+    <script>
+    if (location.hash === '#testem')
+    	document.write('<script src="/jasmine_adapter.js"></'+'script>')
+    </script>
+
+For QUnit, include this snippet
+
+    <script>
+    if (location.hash === '#testem')
+    	document.write('<script src="/qunit_adapter.js"></'+'script>')
+    </script>
+
 License
 -------
 

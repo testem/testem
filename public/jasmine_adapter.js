@@ -1,17 +1,19 @@
+!function(){
+
+function emit(){
+    var socket = parent.socket
+    socket.emit.apply(socket, arguments)
+}
+window.onerror = function(msg, url, line){
+    emit('error', msg, url, line)
+}
 function JasmineAdapterReporter(){}
 JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
-    parent.socket.emit('tests-start')
+    emit('tests-start')
 }
 JasmineAdapterReporter.prototype.reportSuiteResults = function(suite){
-    /*Tutti.sendData({
-        test: 'suiteResults'
-    })*/
 }
 JasmineAdapterReporter.prototype.reportSpecStarting = function(spec){
-    /*Tutti.sendData({
-        test: 'testCaseStarting',
-        name: spec.getFullName()
-        })*/
 }
 JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
     var results = spec.results(),
@@ -28,7 +30,7 @@ JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
                 items[i].stackTrace = item.trace.stack
         }
     }
-    parent.socket.emit('test-result', {
+    emit('test-result', {
         items: items,
         passed: results.passed(),
         spec: spec.getFullName()
@@ -73,5 +75,8 @@ JasmineAdapterReporter.prototype.reportRunnerResults = function(runner){
             }
         }
     }
-    parent.socket.emit('all-test-results', msg)
+    emit('all-test-results', msg)
 }
+jasmine.getEnv().addReporter(new JasmineAdapterReporter)
+
+}()

@@ -36,16 +36,24 @@ var browserName = (function(){
     return userAgent
 })()
 
-var socket, runnerFrame
+var socket, runnerFrame, statusElm
 window.onload = function(){
+    statusElm = document.getElementById('status')
     socket = io.connect()
     runnerFrame = document.getElementById('runner')
-    runnerFrame.src = ''
+    runnerFrame.src = 'about:blank'
     socket.on('connect', function(){
+        statusElm.innerHTML = 'Connected'
+        statusElm.className = 'connected'
         socket.emit('browser-login', browserName)
     })
+    socket.on('disconnect', function(){
+        statusElm.innerHTML = 'Disconnected'
+        statusElm.className = 'disconnected'
+        runnerFrame.src = 'about:blank'
+    })
     socket.on('start-tests', function(data){
-        runnerFrame.setAttribute('src', '/runner/')
+        runnerFrame.setAttribute('src', '/runner/#testem')
     })
     console.log('TESTEM: done with setup')
 }

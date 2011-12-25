@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<title>Test Page</title>
+<link rel="stylesheet" href="jasmine.css">
+<script src="jasmine.js"></script>
+<script>
+if (location.hash === '#testem')
+	document.write('<script src="/jasmine_adapter.js"></'+'script>')
+</script>
+<script src="jasmine-html.js"></script>
+<script src="hello.js"></script>
+<script src="hello_spec.js"></script>
+</head>
+<body>
+<h1>Test Page</h1>
+<script>
+jasmine.getEnv().addReporter(new jasmine.TrivialReporter)
+jasmine.getEnv().execute()
+</script>
+</body>
+</html>
