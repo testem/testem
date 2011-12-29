@@ -36,7 +36,8 @@ var browserName = (function(){
     return userAgent
 })()
 
-var socket, runnerFrame, statusElm
+var socket, runnerFrame, statusElm,
+    runnerURL = '/runner/#testem'
 window.onload = function(){
     statusElm = document.getElementById('status')
     socket = io.connect()
@@ -53,7 +54,10 @@ window.onload = function(){
         runnerFrame.src = 'about:blank'
     })
     socket.on('start-tests', function(data){
-        runnerFrame.setAttribute('src', '/runner/#testem')
+        if (runnerFrame.getAttribute('src') === runnerURL)
+            runnerFrame.contentWindow.location.reload()
+        else
+            runnerFrame.src = runnerURL
     })
     console.log('TESTEM: done with setup')
 }

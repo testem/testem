@@ -380,3 +380,456 @@ info: writing bottom row at 16
 info: browser login: Safari 5.1
 info: writing bottom row at 16
 info: cleanup
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: cleanup
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: startTests
+info: cleanup
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: onInputChar
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: onInputChar
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: Config: {"test_page":"test.html"}
+info: {"port":3580,"autotest":true,"phantomjs":true,"test_page":"test.html"}
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 16
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 16
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: prevTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: prevTab
+info: onInputChar
+info: nextTab
+info: onInputChar
+info: onInputChar
+info: startTests
+info: Safari 5.1 disconnected
+info: writing bottom row at 16
+info: writing bottom row at 16
+info: browser login: Safari 5.1
+info: writing bottom row at 16
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: startTests
+info: onInputChar
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 14
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 14
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.css
+info: writing bottom row at 14
+info: browser login: Safari 5.1
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: onInputChar
+info: startTests
+info: tracked test.html
+info: tracked test.html
+info: tracked hello.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked jasmine.css
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked jasmine.css
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked hello.js
+info: tracked hello_spec.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: tracked jasmine.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked hello.js
+info: tracked hello_spec.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine.js
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine.js
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: tracked jasmine.css
+info: tracked jasmine.css
+info: tracked hello.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: onInputChar
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 14
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 14
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked hello_spec.js
+info: writing bottom row at 14
+info: browser login: Safari 5.1
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked hello.js
+info: tracked hello_spec.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked test.html
+info: tracked test.html
+info: tracked hello_spec.js
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked test.html
+info: tracked test.html
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked test.html
+info: tracked test.html
+info: tracked hello.js
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked jasmine-html.js
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello_spec.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: onInputChar
+info: 
+info: =========== Starting App ==================
+info: writing bottom row at 14
+info: path: /Users/airportyh/Home/Code/testem/phantom.js
+info: writing bottom row at 14
+info: browser login: PhantomJS 1.2
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine.css
+info: tracked jasmine.js
+info: tracked hello.js
+info: tracked jasmine-html.js
+info: tracked hello_spec.js
+info: writing bottom row at 14
+info: browser login: Safari 5.1
+info: writing bottom row at 14
+info: tracked test.html
+info: tracked jasmine-html.js
+info: tracked hello.js
+info: tracked jasmine.js
+info: tracked jasmine.css
+info: tracked hello_spec.js
+info: onInputChar

@@ -18,4 +18,8 @@ describe('hello', function(){
     it('should be firefox', function(){
         expect(navigator.userAgent).toMatch(/Firefox/)
     })
+    it('should do async', function(){
+        waits(1000)
+        
+    })
 })
