@@ -7,10 +7,34 @@ var Server = require('./lib/server').Server
   , child_process = require('child_process')
   , AppView = require('./lib/appviewcharm')
 
+// <http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/>
+var debounce = function (func, threshold, execAsap) {
+ 
+    var timeout;
+ 
+    return function debounced () {
+        var obj = this, args = arguments;
+        function delayed () {
+            if (!execAsap)
+                func.apply(obj, args);
+            timeout = null; 
+        };
+ 
+        if (timeout)
+            clearTimeout(timeout);
+        else if (execAsap)
+            func.apply(obj, args);
+ 
+        timeout = setTimeout(delayed, threshold || 100); 
+    };
+ 
+}
+
 
 function App(config){
     log.info('')
     log.info('=========== Starting App ==================')
+    this.fileWatchers = {}
     this.configure(function(){
         this.server = new Server(this)
         this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
@@ -65,16 +89,20 @@ App.prototype = {
                     }
                     finish()
                 })
-                Fs.watch(this.configFile, function(event, filename){
-                    this.configure()
-                }.bind(this))
+                var i = 1
+                if (!this.fileWatchers[this.configFile])
+                    this.fileWatchers[this.configFile] = 
+                        Fs.watch(this.configFile, debounce(function(event, filename){
+                            this.configure(function(){
+                                this.startTests()
+                            }.bind(this))
+                        }.bind(this), 1000, true))
             }
         }.bind(this))
         
     },
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
-        log.info('path: ' + path)
         var phantom = child_process.spawn('phantomjs', [path])
         process.on('exit', function(){
             phantom.kill('SIGHUP')
@@ -85,12 +113,10 @@ App.prototype = {
         this.view.on('inputChar', this.onInputChar.bind(this))
     },
     onInputChar: function(chr, i) {
-        log.info('onInputChar')
         if (chr === 'q'){
             this.view.cleanup()
             process.exit()
         }else if (i === 13){ // ENTER
-            log.info('startTests')
             this.startTests()
         }
     },

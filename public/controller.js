@@ -54,10 +54,11 @@ window.onload = function(){
         runnerFrame.src = 'about:blank'
     })
     socket.on('start-tests', function(data){
-        if (runnerFrame.getAttribute('src') === runnerURL)
-            runnerFrame.contentWindow.location.reload()
-        else
+        console.log('start-tests')
+        runnerFrame.src = 'about:blank'
+        setTimeout(function(){
             runnerFrame.src = runnerURL
+        }, 1)
     })
     console.log('TESTEM: done with setup')
 }
