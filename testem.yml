@@ -1,6 +1,6 @@
 #framework: qunit
 framework: jasmine
-#test_page: examples/test.html
+test_page: examples/test.html
 src_files:
 #    - examples/qunit/validate.js
 #    - examples/qunit/tests.js
