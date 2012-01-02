@@ -103,10 +103,7 @@ App.prototype = {
     },
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
-        var phantom = child_process.spawn('phantomjs', [path])
-        process.on('exit', function(){
-            phantom.kill('SIGHUP')
-        })
+        this.phantomProcess = child_process.spawn('phantomjs', [path])
     },
     initView: function(){
         this.view = new AppView(this)
@@ -114,8 +111,12 @@ App.prototype = {
     },
     onInputChar: function(chr, i) {
         if (chr === 'q'){
-            this.view.cleanup()
-            process.exit()
+            this.phantomProcess.kill('SIGHUP')
+            setTimeout(function(){
+                
+                this.view.cleanup()
+                process.exit()
+            }.bind(this), 100)
         }else if (i === 13){ // ENTER
             this.startTests()
         }
