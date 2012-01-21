@@ -53,13 +53,13 @@ $(function(){
     socket.on('connect', function(){
         statusElm
             .html('Connected')
-            .addClass('connected')
+            .attr('class', 'connected')
         socket.emit('browser-login', browserName)
     })
     socket.on('disconnect', function(){
         statusElm
             .html('Disconnected')
-            .addClass('disconnected')
+            .attr('class', 'disconnected')
         runnerFrame.attr('src', 'about:blank')
     })
     socket.on('start-tests', function(data){
