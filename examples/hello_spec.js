@@ -10,12 +10,15 @@ describe('hello', function(){
         throw new Error('Crap')
     })
     it('should throw another exception', function(){
+        waits(500)
         throw new Error('Blah')
     })
     it('should throw even more exceptions', function(){
+        waits(500)
         throw new Error('Foobar')
     })
     it('should be firefox', function(){
+        waits(500)
         expect(navigator.userAgent).toMatch(/Firefox/)
     })
     it('should do async', function(){

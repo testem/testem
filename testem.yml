@@ -1,8 +1,8 @@
 #framework: qunit
 framework: jasmine
 test_page: examples/test.html
-src_files:
-#    - examples/qunit/validate.js
-#    - examples/qunit/tests.js
-    - examples/hello.js
-    - examples/hello_spec.js
+#src_files:
+##    - examples/qunit/validate.js
+##    - examples/qunit/tests.js
+#    - examples/hello.js
+#    - examples/hello_spec.js

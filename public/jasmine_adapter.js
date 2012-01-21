@@ -19,13 +19,14 @@ JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
     var results = spec.results(),
         rItems = results.getItems(),
         numItems = rItems.length,
-        items = []
+        items = [],
+        specName = spec.getFullName()
     for (var i = 0; i < numItems; i++){
         var item = rItems[i]
         if (item.type === 'log')
-            items[i] = {type: 'log', message: String(item)}
+            items[i] = {type: 'log', message: String(item), name: specName}
         else if (item.type == 'expect' && item.passed && !item.passed()){
-            items[i] = {type: 'fail', message: item.message}
+            items[i] = {type: 'fail', message: item.message, name: specName}
         if (item.trace.stack)
                 items[i].stackTrace = item.trace.stack
         }

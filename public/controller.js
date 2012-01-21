@@ -36,29 +36,37 @@ var browserName = (function(){
     return userAgent
 })()
 
+function resize(){
+    runnerFrame.css({height: ($(window).height() - runnerFrame.offset().top) + 'px'})
+}
+
 var socket, runnerFrame, statusElm,
     runnerURL = '/runner/#testem'
-window.onload = function(){
-    statusElm = document.getElementById('status')
+    
+$(function(){
+    statusElm = $('#status')
     socket = io.connect()
-    runnerFrame = document.getElementById('runner')
-    runnerFrame.src = 'about:blank'
+    runnerFrame = $('#runner')
+    resize()
+    $(window).resize(resize)
+    runnerFrame.attr('src', 'about:blank')
     socket.on('connect', function(){
-        statusElm.innerHTML = 'Connected'
-        statusElm.className = 'connected'
+        statusElm
+            .html('Connected')
+            .addClass('connected')
         socket.emit('browser-login', browserName)
     })
     socket.on('disconnect', function(){
-        statusElm.innerHTML = 'Disconnected'
-        statusElm.className = 'disconnected'
-        runnerFrame.src = 'about:blank'
+        statusElm
+            .html('Disconnected')
+            .addClass('disconnected')
+        runnerFrame.attr('src', 'about:blank')
     })
     socket.on('start-tests', function(data){
-        console.log('start-tests')
-        runnerFrame.src = 'about:blank'
+        runnerFrame.attr('src', 'about:blank')
         setTimeout(function(){
-            runnerFrame.src = runnerURL
+            runnerFrame.attr('src', runnerURL)
         }, 1)
     })
     console.log('TESTEM: done with setup')
-}
+})
