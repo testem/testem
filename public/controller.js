@@ -37,6 +37,7 @@ var browserName = (function(){
 })()
 
 function resize(){
+    $(document.body).css({overflow: 'hidden'})
     runnerFrame.css({height: ($(window).height() - runnerFrame.offset().top) + 'px'})
 }
 
