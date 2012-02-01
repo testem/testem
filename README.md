@@ -39,7 +39,16 @@ describe('hello', function(){
 })
 EOF
 
-3) Launch testem
+3) Create a testem configuration file
+
+    cat > testem-sample/testem.yml <<EOF
+framework: jasmine
+src_files:
+  - lib/hello.js
+  - spec/hello_spec.js
+EOF
+
+4) Launch testem
 
    cd testem-sample
    ../testem/cmd.js --config testem.yml
@@ -51,9 +60,9 @@ http://www.xxx.yyy.zzz:3580
 
 No browser selected.
 
-4) Attach a browser by navigating to http://www.xxx.yyy.zzz:3580
+5) Attach a browser by navigating to http://www.xxx.yyy.zzz:3580
 
-5) See the test results
+6) See the test results
 
 Chrome 10.0
       2/3
