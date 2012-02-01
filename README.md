@@ -27,6 +27,14 @@ For QUnit, include this snippet
     	document.write('<script src="/qunit_adapter.js"></'+'script>')
     </script>
 
+Using the Text User Interface
+=============================
+Keys:
+             ENTER : Run the tests
+                 q : Quit
+    <- LEFT ARROW  : Move to the next browser tab on the left
+    -> RIGHT ARROW : Move to the next browser tab on the right 
+
 Work Arounds For Known Issues
 =============================
 1) Cannot find module './lib/js-yaml.js'
