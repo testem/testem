@@ -100,19 +100,6 @@ Keys
  * <- LEFT ARROW  : Move to the next browser tab on the left
  * -> RIGHT ARROW : Move to the next browser tab on the right
 
-Work Arounds For Known Issues
-=============================
-1) Cannot find module './lib/js-yaml.js'
-
-This is an issue in the upstream js-yaml.  The work around is described
-here: https://github.com/nodeca/js-yaml/pull/35
-
-    npm install https://github.com/nodeca/js-yaml/tarball/master
-
-    or if you download the tar.gz locally
-
-    npm install nodeca-js-yaml-0.3.5-0-g44441b0.tar.gz
-
 
 License
 -------
