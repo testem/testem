@@ -1,5 +1,7 @@
 !function(){
 
+
+// Trottle this
 function emit(){
     var socket = parent.socket
     socket.emit.apply(socket, arguments)
