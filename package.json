@@ -30,7 +30,7 @@
        "winston": "0.3.4",
        "optimist": "0.2.6",
        "charm": "*",
-       "js-yaml": "0.3.1",
+       "js-yaml": "0.3.5",
        "tap": "*"
    },
    "bin" : {
