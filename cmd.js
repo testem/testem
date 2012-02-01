@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-
+//
+// Command line options
+// --config <relative path to a testem.yml
+//       -m configure autotest
+//
 var Server = require('./lib/server').Server
   , Fs = require('fs')
   , log = require('winston')
@@ -82,6 +86,8 @@ App.prototype = {
             if (callback) callback(config)
         }.bind(this)
 
+        if (argv.config)
+          this.configFile = argv.config
         Fs.stat(this.configFile, function(err, stat){
             if (err) finish()
             else if (stat.isFile()){
