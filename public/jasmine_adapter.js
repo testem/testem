@@ -29,7 +29,7 @@ JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
             items[i] = {type: 'log', message: String(item), name: specName}
         else if (item.type == 'expect' && item.passed && !item.passed()){
             items[i] = {type: 'fail', message: item.message, name: specName}
-        if (item.trace.stack)
+            if (item.trace.stack)
                 items[i].stackTrace = item.trace.stack
         }
     }
