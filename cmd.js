@@ -5,7 +5,12 @@ var Server = require('./lib/server').Server
   , log = require('winston')
   , argv = require('optimist').argv
   , child_process = require('child_process')
-  , AppView = require('./lib/appviewcharm')
+  , AppView
+  
+if (argv.t)
+    AppView = require('./lib/appviewtap')
+else
+    AppView = require('./lib/appviewcharm')
 
 // <http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/>
 var debounce = function (func, threshold, execAsap) {
@@ -129,11 +134,11 @@ App.prototype = {
     onBrowsersChanged: function(){
         this.view.onBrowsersChanged()
     },
-    onTestResult: function(){
-        this.view.onTestResult()
+    onTestResult: function(result){
+        this.view.onTestResult(result)
     },
-    onAllTestResults: function(){
-        this.view.onAllTestResults()
+    onAllTestResults: function(results){
+        this.view.onAllTestResults(results)
     }
 }
 

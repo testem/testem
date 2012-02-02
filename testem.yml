@@ -1,6 +1,6 @@
 #framework: qunit
-test_page: satellite/test/tests.html
-#test_page: examples/test.html
+#test_page: satellite/test/tests.html
+test_page: examples/test.html
 #src_files:
 ##    - examples/qunit/validate.js
 ##    - examples/qunit/tests.js
