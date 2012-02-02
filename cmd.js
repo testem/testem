@@ -122,28 +122,40 @@ App.prototype = {
         }
     },
     startTests: function(){
-        this.view.startRunningIndicator()
+        this.view.onStartTests()
+        //this.view.startRunningIndicator()
         this.server.startTests()
     },
     onBrowsersChanged: function(){
+        log.info('onBrowsersChanged')
+        this.view.onBrowsersChanged()
+        /*
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
         this.view.renderBottomInstructions()
         this.view.refresh()
+        */
     },
     onTestResult: function(){
+        log.info('onTestResult')
+        this.view.onTestResult()
+        /*
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
         this.view.refresh()
         this.view.renderLogPanel()
+        */
     },
     onAllTestResults: function(){
+        this.view.onAllTestResults()
+        /*
         this.view.stopRunningIndicator()
         this.view.onAllTestResults()
         this.view.renderBrowserHeaders()
         this.view.renderTestResults()
         this.view.refresh()
         this.view.renderLogPanel()
+        */
     }
 }
 
