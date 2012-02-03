@@ -25,13 +25,13 @@
    "license" : "MIT",
    "dependencies": {
        "express": ">= 2.4.2",
-       "mustache": "*",
+       "mustache": "0.4.0",
        "socket.io": ">= 0.7.6",
        "winston": "0.3.4",
-       "optimist": "0.2.6",
-       "charm": "*",
+       "charm": "0.0.5",
        "js-yaml": "0.3.5",
-       "tap": "*"
+       "tap": "0.2.0",
+       "commander": "0.5.2"
    },
    "bin" : {
        "testem" : "./cmd.js"

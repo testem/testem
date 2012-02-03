@@ -1,49 +1,49 @@
 #!/usr/bin/env node
+
+
+
+
 //
 // Command line options
 // --config <relative path to a testem.yml
 //       -m configure autotest
 //
 var Server = require('./lib/server').Server
+  , debounce = require('./lib/debounce')
   , Fs = require('fs')
   , log = require('winston')
-  , argv = require('optimist').argv
   , child_process = require('child_process')
+  , program = require('commander')
   , AppView
   
-if (argv.t)
-    AppView = require('./lib/appviewtap')
+program
+    .version('0.0.3')
+    .usage('[options]')
+    .option('-f [file]', 'Config file')
+    .option('-c, --ci', 'Continuous Integration mode')
+    .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI')
+    .option('-t, --tap', 'Output TAP(Test Anything Protocal) files')
+    .option('-o, --output', 'Output directory for TAP files')
+    .option('-p, --port [num]', 'Server port. Defaults to 3580.', 3580)
+    .option('-m, --manual', 'Manual(default is autotest)')
+    .option('-a, --autotest', 'Autotest(default)')
+    .option('-d, --debug', 'Output debug to debug log')
+    .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
+    .option('--nophantomjs', 'Disable phantomjs')
+    .parse(process.argv)
+  
+
+if (program.ci)
+    AppView = require('./lib/appviewconsole')
 else
     AppView = require('./lib/appviewcharm')
-
-// <http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/>
-var debounce = function (func, threshold, execAsap) {
- 
-    var timeout;
- 
-    return function debounced () {
-        var obj = this, args = arguments;
-        function delayed () {
-            if (!execAsap)
-                func.apply(obj, args);
-            timeout = null; 
-        };
- 
-        if (timeout)
-            clearTimeout(timeout);
-        else if (execAsap)
-            func.apply(obj, args);
- 
-        timeout = setTimeout(delayed, threshold || 100); 
-    };
- 
-}
 
 
 function App(config){
     log.info('')
     log.info('=========== Starting App ==================')
     this.fileWatchers = {}
+    
     this.configure(function(){
         this.server = new Server(this)
         this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
@@ -51,7 +51,7 @@ function App(config){
         this.server.on('all-test-results', this.onAllTestResults.bind(this))
         this.server.on('server-start', this.initView.bind(this))
     
-        if (this.config.phantomjs)
+        if (!this.config.nophantomjs)
             app.server.on('server-start', function(){
                 this.startPhantomJS()
             }.bind(this))
@@ -71,13 +71,9 @@ App.prototype = {
         })    
     },
     configure: function(callback){
-        var config = this.config = {
-            port: 3580,
-            autotest: true,
-            phantomjs: true
-        }
+        var config = this.config = program
 
-        if (argv.m)
+        if (program.manual)
             config.autotest = false
 
         var finish = function(){
@@ -86,8 +82,8 @@ App.prototype = {
             if (callback) callback(config)
         }.bind(this)
 
-        if (argv.config)
-          this.configFile = argv.config
+        if (program.f)
+          this.configFile = program.f
         Fs.stat(this.configFile, function(err, stat){
             if (err) finish()
             else if (stat.isFile()){
@@ -114,24 +110,25 @@ App.prototype = {
     },
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
-        this.phantomProcess = child_process.spawn('phantomjs', [path])
+        this.phantomProcess = child_process.spawn('/Applications/phantomjs.app/Contents/MacOS/phantomjs', [path])
     },
     initView: function(){
         this.view = new AppView(this)
         if (this.view.on)
             this.view.on('inputChar', this.onInputChar.bind(this))
     },
+    quit: function(){
+        this.phantomProcess.kill('SIGHUP')
+        setTimeout(function(){
+            this.view.cleanup()
+            process.exit()
+        }.bind(this), 100)
+    }, 
     onInputChar: function(chr, i) {
-        if (chr === 'q'){
-            this.phantomProcess.kill('SIGHUP')
-            setTimeout(function(){
-                
-                this.view.cleanup()
-                process.exit()
-            }.bind(this), 100)
-        }else if (i === 13){ // ENTER
+        if (chr === 'q')
+            this.quit()
+        else if (i === 13) // ENTER
             this.startTests()
-        }
     },
     startTests: function(){
         this.view.onStartTests()
@@ -149,13 +146,9 @@ App.prototype = {
 }
 
 log.remove(log.transports.Console)
-if (argv.d)
-    log.add(log.transports.File, {filename: 'testem.log'})
+if (program.debug){
+    var logfile = program.debuglog || 'testem.log'
+    log.add(log.transports.File, {filename: logfile})
+}
 
 var app = new App()
-
-
-
-
-
-
