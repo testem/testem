@@ -1,44 +1,46 @@
 #!/usr/bin/env node
-//
-// Command line options
-// --config <relative path to a testem.yml
-//       -m configure autotest
-//
+
 var Server = require('./lib/server').Server
   , debounce = require('./lib/debounce')
-  , Fs = require('fs')
+  , fs = require('fs')
   , log = require('winston')
   , child_process = require('child_process')
   , program = require('commander')
-  , path = require('path')
   , AppView
+  , ci = false
+  , config = program
   
 program
     .version('0.0.3')
     .usage('[options]')
     .option('-f [file]', 'Config file')
-    .option('-c, --ci', 'Continuous Integration mode')
-    .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI')
+    .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
+    .option('-a, --no-autotest', 'Disable autotest')
+    .option('-d, --debug', 'Output debug to debug log')
+    .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
+    .option('--no-phantomjs', 'Disable PhantomJS')
+
+program
+    .command('ci')
+    .description('Continuous integration mode')
+    .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI', 1)
     .option('-t, --tap', 'Output TAP(Test Anything Protocal) files')
     .option('-o, --output [dir]', 'Output directory for TAP files', '')
     .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
-    .option('-m, --manual', 'Manual(default is autotest)')
-    .option('-a, --autotest', 'Autotest(default)')
-    .option('-d, --debug', 'Output debug to debug log')
-    .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
-    .option('--nophantomjs', 'Disable PhantomJS')
-    .parse(process.argv)
+    .action(function(env){
+        ci = true
+        config = env
+        config.ci = true
+    })
 
-program.autotest = !program.manual
+program.parse(process.argv)
 
-if (program.ci)
-    AppView = require('./lib/appviewconsole')
-else
-    AppView = require('./lib/appviewcharm')
+AppView = ci ? 
+    require('./lib/appviewconsole') :
+    require('./lib/appviewcharm')
 
 function App(config){
-    log.info('')
-    log.info('=========== Starting App ==================')
+    this.config = config
     this.fileWatchers = {}
     
     this.configure(function(){
@@ -58,7 +60,7 @@ function App(config){
 App.prototype = {
     configFile: 'testem.yml',
     listFiles: function listFiles(cb){
-        Fs.readdir('./', function(err, files){
+        fs.readdir('./', function(err, files){
             if (err)
                 cb(err, files)
             else
@@ -68,23 +70,18 @@ App.prototype = {
         })    
     },
     configure: function(callback){
-        var config = this.config = program
-
-        if (!program.manual || program.autotest)
-            config.autotest = true
-
         var finish = function(){
             if (!config.src_files)
                 config.src_files = this.listFiles
             if (callback) callback(config)
         }.bind(this)
 
-        if (program.f)
-          this.configFile = program.f
-        Fs.stat(this.configFile, function(err, stat){
+        if (config.f)
+          this.configFile = config.f
+        fs.stat(this.configFile, function(err, stat){
             if (err) finish()
             else if (stat.isFile()){
-                Fs.readFile(this.configFile, function(err, data){
+                fs.readFile(this.configFile, function(err, data){
                     if (!err){
                         var cfg = require('js-yaml')
                             .load(String(data))
@@ -96,7 +93,7 @@ App.prototype = {
                 var i = 1
                 if (!this.fileWatchers[this.configFile])
                     this.fileWatchers[this.configFile] = 
-                        Fs.watch(this.configFile, debounce(function(event, filename){
+                        fs.watch(this.configFile, debounce(function(event, filename){
                             this.configure(function(){
                                 this.startTests()
                             }.bind(this))
@@ -142,62 +139,15 @@ App.prototype = {
             return b.results && b.results.all})
     },
     onAllTestResults: function(results){
-        if (this.config.tap && this.testsAllDone()){
-            this.server.browsers.forEach(function(browser){
-                this.outputTap(browser.results, browser)
-            }.bind(this))
-        }
         this.view.onAllTestResults(results)
     },
-    outputTap: function(results, browser){
-        var dir = this.config.output
-          , filename = browser.name.replace(/ /g, '_') + '.tap'
-          , filepath = path.normalize((this.config.output ? this.config.output + '/' : '') + filename)
-          , out = Fs.createWriteStream(filepath)
-          , producer = new (require('tap').Producer)(true)
-        
-        producer.pipe(out)
-        
-        var id = 1
-        
-        results.tests.forEach(function(test){
-            if (test.failed === 0){
-                producer.write({
-                    id: id++,
-                    ok: true,
-                    name: test.name
-                })
-            }else{
-                var item = test.items.filter(function(i){
-                    return !i.passed
-                })[0]
 
-                producer.write({
-                    id: id++,
-                    ok: false,
-                    name: test.name,
-                    message: item.message
-                })
-                
-                // TODO: add stacktraces and file and line number
-            }
-        })
-        
-        producer.end()
-        
-        out.on('close', function(){
-            this.view.onOutputTap(filepath)
-            // TODO: quit() should probably be called elsewhere, not sure how yet
-            this.quit()
-        }.bind(this))
-        
-    }
 }
 
 log.remove(log.transports.Console)
-if (program.debug){
-    var logfile = program.debuglog || 'testem.log'
+if (config.debug){
+    var logfile = config.debuglog || 'testem.log'
     log.add(log.transports.File, {filename: logfile})
 }
 
-var app = new App()
+var app = new App(config)
