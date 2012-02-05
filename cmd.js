@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-
-
-
-
 //
 // Command line options
 // --config <relative path to a testem.yml
@@ -14,6 +10,7 @@ var Server = require('./lib/server').Server
   , log = require('winston')
   , child_process = require('child_process')
   , program = require('commander')
+  , path = require('path')
   , AppView
   
 program
@@ -23,21 +20,21 @@ program
     .option('-c, --ci', 'Continuous Integration mode')
     .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI')
     .option('-t, --tap', 'Output TAP(Test Anything Protocal) files')
-    .option('-o, --output', 'Output directory for TAP files')
-    .option('-p, --port [num]', 'Server port. Defaults to 3580.', 3580)
+    .option('-o, --output [dir]', 'Output directory for TAP files', '')
+    .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
     .option('-m, --manual', 'Manual(default is autotest)')
     .option('-a, --autotest', 'Autotest(default)')
     .option('-d, --debug', 'Output debug to debug log')
     .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
-    .option('--nophantomjs', 'Disable phantomjs')
+    .option('--nophantomjs', 'Disable PhantomJS')
     .parse(process.argv)
-  
+
+program.autotest = !program.manual
 
 if (program.ci)
     AppView = require('./lib/appviewconsole')
 else
     AppView = require('./lib/appviewcharm')
-
 
 function App(config){
     log.info('')
@@ -73,8 +70,8 @@ App.prototype = {
     configure: function(callback){
         var config = this.config = program
 
-        if (program.manual)
-            config.autotest = false
+        if (!program.manual || program.autotest)
+            config.autotest = true
 
         var finish = function(){
             if (!config.src_files)
@@ -137,11 +134,63 @@ App.prototype = {
     onBrowsersChanged: function(){
         this.view.onBrowsersChanged()
     },
-    onTestResult: function(result){
-        this.view.onTestResult(result)
+    onTestResult: function(result, browser){
+        this.view.onTestResult(result, browser)
+    },
+    testsAllDone: function(){
+        return this.server.browsers.every(function(b){
+            return b.results && b.results.all})
     },
     onAllTestResults: function(results){
+        if (this.config.tap && this.testsAllDone()){
+            this.server.browsers.forEach(function(browser){
+                this.outputTap(browser.results, browser)
+            }.bind(this))
+        }
         this.view.onAllTestResults(results)
+    },
+    outputTap: function(results, browser){
+        var dir = this.config.output
+          , filename = browser.name.replace(/ /g, '_') + '.tap'
+          , filepath = path.normalize((this.config.output ? this.config.output + '/' : '') + filename)
+          , out = Fs.createWriteStream(filepath)
+          , producer = new (require('tap').Producer)(true)
+        
+        producer.pipe(out)
+        
+        var id = 1
+        
+        results.tests.forEach(function(test){
+            if (test.failed === 0){
+                producer.write({
+                    id: id++,
+                    ok: true,
+                    name: test.name
+                })
+            }else{
+                var item = test.items.filter(function(i){
+                    return !i.passed
+                })[0]
+
+                producer.write({
+                    id: id++,
+                    ok: false,
+                    name: test.name,
+                    message: item.message
+                })
+                
+                // TODO: add stacktraces and file and line number
+            }
+        })
+        
+        producer.end()
+        
+        out.on('close', function(){
+            this.view.onOutputTap(filepath)
+            // TODO: quit() should probably be called elsewhere, not sure how yet
+            this.quit()
+        }.bind(this))
+        
     }
 }
 

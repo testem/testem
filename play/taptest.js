@@ -15,6 +15,7 @@ test("make sure the thingie is a thing", function (t) {
     t.end()
   })
   t.ok(99, "can also skip individual assertions", {skip: true})
+  t.ok(true, 'true')
   // end lets it know it's over.
   t.end()
 })

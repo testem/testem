@@ -1,37 +1,93 @@
-QUnit.totalTests = 0
-QUnit.totalTestsFailed = 0
-QUnit._logs = []
-QUnit._current = null
-QUnit.log = function(params){
-    if (!params.result)
-        QUnit._logs.push({
-            type: 'fail',
-            name: QUnit._current.name,
+!function(undefined){
+
+var results = {
+    failed: 0,
+    passed: 0,
+    total: 0,
+    tests: []}
+  , currentTest
+  , currentModule
+  , id = 1
+
+window.onerror = function(msg, url, line){
+    emit('error', msg, url, line)
+}
+
+function emit(){
+    var socket = parent.socket
+    socket.emit.apply(socket, arguments)
+}
+  
+function lineNumber(e){
+    return e.line || e.lineNumber
+}
+
+function sourceFile(e){
+    return e.sourceURL || e.fileName
+}
+
+function message(e){
+    var msg = (e.name && e.message) ? (e.name + ': ' + e.message) : e.toString()
+    return msg
+}
+
+function stacktrace(e){
+    if (e.stack)
+        return e.stack
+    return undefined
+}
+  
+QUnit.log = function(params, e){
+    if (e){
+        currentTest.items.push({
+            passed: params.result,
+            line: lineNumber(e),
+            file: sourceFile(e),
+            stacktrace: stacktrace(e),
+            message: message(e)
+        })
+    }else{
+        currentTest.items.push({
+            passed: params.result,
+            actual: params.actual,
+            expected: params.expected,
             message: params.message
         })
+    }
+    
 }
 QUnit.testStart = function(params){
-    QUnit._current = params
+    currentTest = {
+        id: id++,
+        name: (currentModule ? currentModule + ': ' : '') + params.name,
+        items: []
+    }
+    emit('tests-start')
 }
 QUnit.testDone = function(params){
-    QUnit.totalTests++
-    if (params.failed > 0)
-        QUnit.totalTestsFailed++
-    var test = {
-        name: params.name,
-        failed: params.failed,
-        passed: params.passed,
-        total: params.total
-    }
-    parent.socket.emit('test-result', test)
+    currentTest.failed = params.failed
+    currentTest.passed = params.passed
+    currentTest.total = params.total
+    
+    results.total++
+    if (currentTest.failed > 0)
+        results.failed++
+    else
+        results.passed++
+    
+    results.tests.push(currentTest)
+    
+    emit('test-result', currentTest)
+}
+QUnit.moduleStart = function(params){
+    currentModule = params.name
+}
+QUnit.moduleEnd = function(params){
+    currentModule = undefined
 }
 QUnit.done = function(params){
-    var passed = QUnit.totalTests - QUnit.totalTestsFailed
-    parent.socket.emit('all-test-results', {
-        failed: QUnit.totalTestsFailed,
-        passed: passed,
-        total: QUnit.totalTests,
-        runtime: params.runtime,
-        items: QUnit._logs
-    })
+    results.runDuration = params.runtime
+    emit('all-test-results', results)
 }
+
+}()

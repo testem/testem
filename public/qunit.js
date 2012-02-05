@@ -104,7 +104,7 @@ Test.prototype = {
 			this.callback.call(this.testEnvironment);
 		} catch(e) {
 			fail("Test " + this.testName + " died, exception and test follows", e, this.callback);
-			QUnit.ok( false, "Died on test #" + (this.assertions.length + 1) + ": " + e.message + " - " + QUnit.jsDump.parse(e) );
+			QUnit.ok( false, "Died on test #" + (this.assertions.length + 1) + ": " + e.message + " - " + QUnit.jsDump.parse(e), e );
 			// else next test will carry the responsibility
 			saveGlobal();
 
@@ -211,6 +211,7 @@ Test.prototype = {
 		} catch(e) {
 			fail("reset() failed, following Test " + this.testName + ", exception and reset fn follows", e, QUnit.reset);
 		}
+        
 
 		QUnit.testDone( {
 			name: this.testName,
@@ -306,14 +307,14 @@ var QUnit = {
 	 * Asserts true.
 	 * @example ok( "asdfasdf".length > 5, "There must be at least 5 chars" );
 	 */
-	ok: function(a, msg) {
+	ok: function(a, msg, e) {
 		a = !!a;
 		var details = {
 			result: a,
 			message: msg
 		};
 		msg = escapeHtml(msg);
-		QUnit.log(details);
+		QUnit.log(details, e);
 		config.current.assertions.push({
 			result: a,
 			message: msg
