@@ -34,6 +34,6 @@
        "commander": "0.5.2"
    },
    "bin" : {
-       "testem" : "./cmd.js"
+       "testem" : "./testem.js"
    }
 }
