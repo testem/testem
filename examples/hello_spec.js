@@ -4,21 +4,20 @@ describe('hello', function(){
     })
     describe('level 2', function(){
         it('should not say not hello', function(){
-            expect(hello()).toNotBe('not hello world')
+            expect(hello()).not.toBe('not hello world')
             console.log('console.logged')
             jasmine.log('jasmine.logged')
-            expect('blah').toBe(true, 'you better be true')
         })
         
         it('should throw another exception', function(){
             waits(500)
-            throw new Error('Blah')
+            //throw new Error('Blah')
         })
         describe('level 3', function(){
             
             it('should throw exception', function(){
                 //expect(!!navigator.userAgent.match(/Firefox/)).toBe(true)
-                throw new Error('Crap')
+                //throw new Error('Crap')
             })
         })
     })

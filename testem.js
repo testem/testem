@@ -111,11 +111,11 @@ App.prototype = {
         if (this.view.on)
             this.view.on('inputChar', this.onInputChar.bind(this))
     },
-    quit: function(){
+    quit: function(code){
         this.phantomProcess.kill('SIGHUP')
         setTimeout(function(){
             this.view.cleanup()
-            process.exit()
+            process.exit(code)
         }.bind(this), 100)
     }, 
     onInputChar: function(chr, i) {

@@ -24,7 +24,7 @@
    ],
    "license" : "MIT",
    "dependencies": {
-       "express": ">= 2.4.2",
+       "express": ">= 2.5.6",
        "mustache": "0.4.0",
        "socket.io": ">= 0.7.6",
        "winston": "0.3.4",
