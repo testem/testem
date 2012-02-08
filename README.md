@@ -64,8 +64,6 @@ Testem should automatically pickup the new files you've added and also any chang
           1/1                                                                                                  
     All tests passed!  
     
-    
-    
 #### Using the Text User Interface
 
 In development mode, Testem has a text-based graphical user interface which uses keyboard-based controls. Here is a list of the control keys
@@ -104,6 +102,8 @@ The TAP format is a human-readable and language-agnostic test result format. TAP
 
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin)
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
+
+It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode. More on PhantomJS below. 
     
 Configuration File
 ------------------
