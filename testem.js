@@ -50,7 +50,7 @@ function App(config){
         this.server.on('all-test-results', this.onAllTestResults.bind(this))
         this.server.on('server-start', this.initView.bind(this))
     
-        if (!this.config.nophantomjs)
+        if (this.config.phantomjs)
             app.server.on('server-start', function(){
                 this.startPhantomJS()
             }.bind(this))
@@ -104,7 +104,7 @@ App.prototype = {
     },
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
-        this.phantomProcess = child_process.spawn('/Applications/phantomjs.app/Contents/MacOS/phantomjs', [path])
+        this.phantomProcess = child_process.spawn('phantomjs', [path])
     },
     initView: function(){
         this.view = new AppView(this)
@@ -112,7 +112,8 @@ App.prototype = {
             this.view.on('inputChar', this.onInputChar.bind(this))
     },
     quit: function(code){
-        this.phantomProcess.kill('SIGHUP')
+        if (this.phantomProcess)
+            this.phantomProcess.kill('SIGHUP')
         setTimeout(function(){
             this.view.cleanup()
             process.exit(code)

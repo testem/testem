@@ -1,82 +1,111 @@
 Test&rsquo;em &rsquo;Scripts!
 =================
 
-Unit testing Javascripts shouldn't be an effing PITA. `testem` is a command-line tool which aims to make cross browser Javascript unit testing much more tolerable.
+Unit testing Javascripts is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing much more tolerable. Testem supports Jasmine and QUnit right out of the box.
 
-This project is a spin-off of [Tutti](https://github.com/airportyh/Tutti). I first thought I would repurpose Tutti to become a unit testing tool, but after much deliberation, decided to start a new project for this very purpose instead.
+Installation
+------------
+To install:
 
-Usage:
+    sudo npm install testem -g
+    
+This will install the `testem` executable globally on your system, specifically it should be `/usr/local/bin/testem` for unix.
 
-***TODO***
+Usage
+-----
 
-Minimal Example:
-----------------
-1) Create a director at the same level as testem
+Testem supports two distinct use cases: development and continuous integration.
 
-    mkdir testem-sample
+### Development Mode
 
-2) Create the following code and specification javascript files
+The simplest way to use Testem, in the TDD spirit, is to start in an empty directory and run the command
 
-    mkdir testem-sample/lib
-    cat > testem-sample/lib/hello.js <<EOF
-    function hello(){
-        return "hello world"
-    }
-    EOF
+    testem
+    
+You will see a terminal-based interface which looks like this
+    
+    TEST'EM 'SCRIPTS!                                                                                         
+    Open the URL below in a browser to connect.                                                                
+    http://192.168.1.173:3580                                                                                  
 
-    mkdir testem-sample/spec
-    cat > testem-sample/spec/hello_spec.js <<EOF
+
+    No browser selected.  
+    
+Now open your browser and go to the specified URL. You should now see
+
+    TEST'EM 'SCRIPTS!                                                                                          
+    Open the URL below in a browser to connect.                                                                
+    http://192.168.1.173:3580                                                                                  
+      Chrome 16.0                                                                                              
+          0/0                                                                                                  
+    No browser selected.  
+    
+We see 0/0 for tests because at this point we haven't written any code, but as we write them, Testem will pickup any `.js` files
+ that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
+
     describe('hello', function(){
         it('should say hello', function(){
             expect(hello()).toBe('hello world')
         })
-        it('should not say not hello', function(){
-            expect(hello()).toNotBe('not hello world')
-        })
-        it('should be able to add', function(){
-            expect(1+2).toBe(4)
-        })
     })
-    EOF
 
-3) Create a testem configuration file
+We implement the spec like so in `hello.js`
 
-    cat > testem-sample/testem.yml <<EOF
+    function hello(){
+        return "hello world"
+    }
+
+Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. So you should now see
+
+    TEST'EM 'SCRIPTS!                                                                                          
+    Open the URL below in a browser to connect.                                                                
+    http://192.168.1.173:3580                                                                                  
+      Chrome 16.0                                                                                              
+          1/1                                                                                                  
+    All tests passed!     
+
+### Continuous Integration Mode
+
+To use Testem for continuous integration you'd use its `ci` command
+
+    testem ci
+    
+You'd see output like this
+    
+    Open the URL below in a browser to connect.
+    http://192.168.1.173:3580
+    Ok! Starting tests with browsers: Chrome 16.0
+    .
+    Chrome 16.0: 1/1
+    
+In CI mode, Testem waits for a specified number of browsers to connect before starting the tests - the 
+default number is 1. You can change this number using the `-w` flag, to for example test on 2 browsers
+
+    testem ci -w 2
+    
+Configuration File
+------------------
+
+For the simplest Javascript projects, the above workflow will work fine, but there are times when you want
+to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.yml` configuration file. It looks like this
+
     framework: jasmine
     src_files:
-      - lib/hello.js
-      - spec/hello_spec.js
-    EOF
+    - hello.js
+    - hello_spec.js
 
-4) Launch testem
+Custom Test Pages
+-----------------
 
-    cd testem-sample
-    ../testem/cmd.js --config testem.yml
+You can also use a custom page for testing. To do this, first you need to specify `test_page` to point to your test page in the config file(`framework` and `src_files` are irrelevant in this case)
 
-    TEST'EM 'SCRIPTS!
-    -
-    Open the URL below in a browser to connect.
-    http://www.xxx.yyy.zzz:3580
+    test_page: tests.html
+    
+Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
-    No browser selected.
+### Include Snippets
 
-5) Attach a browser by navigating to http://www.xxx.yyy.zzz:3580
-
-6) See the test results
-
-    Chrome 10.0
-        2/3
-    hello should be able to add.
-        Expected 3 to be 4.
-        Error: Expected 3 to be 4.
-
-As expected, one expectation not met.
-
-
-Include Snippet
----------------
-
-Include this snippet directly after your `jasmine.js` include to enable *Testem* with your
+If you are using Jasmine, include this snippet directly after your `jasmine.js` include to enable *Testem* with your
 test page
 
     <script>
@@ -91,15 +120,25 @@ For QUnit, include this snippet
         document.write('<script src="/qunit_adapter.js"></'+'script>')
     </script>
 
+
 Using the Text User Interface
-=============================
+-----------------------------
+
 Keys
 
  * ENTER : Run the tests
  * q : Quit
- * <- LEFT ARROW  : Move to the next browser tab on the left
- * -> RIGHT ARROW : Move to the next browser tab on the right
+ * ← LEFT ARROW  : Move to the next browser tab on the left
+ * → RIGHT ARROW : Move to the next browser tab on the right
+ * ↑ UP ARROW : scroll up in the error window
+ * ↓ DOWN ARROW : scroll down in the error window
+ * Option/Alt-← : scroll left in the error window
+ * Option/Alt-→ : scroll right in the error window
 
+Go Completely Headless with PhantomJS!
+--------------------------------------
+
+If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path, Testem will use it automatically to run your tests for your convenience. ***Installing [PhantomJS](http://www.phantomjs.org/) is highly recommended***!
 
 License
 -------
