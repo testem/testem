@@ -132,8 +132,8 @@ Keys
 * → RIGHT ARROW : Move to the next browser tab on the right
 * ↑ UP ARROW : scroll up in the error window
 * ↓ DOWN ARROW : scroll down in the error window
-* Option/Alt-← : scroll left in the error window
-* Option/Alt-→ : scroll right in the error window
+* Option/Alt + ← : scroll left in the error window
+* Option/Alt + → : scroll right in the error window
 
 Go Completely Headless with PhantomJS!
 --------------------------------------
