@@ -103,7 +103,7 @@ The TAP format is a human-readable and language-agnostic test result format. TAP
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin)
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
-It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode. More on PhantomJS below. 
+It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode - in which case it is automatically launched. More on PhantomJS below. 
     
 Configuration File
 ------------------
