@@ -1,7 +1,7 @@
 Test&rsquo;em &rsquo;Scripts!
 =================
 
-Unit testing Javascripts is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing much more tolerable. Testem supports Jasmine and QUnit right out of the box.
+Unit testing Javascripts is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing much more tolerable. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box.
 
 Installation
 ------------
@@ -126,19 +126,35 @@ Using the Text User Interface
 
 Keys
 
- * ENTER : Run the tests
- * q : Quit
- * ← LEFT ARROW  : Move to the next browser tab on the left
- * → RIGHT ARROW : Move to the next browser tab on the right
- * ↑ UP ARROW : scroll up in the error window
- * ↓ DOWN ARROW : scroll down in the error window
- * Option/Alt-← : scroll left in the error window
- * Option/Alt-→ : scroll right in the error window
+* ENTER : Run the tests
+* q : Quit
+* ← LEFT ARROW  : Move to the next browser tab on the left
+* → RIGHT ARROW : Move to the next browser tab on the right
+* ↑ UP ARROW : scroll up in the error window
+* ↓ DOWN ARROW : scroll down in the error window
+* Option/Alt-← : scroll left in the error window
+* Option/Alt-→ : scroll right in the error window
 
 Go Completely Headless with PhantomJS!
 --------------------------------------
 
 If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path, Testem will use it automatically to run your tests for your convenience. ***Installing [PhantomJS](http://www.phantomjs.org/) is highly recommended***!
+
+Credits
+-------
+
+Testem depends on these great software
+
+* [Node](http://nodejs.org/)
+* [Socket.IO](http://socket.io/)
+* [PhantomJS](http://www.phantomjs.org/)
+* [Node-Tap](https://github.com/isaacs/node-tap)
+* [Node-Charm](https://github.com/substack/node-charm)
+* [Node Commander](http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy)
+* [JS-Yaml](https://github.com/nodeca/js-yaml)
+* [Winston](http://blog.nodejitsu.com/put-your-logs-anywhere-with-winston)
+* [Express](http://expressjs.com/)
+* [jQuery](http://jquery.com/)
 
 License
 -------
