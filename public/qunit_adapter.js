@@ -14,8 +14,10 @@ window.onerror = function(msg, url, line){
 }
 
 function emit(){
-    var socket = parent.socket
-    socket.emit.apply(socket, arguments)
+    if (parent && parent.socket){
+        var socket = parent.socket
+        socket.emit.apply(socket, arguments)
+    }
 }
   
 function lineNumber(e){

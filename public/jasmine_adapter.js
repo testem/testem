@@ -7,8 +7,10 @@ var results = {
     tests: []}
 
 function emit(){
-    var socket = parent.socket
-    socket.emit.apply(socket, arguments)
+    if (parent && parent.socket){
+        var socket = parent.socket
+        socket.emit.apply(socket, arguments)
+    }
 }
 
 window.onerror = function(msg, url, line){

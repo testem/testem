@@ -7,7 +7,6 @@ var Server = require('./lib/server').Server
   , child_process = require('child_process')
   , program = require('commander')
   , AppView
-  , ci = false
   , config = program
   
 program
@@ -17,25 +16,25 @@ program
     .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
     .option('-a, --no-autotest', 'Disable autotest')
     .option('-d, --debug', 'Output debug to debug log')
-    .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
+    .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
     .option('--no-phantomjs', 'Disable PhantomJS')
 
 program
     .command('ci')
     .description('Continuous integration mode')
     .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI', 1)
-    .option('-t, --tap', 'Output TAP(Test Anything Protocal) files')
+    .option('-t, --no-tap', 'Disable TAP(Test Anything Protocal) output')
     .option('-o, --output [dir]', 'Output directory for TAP files', '')
     .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
     .action(function(env){
-        ci = true
+        env.__proto__ = program
         config = env
         config.ci = true
     })
 
 program.parse(process.argv)
 
-AppView = ci ? 
+AppView = config.ci ? 
     require('./lib/appviewconsole') :
     require('./lib/appviewcharm')
 
@@ -43,6 +42,7 @@ function App(config){
     this.config = config
     this.fileWatchers = {}
     
+    log.info('phantomjs: ' + this.config.phantomjs)
     this.configure(function(){
         this.server = new Server(this)
         this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
@@ -105,6 +105,7 @@ App.prototype = {
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
         this.phantomProcess = child_process.spawn('phantomjs', [path])
+        log.info('Spawning PhantomJS')
     },
     initView: function(){
         this.view = new AppView(this)
@@ -147,8 +148,7 @@ App.prototype = {
 
 log.remove(log.transports.Console)
 if (config.debug){
-    var logfile = config.debuglog || 'testem.log'
-    log.add(log.transports.File, {filename: logfile})
+    log.add(log.transports.File, {filename: config.debuglog})
 }
 
 var app = new App(config)
