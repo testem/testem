@@ -138,7 +138,7 @@ Keys
 Go Completely Headless with PhantomJS!
 --------------------------------------
 
-If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path, Testem will use it automatically to run your tests for your convenience. ***Installing [PhantomJS](http://www.phantomjs.org/) is highly recommended***!
+If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path, Testem will use it automatically to run your tests for your convenience. ***Installing [PhantomJS](http://www.phantomjs.org/) is highly recommended!***
 
 Credits
 -------
