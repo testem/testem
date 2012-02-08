@@ -62,7 +62,22 @@ Testem should automatically pickup the new files you've added and also any chang
     http://192.168.1.173:3580                                                                                  
       Chrome 16.0                                                                                              
           1/1                                                                                                  
-    All tests passed!     
+    All tests passed!  
+    
+    
+    
+#### Using the Text User Interface
+
+In development mode, Testem has a text-based graphical user interface which uses keyboard-based controls. Here is a list of the control keys
+
+* ENTER : Run the tests
+* q : Quit
+* ← LEFT ARROW  : Move to the next browser tab on the left
+* → RIGHT ARROW : Move to the next browser tab on the right
+* ↑ UP ARROW : scroll up in the error window
+* ↓ DOWN ARROW : scroll down in the error window
+* Option/Alt + ← : scroll left in the error window
+* Option/Alt + → : scroll right in the error window   
 
 ### Continuous Integration Mode
 
@@ -127,20 +142,6 @@ For QUnit, include this snippet
         document.write('<script src="/qunit_adapter.js"></'+'script>')
     </script>
 
-
-Using the Text User Interface
------------------------------
-
-Keys
-
-* ENTER : Run the tests
-* q : Quit
-* ← LEFT ARROW  : Move to the next browser tab on the left
-* → RIGHT ARROW : Move to the next browser tab on the right
-* ↑ UP ARROW : scroll up in the error window
-* ↓ DOWN ARROW : scroll down in the error window
-* Option/Alt + ← : scroll left in the error window
-* Option/Alt + → : scroll right in the error window
 
 Go Completely Headless with PhantomJS!
 --------------------------------------
