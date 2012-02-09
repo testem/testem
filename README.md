@@ -93,6 +93,12 @@ In development mode, Testem has a text-based graphical user interface which uses
 * Option/Alt + ← : scroll left in the error window
 * Option/Alt + → : scroll right in the error window   
 
+#### Command line options
+
+To see all command line options do
+
+    testem --help
+
 ### Continuous Integration Mode
 
 To use Testem for continuous integration you'd use its `ci` command
@@ -114,12 +120,18 @@ For CI, Testem outputs in the [TAP](http://testanything.org/wiki/index.php/Main_
 
     # ok
     
-The TAP format is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
+TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
 
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin)
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode - in which case it is automatically launched. More on PhantomJS below. 
+    
+#### Command line options
+
+To see all command line options for CI, do
+
+    testem ci --help
     
 Configuration File
 ------------------
