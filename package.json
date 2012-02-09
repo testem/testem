@@ -31,7 +31,8 @@
        "charm": "0.0.5",
        "js-yaml": "0.3.5",
        "tap": "0.2.0",
-       "commander": "0.5.2"
+       "commander": "0.5.2",
+       "glob": "3.0.1"
    },
    "bin" : {
        "testem" : "./testem.js"
