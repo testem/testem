@@ -3,6 +3,11 @@ Test&rsquo;em &rsquo;Scripts!
 
 Unit testing Javascripts is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing much more tolerable. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box.
 
+Requirements
+------------
+
+You need [Node](http://nodejs.org/) version 0.6.2 or later installed on your system.
+
 Installation
 ------------
 To install:
