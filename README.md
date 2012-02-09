@@ -122,7 +122,7 @@ For CI, Testem outputs in the [TAP](http://testanything.org/wiki/index.php/Main_
     
 TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
 
-* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin)
+* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode - in which case it is automatically launched. More on PhantomJS below. 
