@@ -163,7 +163,7 @@ test page
         document.write('<script src="/jasmine_adapter.js"></'+'script>')
     </script>
 
-For QUnit, include this snippet
+For QUnit, include this snippet directly after your 'qunit.js' include
 
     <script>
     if (location.hash === '#testem')
