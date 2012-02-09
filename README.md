@@ -53,14 +53,25 @@ We see 0/0 for tests because at this point we haven't written any code, but as w
             expect(hello()).toBe('hello world')
         })
     })
+    
+Save that file and now you should see
 
-We implement the spec like so in `hello.js`
+    TEST'EM 'SCRIPTS!                                                                                          
+    Open the URL below in a browser to connect.                                                                
+    http://192.168.1.173:3580                                                                                  
+      Chrome 16.0                                                                                              
+          0/1
+    hello should say hello.                                                                       
+        x ReferenceError: Can't find variable: hello                                                                                                  
+    No browser selected.
+
+Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
     function hello(){
         return "hello world"
     }
 
-Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. So you should now see
+So you should now see
 
     TEST'EM 'SCRIPTS!                                                                                          
     Open the URL below in a browser to connect.                                                                
