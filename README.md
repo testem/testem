@@ -7,7 +7,7 @@ Installation
 ------------
 To install:
 
-    sudo npm install testem -g
+    npm install testem -g
     
 This will install the `testem` executable globally on your system, specifically it should be `/usr/local/bin/testem` for unix.
 
