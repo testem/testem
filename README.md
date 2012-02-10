@@ -144,6 +144,12 @@ to structure your sources files into separate directories, or want to have finer
     - hello.js
     - hello_spec.js
 
+The src_files can also be glob patterns (See: isaacs/node-glob)
+
+    src_files:
+    - js/**/*.js
+    - spec/**/*.js
+
 Custom Test Pages
 -----------------
 
