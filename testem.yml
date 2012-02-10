@@ -1,7 +1,8 @@
 framework: jasmine
 #test_page: satellite/test/tests.html
-test_page: examples/test.html
-#src_files:
+#test_page: examples/test.html
+src_files:
+- examples/hello*.js
 #- examples/qunit/validate.js
 #- examples/qunit/tests.js
 #- examples/hello.js
