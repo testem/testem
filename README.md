@@ -161,8 +161,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippets
 
-If you are using Jasmine, include this snippet directly after your `jasmine.js` include to enable *Testem* with your
-test page
+If you are using Jasmine, include this snippet directly after your `jasmine.js` include to enable *Testem* with your test page
 
     <script>
     if (location.hash === '#testem')
