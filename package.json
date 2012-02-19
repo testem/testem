@@ -35,6 +35,13 @@
        "glob" : "3.0.1",
        "async" : "0.1.15"
    },
+   "devDependencies": {
+       "mocha": "*",
+       "sinon": "*",
+       "async": "*",
+       "chai": "*",
+       "sinon-chai": "*"
+   },
    "bin" : {
        "testem" : "./testem.js"
    }
