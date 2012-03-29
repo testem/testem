@@ -26,7 +26,7 @@ Setup your Source Code Management and Build triggers, this is dependent on what 
 
 Hit "Add build step" and select "Execute shell" - or "Execute Windows batch command" if you are on Windows. In the "Command" text area, paste this code
 
-    export PATH=$PATH:/usr/local/bin
+    export PATH=$PATH:/usr/local/bin:/sbin
     testem ci > tests.tap
     
 Under "Post-build Actions", check "Publish TAP Results", then in "Test results" put `tests.tap`.
