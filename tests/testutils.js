@@ -1,6 +1,6 @@
 var fs = require('fs')
   , spawn = require('child_process').spawn
-  , dataDir = __dirname + '/data/'
+  , dataDir = __dirname + '/data'
   , chai = require('chai')
   , sinon = require('sinon')
   , util = require('util')
@@ -43,3 +43,7 @@ function touchFile(file, cb){
     system(['touch', [filePath(file)]], cb)
 }
 exports.touchFile = touchFile
+
+exports.mkdir = function(f, cb){
+    fs.mkdir(filePath(f), cb)
+}
