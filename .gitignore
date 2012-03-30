@@ -1,4 +1,5 @@
-/node_modules
+/node_modules/.bin/
+/node_modules/*
 app.log
 testem.log
 testem.log2
