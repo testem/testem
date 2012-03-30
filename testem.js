@@ -44,6 +44,7 @@ function App(config){
     
     log.info('phantomjs: ' + this.config.phantomjs)
     this.configure(function(){
+        log.info('configuring')
         this.server = new Server(this)
         this.server.on('browsers-changed', this.onBrowsersChanged.bind(this))
         this.server.on('test-result', this.onTestResult.bind(this))
@@ -59,27 +60,17 @@ function App(config){
 
 App.prototype = {
     configFile: 'testem.yml',
-    listFiles: function listFiles(cb){
-        fs.readdir('./', function(err, files){
-            if (err)
-                cb(err, files)
-            else
-                cb(null, files.filter(function(file){
-                    return file.match(/\.js$/)
-                }).sort())
-        })    
-    },
     configure: function(callback){
         var finish = function(){
-            if (!config.src_files)
-                config.src_files = this.listFiles
             if (callback) callback(config)
         }.bind(this)
 
         if (config.f)
-          this.configFile = config.f
+            this.configFile = config.f
         fs.stat(this.configFile, function(err, stat){
-            if (err) finish()
+            if (err){
+                finish()
+            }
             else if (stat.isFile()){
                 fs.readFile(this.configFile, function(err, data){
                     if (!err){
@@ -100,7 +91,6 @@ App.prototype = {
                         }.bind(this), 1000, true))
             }
         }.bind(this))
-        
     },
     startPhantomJS: function(){
         var path = __dirname + '/phantom.js'
