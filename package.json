@@ -30,7 +30,7 @@
        "winston": "0.3.4",
        "charm": "0.0.5",
        "js-yaml": "0.3.5",
-       "tap": "git://github.com/isaacs/node-tap.git#0.2.4",
+       "tap": "https://github.com/isaacs/node-tap.git#0.2.4",
        "commander": "0.5.2",
        "glob" : "3.0.1",
        "async" : "0.1.15"
