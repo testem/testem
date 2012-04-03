@@ -23,8 +23,9 @@ describe('FileWatcher', function(){
         async.series([function(next)
         
         { setTimeout(next, 200) }, function(next)
-        { test.touchFile('blah.txt', next) }, function(next)
-        { expect(changed.called).to.equal(true); done() }
+        { debugger; test.touchFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 200) }, function(next)
+        { debugger; expect(changed.called).to.equal(true); done() }
         
         ])
     })
@@ -38,10 +39,23 @@ describe('FileWatcher', function(){
         { test.touchFile('blah.txt', next) }, function(next)
         { watcher.add(test.filePath('blah.txt')), next() }, function(next)
         { setTimeout(next, 200) }, function(next)
-        { test.touchFile('blah.txt', next) }, function()
-        { expect(changed.args[0]).to.be.eql(['change', test.filePath('blah.txt')]); done() }
+        { test.touchFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 200) }, function(next)
+        { expect(changed.args[0]).to.be.eql(['change', test.filePath('blah.txt')]), done()}
         
         ])
+    })
+    it('should not trigger changed when only accessed', function(done){
+        async.series([function(next)
+        
+        { test.touchFile('blah.txt', next) }, function(next)
+        { watcher.add(test.filePath('blah.txt')), next() }, function(next)
+        { setTimeout(next, 200) }, function(next)
+        { test.accessFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 200) }, function(next)
+        { expect(changed.callCount).to.equal(0); done() }
+        
+        ])        
     })
     it('should watch glob patterns', function(done){
         async.series([function(next)
@@ -51,9 +65,11 @@ describe('FileWatcher', function(){
         { watcher.add(test.filePath('*.txt')), next() }, function(next)
         { setTimeout(next, 200) }, function(next)
         { test.touchFile('one.txt', next) }, function(next)
+        { setTimeout(next, 200) }, function(next)
         { expect(changed.args[0])
               .to.be.eql(['change', test.filePath('one.txt')]), next() }, function(next)
         { test.touchFile('two.txt', next) }, function(next)
+        { setTimeout(next, 200) }, function(next)
         { expect(changed.args[1])
               .to.be.eql(['change', test.filePath('two.txt')])
           done() }

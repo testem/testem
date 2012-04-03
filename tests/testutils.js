@@ -44,6 +44,14 @@ function touchFile(file, cb){
 }
 exports.touchFile = touchFile
 
+exports.accessFile = function(file, cb){
+    system(['touch', ['-a', filePath(file)]], cb)
+}
+
+exports.breath = function(done){
+    setTimeout(done, 200)
+}
+
 exports.mkdir = function(f, cb){
     fs.mkdir(filePath(f), cb)
 }
