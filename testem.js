@@ -104,7 +104,7 @@ App.prototype = {
     },
     quit: function(code){
         if (this.phantomProcess)
-            this.phantomProcess.kill('SIGHUP')
+            this.phantomProcess.kill('SIGTERM')
         setTimeout(function(){
             this.view.cleanup()
             process.exit(code)
