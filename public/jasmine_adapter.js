@@ -22,7 +22,7 @@ JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
     emit('tests-start')
 }
 JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
-    parent.spec = spec
+    if (spec.results().skipped) return
     var test = {
         passed: 0,
         failed: 0,
