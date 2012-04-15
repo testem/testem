@@ -7,7 +7,7 @@
        "unittest",
        "browser"
    ],
-   "version": "0.0.11",
+   "version": "0.0.12",
    "author": {
       "name" : "Toby Ho", 
       "email" : "airportyh@gmail.com"
@@ -35,7 +35,7 @@
        "glob" : "3.0.1",
        "async" : "0.1.15"
    },
-   "bundledDependencies": ["node-tap"],
+   "bundleDependencies": ["node-tap"],
    "devDependencies": {
        "mocha": "*",
        "sinon": "*",
