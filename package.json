@@ -7,7 +7,7 @@
        "unittest",
        "browser"
    ],
-   "version": "0.0.10",
+   "version": "0.0.11",
    "author": {
       "name" : "Toby Ho", 
       "email" : "airportyh@gmail.com"
@@ -30,11 +30,12 @@
        "winston": "0.3.4",
        "charm": "0.0.5",
        "js-yaml": "0.3.5",
-       "tap": "git+https://github.com/isaacs/node-tap.git",
+       "tap": "*",
        "commander": "0.5.2",
        "glob" : "3.0.1",
        "async" : "0.1.15"
    },
+   "bundledDependencies": ["node-tap"],
    "devDependencies": {
        "mocha": "*",
        "sinon": "*",
