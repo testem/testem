@@ -33,7 +33,8 @@
        "tap": "*",
        "commander": "0.5.2",
        "glob" : "3.0.1",
-       "async" : "0.1.15"
+       "async" : "0.1.15",
+       "rimraf": "*"
    },
    "files": [
        "docs",
