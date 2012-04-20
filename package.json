@@ -7,7 +7,7 @@
        "unittest",
        "browser"
    ],
-   "version": "0.0.15",
+   "version": "0.0.16",
    "author": {
       "name" : "Toby Ho", 
       "email" : "airportyh@gmail.com"
