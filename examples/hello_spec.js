@@ -18,7 +18,7 @@ describe('hello', function(){
             it('should throw exception', function(){
                 //expect(!!navigator.userAgent.match(/Firefox/)).toBe(true)
                 var a
-                a.b
+                //a.b
             })
         })
     })
