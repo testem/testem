@@ -17,9 +17,6 @@ program
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI', 1)
-    .option('-t, --no-tap', 'Disable TAP(Test Anything Protocal) output')
-    .option('-o, --output [dir]', 'Output directory for TAP files', '')
     .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
     .action(function(env){
         env.__proto__ = program
