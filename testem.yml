@@ -8,3 +8,5 @@ src_files:
 #- examples/qunit/tests.js
 #- examples/hello.js
 #- examples/hello_spec.js
+ci_exclude_browsers:
+- Safari
