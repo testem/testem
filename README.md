@@ -105,12 +105,7 @@ To use Testem for continuous integration you'd use its `ci` command
 
     testem ci
     
-In CI mode, Testem waits for a specified number of browsers to connect before starting the tests - the 
-default number is 1. You can change this number using the `-w` flag, to for example test on 2 browsers
-
-    testem ci -w 2
-    
-For CI, Testem outputs in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
+In CI mode, Testem runs your tests on all the browsers that are available on the system one after another. It outputs in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
 
     ok 1 Chrome 16.0 - hello should say hello.
 
@@ -125,8 +120,6 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
-It is recommended to use [PhantomJS](http://www.phantomjs.org/) with Testem in CI mode - in which case it is automatically launched. More on PhantomJS below. 
-    
 #### Command line options
 
 To see all command line options for CI, do
