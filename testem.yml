@@ -1,9 +1,9 @@
 framework: jasmine
 #test_page: satellite/test/tests.html
-#test_page: "examples/test.html?spec=hello%20level%202%20should%20not%20say%20not%20hello."
-src_files:
-- examples/hello.js
-- examples/hello_spec.js
+test_page: "examples/test.html"
+#src_files:
+#- examples/hello.js
+#- examples/hello_spec.js
 #- examples/qunit/validate.js
 #- examples/qunit/tests.js
 #- examples/hello.js

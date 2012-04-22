@@ -13,6 +13,10 @@ function emit(){
     }
 }
 
+if (parent && parent.browserLogin){
+    parent.browserLogin(navigator.userAgent)
+}
+
 window.onerror = function(msg, url, line){
     emit('error', msg, url, line)
 }

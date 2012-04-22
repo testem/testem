@@ -1,5 +1,4 @@
-var browserName = (function(){
-    var userAgent = navigator.userAgent
+function getBrowserName(userAgent){
     var regexs = [
         /MS(?:(IE) ([0-9]\.[0-9]))/,
         /(Chrome)\/([0-9]+\.[0-9]+)/,
@@ -34,7 +33,7 @@ var browserName = (function(){
         }
     }
     return userAgent
-})()
+}
 
 function resize(){
     $(document.body).css({overflow: 'hidden'})
@@ -43,6 +42,10 @@ function resize(){
 
 var socket, runnerFrame, statusElm,
     runnerURL = '/runner/#testem'
+
+function browserLogin(userAgent){    
+    socket.emit('browser-login', getBrowserName(userAgent))
+}   
     
 $(function(){
     statusElm = $('#status')
@@ -55,7 +58,6 @@ $(function(){
         statusElm
             .html('Connected')
             .attr('class', 'connected')
-        socket.emit('browser-login', browserName)
     })
     socket.on('disconnect', function(){
         statusElm
@@ -69,5 +71,4 @@ $(function(){
             runnerFrame.attr('src', runnerURL)
         }, 1)
     })
-    console.log('TESTEM: done with setup')
 })
