@@ -5,19 +5,20 @@ var log = require('winston')
   , config = program
   
 program
-    .version('0.0.3')
+    .version(require(__dirname + '/package').version)
     .usage('[options]')
     .option('-f [file]', 'Config file')
-    .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
-    .option('-a, --no-autotest', 'Disable autotest')
+    .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
     .option('-d, --debug', 'Output debug to debug log')
     .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
-    .option('--no-phantomjs', 'Disable PhantomJS')
 
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
+    .option('-b, --browsers [list]', 'List of browsers to test(comma separated).')
+    .option('-s, --skip [list]', 'List of browsers to skip(comma separated).')
+    .option('-l, --list', 'Print the list of available browsers.')
+    .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
     .action(function(env){
         env.__proto__ = program
         config = env
@@ -34,5 +35,4 @@ log.remove(log.transports.Console)
 if (config.debug){
     log.add(log.transports.File, {filename: config.debuglog})
 }
-
 new App(config)
