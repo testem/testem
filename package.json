@@ -52,6 +52,9 @@
     "chai": "*",
     "sinon-chai": "*"
   },
+  "bundledDependencies": [
+    "tap"
+  ],
   "bin": {
     "testem": "./testem.js"
   }
