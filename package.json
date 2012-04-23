@@ -7,7 +7,7 @@
     "unittest",
     "browser"
   ],
-  "version": "0.0.21",
+  "version": "0.0.22",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
@@ -52,10 +52,11 @@
     "chai": "*",
     "sinon-chai": "*"
   },
-  "bundledDependencies": [
-    "tap"
-  ],
   "bin": {
     "testem": "./testem.js"
-  }
+  },
+  "bundleDependencies": [
+    "tap"
+  ],
+  "optionalDependencies": {}
 }
