@@ -1,62 +1,62 @@
 {
-   "name": "testem",
-   "description": "Test'em 'scripts! Unit testing javascripts made easy.",
-   "keywords": [
-       "javascript",
-       "testing",
-       "unittest",
-       "browser"
-   ],
-   "version": "0.0.20",
-   "author": {
-      "name" : "Toby Ho", 
-      "email" : "airportyh@gmail.com"
-   },
-   "repository": {
-       "type": "git",
-       "url": "http://github.com/airportyh/testem.git"
-   },
-   "bugs": {
-       "url": "http://github.com/airportyh/testem/issues"
-   },
-   "engines": [
-       "node >= 0.6.2"
-   ],
-   "license" : "MIT",
-   "dependencies": {
-       "express": ">= 2.5.6",
-       "mustache": "0.4.0",
-       "socket.io": ">= 0.7.6",
-       "winston": "0.3.4",
-       "charm": "0.0.5",
-       "js-yaml": "0.3.5",
-       "tap": "*",
-       "commander": "0.5.2",
-       "glob" : "3.0.1",
-       "async" : "0.1.15",
-       "rimraf": "*"
-   },
-   "files": [
-       "docs",
-       "examples",
-       "lib",
-       "public",
-       "README.md",
-       "testem.js",
-       "assets",
-       "package.json",
-       "views",
-       "tests"
-   ],
-   "bundledDependencies": ["tap"],
-   "devDependencies": {
-       "mocha": "*",
-       "sinon": "*",
-       "async": "*",
-       "chai": "*",
-       "sinon-chai": "*"
-   },
-   "bin" : {
-       "testem" : "./testem.js"
-   }
+  "name": "testem",
+  "description": "Test'em 'scripts! Unit testing javascripts made easy.",
+  "keywords": [
+    "javascript",
+    "testing",
+    "unittest",
+    "browser"
+  ],
+  "version": "0.0.21",
+  "author": "Toby Ho <airportyh@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/airportyh/testem.git"
+  },
+  "bugs": {
+    "url": "http://github.com/airportyh/testem/issues"
+  },
+  "engines": [
+    "node >= 0.6.2"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": ">= 2.5.6",
+    "mustache": "0.4.0",
+    "socket.io": ">= 0.7.6",
+    "winston": "0.3.4",
+    "charm": "0.0.5",
+    "js-yaml": "0.3.5",
+    "tap": "*",
+    "commander": "0.5.2",
+    "glob": "3.0.1",
+    "async": "0.1.15",
+    "rimraf": "*"
+  },
+  "files": [
+    "docs",
+    "examples",
+    "lib",
+    "public",
+    "README.md",
+    "testem.js",
+    "assets",
+    "package.json",
+    "views",
+    "tests"
+  ],
+  "devDependencies": {
+    "mocha": "*",
+    "sinon": "*",
+    "async": "*",
+    "chai": "*",
+    "sinon-chai": "*"
+  },
+  "bin": {
+    "testem": "./testem.js"
+  },
+  "bundleDependencies": [
+    "tap"
+  ],
+  "optionalDependencies": {}
 }
