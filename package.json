@@ -1,6 +1,6 @@
 {
   "name": "testem",
-  "description": "Test'em 'scripts! Unit testing javascripts made easy.",
+  "description": "Test'em 'scripts! Javascript Unit testing made easy.",
   "keywords": [
     "javascript",
     "testing",
@@ -54,9 +54,5 @@
   },
   "bin": {
     "testem": "./testem.js"
-  },
-  "bundleDependencies": [
-    "tap"
-  ],
-  "optionalDependencies": {}
+  }
 }
