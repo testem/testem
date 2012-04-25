@@ -1,7 +1,7 @@
 Test&rsquo;em &rsquo;Scripts!
 =================
 
-Unit testing Javascripts is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing much more tolerable. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box.
+Javascript Unit testing is a PITA. Testem is a command-line tool that aims to make cross browser Javascript unit testing easy. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box. It supports two distinct use-cases: the *test-driven-development* workflow; and *continuous integration*.
 
 Requirements
 ------------
@@ -14,12 +14,12 @@ To install:
 
     npm install testem -g
     
-This will install the `testem` executable globally on your system, specifically it should be `/usr/local/bin/testem` for unix.
+This will install the `testem` executable globally on your system.
 
 Usage
 -----
 
-Testem supports two distinct use cases: development and continuous integration.
+As stated before, Testem supports two use cases: test-driven-development and continuous integration. Let's go over each one.
 
 ### Development Mode
 
@@ -105,7 +105,21 @@ To use Testem for continuous integration you'd use its `ci` command
 
     testem ci
     
-In CI mode, Testem runs your tests on all the browsers that are available on the system one after another. It outputs in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
+In CI mode, Testem runs your tests on all the browsers that are available on the system one after another. To find out what browsers are currently available - those that Testem knows about and can make use of
+
+    testem ci -l
+    
+Will print them out. The output might look like
+
+    $ testem ci -l
+    Browsers available on this system: 
+    Chrome
+    Firefox
+    Safari
+    Opera
+    PhantomJS
+
+When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
 
     ok 1 Chrome 16.0 - hello should say hello.
 
@@ -137,7 +151,7 @@ to structure your sources files into separate directories, or want to have finer
     - hello.js
     - hello_spec.js
 
-The src_files can also be glob patterns (See: isaacs/node-glob)
+The src_files can also be glob patterns (See: [node-glob](https://github.com/isaacs/node-glob))
 
     src_files:
     - js/**/*.js
@@ -169,10 +183,10 @@ For QUnit, include this snippet directly after your 'qunit.js' include
     </script>
 
 
-Go Completely Headless with PhantomJS!
---------------------------------------
+Go Completely Headless with PhantomJS
+-------------------------------------
 
-If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path, Testem will use it automatically to run your tests for your convenience. ***Installing [PhantomJS](http://www.phantomjs.org/) is highly recommended!***
+If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
 
 Credits
 -------
