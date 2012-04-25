@@ -1,7 +1,7 @@
 Test&rsquo;em &rsquo;Scripts!
 =================
 
-Javascript ugnit testing is a PITA. Testem aims to make Javascript unit testing in browsers as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box. It supports two distinct use-cases: the *test-driven-development(TDD)* workflow; and *continuous integration(CI)*.
+Javascript unit testing is a PITA. Testem aims to make Javascript unit testing in browsers as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. Testem supports [Jasmine](http://pivotal.github.com/jasmine/) and [QUnit](http://docs.jquery.com/QUnit) right out of the box. It supports two distinct use-cases: the *test-driven-development(TDD)* workflow; and *continuous integration(CI)*.
 
 Requirements
 ------------
