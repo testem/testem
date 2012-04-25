@@ -101,7 +101,7 @@ To see all command line options do
 
 ### Continuous Integration Mode
 
-To use Testem for continuous integration you'd use its `ci` command
+To use Testem for continuous integration you'd do
 
     testem ci
     
