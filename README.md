@@ -113,11 +113,16 @@ Will print them out. The output might look like
 
     $ testem ci -l
     Browsers available on this system: 
+    IE7
+    IE8
+    IE9
     Chrome
     Firefox
     Safari
     Opera
     PhantomJS
+    
+Did you notice that this system has IE versions 7-9? Yes, actually it has only IE9 installed, but Testem uses IE's compatibility mode feature to emulate IE 7 and 8.
 
 When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
 
