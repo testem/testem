@@ -7,7 +7,7 @@ var log = require('winston')
 program
     .version(require(__dirname + '/package').version)
     .usage('[options]')
-    .option('-f [file]', 'Config file')
+    .option('-c, --config [file]', 'Config file')
     .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
     .option('-d, --debug', 'Output debug to debug log')
     .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
