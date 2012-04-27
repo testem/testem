@@ -3,3 +3,4 @@
 app.log
 testem.log
 testem.log2
+/tests/data
