@@ -2,12 +2,13 @@
 
 var log = require('winston')
   , program = require('commander')
-  , config = program
+  , progOptions = program
+  , ci = false
   
 program
     .version(require(__dirname + '/package').version)
     .usage('[options]')
-    .option('-c, --config [file]', 'Config file')
+    .option('-f, --file [file]', 'Config file', 'testem.yml')
     .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
     .option('-d, --debug', 'Output debug to debug log')
     .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
@@ -18,21 +19,20 @@ program
     .option('-b, --browsers [list]', 'List of browsers to test(comma separated).')
     .option('-s, --skip [list]', 'List of browsers to skip(comma separated).')
     .option('-l, --list', 'Print the list of available browsers.')
-    .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
     .action(function(env){
         env.__proto__ = program
-        config = env
-        config.ci = true
+        progOptions = env
+        ci = true
     })
 
 program.parse(process.argv)
-
-App = config.ci ? 
+App = ci ? 
     require('./lib/ci_mode_app') :
     require('./lib/dev_mode_app')
 
 log.remove(log.transports.Console)
-if (config.debug){
-    log.add(log.transports.File, {filename: config.debuglog})
+if (progOptions.debug){
+    log.add(log.transports.File, {filename: progOptions.debuglog})
 }
-new App(config)
+
+new App(progOptions)
