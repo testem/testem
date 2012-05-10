@@ -99,6 +99,15 @@ To see all command line options do
 
     testem --help
 
+#### Example Projects
+
+I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
+
+    * [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
+    * [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
+    * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
+    * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
+
 ### Continuous Integration Mode
 
 To use Testem for continuous integration you'd do
