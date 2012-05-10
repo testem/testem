@@ -1,0 +1,9 @@
+Write tests for 
+
+* browserclient.js
+* ci_mode_app.js
+* appview.js
+* filewatcher.js
+* server.js
+* config.js
+* dev_mode_app.js

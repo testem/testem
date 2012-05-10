@@ -23,9 +23,9 @@ describe('FileWatcher', function(){
         async.series([function(next)
         
         { setTimeout(next, 200) }, function(next)
-        { debugger; test.touchFile('blah.txt', next) }, function(next)
+        { test.touchFile('blah.txt', next) }, function(next)
         { setTimeout(next, 200) }, function(next)
-        { debugger; expect(changed.called).to.equal(true); done() }
+        { expect(changed.called).to.equal(true); done() }
         
         ])
     })
@@ -57,45 +57,5 @@ describe('FileWatcher', function(){
         
         ])        
     })
-    it('should watch glob patterns', function(done){
-        async.series([function(next)
-        
-        { test.touchFile('one.txt', next) }, function(next)
-        { test.touchFile('two.txt', next) }, function(next)
-        { watcher.add(test.filePath('*.txt')), next() }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { test.touchFile('one.txt', next) }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { expect(changed.args[0])
-              .to.be.eql(['change', test.filePath('one.txt')]), next() }, function(next)
-        { test.touchFile('two.txt', next) }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { expect(changed.args[1])
-              .to.be.eql(['change', test.filePath('two.txt')])
-          done() }
-    
-        ])
-    })
-    
-    /*
-    it('should watch wild cards', function(done){
-        test.log('wild cards')
-        async.series([function(next)
-        
-        { watcher.add(test.filePath('folder/*.txt')); next() }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { test.mkdir('folder', next) }, function(next)
-        { test.mkdir('folder2', next) }, function(next)
-        { test.touchFile('folder/one.txt', next) }, function(next)
-        { test.touchFile('folder2/two.txt', next) }, function(next)
-        { expect(changed.args[0])
-                .to.be.eql(['change', test.filePath('folder/one.txt')])
-          expect(changed.args[1])
-                .to.be.eql(['change', test.filePath('folder2/two.txt')])
-          done() }
-          
-        ])
-    })
-    */
     
 })
