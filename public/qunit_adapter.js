@@ -19,6 +19,10 @@ function emit(){
         socket.emit.apply(socket, arguments)
     }
 }
+
+if (parent && parent.browserLogin){
+    parent.browserLogin(navigator.userAgent)
+}
   
 function lineNumber(e){
     return e.line || e.lineNumber
