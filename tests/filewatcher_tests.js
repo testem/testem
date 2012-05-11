@@ -58,5 +58,19 @@ describe('FileWatcher', function(){
         
         ])        
     })
+    it('stops watching once you clear', function(){
+        async.series([function(next)
+        
+        { test.touchFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 500) }, function(next)
+        { watcher.add(test.filePath('blah.txt')), next() }, function(next)
+        { setTimeout(next, 500) }, function(next)
+        { watcher.clear(), next() }, function(next)
+        { test.touchFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 500) }, function(next)
+        { expect(changed.calledWith(test.filePath('blah.txt'))).to.equal(false), done()}
+        
+        ])
+    })
     
 })
