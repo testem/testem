@@ -148,6 +148,17 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
+#### Selecting Specific Browsers
+
+To select a specific browser or set of browsers, use the `-b` option:
+
+    testem ci -b IE9
+    testem ci -b Firefox,Chrome
+
+To skip a specific browser or set of browsers, use the `-s` option:
+
+    testem ci -s IE7  # don't run on IE7
+
 #### Command line options
 
 To see all command line options for CI, do
