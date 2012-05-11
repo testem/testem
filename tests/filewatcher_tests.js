@@ -22,10 +22,10 @@ describe('FileWatcher', function(){
         watcher.add(test.dataDir)
         async.series([function(next)
         
-        { setTimeout(next, 200) }, function(next)
+        { setTimeout(next, 500) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { expect(changed.called).to.equal(true); done() }
+        { setTimeout(next, 500) }, function(next)
+        { expect(changed.calledWith(test.dataDir)).to.equal(true); done() }
         
         ])
     })
@@ -37,11 +37,12 @@ describe('FileWatcher', function(){
         async.series([function(next)
         
         { test.touchFile('blah.txt', next) }, function(next)
+        { setTimeout(next, 500) }, function(next)
         { watcher.add(test.filePath('blah.txt')), next() }, function(next)
-        { setTimeout(next, 200) }, function(next)
+        { setTimeout(next, 500) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
-        { setTimeout(next, 200) }, function(next)
-        { expect(changed.args[0]).to.be.eql(['change', test.filePath('blah.txt')]), done()}
+        { setTimeout(next, 500) }, function(next)
+        { expect(changed.calledWith(test.filePath('blah.txt'))).to.equal(true), done()}
         
         ])
     })

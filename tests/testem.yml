@@ -1,0 +1,4 @@
+framework: jasmine
+src_files:
+- implementation.js
+- tests.js

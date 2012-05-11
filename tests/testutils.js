@@ -9,6 +9,8 @@ exports.expect = chai.expect
 
 exports.spy = sinon.spy
 
+exports.stub = sinon.stub
+
 exports.dataDir = dataDir
 
 exports.log = util.debug
@@ -26,7 +28,9 @@ exports.system = system
 
 function refreshDataDir(done){
     function mkdir(){
-        fs.mkdir(dataDir, done)
+        fs.mkdir(dataDir, function(){
+          setTimeout(done, 200)
+        })
     }
     fs.stat(dataDir, function(err, stat){
         if (err)

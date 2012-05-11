@@ -46,7 +46,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "mocha tests/browserclient_tests.js"
+    "test": "mocha tests/*_tests.js"
   },
   "devDependencies": {
     "mocha": "*",
