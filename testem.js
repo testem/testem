@@ -19,6 +19,7 @@ program
     .option('-b, --browsers [list]', 'List of browsers to test(comma separated).')
     .option('-s, --skip [list]', 'List of browsers to skip(comma separated).')
     .option('-l, --list', 'Print the list of available browsers.')
+    .option('-t, --timeout [sec]', 'Timeout a browser after [sec] seconds.', null)
     .action(function(env){
         env.__proto__ = program
         progOptions = env
