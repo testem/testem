@@ -18,6 +18,7 @@ describe('FileWatcher', function(){
         watcher.add(test.dataDir)
     })
     
+    
     it('should watch for directory changes', function(done){
         watcher.add(test.dataDir)
         async.series([function(next)
