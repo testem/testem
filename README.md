@@ -210,6 +210,12 @@ For QUnit, include this snippet directly after your 'qunit.js' include
         document.write('<script src="/qunit_adapter.js"></'+'script>')
     </script>
 
+For Mochaa, include this snippet directly after your 'mocha.js' include
+
+    <script>
+    if (location.hash === '#testem')
+        document.write('<script src="/mocha_adapter.js"></'+'script>')
+    </script>
 
 Go Completely Headless with PhantomJS
 -------------------------------------
