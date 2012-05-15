@@ -18,14 +18,13 @@ describe('FileWatcher', function(){
         watcher.add(test.dataDir)
     })
     
-    
+
     it('should watch for directory changes', function(done){
         watcher.add(test.dataDir)
         async.series([function(next)
         
-        { setTimeout(next, 500) }, function(next)
+        { setTimeout(next, 1000) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
-        { setTimeout(next, 500) }, function(next)
         { expect(changed.calledWith(test.dataDir)).to.equal(true); done() }
         
         ])
