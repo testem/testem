@@ -1,10 +1,11 @@
 !function(undefined){
 
-var results = {
-    failed: 0,
-    passed: 0,
-    total: 0,
-    tests: []}
+var results = 
+    { failed: 0
+    , passed: 0
+    , total: 0
+    , tests: []
+    }
 
 function emit(){
     if (parent && parent.socket){
