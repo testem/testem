@@ -32,19 +32,19 @@ describe('Config', function(){
 		test.stub(config, 'get', function(key){
 			return null
 		})
-		expect(config.isCwdMode()).to.equal(true)
+		expect(config.isCwdMode()).to.be.ok
 		config.get.restore()
 		test.stub(config, 'get', function(key){
 			if (key === 'src_files') return ['implementation.js']
 			return null
 		})
-		expect(config.isCwdMode()).to.equal(false)
+		expect(config.isCwdMode()).to.not.be.ok
 		config.get.restore()
 		test.stub(config, 'get', function(key){
 			if (key === 'test_page') return 'tests.html'
 			return null
 		})
-		expect(config.isCwdMode()).to.equal(false)
+		expect(config.isCwdMode()).to.not.be.ok
 		config.get.restore()
 	})
 })

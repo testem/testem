@@ -7,10 +7,10 @@ describe('BrowserClient', function(){
     var socket, app, client, server
     beforeEach(function(){
         socket = new EventEmitter
-        server = 
-        { emit: test.spy()
-        , cleanUpConnections: test.spy()
-        , removeBrowser: test.spy()
+        server = {
+            emit: test.spy()
+            , cleanUpConnections: test.spy()
+            , removeBrowser: test.spy()
         }
         app = {
             server: server
@@ -21,31 +21,35 @@ describe('BrowserClient', function(){
         expect(client.client).to.equal(socket)
         expect(client.app).to.equal(app)
     })
-    it('emits server browsers-changed when browser-login', function(){
-        socket.emit('browser-login')
-        expect(app.server.emit.calledWith('browsers-changed')).to.equal(true)
+    it('triggers change:name when browser-login', function(){
+        var onChange = test.spy()
+        client.on('change:name', onChange)
+        socket.emit('browser-login', 'PhantomJS 1.9')
+        expect(onChange.callCount).to.equal(1)
     })
-    describe('resetTestResults', function(){
+    describe('reset Test Results', function(){
         it('resets topLevelError', function(){
-            client.topLevelError = 'blah'
-            client.resetTestResults()
-            expect(client.topLevelError).to.equal(null)
+            client.results.set('topLevelError', 'blah')
+            client.results.reset()
+            expect(client.results.topLevelError).to.equal(null)
         })
         it('resets results', function(){
-            client.results.total++
-            client.results.passed++
-            client.resetTestResults()
+            client.results.addResult({
+                failed: false
+                , passed: true
+            })
+            client.results.reset()
             expect(client.results.total).to.equal(0)
             expect(client.results.passed).to.equal(0)
         })
     })
     it('emits start-tests and resets when startTests', function(){
-        test.spy(client, 'resetTestResults')
+        test.spy(client.results, 'reset')
         test.spy(socket, 'emit')
         client.startTests()
-        expect(client.resetTestResults.callCount).to.equal(1)
-        expect(socket.emit.calledWith('start-tests')).to.equal(true)
-        client.resetTestResults.restore()
+        expect(client.results.reset.callCount).to.equal(1)
+        expect(socket.emit.calledWith('start-tests')).to.be.ok
+        client.results.reset.restore()
         socket.emit.restore()
     })
     it('sets topLevelError when error emitted', function(){
@@ -59,13 +63,10 @@ describe('BrowserClient', function(){
         it('sets browser name', function(){
             expect(client.name).to.equal('IE 11.0')
         })
-        it('emits browsers-changes to server', function(){
-            expect(server.emit.calledWith('browsers-changed')).to.equal(true)
-        })
     })
     it('emits test-start on server on tests-start', function(){
         socket.emit('tests-start')
-        expect(server.emit.calledWith('test-start')).to.equal(true)
+        expect(server.emit.calledWith('test-start')).to.be.ok
     })
     it('updates results on test-result', function(){
         socket.emit('test-result', {failed: 1})
@@ -77,12 +78,12 @@ describe('BrowserClient', function(){
     })
     it('sets "all" on all-tests-results', function(){
         socket.emit('all-test-results')
-        expect(client.results.all).to.equal(true)
+        expect(client.results.all).to.be.ok
     })
     it('emits all-test-results on server on all-tests-results', function(){
         socket.emit('all-test-results')
         expect(server.emit.calledWith('all-test-results', client.results, client))
-            .to.equal(true)
+            .to.be.ok
     })
     it('removes self from server if disconnect', function(){
         socket.emit('disconnect')

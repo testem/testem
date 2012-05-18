@@ -66,6 +66,7 @@ $(function(){
         runnerFrame.attr('src', 'about:blank')
     })
     socket.on('start-tests', function(data){
+        console.log('received start-tests')
         runnerFrame.attr('src', 'about:blank')
         setTimeout(function(){
             runnerFrame.attr('src', runnerURL)

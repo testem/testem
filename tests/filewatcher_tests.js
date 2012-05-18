@@ -25,7 +25,8 @@ describe('FileWatcher', function(){
         
         { setTimeout(next, 1000) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
-        { expect(changed.calledWith(test.dataDir)).to.equal(true); done() }
+        { setTimeout(next, 500) }, function(next)
+        { expect(changed.calledWith(test.dataDir)).to.be.ok; done() }
         
         ])
     })
@@ -42,7 +43,7 @@ describe('FileWatcher', function(){
         { setTimeout(next, 500) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
         { setTimeout(next, 500) }, function(next)
-        { expect(changed.calledWith(test.filePath('blah.txt'))).to.equal(true), done()}
+        { expect(changed.calledWith(test.filePath('blah.txt'))).to.be.ok, done()}
         
         ])
     })
@@ -54,11 +55,11 @@ describe('FileWatcher', function(){
         { setTimeout(next, 200) }, function(next)
         { test.accessFile('blah.txt', next) }, function(next)
         { setTimeout(next, 200) }, function(next)
-        { expect(changed.callCount).to.equal(0); done() }
+        { expect(changed.called).to.not.be.ok; done() }
         
         ])        
     })
-    it('stops watching once you clear', function(){
+    it('stops watching once you clear', function(done){
         async.series([function(next)
         
         { test.touchFile('blah.txt', next) }, function(next)
@@ -68,7 +69,7 @@ describe('FileWatcher', function(){
         { watcher.clear(), next() }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
         { setTimeout(next, 500) }, function(next)
-        { expect(changed.calledWith(test.filePath('blah.txt'))).to.equal(false), done()}
+        { expect(changed.calledWith(test.filePath('blah.txt'))).to.not.be.ok, done()}
         
         ])
     })
