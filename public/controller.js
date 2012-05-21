@@ -46,7 +46,13 @@ var socket, runnerFrame, statusElm,
 function browserLogin(userAgent){    
     socket.emit('browser-login', getBrowserName(userAgent))
 }   
-    
+
+function startTests(){
+    runnerFrame.attr('src', 'about:blank')
+    setTimeout(function(){
+        runnerFrame.attr('src', runnerURL)
+    }, 1)
+}
 $(function(){
     statusElm = $('#status')
     socket = io.connect()
@@ -58,6 +64,7 @@ $(function(){
         statusElm
             .html('Connected')
             .attr('class', 'connected')
+        startTests()
     })
     socket.on('disconnect', function(){
         statusElm
@@ -66,10 +73,6 @@ $(function(){
         runnerFrame.attr('src', 'about:blank')
     })
     socket.on('start-tests', function(data){
-        console.log('received start-tests')
-        runnerFrame.attr('src', 'about:blank')
-        setTimeout(function(){
-            runnerFrame.attr('src', runnerURL)
-        }, 1)
+        startTests()
     })
 })
