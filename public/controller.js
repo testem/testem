@@ -73,6 +73,7 @@ $(function(){
         runnerFrame.attr('src', 'about:blank')
     })
     socket.on('start-tests', function(data){
+        console.log('start-tests received')
         startTests()
     })
 })
