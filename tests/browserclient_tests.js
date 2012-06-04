@@ -29,60 +29,66 @@ describe('BrowserClient', function(){
     })
     describe('reset Test Results', function(){
         it('resets topLevelError', function(){
-            client.results.set('topLevelError', 'blah')
-            client.results.reset()
-            expect(client.results.topLevelError).to.equal(null)
+            var results = client.get('results')
+            results.set('topLevelError', 'blah')
+            results.reset()
+            expect(results.get('topLevelError')).to.equal(null)
         })
         it('resets results', function(){
-            client.results.addResult({
+            var results = client.get('results')
+            results.addResult({
                 failed: false
                 , passed: true
             })
-            client.results.reset()
-            expect(client.results.total).to.equal(0)
-            expect(client.results.passed).to.equal(0)
+            results.reset()
+            expect(results.get('total')).to.equal(0)
+            expect(results.get('passed')).to.equal(0)
         })
     })
     it('emits start-tests and resets when startTests', function(){
-        test.spy(client.results, 'reset')
+        var results = client.get('results')
+        test.spy(results, 'reset')
         test.spy(socket, 'emit')
         client.startTests()
-        expect(client.results.reset.callCount).to.equal(1)
+        expect(results.reset.callCount).to.equal(1)
         expect(socket.emit.calledWith('start-tests')).to.be.ok
-        client.results.reset.restore()
+        results.reset.restore()
         socket.emit.restore()
     })
     it('sets topLevelError when error emitted', function(){
         socket.emit('error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
-        expect(client.topLevelError).to.equal('TypeError: bad news at http://test.com/bad.js, line 45')
+        expect(client.get('results').get('topLevelError')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45')
     })
     describe('login', function(){
         beforeEach(function(){
             socket.emit('browser-login', 'IE 11.0')
         })
         it('sets browser name', function(){
-            expect(client.name).to.equal('IE 11.0')
+            expect(client.get('name')).to.equal('IE 11.0')
         })
     })
-    it('emits test-start on server on tests-start', function(){
+    it('emits tests-start on server on tests-start', function(){
+        test.spy(client, 'trigger')
         socket.emit('tests-start')
-        expect(server.emit.calledWith('test-start')).to.be.ok
+        expect(client.trigger.calledWith('tests-start')).to.be.ok
+        client.trigger.restore()
     })
     it('updates results on test-result', function(){
+        var results = client.get('results')
         socket.emit('test-result', {failed: 1})
-        expect(client.results.passed).to.equal(0)
-        expect(client.results.failed).to.equal(1)
+        expect(results.get('passed')).to.equal(0)
+        expect(results.get('failed')).to.equal(1)
         socket.emit('test-result', {failed: 0})
-        expect(client.results.passed).to.equal(1)
-        expect(client.results.tests.length).to.equal(2)
+        expect(results.get('passed')).to.equal(1)
+        expect(results.get('tests').length).to.equal(2)
     })
     it('sets "all" on all-tests-results', function(){
         socket.emit('all-test-results')
-        expect(client.results.all).to.be.ok
+        expect(client.get('results').get('all')).to.be.ok
     })
     it('emits all-test-results on server on all-tests-results', function(){
         socket.emit('all-test-results')
-        expect(server.emit.calledWith('all-test-results', client.results, client))
+        expect(server.emit.calledWith('all-test-results', client.get('results'), client))
             .to.be.ok
     })
     it('removes self from server if disconnect', function(){
