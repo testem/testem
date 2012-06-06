@@ -48,7 +48,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "mocha tests/*_tests.js"
+    "test": "./node_modules/.bin/mocha tests/*_tests.js"
   },
   "devDependencies": {
     "mocha": "*",
