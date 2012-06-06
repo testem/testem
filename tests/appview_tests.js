@@ -20,7 +20,11 @@ describe('BrowserTab', function(){
 			, foreground: function(){return this}
 			, display: function(){return this}
 		}
-		tab = new appview.BrowserTab(browser, 0, app)
+		tab = new appview.BrowserTab({
+			browser: browser
+			, index: 0
+			, appview: app
+		})
 	})
 	it('should be unselected', function(){
 		expect(tab.get('selected')).to.not.be.ok
@@ -72,7 +76,12 @@ describe('LogPanel', function(){
 			, foreground: function(){return this}
 			, display: function(){return this}
 		}
-		logPanel = new appview.LogPanel(6, 1, browser, av)
+		logPanel = new appview.LogPanel({
+			line: 6
+			, col: 1
+			, browser: browser
+			, appview: av
+		})
 	})
 	it('has line, col, height, width and text properties', function(){
 		expect(logPanel.get('line')).to.equal(6)

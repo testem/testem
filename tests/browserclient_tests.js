@@ -15,7 +15,10 @@ describe('BrowserClient', function(){
         app = {
             server: server
         }
-        client = new BrowserClient(socket, app)
+        client = new BrowserClient({
+            client: socket
+            , app: app
+        })
     })
     it('can create', function(){
         expect(client.client).to.equal(socket)
