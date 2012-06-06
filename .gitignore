@@ -4,3 +4,4 @@ app.log
 testem.log
 testem.log2
 /tests/data
+npm-debug.log
