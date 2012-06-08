@@ -1,71 +1,64 @@
-!function(undefined){
+function jasmineAdapter(socket){
 
-var results = 
-    { failed: 0
-    , passed: 0
-    , total: 0
-    , tests: []
-    }
+    var results = 
+        { failed: 0
+        , passed: 0
+        , total: 0
+        , tests: []
+        }
 
-function emit(){
-    if (parent && parent.socket){
-        var socket = parent.socket
+    function emit(){
         socket.emit.apply(socket, arguments)
     }
-}
 
-if (parent && parent.browserLogin){
-    parent.browserLogin(navigator.userAgent)
-}
-
-window.onerror = function(msg, url, line){
-    emit('error', msg, url, line)
-}
-
-function JasmineAdapterReporter(){}
-JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
-    emit('tests-start')
-}
-JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
-    if (spec.results().skipped) return
-    var test = {
-        passed: 0,
-        failed: 0,
-        total: 0,
-        id: spec.id + 1,
-        name: spec.getFullName(),
-        items: []
+    window.onerror = function(msg, url, line){
+        emit('error', msg, url, line)
     }
-    
-    var items = spec.results().getItems()
-    
-    for (var i = 0, len = items.length; i < len; i++){
-        var item = items[i]
-        if (item.type === 'log') continue
-        var passed = item.passed()
-        test.total++
-        if (passed)
-            test.passed++
+
+    function JasmineAdapterReporter(){}
+    JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
+        emit('tests-start')
+    }
+    JasmineAdapterReporter.prototype.reportSpecResults = function(spec){
+        if (spec.results().skipped) return
+        var test = {
+            passed: 0,
+            failed: 0,
+            total: 0,
+            id: spec.id + 1,
+            name: spec.getFullName(),
+            items: []
+        }
+        
+        var items = spec.results().getItems()
+        
+        for (var i = 0, len = items.length; i < len; i++){
+            var item = items[i]
+            if (item.type === 'log') continue
+            var passed = item.passed()
+            test.total++
+            if (passed)
+                test.passed++
+            else
+                test.failed++
+            test.items.push({    
+                passed: passed,
+                message: item.message,
+                stacktrace: item.trace.stack ? item.trace.stack : undefined
+            })
+        }
+        
+        results.total++
+        if (test.failed > 0)
+            results.failed++
         else
-            test.failed++
-        test.items.push({    
-            passed: passed,
-            message: item.message,
-            stacktrace: item.trace.stack ? item.trace.stack : undefined
-        })
+            results.passed++
+
+        emit('test-result', test)
     }
-    
-    results.total++
-    if (test.failed > 0)
-        results.failed++
-    else
-        results.passed++
+    JasmineAdapterReporter.prototype.reportRunnerResults = function(runner){
+        emit('all-test-results', results)
+    }
+    jasmine.getEnv().addReporter(new JasmineAdapterReporter)
 
-    emit('test-result', test)
 }
-JasmineAdapterReporter.prototype.reportRunnerResults = function(runner){
-    emit('all-test-results', results)
-}
-jasmine.getEnv().addReporter(new JasmineAdapterReporter)
-
-}()

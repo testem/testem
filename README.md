@@ -194,27 +194,13 @@ You can also use a custom page for testing. To do this, first you need to specif
     
 Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
-### Include Snippets
+### Include Snippet
 
-If you are using Jasmine, include this snippet directly after your `jasmine.js` include to enable *Testem* with your test page
-
-    <script>
-    if (location.hash === '#testem')
-        document.write('<script src="/jasmine_adapter.js"></'+'script>')
-    </script>
-
-For QUnit, include this snippet directly after your 'qunit.js' include
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` include to enable *Testem* with your test page
 
     <script>
     if (location.hash === '#testem')
-        document.write('<script src="/qunit_adapter.js"></'+'script>')
-    </script>
-
-For Mochaa, include this snippet directly after your 'mocha.js' include
-
-    <script>
-    if (location.hash === '#testem')
-        document.write('<script src="/mocha_adapter.js"></'+'script>')
+        document.write('<script src="/testem.js"></'+'script>')
     </script>
 
 Go Completely Headless with PhantomJS
