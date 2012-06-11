@@ -223,6 +223,7 @@ Testem depends on these great software
 * [Winston](http://blog.nodejitsu.com/put-your-logs-anywhere-with-winston)
 * [Express](http://expressjs.com/)
 * [jQuery](http://jquery.com/)
+* [Backbone](http://backbonejs.org/)
 
 License
 -------
