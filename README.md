@@ -9,7 +9,10 @@ Screencast
 ----------
 
 Watch this screencast to see it in action. 
+
+<div>
 <iframe width="480" height="360" src="http://www.youtube.com/embed/ZyUN__C3xgY" frameborder="0" allowfullscreen></iframe>
+</div>
 
 Requirements
 ------------
