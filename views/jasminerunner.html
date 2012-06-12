@@ -4,14 +4,21 @@
 <title>Test'em Runner</title>
 <script src="/testem/jasmine.js"></script>
 <script src="/testem/jasmine-html.js"></script>
+<script>
+  (function() {
+    var jasmineEnv = jasmine.getEnv()
+    jasmineEnv.addReporter(new jasmine.HtmlReporter)
+
+    window.onload = function() {
+      jasmineEnv.execute()
+    };
+  })();
+</script>
+
 {{#scripts}}<script src="{{.}}"></script>{{/scripts}}
 <script src="/testem.js"></script>
 <link rel="stylesheet" href="/testem/jasmine.css">
 </head>
 <body>
-<script>
-jasmine.getEnv().addReporter(new jasmine.HtmlReporter)
-jasmine.getEnv().execute()
-</script>
 </body>
 </html>
