@@ -36,21 +36,11 @@ The simplest way to use Testem, in the TDD spirit, is to start in an empty direc
     
 You will see a terminal-based interface which looks like this
     
-    TEST'EM 'SCRIPTS!                                                                                         
-    Open the URL below in a browser to connect.                                                                
-    http://192.168.1.173:3580                                                                                  
-
-
-    No browser selected.  
+![Initial interface](https://github.com/airportyh/testem/raw/master/images/initial.png)
     
 Now open your browser and go to the specified URL. You should now see
 
-    TEST'EM 'SCRIPTS!                                                                                          
-    Open the URL below in a browser to connect.                                                                
-    http://192.168.1.173:3580                                                                                  
-      Chrome 16.0                                                                                              
-          0/0                                                                                                  
-    No browser selected.  
+![Zero of zero](https://github.com/airportyh/testem/raw/master/images/zeros.png)
     
 We see 0/0 for tests because at this point we haven't written any code, but as we write them, Testem will pickup any `.js` files
  that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
@@ -63,14 +53,7 @@ We see 0/0 for tests because at this point we haven't written any code, but as w
     
 Save that file and now you should see
 
-    TEST'EM 'SCRIPTS!                                                                                          
-    Open the URL below in a browser to connect.                                                                
-    http://192.168.1.173:3580                                                                                  
-      Chrome 16.0                                                                                              
-          0/1
-    hello should say hello.                                                                       
-        x ReferenceError: Can't find variable: hello                                                                                                  
-    No browser selected.
+![Red](https://github.com/airportyh/testem/raw/master/images/red.png)
 
 Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
@@ -80,12 +63,7 @@ Testem should automatically pickup the new files you've added and also any chang
 
 So you should now see
 
-    TEST'EM 'SCRIPTS!                                                                                          
-    Open the URL below in a browser to connect.                                                                
-    http://192.168.1.173:3580                                                                                  
-      Chrome 16.0                                                                                              
-          1/1                                                                                                  
-    All tests passed!  
+![Green](https://github.com/airportyh/testem/raw/master/images/green.png)
     
 #### Using the Text User Interface
 
