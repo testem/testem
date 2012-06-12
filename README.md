@@ -8,11 +8,7 @@ Javascript unit testing can be tedious and painful. Testem aims to make Javascri
 Screencast
 ----------
 
-Watch this screencast to see it in action. 
-
-<div>
-<iframe width="480" height="360" src="http://www.youtube.com/embed/ZyUN__C3xgY" frameborder="0" allowfullscreen></iframe>
-</div>
+Watch this [screencast](http://youtu.be/ZyUN__C3xgY) to see it in action. 
 
 Requirements
 ------------
