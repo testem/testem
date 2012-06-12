@@ -97,8 +97,6 @@ In development mode, Testem has a text-based graphical user interface which uses
 * → RIGHT ARROW : Move to the next browser tab on the right
 * ↑ UP ARROW : scroll up in the error window
 * ↓ DOWN ARROW : scroll down in the error window
-* Option/Alt + ← : scroll left in the error window
-* Option/Alt + → : scroll right in the error window   
 
 #### Command line options
 
