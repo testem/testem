@@ -15,7 +15,7 @@ To check that you didn't accidentally break stuff while mucking around, you can 
 
 	npm test
 
-This runs the unit tests on the Node side of things. There are also some integrations tests that test running all the examples in the `examples` folder using `testem ci` - `tests/integration/browser_tests.sh`(Unix) and `tests/integration/browser_tests.bat`(Windows).
+This runs the unit tests on the Node side of things. There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci` - `tests/integration/browser_tests.sh`(Unix) and `tests/integration/browser_tests.bat`(Windows).
 
 Coding Style
 ------------
