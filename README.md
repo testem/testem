@@ -192,7 +192,7 @@ If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and 
 Contributing
 ------------
 
-If you want to contribute to the project, I am going to my best to stay out of your way. 
+If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/docs/contributing.md), I am going to my best to stay out of your way. 
 
 Credits
 -------
