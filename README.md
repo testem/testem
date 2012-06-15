@@ -189,6 +189,11 @@ Go Completely Headless with PhantomJS
 
 If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
 
+Contributing
+------------
+
+If you want to contribute to the project, I am going to my best to stay out of your way. 
+
 Credits
 -------
 
