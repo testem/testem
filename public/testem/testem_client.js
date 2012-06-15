@@ -1,3 +1,13 @@
+/*
+
+testem_client.js
+================
+
+The client-side script that reports results back to the Testem server via Socket.IO.
+It also restarts the tests by refreshing the page when instructed by the server to do so.
+
+*/
+
 function getBrowserName(userAgent){
     var regexs = [
         /MS(?:(IE) ([0-9]\.[0-9]))/,

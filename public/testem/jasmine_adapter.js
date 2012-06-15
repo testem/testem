@@ -1,3 +1,12 @@
+/*
+
+jasmine_adapter.js
+==================
+
+Testem's adapter for Jasmine. It works by adding a custom reporter.
+
+*/
+
 function jasmineAdapter(socket){
 
     var results = 

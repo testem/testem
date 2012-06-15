@@ -1,3 +1,12 @@
+/*
+
+mocha_adapter.js
+================
+
+Testem`s adapter for Mocha. It works by monkey-patching `Runner.prototype.emit`.
+
+*/
+
 function mochaAdapter(socket){
 
 	var results = 

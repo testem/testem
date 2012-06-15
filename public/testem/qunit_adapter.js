@@ -1,3 +1,19 @@
+/*
+
+qunit_adapter.js
+================
+
+Testem's QUnit adapter. Works by using QUnit's hooks:
+
+* `testStart`
+* `testDone`
+* `moduleStart`
+* `moduleEnd`
+* `done`
+* `log`
+
+*/
+
 function qunitAdapter(socket){
 
     var results = {
