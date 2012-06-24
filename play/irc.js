@@ -299,7 +299,7 @@ function addConnection(server, nick, clientcfg) {
     appendLine(conn.wins.status, 'Ready!');
   });
   client.on('error', function(err) {
-    appendLine(conn.wins.status, '* Error: ' + require('sys').inspect(err));
+    appendLine(conn.wins.status, '* Error: ' + require('util').inspect(err));
   });
   client.conn.on('end', function() {
     appendLine(conn.wins.status, 'Disconnected!');
@@ -473,7 +473,7 @@ function addConnection(server, nick, clientcfg) {
   });
   client.on('unhandledMessage', function(message) {
     var msg = 'UNHANDLED ' + message.command + ' > prefix: ' + message.prefix
-              + ', nick: ' + message.nick + ', args: ' + require('sys').inspect(message.args);
+              + ', nick: ' + message.nick + ', args: ' + require('util').inspect(message.args);
     appendLine(conn.wins.status, msg, nc.attrs.BOLD);
   });
   setupWindow(conn.wins.status, conn);
