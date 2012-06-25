@@ -194,6 +194,15 @@ Contributing
 
 If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/docs/contributing.md), I am going to do my best to stay out of your way. 
 
+Roadmap
+-------
+
+1. Getting feedback from other folks using Testem in the real world, and then improve the user experience as much as possible.
+2. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - after seeing [Bunyip](http://www.thecssninja.com/javascript/bunyip) I was like oh snap! I need to get on this. 
+3. Travis CI integration.
+3. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
+4. Direct Coffeescript support.
+
 Credits
 -------
 
