@@ -37,7 +37,7 @@ and on Windows do
 Coding Style
 ------------
 
-This is where I am going deviate from the norm. I am a *semicolon-less*, *leading comma* kind of guy. It is unconventional, but there's is [method](http://npmjs.org/doc/coding-style.html) [to](https://gist.github.com/2037204) [the](http://mir.aculo.us/2012/04/16/writing-semicolon-less-javascript-the-for-people-who-want-to-get-stuff-done-edition/) [madness](http://inimino.org/~inimino/blog/javascript_semicolons). I don't like being told how to code, and because of that, I don't want to tell you how to code either. *You don't have to follow my coding style.* The only principles you should follow are
+This is where I am going deviate from the norm. I am a *semicolon-less*, *leading comma* kind of guy. It is unconventional, but there's is [method](http://npmjs.org/doc/coding-style.html) [to](https://gist.github.com/2037204) [the](http://mir.aculo.us/2012/04/16/writing-semicolon-less-javascript-the-for-people-who-want-to-get-stuff-done-edition/) [madness](http://inimino.org/~inimino/blog/javascript_semicolons). *You are not required to follow my coding style.* The only principles you should follow are
 
 1. Have fun.
 2. Be thoughtful of others.
