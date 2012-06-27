@@ -48,7 +48,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha `find tests -name '*_tests.js'`"
+    "test": "./node_modules/.bin/mocha --timeout 3000 `find tests -name '*_tests.js'`"
   },
   "devDependencies": {
     "mocha": "*",
