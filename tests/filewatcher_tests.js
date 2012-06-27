@@ -25,7 +25,7 @@ describe('FileWatcher', function(){
         
         { setTimeout(next, 1000) }, function(next)
         { test.touchFile('blah.txt', next) }, function(next)
-        { setTimeout(next, 500) }, function(next)
+        { setTimeout(next, 1000) }, function(next)
         { expect(changed.calledWith(test.dataDir)).to.be.ok; done() }
         
         ])
