@@ -84,7 +84,8 @@ function initUI(){
     elm.className = connectStatus
     elm.innerHTML = markup
     document.body.appendChild(elm)
-    
+
+    initTestFrameworkHooks()
 }
 
 function initTestFrameworkHooks(){
@@ -94,6 +95,8 @@ function initTestFrameworkHooks(){
         mochaAdapter(socket)
     }else if (typeof QUnit === 'object'){
         qunitAdapter(socket)
+    }else if (typeof customAdapter === 'function') {
+        customAdapter(socket)
     }
 }
 
@@ -118,7 +121,6 @@ function init(){
     })
     socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
-    initTestFrameworkHooks()
     addListener(window, 'load', initUI)
 }
 
