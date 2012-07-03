@@ -33,7 +33,8 @@
     "async": "0.1.15",
     "rimraf": "*",
     "underscore": "*",
-    "backbone": "*"
+    "backbone": "*",
+    "browserify": "1.13.5"
   },
   "files": [
     "docs",
