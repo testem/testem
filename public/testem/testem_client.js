@@ -95,8 +95,6 @@ function initTestFrameworkHooks(){
         mochaAdapter(socket)
     }else if (typeof QUnit === 'object'){
         qunitAdapter(socket)
-    }else if (typeof customAdapter === 'function') {
-        customAdapter(socket)
     }
 }
 
@@ -125,3 +123,9 @@ function init(){
 }
 
 init()
+
+window.Testem = {
+    useCustomAdapter: function(adapter){
+        adapter(socket)
+    }
+}
