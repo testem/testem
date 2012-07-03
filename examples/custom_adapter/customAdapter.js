@@ -116,4 +116,5 @@ function customTestFrameworkAdapter(socket) {
 
 }
 
+// Tell Testem to use your adapter
 Testem.useCustomAdapter(customTestFrameworkAdapter)

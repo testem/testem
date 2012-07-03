@@ -84,13 +84,13 @@ To see all command line options do
 
 #### DIY: Use Any Test Framework
 
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_simple/customAdapter.js) for an example of how to write a custom adapter.
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
 Then, to use it, in your `testem.yml` simply set
 
     framework: custom
 
-And then make sure you include the adapter code in your test suite and you are ready to go.
+And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_simple).
 
 #### Example Projects
 
@@ -101,7 +101,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
-* [Simple Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_simple)
+* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_simple)
 
 ### Continuous Integration Mode
 
