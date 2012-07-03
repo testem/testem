@@ -90,7 +90,7 @@ Then, to use it, in your `testem.yml` simply set
 
     framework: custom
 
-And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_simple).
+And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
 
 #### Example Projects
 
@@ -101,7 +101,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
-* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_simple)
+* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 ### Continuous Integration Mode
 
