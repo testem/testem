@@ -1,4 +1,4 @@
-var assert = require('assert');
+var test = require('tap').test;
 var bunker = require('../');
 var fs = require('fs');
 
@@ -7,7 +7,9 @@ var src = fs.readdirSync(__dirname + '/src').reduce(function (acc, file) {
     return acc;
 }, {});
 
-exports.cover = function () {
+test('cover', function (t) {
+    t.plan(1);
+    
     var b = bunker(src['cover.js']);
     var counts = {};
     
@@ -19,7 +21,7 @@ exports.cover = function () {
         setInterval : setInterval,
         clearInterval : function () {
             process.nextTick(function () {
-                assert.deepEqual(counts, {
+                t.same(counts, {
                     binary : 11,
                     'unary-postfix' : 11,
                     'var' : 2,
@@ -30,6 +32,5 @@ exports.cover = function () {
             
             return clearInterval.apply(this, arguments);
         },
-        console : console
     });
-};
+});

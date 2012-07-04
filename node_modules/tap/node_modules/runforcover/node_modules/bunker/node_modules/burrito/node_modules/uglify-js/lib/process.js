@@ -223,6 +223,17 @@ function ast_walker() {
                 }
         };
 
+        function dive(ast) {
+                if (ast == null)
+                        return null;
+                try {
+                        stack.push(ast);
+                        return walkers[ast[0]].apply(ast, ast.slice(1));
+                } finally {
+                        stack.pop();
+                }
+        };
+
         function with_walkers(walkers, cont){
                 var save = {}, i;
                 for (i in walkers) if (HOP(walkers, i)) {
@@ -239,6 +250,7 @@ function ast_walker() {
 
         return {
                 walk: walk,
+                dive: dive,
                 with_walkers: with_walkers,
                 parent: function() {
                         return stack[stack.length - 2]; // last one is current node
@@ -632,21 +644,6 @@ function boolean_expr(expr) {
                );
 };
 
-function make_conditional(c, t, e) {
-    var make_real_conditional = function() {
-        if (c[0] == "unary-prefix" && c[1] == "!") {
-            return e ? [ "conditional", c[2], e, t ] : [ "binary", "||", c[2], t ];
-        } else {
-            return e ? [ "conditional", c, t, e ] : [ "binary", "&&", c, t ];
-        }
-    };
-    // shortcut the conditional if the expression has a constant value
-    return when_constant(c, function(ast, val){
-        warn_unreachable(val ? e : t);
-        return          (val ? t : e);
-    }, make_real_conditional);
-};
-
 function empty(b) {
         return !b || (b[0] == "block" && (!b[1] || b[1].length == 0));
 };
@@ -674,6 +671,7 @@ var when_constant = (function(){
                         switch (expr[1]) {
                             case "true": return true;
                             case "false": return false;
+                            case "null": return null;
                         }
                         break;
                     case "unary-prefix":
@@ -696,6 +694,7 @@ var when_constant = (function(){
                             case "+"          : return evaluate(left) +          evaluate(right);
                             case "*"          : return evaluate(left) *          evaluate(right);
                             case "/"          : return evaluate(left) /          evaluate(right);
+                            case "%"          : return evaluate(left) %          evaluate(right);
                             case "-"          : return evaluate(left) -          evaluate(right);
                             case "<<"         : return evaluate(left) <<         evaluate(right);
                             case ">>"         : return evaluate(left) >>         evaluate(right);
@@ -974,8 +973,8 @@ function ast_squeeze(ast, options) {
         options = defaults(options, {
                 make_seqs   : true,
                 dead_code   : true,
-                keep_comps  : true,
-                no_warnings : false
+                no_warnings : false,
+                keep_comps  : true
         });
 
         var w = ast_walker(), walk = w.walk, scope;
@@ -1010,6 +1009,24 @@ function ast_squeeze(ast, options) {
                         break;
                 }
                 return not_c;
+        };
+
+        function make_conditional(c, t, e) {
+                var make_real_conditional = function() {
+                        if (c[0] == "unary-prefix" && c[1] == "!") {
+                                return e ? [ "conditional", c[2], e, t ] : [ "binary", "||", c[2], t ];
+                        } else {
+                                return e ? best_of(
+                                        [ "conditional", c, t, e ],
+                                        [ "conditional", negate(c), e, t ]
+                                ) : [ "binary", "&&", c, t ];
+                        }
+                };
+                // shortcut the conditional if the expression has a constant value
+                return when_constant(c, function(ast, val){
+                        warn_unreachable(val ? e : t);
+                        return          (val ? t : e);
+                }, make_real_conditional);
         };
 
         function with_scope(s, cont) {
@@ -1151,11 +1168,13 @@ function ast_squeeze(ast, options) {
         function make_if(c, t, e) {
                 return when_constant(c, function(ast, val){
                         if (val) {
+                                t = walk(t);
                                 warn_unreachable(e);
-                                return t;
+                                return t || [ "block" ];
                         } else {
+                                e = walk(e);
                                 warn_unreachable(t);
-                                return e;
+                                return e || [ "block" ];
                         }
                 }, function() {
                         return make_real_if(c, t, e);
@@ -1276,7 +1295,15 @@ function ast_squeeze(ast, options) {
                         return when_constant([ "binary", op, walk(left), walk(right) ], function yes(c){
                                 return best_of(walk(c), this);
                         }, function no() {
-                                return this;
+                                return function(){
+                                        if(op != "==" && op != "!=") return;
+                                        var l = walk(left), r = walk(right);
+                                        if(l && l[0] == "unary-prefix" && l[1] == "!" && l[2][0] == "num")
+                                                left = ['num', +!l[2][1]];
+                                        else if (r && r[0] == "unary-prefix" && r[1] == "!" && r[2][0] == "num")
+                                                right = ['num', +!r[2][1]];
+                                        return ["binary", op, left, right];
+                                }() || this;
                         });
                 },
                 "conditional": function(c, t, e) {
@@ -1305,7 +1332,18 @@ function ast_squeeze(ast, options) {
                             case "false": return [ "unary-prefix", "!", [ "num", 1 ]];
                         }
                 },
-                "while": _do_while
+                "while": _do_while,
+                "assign": function(op, lvalue, rvalue) {
+                        lvalue = walk(lvalue);
+                        rvalue = walk(rvalue);
+                        var okOps = [ '+', '-', '/', '*', '%', '>>', '<<', '>>>', '|', '^', '&' ];
+                        if (op === true && lvalue[0] === "name" && rvalue[0] === "binary" &&
+                            ~okOps.indexOf(rvalue[1]) && rvalue[2][0] === "name" &&
+                            rvalue[2][1] === lvalue[1]) {
+                                return [ this[0], rvalue[1], lvalue, rvalue[3] ]
+                        }
+                        return [ this[0], op, lvalue, rvalue ];
+                }
         }, function() {
                 for (var i = 0; i < 2; ++i) {
                         ast = prepare_ifs(ast);
@@ -1326,12 +1364,13 @@ var DOT_CALL_NO_PARENS = jsp.array_to_hash([
         "dot",
         "sub",
         "call",
-        "regexp"
+        "regexp",
+        "defun"
 ]);
 
 function make_string(str, ascii_only) {
         var dq = 0, sq = 0;
-        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029]/g, function(s){
+        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029\0]/g, function(s){
                 switch (s) {
                     case "\\": return "\\\\";
                     case "\b": return "\\b";
@@ -1343,6 +1382,7 @@ function make_string(str, ascii_only) {
                     case "\u2029": return "\\u2029";
                     case '"': ++dq; return '"';
                     case "'": ++sq; return "'";
+                    case "\0": return "\\0";
                 }
                 return s;
         });
@@ -1475,8 +1515,13 @@ function gen_code(ast, options) {
         function make_num(num) {
                 var str = num.toString(10), a = [ str.replace(/^0\./, ".") ], m;
                 if (Math.floor(num) === num) {
-                        a.push("0x" + num.toString(16).toLowerCase(), // probably pointless
-                               "0" + num.toString(8)); // same.
+                        if (num >= 0) {
+                                a.push("0x" + num.toString(16).toLowerCase(), // probably pointless
+                                       "0" + num.toString(8)); // same.
+                        } else {
+                                a.push("-0x" + (-num).toString(16).toLowerCase(), // probably pointless
+                                       "-0" + (-num).toString(8)); // same.
+                        }
                         if ((m = /^(.*?)(0+)$/.exec(num))) {
                                 a.push(m[1] + "e" + m[2].length);
                         }
@@ -1527,7 +1572,9 @@ function gen_code(ast, options) {
                         return add_spaces([ "throw", make(expr) ]) + ";";
                 },
                 "new": function(ctor, args) {
-                        args = args.length > 0 ? "(" + add_commas(MAP(args, make)) + ")" : "";
+                        args = args.length > 0 ? "(" + add_commas(MAP(args, function(expr){
+                                return parenthesize(expr, "seq");
+                        })) + ")" : "";
                         return add_spaces([ "new", parenthesize(ctor, "seq", "binary", "conditional", "assign", function(expr){
                                 var w = ast_walker(), has_call = {};
                                 try {
@@ -1582,7 +1629,7 @@ function gen_code(ast, options) {
                 },
                 "call": function(func, args) {
                         var f = make(func);
-                        if (needs_parens(func))
+                        if (f.charAt(0) != "(" && needs_parens(func))
                                 f = "(" + f + ")";
                         return f + "(" + add_commas(MAP(args, function(expr){
                                 return parenthesize(expr, "seq");
@@ -1630,7 +1677,8 @@ function gen_code(ast, options) {
                         //      we need to be smarter.
                         //      adding parens all the time is the safest bet.
                         if (member(lvalue[0], [ "assign", "conditional", "seq" ]) ||
-                            lvalue[0] == "binary" && PRECEDENCE[operator] > PRECEDENCE[lvalue[1]]) {
+                            lvalue[0] == "binary" && PRECEDENCE[operator] > PRECEDENCE[lvalue[1]] ||
+                            lvalue[0] == "function" && needs_parens(this)) {
                                 left = "(" + left + ")";
                         }
                         if (member(rvalue[0], [ "assign", "conditional", "seq" ]) ||
@@ -1663,9 +1711,10 @@ function gen_code(ast, options) {
                         return hash + "[" + make(subscript) + "]";
                 },
                 "object": function(props) {
+                        var obj_needs_parens = needs_parens(this);
                         if (props.length == 0)
-                                return "{}";
-                        return "{" + newline + with_indent(function(){
+                                return obj_needs_parens ? "({})" : "{}";
+                        var out = "{" + newline + with_indent(function(){
                                 return MAP(props, function(p){
                                         if (p.length == 3) {
                                                 // getter/setter.  The name is in p[0], the arg.list in p[1][2], the
@@ -1686,14 +1735,15 @@ function gen_code(ast, options) {
                                                                  : [ key + ":", val ]));
                                 }).join("," + newline);
                         }) + newline + indent("}");
+                        return obj_needs_parens ? "(" + out + ")" : out;
                 },
                 "regexp": function(rx, mods) {
                         return "/" + rx + "/" + mods;
                 },
                 "array": function(elements) {
                         if (elements.length == 0) return "[]";
-                        return add_spaces([ "[", add_commas(MAP(elements, function(el){
-                                if (!beautify && el[0] == "atom" && el[1] == "undefined") return "";
+                        return add_spaces([ "[", add_commas(MAP(elements, function(el, i){
+                                if (!beautify && el[0] == "atom" && el[1] == "undefined") return i === elements.length - 1 ? "," : "";
                                 return parenthesize(el, "seq");
                         })), "]" ]);
                 },
@@ -1722,6 +1772,7 @@ function gen_code(ast, options) {
         // to the inner IF).  This function checks for this case and
         // adds the block brackets if needed.
         function make_then(th) {
+                if (th == null) return ";";
                 if (th[0] == "do") {
                         // https://github.com/mishoo/UglifyJS/issues/#issue/57
                         // IE croaks with "syntax error" on code like this:
@@ -1751,7 +1802,8 @@ function gen_code(ast, options) {
                         out += " " + make_name(name);
                 }
                 out += "(" + add_commas(MAP(args, make_name)) + ")";
-                return add_spaces([ out, make_block(body) ]);
+                out = add_spaces([ out, make_block(body) ]);
+                return needs_parens(this) ? "(" + out + ")" : out;
         };
 
         function must_has_semicolon(node) {

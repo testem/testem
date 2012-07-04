@@ -1,14 +1,15 @@
-var assert = require('assert');
+var test = require('tap').test;
 var burrito = require('../');
 
-exports.microwave = function () {
-    var times = 0;
+test('microwave', function (t) {
+    t.plan(4);
+    
     var context = {
         f : function (x) { return x + 1 },
         g : function (x) { return x + 2 },
         h : function (x) { return x + 3 },
         z : function (x) {
-            times ++;
+            t.ok(true); // 3 times
             return x * 10;
         },
     };
@@ -21,13 +22,13 @@ exports.microwave = function () {
         }
     });
     
-    assert.equal(res, (((((5 + 3) * 10) + 2) * 10) + 1) * 10);
-    assert.equal(times, 3);
-};
+    t.equal(res, (((((5 + 3) * 10) + 2) * 10) + 1) * 10);
+});
 
-exports.emptyContext = function () {
+test('empty context', function (t) {
     var res = burrito.microwave('Math.sin(2)', function (node) {
         if (node.name === 'num') node.wrap('Math.PI / %s');
     });
-    assert.equal(res, 1);
-};
+    t.equal(res, 1);
+    t.end();
+});

@@ -1,23 +1,24 @@
-var assert = require('assert');
+var test = require('tap').test;
 var traverse = require('../');
 var deepEqual = require('./lib/deep_equal');
 
-exports.super_deep = function () {
+test('super_deep', function (t) {
     var util = require('util');
     var a0 = make();
     var a1 = make();
-    assert.ok(deepEqual(a0, a1));
+    t.ok(deepEqual(a0, a1));
     
     a0.c.d.moo = true;
-    assert.ok(!deepEqual(a0, a1));
+    t.ok(!deepEqual(a0, a1));
     
     a1.c.d.moo = true;
-    assert.ok(deepEqual(a0, a1));
+    t.ok(deepEqual(a0, a1));
     
     // TODO: this one
     //a0.c.a = a1;
-    //assert.ok(!deepEqual(a0, a1));
-};
+    //t.ok(!deepEqual(a0, a1));
+    t.end();
+});
 
 function make () {
     var a = { self : 'a' };

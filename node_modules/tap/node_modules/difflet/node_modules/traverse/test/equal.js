@@ -1,9 +1,11 @@
-var assert = require('assert');
+var test = require('tap').test;
 var traverse = require('../');
 var deepEqual = require('./lib/deep_equal');
 
-exports.deepDates = function () {
-    assert.ok(
+test('deepDates', function (t) {
+    t.plan(2);
+    
+    t.ok(
         deepEqual(
             { d : new Date, x : [ 1, 2, 3 ] },
             { d : new Date, x : [ 1, 2, 3 ] }
@@ -13,7 +15,7 @@ exports.deepDates = function () {
     
     var d0 = new Date;
     setTimeout(function () {
-        assert.ok(
+        t.ok(
             !deepEqual(
                 { d : d0, x : [ 1, 2, 3 ], },
                 { d : new Date, x : [ 1, 2, 3 ] }
@@ -21,62 +23,64 @@ exports.deepDates = function () {
             'microseconds should count in date equality'
         );
     }, 5);
-};
+});
 
-exports.deepCircular = function () {
+test('deepCircular', function (t) {
     var a = [1];
     a.push(a); // a = [ 1, *a ]
     
     var b = [1];
     b.push(a); // b = [ 1, [ 1, *a ] ]
     
-    assert.ok(
+    t.ok(
         !deepEqual(a, b),
         'circular ref mount points count towards equality'
     );
     
     var c = [1];
     c.push(c); // c = [ 1, *c ]
-    assert.ok(
+    t.ok(
         deepEqual(a, c),
         'circular refs are structurally the same here'
     );
     
     var d = [1];
     d.push(a); // c = [ 1, [ 1, *d ] ]
-    assert.ok(
+    t.ok(
         deepEqual(b, d),
         'non-root circular ref structural comparison'
     );
-};
+    
+    t.end();
+});
 
-exports.deepInstances = function () {
-    assert.ok(
+test('deepInstances', function (t) {
+    t.ok(
         !deepEqual([ new Boolean(false) ], [ false ]),
         'boolean instances are not real booleans'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual([ new String('x') ], [ 'x' ]),
         'string instances are not real strings'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual([ new Number(4) ], [ 4 ]),
         'number instances are not real numbers'
     );
     
-    assert.ok(
+    t.ok(
         deepEqual([ new RegExp('x') ], [ /x/ ]),
         'regexp instances are real regexps'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual([ new RegExp(/./) ], [ /../ ]),
         'these regexps aren\'t the same'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(
             [ function (x) { return x * 2 } ],
             [ function (x) { return x * 2 } ]
@@ -85,31 +89,34 @@ exports.deepInstances = function () {
     );
     
     var f = function (x) { return x * 2 };
-    assert.ok(
+    t.ok(
         deepEqual([ f ], [ f ]),
         'these functions are actually equal'
     );
-};
+    
+    t.end();
+});
 
-exports.deepEqual = function () {
-    assert.ok(
+test('deepEqual', function (t) {
+    t.ok(
         !deepEqual([ 1, 2, 3 ], { 0 : 1, 1 : 2, 2 : 3 }),
         'arrays are not objects'
     );
-};
+    t.end();
+});
 
-exports.falsy = function () {
-    assert.ok(
+test('falsy', function (t) {
+    t.ok(
         !deepEqual([ undefined ], [ null ]),
         'null is not undefined!'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual([ null ], [ undefined ]),
         'undefined is not null!'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(
             { a : 1, b : 2, c : [ 3, undefined, 5 ] },
             { a : 1, b : 2, c : [ 3, null, 5 ] }
@@ -117,7 +124,7 @@ exports.falsy = function () {
         'undefined is not null, however deeply!'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(
             { a : 1, b : 2, c : [ 3, undefined, 5 ] },
             { a : 1, b : 2, c : [ 3, null, 5 ] }
@@ -125,16 +132,18 @@ exports.falsy = function () {
         'null is not undefined, however deeply!'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(
             { a : 1, b : 2, c : [ 3, undefined, 5 ] },
             { a : 1, b : 2, c : [ 3, null, 5 ] }
         ),
         'null is not undefined, however deeply!'
     );
-};
+    
+    t.end();
+});
 
-exports.deletedArrayEqual = function () {
+test('deletedArrayEqual', function (t) {
     var xs = [ 1, 2, 3, 4 ];
     delete xs[2];
     
@@ -143,51 +152,57 @@ exports.deletedArrayEqual = function () {
     ys[1] = 2;
     ys[3] = 4;
     
-    assert.ok(
+    t.ok(
         deepEqual(xs, ys),
         'arrays with deleted elements are only equal to'
         + ' arrays with similarly deleted elements'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(xs, [ 1, 2, undefined, 4 ]),
         'deleted array elements cannot be undefined'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(xs, [ 1, 2, null, 4 ]),
         'deleted array elements cannot be null'
     );
-};
+    
+    t.end();
+});
 
-exports.deletedObjectEqual = function () {
+test('deletedObjectEqual', function (t) {
     var obj = { a : 1, b : 2, c : 3 };
     delete obj.c;
     
-    assert.ok(
+    t.ok(
         deepEqual(obj, { a : 1, b : 2 }),
         'deleted object elements should not show up'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(obj, { a : 1, b : 2, c : undefined }),
         'deleted object elements are not undefined'
     );
     
-    assert.ok(
+    t.ok(
         !deepEqual(obj, { a : 1, b : 2, c : null }),
         'deleted object elements are not null'
     );
-};
+    
+    t.end();
+});
 
-exports.emptyKeyEqual = function () {
-    assert.ok(!deepEqual(
+test('emptyKeyEqual', function (t) {
+    t.ok(!deepEqual(
         { a : 1 }, { a : 1, '' : 55 }
     ));
-};
+    
+    t.end();
+});
 
-exports.deepArguments = function () {
-    assert.ok(
+test('deepArguments', function (t) {
+    t.ok(
         !deepEqual(
             [ 4, 5, 6 ],
             (function () { return arguments })(4, 5, 6)
@@ -195,26 +210,31 @@ exports.deepArguments = function () {
         'arguments are not arrays'
     );
     
-    assert.ok(
+    t.ok(
         deepEqual(
             (function () { return arguments })(4, 5, 6),
             (function () { return arguments })(4, 5, 6)
         ),
         'arguments should equal'
     );
-};
+    
+    t.end();
+});
 
-exports.deepUn = function () {
-    assert.ok(!deepEqual({ a : 1, b : 2 }, undefined));
-    assert.ok(!deepEqual({ a : 1, b : 2 }, {}));
-    assert.ok(!deepEqual(undefined, { a : 1, b : 2 }));
-    assert.ok(!deepEqual({}, { a : 1, b : 2 }));
-    assert.ok(deepEqual(undefined, undefined));
-    assert.ok(deepEqual(null, null));
-    assert.ok(!deepEqual(undefined, null));
-};
+test('deepUn', function (t) {
+    t.ok(!deepEqual({ a : 1, b : 2 }, undefined));
+    t.ok(!deepEqual({ a : 1, b : 2 }, {}));
+    t.ok(!deepEqual(undefined, { a : 1, b : 2 }));
+    t.ok(!deepEqual({}, { a : 1, b : 2 }));
+    t.ok(deepEqual(undefined, undefined));
+    t.ok(deepEqual(null, null));
+    t.ok(!deepEqual(undefined, null));
+    
+    t.end();
+});
 
-exports.deepLevels = function () {
+test('deepLevels', function (t) {
     var xs = [ 1, 2, [ 3, 4, [ 5, 6 ] ] ];
-    assert.ok(!deepEqual(xs, []));
-};
+    t.ok(!deepEqual(xs, []));
+    t.end();
+});

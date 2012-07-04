@@ -68,6 +68,10 @@ module.exports = function (a, b) {
                     notEqual();
                 }
             }
+            else if (toS(y) === '[object RegExp]'
+            || toS(x) === '[object RegExp]') {
+                if (!x || !y || x.toString() !== y.toString()) notEqual();
+            }
             else if (x instanceof Date || y instanceof Date) {
                 if (!(x instanceof Date) || !(y instanceof Date)
                 || x.getTime() !== y.getTime()) {

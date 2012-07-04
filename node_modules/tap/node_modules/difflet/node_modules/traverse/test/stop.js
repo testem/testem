@@ -1,7 +1,7 @@
-var assert = require('assert');
+var test = require('tap').test;
 var traverse = require('../');
 
-exports.stop = function () {
+test('stop', function (t) {
     var visits = 0;
     traverse('abcdefghij'.split('')).forEach(function (node) {
         if (typeof node === 'string') {
@@ -10,10 +10,11 @@ exports.stop = function () {
         }
     });
     
-    assert.equal(visits, 5);
-};
+    t.equal(visits, 5);
+    t.end();
+});
 
-exports.stopMap = function () {
+test('stopMap', function (t) {
     var s = traverse('abcdefghij'.split('')).map(function (node) {
         if (typeof node === 'string') {
             if (node === 'e') this.stop()
@@ -21,10 +22,11 @@ exports.stopMap = function () {
         }
     }).join('');
     
-    assert.equal(s, 'ABCDEfghij');
-};
+    t.equal(s, 'ABCDEfghij');
+    t.end();
+});
 
-exports.stopReduce = function () {
+test('stopReduce', function (t) {
     var obj = {
         a : [ 4, 5 ],
         b : [ 6, [ 7, 8, 9 ] ]
@@ -37,5 +39,6 @@ exports.stopReduce = function () {
         return acc;
     }, []);
     
-    assert.deepEqual(xs, [ 4, 5, 6 ]);
-};
+    t.same(xs, [ 4, 5, 6 ]);
+    t.end();
+});

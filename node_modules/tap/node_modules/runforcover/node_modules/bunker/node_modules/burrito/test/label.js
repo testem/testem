@@ -1,110 +1,92 @@
-var assert = require('assert');
+var test = require('tap').test;
 var burrito = require('../');
 
-exports.callLabel = function () {
-    var times = 0;
-    var src = burrito('foo(10)', function (node) {
+test('call label', function (t) {
+    t.plan(1);
+    
+    burrito('foo(10)', function (node) {
         if (node.name === 'call') {
-            assert.equal(node.label(), 'foo');
-            times ++;
+            t.equal(node.label(), 'foo');
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.varLabel = function () {
-    var times = 0;
-    var src = burrito('var x = 2', function (node) {
+test('var label', function (t) {
+    t.plan(1);
+    
+    burrito('var x = 2', function (node) {
         if (node.name === 'var') {
-            assert.deepEqual(node.label(), [ 'x' ]);
-            times ++;
+            t.same(node.label(), [ 'x' ]);
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.varsLabel = function () {
-    var times = 0;
-    var src = burrito('var x = 2, y = 3', function (node) {
+test('vars label', function (t) {
+    t.plan(1);
+    
+    burrito('var x = 2, y = 3', function (node) {
         if (node.name === 'var') {
-            assert.deepEqual(node.label(), [ 'x', 'y' ]);
-            times ++;
+            t.same(node.label(), [ 'x', 'y' ]);
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.defunLabel = function () {
-    var times = 0;
-    var src = burrito('function moo () {}', function (node) {
+test('defun label', function (t) {
+    t.plan(1);
+    
+    burrito('function moo () {}', function (node) {
         if (node.name === 'defun') {
-            assert.deepEqual(node.label(), 'moo');
-            times ++;
+            t.same(node.label(), 'moo');
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.functionLabel = function () {
-    var times = 0;
-    var src = burrito('(function zzz () {})()', function (node) {
+test('function label', function (t) {
+    t.plan(1);
+    
+    burrito('(function zzz () {})()', function (node) {
         if (node.name === 'function') {
-            assert.deepEqual(node.label(), 'zzz');
-            times ++;
+            t.same(node.label(), 'zzz');
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.anonFunctionLabel = function () {
-    var times = 0;
-    var src = burrito('(function () {})()', function (node) {
+test('anon function label', function (t) {
+    t.plan(1);
+    
+    burrito('(function () {})()', function (node) {
         if (node.name === 'function') {
-            assert.ok(node.label() === null);
-            times ++;
+            t.equal(node.label(), null);
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.dotCallLabel = function () {
-    var times = 0;
-    var src = burrito('process.nextTick(fn)', function (node) {
+test('dot call label', function (t) {
+    t.plan(1);
+    
+    burrito('process.nextTick(fn)', function (node) {
         if (node.name === 'call') {
-            assert.equal(node.label(), 'nextTick');
-            times ++;
+            t.equal(node.label(), 'nextTick');
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.tripleDotLabel = function () {
-    var times = 0;
-    var src = burrito('a.b.c(fn)', function (node) {
+test('triple dot label', function (t) {
+    t.plan(1);
+    
+    burrito('a.b.c(fn)', function (node) {
         if (node.name === 'call') {
-            assert.equal(node.label(), 'c');
-            times ++;
+            t.equal(node.label(), 'c');
         }
     });
-    
-    assert.equal(times, 1);
-};
+});
 
-exports.exprLabel = function () {
-    var times = 0;
-    var src = burrito('a.b[x+1](fn)', function (node) {
+test('expr label', function (t) {
+    t.plan(1);
+    
+    burrito('a.b[x+1](fn)', function (node) {
         if (node.name === 'call') {
-            assert.ok(node.label() === null);
-            times ++;
+            t.ok(node.label() === null);
         }
     });
-    
-    assert.equal(times, 1);
-};
+});

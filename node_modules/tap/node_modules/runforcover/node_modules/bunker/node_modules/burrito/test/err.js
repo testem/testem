@@ -1,38 +1,43 @@
-var assert = require('assert');
+var test = require('tap').test;
 var burrito = require('../');
 
-exports.wrapError = function () {
+test('wrap error', function (t) {
+    t.plan(6);
+    
     try {
         var src = burrito('f() && g()', function (node) {
             if (node.name === 'binary') node.wrap('h(%a, %b')
         });
-        assert.fail('should have blown up');
+        t.fail('should have blown up');
     }
     catch (err) {
-        assert.ok(err.message.match(/unexpected/i));
-        assert.ok(err instanceof SyntaxError);
-        assert.ok(!err.stack.match(/uglify-js/));
-        assert.equal(err.line, 0);
-        assert.equal(err.col, 10);
-        assert.equal(err.pos, 10);
+        t.ok(err.message.match(/unexpected/i));
+        t.ok(err instanceof SyntaxError);
+        t.ok(!err.stack.match(/uglify-js/));
+        t.equal(err.line, 0);
+        t.equal(err.col, 10);
+        t.equal(err.pos, 10);
     }
-};
+});
 
-exports.nonString = function () {
-    assert.throws(function () {
+test('non string', function (t) {
+    t.plan(3);
+    
+    t.throws(function () {
         burrito.parse(new Buffer('[]'));
     });
     
-    assert.throws(function () {
+    t.throws(function () {
         burrito.parse(new String('[]'));
     });
     
-    assert.throws(function () {
+    t.throws(function () {
         burrito.parse();
     });
-};
+});
 
-exports.syntaxError = function () {
+test('syntax error', function (t) {
+    t.plan(3);
     try {
         var src = burrito('f() && g())', function (node) {
             if (node.name === 'binary') node.wrap('h(%a, %b)')
@@ -40,8 +45,8 @@ exports.syntaxError = function () {
         assert.fail('should have blown up');
     }
     catch (err) {
-        assert.ok(err.message.match(/unexpected/i));
-        assert.ok(err instanceof SyntaxError);
-        assert.ok(!err.stack.match(/uglify-js/));
+        t.ok(err.message.match(/unexpected/i));
+        t.ok(err instanceof SyntaxError);
+        t.ok(!err.stack.match(/uglify-js/));
     }
-};
+});

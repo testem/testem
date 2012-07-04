@@ -1,11 +1,11 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 
-exports['interface map'] = function () {
+test('interface map', function (t) {
     var obj = { a : [ 5,6,7 ], b : { c : [8] } };
     
-    assert.deepEqual(
-        Traverse.paths(obj)
+    t.same(
+        traverse.paths(obj)
             .sort()
             .map(function (path) { return path.join('/') })
             .slice(1)
@@ -14,8 +14,8 @@ exports['interface map'] = function () {
          'a a/0 a/1 a/2 b b/c b/c/0'
     );
     
-    assert.deepEqual(
-        Traverse.nodes(obj),
+    t.same(
+        traverse.nodes(obj),
         [
             { a: [ 5, 6, 7 ], b: { c: [ 8 ] } },
             [ 5, 6, 7 ], 5, 6, 7,
@@ -23,8 +23,8 @@ exports['interface map'] = function () {
         ]
     );
     
-    assert.deepEqual(
-        Traverse.map(obj, function (node) {
+    t.same(
+        traverse.map(obj, function (node) {
             if (typeof node == 'number') {
                 return node + 1000;
             }
@@ -36,7 +36,8 @@ exports['interface map'] = function () {
     );
     
     var nodes = 0;
-    Traverse.forEach(obj, function (node) { nodes ++ });
-    assert.deepEqual(nodes, 8);
-};
-
+    traverse.forEach(obj, function (node) { nodes ++ });
+    t.same(nodes, 8);
+    
+    t.end();
+});

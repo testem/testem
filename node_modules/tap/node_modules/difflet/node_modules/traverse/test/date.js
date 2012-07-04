@@ -1,35 +1,37 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 
-exports.dateEach = function () {
+test('dateEach', function (t) {
     var obj = { x : new Date, y : 10, z : 5 };
     
     var counts = {};
     
-    Traverse(obj).forEach(function (node) {
+    traverse(obj).forEach(function (node) {
         var t = (node instanceof Date && 'Date') || typeof node;
         counts[t] = (counts[t] || 0) + 1;
     });
     
-    assert.deepEqual(counts, {
+    t.same(counts, {
         object : 1,
         Date : 1,
         number : 2,
     });
-};
+    t.end();
+});
 
-exports.dateMap = function () {
+test('dateMap', function (t) {
     var obj = { x : new Date, y : 10, z : 5 };
     
-    var res = Traverse(obj).map(function (node) {
+    var res = traverse(obj).map(function (node) {
         if (typeof node === 'number') this.update(node + 100);
     });
     
-    assert.ok(obj.x !== res.x);
-    assert.deepEqual(res, {
+    t.ok(obj.x !== res.x);
+    t.same(res, {
         x : obj.x,
         y : 110,
         z : 105,
     });
-};
+    t.end();
+});
 

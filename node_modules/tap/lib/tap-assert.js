@@ -1,6 +1,7 @@
 // an assert module that returns tappable data for each assertion.
 var difflet = require('difflet')
   , deepEqual = require('deep-equal')
+  , bufferEqual = require('buffer-equal')
 
 module.exports = assert
 
@@ -173,7 +174,12 @@ function equivalent (a, b, message, extra) {
   message = message || "should be equivalent"
   extra.found = a
   extra.wanted = b
-  return assert(deepEqual(a, b), message, extra)
+
+  if (Buffer.isBuffer(a) && Buffer.isBuffer(b)) {
+    return assert(bufferEqual(a, b), message, extra)
+  } else {
+    return assert(deepEqual(a, b), message, extra)
+  }
 }
 assert.equivalent = equivalent
 syns.equivalent = ["isEquivalent"
@@ -209,12 +215,18 @@ function inequivalent (a, b, message, extra) {
   message = message || "should not be equivalent"
   extra.found = a
   extra.doNotWant = b
-  return assert(!deepEqual(a, b), message, extra)
+  
+  if (Buffer.isBuffer(a) && Buffer.isBuffer(b)) {
+    return assert(!bufferEqual(a, b), message, extra)
+  } else {
+    return assert(!deepEqual(a, b), message, extra)
+  }
 }
 assert.inequivalent = inequivalent
 syns.inequivalent = ["notEquivalent"
                     ,"notDeepEqual"
                     ,"notDeeply"
+                    ,"notSame"
                     ,"isNotDeepEqual"
                     ,"isNotDeeply"
                     ,"isNotEquivalent"

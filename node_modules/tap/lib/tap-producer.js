@@ -31,6 +31,11 @@ TapProducer.prototype.write = function (res) {
   if (typeof res === "function") throw new Error("wtf?")
   if (!this.writable) this.emit("error", new Error("not writable"))
 
+  if (!this._didHead) {
+    this.emit("data", "TAP version 13\n")
+    this._didHead = true
+  }
+
   var diag = res.diag
   if (diag === undefined) diag = this.diag
 

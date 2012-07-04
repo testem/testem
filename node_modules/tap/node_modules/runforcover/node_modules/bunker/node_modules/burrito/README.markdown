@@ -6,6 +6,8 @@ Burrito makes it easy to do crazy stuff with the javascript AST.
 This is super useful if you want to roll your own stack traces or build a code
 coverage tool.
 
+[![build status](https://secure.travis-ci.org/substack/node-burrito.png)](http://travis-ci.org/substack/node-burrito)
+
 ![node.wrap("burrito")](http://substack.net/images/burrito.png)
 
 examples

@@ -1,9 +1,9 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 
-exports['sort test'] = function () {
+test('sort test', function (t) {
     var acc = [];
-    Traverse({
+    traverse({
         a: 30,
         b: 22,
         id: 9
@@ -21,9 +21,11 @@ exports['sort test'] = function () {
         if (this.isLeaf) acc.push(node);
     });
     
-    assert.equal(
+    t.equal(
         acc.join(' '),
         '9 30 22',
         'Traversal in a custom order'
     );
-};
+    
+    t.end();
+});

@@ -1,9 +1,9 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 
-exports['leaves test'] = function () {
+test('leaves test', function (t) {
     var acc = [];
-    Traverse({
+    traverse({
         a : [1,2,3],
         b : 4,
         c : [5,6],
@@ -12,10 +12,11 @@ exports['leaves test'] = function () {
         if (this.isLeaf) acc.push(x);
     });
     
-    assert.equal(
+    t.equal(
         acc.join(' '),
         '1 2 3 4 5 6 7 8 9',
         'Traversal in the right(?) order'
     );
-};
-
+    
+    t.end();
+});

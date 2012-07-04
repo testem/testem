@@ -1,15 +1,11 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 
-exports['traverse an object with nested functions'] = function () {
-    var to = setTimeout(function () {
-        assert.fail('never ran');
-    }, 1000);
+test('traverse an object with nested functions', function (t) {
+    t.plan(1);
     
     function Cons (x) {
-        clearTimeout(to);
-        assert.equal(x, 10);
+        t.equal(x, 10)
     };
-    Traverse(new Cons(10));
-};
-
+    traverse(new Cons(10));
+});

@@ -4,6 +4,8 @@ bunker
 Bunker is a module to calculate code coverage using native javascript
 [burrito](https://github.com/substack/node-burrito) AST trickery.
 
+[![build status](https://secure.travis-ci.org/substack/node-bunker.png)](http://travis-ci.org/substack/node-bunker)
+
 ![code coverage](http://substack.net/images/code_coverage.png)
 
 examples

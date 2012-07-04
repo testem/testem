@@ -1,7 +1,7 @@
 var traverse = require('../');
-var assert = require('assert');
+var test = require('tap').test;
 
-exports.subexpr = function () {
+test('subexpr', function (t) {
     var obj = [ 'a', 4, 'b', 5, 'c', 6 ];
     var r = traverse(obj).map(function (x) {
         if (typeof x === 'number') {
@@ -9,15 +9,16 @@ exports.subexpr = function () {
         }
     });
     
-    assert.deepEqual(obj, [ 'a', 4, 'b', 5, 'c', 6 ]);
-    assert.deepEqual(r, [
+    t.same(obj, [ 'a', 4, 'b', 5, 'c', 6 ]);
+    t.same(r, [
         'a', [ 3.9, 4, 4.1 ],
         'b', [ 4.9, 5, 5.1 ],
         'c', [ 5.9, 6, 6.1 ],
     ]);
-};
+    t.end();
+});
 
-exports.block = function () {
+test('block', function (t) {
     var obj = [ [ 1 ], [ 2 ], [ 3 ] ];
     var r = traverse(obj).map(function (x) {
         if (Array.isArray(x) && !this.isRoot) {
@@ -26,9 +27,10 @@ exports.block = function () {
         }
     });
     
-    assert.deepEqual(r, [
+    t.same(r, [
         [ [ [ [ [ 5 ] ] ] ] ],
         [ [ [ [ 5 ] ] ] ],
         [ [ [ 5 ] ] ],
     ]);
-};
+    t.end();
+});

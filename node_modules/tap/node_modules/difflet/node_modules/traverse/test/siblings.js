@@ -1,7 +1,7 @@
-var assert = require('assert');
+var test = require('tap').test;
 var traverse = require('../');
 
-exports.siblings = function () {
+test('siblings', function (t) {
     var obj = { a : 1, b : 2, c : [ 4, 5, 6 ] };
     
     var res = traverse(obj).reduce(function (acc, x) {
@@ -23,7 +23,7 @@ exports.siblings = function () {
         return acc;
     }, {});
     
-    assert.deepEqual(res, {
+    t.same(res, {
         '/' : { siblings : [], key : undefined, index : -1 },
         '/a' : { siblings : [ 'a', 'b', 'c' ], key : 'a', index : 0 },
         '/b' : { siblings : [ 'a', 'b', 'c' ], key : 'b', index : 1 },
@@ -32,4 +32,6 @@ exports.siblings = function () {
         '/c/1' : { siblings : [ '0', '1', '2' ], key : '1', index : 1 },
         '/c/2' : { siblings : [ '0', '1', '2' ], key : '2', index : 2 }
     });
-};
+    
+    t.end();
+});

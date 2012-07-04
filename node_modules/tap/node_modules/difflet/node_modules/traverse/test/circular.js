@@ -1,115 +1,117 @@
-var assert = require('assert');
-var Traverse = require('../');
+var test = require('tap').test;
+var traverse = require('../');
 var deepEqual = require('./lib/deep_equal');
 var util = require('util');
 
-exports.circular = function () {
+test('circular', function (t) {
+    t.plan(1);
+    
     var obj = { x : 3 };
     obj.y = obj;
-    var foundY = false;
-    Traverse(obj).forEach(function (x) {
+    traverse(obj).forEach(function (x) {
         if (this.path.join('') == 'y') {
-            assert.equal(
+            t.equal(
                 util.inspect(this.circular.node),
                 util.inspect(obj)
             );
-            foundY = true;
         }
     });
-    assert.ok(foundY);
-};
+});
 
-exports.deepCirc = function () {
+test('deepCirc', function (t) {
+    t.plan(2);
     var obj = { x : [ 1, 2, 3 ], y : [ 4, 5 ] };
     obj.y[2] = obj;
     
     var times = 0;
-    Traverse(obj).forEach(function (x) {
+    traverse(obj).forEach(function (x) {
         if (this.circular) {
-            assert.deepEqual(this.circular.path, []);
-            assert.deepEqual(this.path, [ 'y', 2 ]);
-            times ++;
+            t.same(this.circular.path, []);
+            t.same(this.path, [ 'y', 2 ]);
         }
     });
-    
-    assert.deepEqual(times, 1);
-};
+});
 
-exports.doubleCirc = function () {
+test('doubleCirc', function (t) {
     var obj = { x : [ 1, 2, 3 ], y : [ 4, 5 ] };
     obj.y[2] = obj;
     obj.x.push(obj.y);
     
     var circs = [];
-    Traverse(obj).forEach(function (x) {
+    traverse(obj).forEach(function (x) {
         if (this.circular) {
             circs.push({ circ : this.circular, self : this, node : x });
         }
     });
     
-    assert.deepEqual(circs[0].self.path, [ 'x', 3, 2 ]);
-    assert.deepEqual(circs[0].circ.path, []);
+    t.same(circs[0].self.path, [ 'x', 3, 2 ]);
+    t.same(circs[0].circ.path, []);
      
-    assert.deepEqual(circs[1].self.path, [ 'y', 2 ]);
-    assert.deepEqual(circs[1].circ.path, []);
+    t.same(circs[1].self.path, [ 'y', 2 ]);
+    t.same(circs[1].circ.path, []);
     
-    assert.deepEqual(circs.length, 2);
-};
+    t.same(circs.length, 2);
+    t.end();
+});
 
-exports.circDubForEach = function () {
+test('circDubForEach', function (t) {
     var obj = { x : [ 1, 2, 3 ], y : [ 4, 5 ] };
     obj.y[2] = obj;
     obj.x.push(obj.y);
     
-    Traverse(obj).forEach(function (x) {
+    traverse(obj).forEach(function (x) {
         if (this.circular) this.update('...');
     });
     
-    assert.deepEqual(obj, { x : [ 1, 2, 3, [ 4, 5, '...' ] ], y : [ 4, 5, '...' ] });
-};
+    t.same(obj, { x : [ 1, 2, 3, [ 4, 5, '...' ] ], y : [ 4, 5, '...' ] });
+    t.end();
+});
 
-exports.circDubMap = function () {
+test('circDubMap', function (t) {
     var obj = { x : [ 1, 2, 3 ], y : [ 4, 5 ] };
     obj.y[2] = obj;
     obj.x.push(obj.y);
     
-    var c = Traverse(obj).map(function (x) {
+    var c = traverse(obj).map(function (x) {
         if (this.circular) {
             this.update('...');
         }
     });
     
-    assert.deepEqual(c, { x : [ 1, 2, 3, [ 4, 5, '...' ] ], y : [ 4, 5, '...' ] });
-};
+    t.same(c, { x : [ 1, 2, 3, [ 4, 5, '...' ] ], y : [ 4, 5, '...' ] });
+    t.end();
+});
 
-exports.circClone = function () {
+test('circClone', function (t) {
     var obj = { x : [ 1, 2, 3 ], y : [ 4, 5 ] };
     obj.y[2] = obj;
     obj.x.push(obj.y);
     
-    var clone = Traverse.clone(obj);
-    assert.ok(obj !== clone);
+    var clone = traverse.clone(obj);
+    t.ok(obj !== clone);
     
-    assert.ok(clone.y[2] === clone);
-    assert.ok(clone.y[2] !== obj);
-    assert.ok(clone.x[3][2] === clone);
-    assert.ok(clone.x[3][2] !== obj);
-    assert.deepEqual(clone.x.slice(0,3), [1,2,3]);
-    assert.deepEqual(clone.y.slice(0,2), [4,5]);
-};
+    t.ok(clone.y[2] === clone);
+    t.ok(clone.y[2] !== obj);
+    t.ok(clone.x[3][2] === clone);
+    t.ok(clone.x[3][2] !== obj);
+    t.same(clone.x.slice(0,3), [1,2,3]);
+    t.same(clone.y.slice(0,2), [4,5]);
+    t.end();
+});
 
-exports.circMapScrub = function () {
+test('circMapScrub', function (t) {
     var obj = { a : 1, b : 2 };
     obj.c = obj;
     
-    var scrubbed = Traverse(obj).map(function (node) {
+    var scrubbed = traverse(obj).map(function (node) {
         if (this.circular) this.remove();
     });
-    assert.deepEqual(
+    t.same(
         Object.keys(scrubbed).sort(),
         [ 'a', 'b' ]
     );
-    assert.ok(deepEqual(scrubbed, { a : 1, b : 2 }));
+    t.ok(deepEqual(scrubbed, { a : 1, b : 2 }));
     
-    assert.equal(obj.c, obj);
-};
+    t.equal(obj.c, obj);
+    t.end();
+});
