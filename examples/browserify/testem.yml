@@ -1,0 +1,4 @@
+browserify: true
+framework: custom
+src_files:
+- test/**/*.js
