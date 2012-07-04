@@ -1,3 +1,4 @@
 node: node_modules/.bin/tap
-src_files:
+node-args:
+ - --tap
  - test.js
