@@ -3,6 +3,6 @@
   "private": true,
   "version": "0.0.1",
   "dependencies": {
-    "testling": "~0.2.5"
+    "tap": "~0.2.5"
   }
 }

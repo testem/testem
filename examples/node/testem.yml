@@ -1,1 +1,3 @@
-node: test.js
+node: node_modules/.bin/tap
+src_files:
+ - test.js
