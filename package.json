@@ -37,6 +37,7 @@
     "testem-testling-adapter": "~0.1.1"
   },
   "files": [
+    "adapters",
     "docs",
     "examples",
     "lib",
