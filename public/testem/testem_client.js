@@ -84,7 +84,8 @@ function initUI(){
     elm.className = connectStatus
     elm.innerHTML = markup
     document.body.appendChild(elm)
-    
+
+    initTestFrameworkHooks()
 }
 
 function initTestFrameworkHooks(){
@@ -118,8 +119,13 @@ function init(){
     })
     socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
-    initTestFrameworkHooks()
     addListener(window, 'load', initUI)
 }
 
 init()
+
+window.Testem = {
+    useCustomAdapter: function(adapter){
+        adapter(socket)
+    }
+}

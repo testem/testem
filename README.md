@@ -3,7 +3,7 @@ Test&rsquo;em &rsquo;Scripts!
 
 [![Build Status](https://secure.travis-ci.org/airportyh/testem.png?branch=master)](http://travis-ci.org/airportyh/testem)
 
-Javascript unit testing can be tedious and painful. Testem aims to make Javascript unit testing in browsers as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. Testem supports [Jasmine](http://pivotal.github.com/jasmine/), [QUnit](http://docs.jquery.com/QUnit) and [Mocha](http://visionmedia.github.com/mocha/) right out of the box. It supports two distinct use-cases: the *test-driven-development(TDD)* workflow; and *continuous integration(CI)*. 
+Javascript unit testing can be tedious and painful. Testem aims to make Javascript unit testing in browsers as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. Testem supports [Jasmine](http://pivotal.github.com/jasmine/), [QUnit](http://docs.jquery.com/QUnit) and [Mocha](http://visionmedia.github.com/mocha/) right out of the box, and can be made to work with others via custom test framework adapters. It supports two distinct use-cases: the *test-driven-development(TDD)* workflow; and *continuous integration(CI)*. 
 
 Screencast
 ----------
@@ -82,6 +82,16 @@ To see all command line options do
 
     testem --help
 
+#### DIY: Use Any Test Framework
+
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+
+Then, to use it, in your `testem.yml` simply set
+
+    framework: custom
+
+And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
+
 #### Example Projects
 
 I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
@@ -91,6 +101,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
+* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 ### Continuous Integration Mode
 
