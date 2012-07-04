@@ -34,7 +34,7 @@
     "rimraf": "*",
     "underscore": "*",
     "backbone": "*",
-    "testem-node": "0.0.1"
+    "testem-node": "0.1.0"
   },
   "files": [
     "docs",
