@@ -164,7 +164,7 @@ Configuration File
 ------------------
 
 For the simplest Javascript projects, the TDD workflow described above will work fine, but there are times when you want
-to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.yml` configuration file. It looks like this
+to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.yml` configuration file (you can also alternatively use the JSON format with a `testem.json` file). It looks like this
 
     framework: jasmine
     src_files:
