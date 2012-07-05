@@ -17,17 +17,38 @@ describe('Config', function(){
 	it('gives progOptions properties when got', function(){
 		expect(config.get('file')).to.equal(progOptions.file)
 	})
-	describe('read config file', function(){
+	describe('read yaml config file', function(){
 		beforeEach(function(done){
-			config.read(function(){
-				done()
-			})
+			config.read(done)
 		})
 		it('gets properties from config file', function(){
 			expect(config.get('framework')).to.equal('jasmine')
 			expect(String(config.get('src_files'))).to.equal('implementation.js,tests.js')
 		})
 	})
+	
+	describe('read json config file', function(){
+		var config
+		beforeEach(function(done){
+			var progOptions = {
+				file: __dirname + '/testem.json'
+			}
+			config = new Config(progOptions)
+			config.read(done)
+		})
+		it('gets properties from config file', function(){
+			expect(config.get('framework')).to.equal('mocha')
+			expect(String(config.get('src_files'))).to.equal('impl.js,tests.js')
+		})
+	})
+
+	it('give precendence to json config file', function(){
+		var config = new Config({})
+		config.read(function(){
+			expect(config.get('framework')).to.equal('mocha')
+		})
+	})
+
 	it('returns whether isCwdMode (read js files from current dir)', function(){
 		test.stub(config, 'get', function(key){
 			return null
