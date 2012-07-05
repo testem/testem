@@ -1,0 +1,5 @@
+{
+    "dependencies" : {
+        "socket.io" : "0.8.5"
+    }
+}

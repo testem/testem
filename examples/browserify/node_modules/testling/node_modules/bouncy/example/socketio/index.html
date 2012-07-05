@@ -1,0 +1,14 @@
+<html>
+<head>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    var socket = io.connect();
+    socket.on('news', function (data) {
+        document.body.innerHTML += data.news;
+        socket.emit('blues', "I've got the bouncy websocket spec blues.");
+    });
+</script>
+</head>
+<body>
+</body>
+</html>

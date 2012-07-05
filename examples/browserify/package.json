@@ -1,0 +1,9 @@
+{
+  "name": "browserify-example",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "testling": "~0.2.5",
+    "testem-testling-adapter": "0.1.1"
+  }
+}
