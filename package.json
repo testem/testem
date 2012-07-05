@@ -60,8 +60,6 @@
   "bin": {
     "testem": "./testem.js"
   },
-  "bundleDependencies": [
-    "tap"
-  ],
+  "bundleDependencies": [],
   "optionalDependencies": {}
 }
