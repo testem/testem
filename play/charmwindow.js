@@ -53,7 +53,7 @@ function initCharm(){
     charm.reset()
     charm.on('data', function(buf){
         charm.erase('screen')
-        tty.setRawMode(false)
+        process.stdin.setRawMode(false)
         charm.destroy()
         process.exit()
     })
