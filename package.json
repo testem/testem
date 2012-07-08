@@ -33,7 +33,8 @@
     "async": "0.1.15",
     "rimraf": "*",
     "underscore": "*",
-    "backbone": "*"
+    "backbone": "*",
+    "testem-node": "0.1.0"
   },
   "files": [
     "docs",

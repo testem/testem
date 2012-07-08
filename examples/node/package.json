@@ -1,0 +1,8 @@
+{
+  "name": "testem-node-example",
+  "private": true,
+  "version": "0.0.1",
+  "dependencies": {
+    "tap": "~0.2.5"
+  }
+}
