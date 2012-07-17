@@ -9,7 +9,7 @@ program
     .version(require(__dirname + '/package').version)
     .usage('[options]')
     .option('-f, --file [file]', 'Config file. Defaults to testem.json or testem.yml')
-    .option('-p, --port [num]', 'Server port - Defaults to 7357', 7357)
+    .option('-p, --port [num]', 'Server port - Defaults to 7357', Number)
     .option('-d, --debug', 'Output debug to debug log')
     .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
 
