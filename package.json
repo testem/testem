@@ -33,9 +33,11 @@
     "async": "0.1.15",
     "rimraf": "*",
     "underscore": "*",
-    "backbone": "*"
+    "backbone": "*",
+    "testem-testling-adapter": "~0.1.1"
   },
   "files": [
+    "adapters",
     "docs",
     "examples",
     "lib",
