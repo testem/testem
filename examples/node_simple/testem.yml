@@ -1,0 +1,9 @@
+launchers:
+	mocha:
+		exec: "mocha tests.js"
+dev_mode:
+	auto_start:
+		- mocha
+ci_mode:
+	auto_start:
+		- mocha
