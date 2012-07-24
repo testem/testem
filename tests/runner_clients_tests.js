@@ -1,4 +1,7 @@
-var BrowserClient = require('../lib/browserclient.js')
+
+var runner_clients = require('../lib/runner_clients')
+  , BrowserClient = runner_clients.BrowserClient
+  , ProcessClient = runner_clients.ProcessClient
   , test = require('./testutils.js')
   , EventEmitter = require('events').EventEmitter
   , expect = test.expect
@@ -98,4 +101,35 @@ describe('BrowserClient', function(){
         socket.emit('disconnect')
         expect(server.removeBrowser.calledWith(client))
     })
+})
+
+describe('ProcessClient', function(){
+    var client
+    var onStdoutData
+    beforeEach(function(){
+        client = new ProcessClient({
+            app: {}
+            , launcher: {
+                process: {
+                    on: function(){}
+                    , stdout: {
+                        on: function(evt, cb){
+                            if (evt === 'data')
+                                onStdoutData = cb
+                        }
+                    }
+                }
+            }
+        })
+    })
+    it('should instantiate', function(){
+    })
+    it('should append data to logOutput', function(){
+        expect(client.get('logOutput')).to.equal('')
+        onStdoutData('blahblah')
+        expect(client.get('logOutput')).to.equal('blahblah')
+        onStdoutData('foofoo')
+        expect(client.get('logOutput')).to.equal('blahblahfoofoo')
+    })
+    it('')
 })

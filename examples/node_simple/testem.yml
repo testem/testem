@@ -1,9 +1,9 @@
+src_files:
+    - tests.js
 launchers:
-	mocha:
-		exec: "mocha tests.js"
-dev_mode:
-	auto_start:
-		- mocha
-ci_mode:
-	auto_start:
-		- mocha
+    Node: 
+        cmd: mocha tests.js -R tap
+        tap_output: true
+auto_launch:
+    dev_mode: 
+    - Node

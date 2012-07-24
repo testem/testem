@@ -1,0 +1,4 @@
+auto_launch:
+    dev_mode:
+    - Safari
+    - Chrome
