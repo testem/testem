@@ -2,8 +2,7 @@ src_files:
     - tests.js
 launchers:
     Node: 
-        cmd: mocha tests.js -R tap
-        tap_output: true
+        cmd: node spawn.js
 auto_launch:
     dev_mode: 
     - Node

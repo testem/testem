@@ -4,19 +4,19 @@ var expect = require('chai').expect
 describe('hello', function(){
 	it('should say hello', function(done){
 		expect(hello()).to.equal('hello world')
-        //setTimeout(done, 1000)
-        console.error('hello there?')
-        done()
+        console.error(hello())
+        setTimeout(done, 500)
 	})
 
     it('should also be awesome', function(done){
-        console.error('yeah, and then what?')
         //setTimeout(done, 1000)
+        console.error('hello')
         done()
     })
 
-    it('should change reality', function(done){
-        console.error('What? 1 isnt 2?')
+    it('should not change reality', function(done){
+        
+        console.error('hello again')
         expect(1).to.equal(2)
         //setTimeout(done, 1000)
         done()
