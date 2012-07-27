@@ -1,8 +1,11 @@
+framework: mocha
 src_files:
+    - chai.js
+    - hello.js
     - tests.js
 launchers:
     Node: 
-        cmd: node spawn.js
+        cmd: mocha tests.js -R tap
 auto_launch:
     dev_mode: 
     - Node
