@@ -25,7 +25,7 @@ describe('hello', function(){
 
     it('should also be awesome', function(done){
         //setTimeout(done, 1000)
-        console.error('hello')
+        console.log('hello')
         done()
     })
 

@@ -22,7 +22,7 @@ function mochaAdapter(socket){
 	}
 
 	window.onerror = function(msg, url, line){
-	    emit('error', msg, url, line)
+	    emit('top-level-error', msg, url, line)
 	}
 
 	var oEmit = mocha.Runner.prototype.emit

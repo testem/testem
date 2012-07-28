@@ -122,6 +122,26 @@ function init(){
     addListener(window, 'load', initUI)
 }
 
+function takeOverConsole(){
+    var console = window.console
+    if (!console) return
+    function intercept(method){
+        var original = console[method]
+        console[method] = function(){
+            var message = Array.prototype.slice.apply(arguments).join(' ')
+            socket.emit(method, message)
+            if (original.call){
+                original.call(console, message)
+            }else{
+                original(message)
+            }
+        }
+    }
+    var methods = ['log', 'warn', 'error']
+    for (var i = 0; i < methods.length; i++)
+        intercept(methods[i])
+}
+takeOverConsole()
 init()
 
 window.Testem = {
