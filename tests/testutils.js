@@ -7,6 +7,8 @@ var fs = require('fs')
 
 exports.expect = chai.expect
 
+exports.sinon = sinon
+
 exports.spy = sinon.spy
 
 exports.stub = sinon.stub

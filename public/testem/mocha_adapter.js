@@ -37,7 +37,7 @@ function mochaAdapter(socket){
 					{ passed: 1
 					, failed: 0
 					, total: 1
-					, id: id + 1
+					, id: id++
 					, name: test.title
 					, items: []
 					}
@@ -56,7 +56,7 @@ function mochaAdapter(socket){
 					{ passed: 0
 					, failed: 1
 					, total: 1
-					, id: id + 1
+					, id: id++
 					, name: test.title
 					, items: items
 					}

@@ -1,0 +1,9 @@
+src_files:
+    - tests/styled_string_tests.js
+    - lib/styled_string.js
+launchers:
+    Mocha:
+        cmd: mocha tests/styled_string_tests.js
+auto_launch:
+    dev_mode:
+        - Mocha
