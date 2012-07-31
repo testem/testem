@@ -7,6 +7,6 @@ launchers:
     Node: 
         cmd: mocha tests.js -R tap
         protocol: tap
-#auto_launch:
-#    dev_mode: 
-#    - Node
+auto_launch:
+    dev_mode: 
+    - Node

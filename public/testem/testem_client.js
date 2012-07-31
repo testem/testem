@@ -130,9 +130,11 @@ function takeOverConsole(){
         console[method] = function(){
             var message = Array.prototype.slice.apply(arguments).join(' ')
             socket.emit(method, message)
-            if (original.call){
-                original.call(console, message)
+            if (original.apply){
+                // Do this for normal browsers
+                original.apply(console, arguments)
             }else{
+                // Do this for IE
                 original(message)
             }
         }
@@ -141,6 +143,7 @@ function takeOverConsole(){
     for (var i = 0; i < methods.length; i++)
         intercept(methods[i])
 }
+
 takeOverConsole()
 init()
 
