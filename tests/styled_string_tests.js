@@ -20,6 +20,10 @@ describe('StyledString', function(){
         expect(s1.length).to.equal(2)
         expect(s1.attrs.foreground).to.equal('red')
     })
+    it('has substr too', function(){
+        var s = StyledString('abc')
+        expect(s.substr === s.substring).to.be.ok
+    })
     it('can substring a compound string (1 arg)', function(){
         var s1 = StyledString('abc', {foreground: 'red'})
         var s2 = StyledString('def', {foreground: 'blue'})
