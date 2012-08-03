@@ -34,6 +34,10 @@ describe('StyledString', function(){
         var s3 = s1.concat(s2)
         expect(s3.substring(1, 3).toString()).to.equal('\033[31mbc\033[0m')
         expect(s3.substring(2, 5).toString()).to.equal('\033[31mc\033[0m\033[34mde\033[0m')
+        expect(s3.substring(3, 5).toString()).to.equal('\033[34mde\033[0m')
+        expect(s3.substring(4, 6).toString()).to.equal('\033[34mef\033[0m')
+        expect(s3.substring(4, 100).toString()).to.equal('\033[34mef\033[0m')
+        expect(s3.substring(0, 100).toString()).to.equal('\033[31mabc\033[0m\033[34mdef\033[0m')
     })
     it('can match', function(){
         var s = StyledString('abc', {foreground: 'red'})
