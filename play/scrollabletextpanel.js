@@ -18,25 +18,43 @@ var AppView = View.extend({
     , initialize: function(attrs){
         this.initCharm()
         var size = process.stdout.getWindowSize()
+        var text = StyledString('hello world\n', {foreground: 'red'}).concat(
+            StyledString('abcdefghijklmnopqrstuvwxyz1234567890')
+            , StyledString('ABCDEFGHIJKLMNOPQRSTUVWXYZ', {
+                background: 'red'
+                , foreground: 'white'
+            }))
+        for (var i = 0; i < 10; i++){
+            text = text.concat(
+                StyledString('\n' + i)
+                , StyledString('abc', {
+                    background: 'red'
+                    , foreground: 'white'
+                })
+            )
+        }
         this.textPanel = new ScrollableTextPanel({
             line: 0
             , col: 0
             , width: size[0]
-            , height: size[1]
-            , text: 
-                StyledString('hello world\n', {foreground: 'red'}).concat(
-                    StyledString('bla blah blah blah blah blah. what are you up to ')
-                    , StyledString('today?', {
-                        background: 'red'
-                        , foreground: 'white'
-                    }))
+            , height: size[1] - 5
+            , text: text
+            , appview: this
+        })
+        this.textPanel2 = new ScrollableTextPanel({
+            line: size[1] - 5
+            , col: 0
+            , width: size[0]
+            , height: 5
+            , text: text
+            , appview: this
         })
         var self = this
         setInterval(function(){
             getTermSize(function(cols, lines){
                 self.textPanel.set({
                     width: cols
-                    , height: lines
+                    , height: lines - 5
                 })
             })
         }, 500)
@@ -45,7 +63,7 @@ var AppView = View.extend({
         var charm = this.charm
         charm.reset()
         charm.erase('screen')
-        charm.cursor(false)
+        //charm.cursor(false)
         charm.on('data', this.onInputChar.bind(this))
         charm.on('^C', function(buf){
             this.cleanup(function(){
@@ -58,18 +76,14 @@ var AppView = View.extend({
             var chr = String(buf).charAt(0)
               , i = chr.charCodeAt(0)
               , key = (buf[0] === 27 && buf[1] === 91) ? buf[2] : null
-            if (buf[0] === 27 && buf[1] === 98)
-                this.scrollLeft()
-            else if (buf[0] === 27 && buf[1] === 102)
-                this.scrollRight()
-            else if (key === 67) // right arrow
-                this.nextTab()
+            if (key === 67) // right arrow
+                this.textPanel2.scrollUp()
             else if (key === 68) // left arrow
-                this.prevTab()
+                this.textPanel2.scrollDown()
             else if (key === 66) // down arrow
                 this.textPanel.scrollDown()
             else if (key === 65) // up arrow
-                this.textPanel.logPanel.scrollUp()
+                this.textPanel.scrollUp()
             this.trigger('inputChar', chr, i)
         }catch(e){
             log.error('In onInputChar: ' + e + '\n' + e.stack)
