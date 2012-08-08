@@ -8,7 +8,6 @@ Testem`s adapter for Mocha. It works by monkey-patching `Runner.prototype.emit`.
 */
 
 function mochaAdapter(socket){
-
 	var results = 
 		{ failed: 0
 	    , passed: 0
@@ -22,7 +21,7 @@ function mochaAdapter(socket){
 	}
 
 	window.onerror = function(msg, url, line){
-	    emit('top-level-error', msg, url, line)
+		emit('top-level-error', msg, url, line)
 	}
 
 	var oEmit = mocha.Runner.prototype.emit

@@ -10,3 +10,4 @@ launchers:
 auto_launch:
     dev_mode: 
     - Node
+    - Chrome

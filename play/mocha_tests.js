@@ -1,10 +1,8 @@
-if (typeof require !== 'undefined'){
-    var hello = require('./hello')
-    var expect = require('chai').expect
-}else{
-    var expect = chai.expect
-}
+var expect = require('chai').expect
 
+function hello(){
+    return 'hello world'
+}
 
 describe('hello', function(){
 
@@ -17,11 +15,11 @@ describe('hello', function(){
         console.log = originalConsoleLog
     })*/
 
-	it('should say hello', function(done){
-		expect(hello()).to.equal('hello world eue')
+    it('should say hello', function(done){
+        expect(hello()).to.equal('hello world eue')
         console.error(hello() + ' to you')
         setTimeout(done, 500)
-	})
+    })
 
     it('should also be awesome', function(done){
         //setTimeout(done, 1000)

@@ -85,7 +85,7 @@ function initUI(){
     elm.innerHTML = markup
     document.body.appendChild(elm)
 
-    initTestFrameworkHooks()
+    
 }
 
 function initTestFrameworkHooks(){
@@ -107,6 +107,7 @@ var addListener = window.addEventListener ?
     }
 
 function init(){
+
     socket = io.connect()
     socket.emit('browser-login', getBrowserName(navigator.userAgent))
     socket.on('connect', function(){
@@ -119,6 +120,7 @@ function init(){
     })
     socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
+    initTestFrameworkHooks()
     addListener(window, 'load', initUI)
 }
 
