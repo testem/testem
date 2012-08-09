@@ -20,8 +20,13 @@ function mochaAdapter(socket){
 	    socket.emit.apply(socket, arguments)
 	}
 
-	window.onerror = function(msg, url, line){
-		emit('top-level-error', msg, url, line)
+	function getFullName(test){
+		var name = ''
+		while (test){
+			name = test.title + ' ' + name
+			test = test.parent
+		}
+		return name.replace(/^ /, '')
 	}
 
 	var oEmit = mocha.Runner.prototype.emit
@@ -31,13 +36,14 @@ function mochaAdapter(socket){
 		}else if (evt === 'end'){
 			emit('all-test-results', results)
 		}else if (evt === 'test end'){
+			var name = getFullName(test)
 			if (test.state === 'passed'){
 				var tst = 
 					{ passed: 1
 					, failed: 0
 					, total: 1
 					, id: id++
-					, name: test.title
+					, name: name
 					, items: []
 					}
 				results.passed++
@@ -56,7 +62,7 @@ function mochaAdapter(socket){
 					, failed: 1
 					, total: 1
 					, id: id++
-					, name: test.title
+					, name: name
 					, items: items
 					}
 				results.failed++

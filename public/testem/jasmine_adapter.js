@@ -20,10 +20,6 @@ function jasmineAdapter(socket){
         socket.emit.apply(socket, arguments)
     }
 
-    window.onerror = function(msg, url, line){
-        emit('top-level-error', msg, url, line)
-    }
-
     function JasmineAdapterReporter(){}
     JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
         emit('tests-start')

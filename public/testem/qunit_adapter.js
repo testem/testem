@@ -25,10 +25,6 @@ function qunitAdapter(socket){
       , currentModule
       , id = 1
 
-    window.onerror = function(msg, url, line){
-        emit('top-level-error', msg, url, line)
-    }
-
     function emit(){
         socket.emit.apply(socket, arguments)
     }

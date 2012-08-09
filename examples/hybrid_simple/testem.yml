@@ -5,9 +5,8 @@ src_files:
     - tests.js
 launchers:
     Node: 
-        cmd: mocha tests.js -R tap
+        command: mocha tests.js -R tap
         protocol: tap
-auto_launch:
-    dev_mode: 
+auto_launch_in_dev:
     - Node
     - Chrome

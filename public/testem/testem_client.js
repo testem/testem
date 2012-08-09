@@ -107,7 +107,8 @@ var addListener = window.addEventListener ?
     }
 
 function init(){
-
+    takeOverConsole()
+    interceptWindowOnError()
     socket = io.connect()
     socket.emit('browser-login', getBrowserName(navigator.userAgent))
     socket.on('connect', function(){
@@ -146,7 +147,12 @@ function takeOverConsole(){
         intercept(methods[i])
 }
 
-takeOverConsole()
+function interceptWindowOnError(){
+    window.onerror = function(msg, url, line){
+        socket.emit('top-level-error', msg, url, line)
+    }
+}
+
 init()
 
 window.Testem = {
