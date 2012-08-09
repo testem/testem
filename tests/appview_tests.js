@@ -5,11 +5,11 @@ var appview = require('../lib/appview.js')
   , async = require('async')
   , Backbone = require('backbone')
 
-describe('BrowserTab', function(){
-	var tab, browser, app, position, write, results, tests
+describe('RunnerTab', function(){
+	var tab, runner, app, position, write, results, tests
 	beforeEach(function(){
 		app = new Backbone.Model()
-		browser = new Backbone.Model({
+		runner = new Backbone.Model({
 			results: results = new Backbone.Model({
 				tests: tests = new Backbone.Collection
 			})
@@ -20,8 +20,8 @@ describe('BrowserTab', function(){
 			, foreground: function(){return this}
 			, display: function(){return this}
 		}
-		tab = new appview.BrowserTab({
-			browser: browser
+		tab = new appview.RunnerTab({
+			runner: runner
 			, index: 0
 			, appview: app
 		})
@@ -49,10 +49,10 @@ describe('BrowserTab', function(){
 		tab.set('selected', true)
 		expect(tab.renderTab.callCount).to.equal(1)
 	})
-	it('should render browser name if browser name changed', function(){
-		test.spy(tab, 'renderBrowserName')
-		browser.set('name', 'IE 9.0')
-		expect(tab.renderBrowserName.callCount).to.equal(1)
+	it('should render runner name if runner name changed', function(){
+		test.spy(tab, 'renderRunnerName')
+		runner.set('name', 'IE 9.0')
+		expect(tab.renderRunnerName.callCount).to.equal(1)
 	})
 	it('should render results if results changed', function(){
 		test.spy(tab, 'renderResults')
@@ -62,10 +62,10 @@ describe('BrowserTab', function(){
 })
 
 describe('LogPanel', function(){
-	var logPanel, charm, position, write, browser, av, results, tests
+	var logPanel, charm, position, write, runner, av, results, tests
 	beforeEach(function(){
 		av = new Backbone.Model()
-		browser = new Backbone.Model({
+		runner = new Backbone.Model({
 			results: results = new Backbone.Model({
 				tests: tests = new Backbone.Collection
 			})
@@ -79,7 +79,7 @@ describe('LogPanel', function(){
 		logPanel = new appview.LogPanel({
 			line: 6
 			, col: 1
-			, browser: browser
+			, runner: runner
 			, appview: av
 		})
 	})
