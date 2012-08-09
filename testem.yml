@@ -3,7 +3,7 @@ src_files:
     - lib/styled_string.js
 launchers:
     Mocha:
-        cmd: mocha tests/styled_string_tests.js
-auto_launch:
-    dev_mode:
-        - Mocha
+        command: mocha tests/styled_string_tests.js -R tap
+        protocol: tap
+auto_launch_in_dev:
+    - Mocha

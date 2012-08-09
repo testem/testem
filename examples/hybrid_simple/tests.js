@@ -6,7 +6,7 @@ if (typeof require !== 'undefined'){
 }
 
 
-describe('hello', function(){
+describe('hello', function(){{
 
     it('should say hello', function(done){
         expect(hello()).to.equal('hello world')

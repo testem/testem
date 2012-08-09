@@ -107,31 +107,11 @@ describe('StyledString', function(){
         var ss = s3.split(',')
         expect(ss.length).to.equal(1)
     })
-
-    describe('split line bug', function(){
-        it('can split into lines', function(){
-            function splitLines(text, colLimit){
-                if (!text) return []
-                var firstSplit = text.split('\n')
-                var secondSplit = []
-                firstSplit.forEach(function(line){
-                    while (line.length > colLimit){
-                        var first = line.substring(0, colLimit)
-                        secondSplit.push(first)
-                        line = line.substring(colLimit)
-                    }
-                    if (line.length > 0) secondSplit.push(line)
-                })
-                return secondSplit
-            }
-            var s = StyledString('hello should also be awesome', {foreground: 'cyan'})
-            var lines = splitLines(s, 20)
-            expect(lines.length).to.equal(2)
-            expect(lines[0] instanceof StyledString)
-            expect(lines[0].toString()).to.equal('\u001b[36mhello should also be\u001b[0m')
-            expect(lines[1] instanceof StyledString)
-            expect(lines[1].toString()).to.equal('\u001b[36m awesome\u001b[0m')
-        })
+    it('gives unstyled string back', function(){
+        var s1 = StyledString('abc', {foreground: 'red'})
+        expect(s1.unstyled()).to.equal('abc')
+        var s2 = StyledString('def', {foreground: 'green'})
+        var s3 = s1.concat(s2)
+        expect(s3.unstyled()).to.equal('abcdef')
     })
-
 })
