@@ -9,3 +9,4 @@ launchers:
         protocol: tap
 auto_launch_in_dev:
     - Chrome
+    - Node

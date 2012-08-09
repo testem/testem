@@ -5,4 +5,4 @@ function hello(){
 
 if (typeof module !== 'undefined' && module.exports){
     module.exports = hello
-}}
+}
