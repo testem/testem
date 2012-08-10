@@ -3,37 +3,51 @@
 var log = require('winston')
   , program = require('commander')
   , progOptions = program
-  , ci = false
+  , Config = require('./lib/config')
+  , command
   
 program
     .version(require(__dirname + '/package').version)
     .usage('[options]')
-    .option('-f, --file [file]', 'Config file. Defaults to testem.json or testem.yml')
-    .option('-p, --port [num]', 'Server port - Defaults to 7357', Number)
-    .option('-d, --debug', 'Output debug to debug log')
-    .option('--debuglog [log]', 'Name of debug log file. Defaults to testem.log', 'testem.log')
+    .option('-f, --file [file]', 'config file - defaults to testem.json or testem.yml')
+    .option('-p, --port [num]', 'server port - defaults to 7357', Number)
+    .option('-l, --launchers [list]', 'list of browsers to auto-launch(comma separated)')
+    .option('-d, --debug', 'output debug to debug log - testem.log')
+
+program
+    .command('launchers')
+    .description('Print the list of available launchers (browsers & process launchers)')
+    .action(function(env){
+        progOptions = env
+        command = 'launchers'
+    })
 
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-b, --browsers [list]', 'List of browsers to test(comma separated).')
-    .option('-s, --skip [list]', 'List of browsers to skip(comma separated).')
-    .option('-l, --list', 'Print the list of available browsers.')
-    .option('-t, --timeout [sec]', 'Timeout a browser after [sec] seconds.', null)
+    .option('-l, --launchers [list]', 'list of browsers to test(comma separated)')
+    .option('-s, --skip [list]', 'list of browsers to skip(comma separated)')
+    .option('-t, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
     .action(function(env){
         env.__proto__ = program
         progOptions = env
-        ci = true
+        command = 'ci'
     })
 
 program.parse(process.argv)
-App = ci ? 
-    require('./lib/ci_mode_app') :
-    require('./lib/dev_mode_app')
-
 log.remove(log.transports.Console)
 if (progOptions.debug){
     log.add(log.transports.File, {filename: progOptions.debuglog})
 }
 
-new App(progOptions)
+var config = new Config(progOptions)
+if (command === 'launchers'){
+    config.read(function(){
+        config.printLauncherInfo()
+    })
+}else{
+    App = command === 'ci' ? 
+        require('./lib/ci_mode_app') :
+        require('./lib/dev_mode_app')
+    new App(config)
+}

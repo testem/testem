@@ -33,7 +33,9 @@
     "async": "0.1.15",
     "rimraf": "*",
     "underscore": "*",
-    "backbone": "*"
+    "backbone": "*",
+    "styled_string": "*",
+    "colors": "*"
   },
   "files": [
     "docs",

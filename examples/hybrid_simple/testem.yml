@@ -7,6 +7,7 @@ launchers:
     Node: 
         command: mocha tests.js -R tap
         protocol: tap
+        launch_in_dev: true
 auto_launch_in_dev:
     - Chrome
     - Node
