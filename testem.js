@@ -37,7 +37,7 @@ program
 program.parse(process.argv)
 log.remove(log.transports.Console)
 if (progOptions.debug){
-    log.add(log.transports.File, {filename: progOptions.debuglog})
+    log.add(log.transports.File, {filename: 'testem.log'})
 }
 
 var config = new Config(progOptions)
