@@ -1,28 +1,37 @@
+#!/usr/bin/env node
+
 var program = require('commander')
+var command
+var env
+program
+    .usage('[options]')
+    .option('-f, --file [file]', 'config file - defaults to testem.json or testem.yml')
+    .option('-p, --port [num]', 'server port - defaults to 7357', Number)
+    .option('-l, --launch [list]', 'list of launchers to launch(comma separated)')
+    .option('-s, --skip [list]', 'list of launchers to skip(comma separated)')
+    .option('-d, --debug', 'output debug to debug log - testem.log')
 
 program
-    .version('0.0.3')
-    .usage('[options]')
-    .option('-f [file]', 'Config file')
-    .option('-p, --port [num]', 'Server port - Defaults to 3580', 3580)
-    .option('-a, --no-autotest', 'Disable autotest')
-    .option('-d, --debug', 'Output debug to debug log')
-    .option('--debuglog', 'Name of debug log file. Defaults to testem.log')
-    .option('--no-phantomjs', 'Disable PhantomJS')
-    
-    
+    .command('launchers')
+    .description('Print the list of available launchers (browsers & process launchers)')
+    .action(function(e){
+        env = e
+        console.log(env)
+        
+    })
+
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-w, --wait [num]', 'Wait for [num] of browsers before auto-starting tests for CI')
-    .option('-t, --tap', 'Output TAP(Test Anything Protocal) files')
-    .option('-o, --output [dir]', 'Output directory for TAP files', '')
-    .action(function(env){
-        console.log('tap: ' + env.tap)
-        console.log('running in CI mode.')
+    .option('-t, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
+    .action(function(e){
+        env = e
+        console.log(env.skip)
+        command = 'ci'
     })
-    
+
+
 program.parse(process.argv)
 
-console.log('autotest: ' + program.autotest)
-console.log('tap: ' + program.tap)
+console.log(program)
+

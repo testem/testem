@@ -1,0 +1,2 @@
+#! /bin/bash
+node play/cmdr.js ci -s Chrome -l Firefox

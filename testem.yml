@@ -1,9 +1,9 @@
 src_files:
-    - tests/styled_string_tests.js
-    - lib/styled_string.js
+    - lib/catchem.js
+    - tests/catchem_tests.js
 launchers:
     Mocha:
-        command: mocha tests/styled_string_tests.js -R tap
+        command: mocha tests/catchem_tests.js -R tap
         protocol: tap
 auto_launch_in_dev:
     - Mocha
