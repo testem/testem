@@ -1,6 +1,6 @@
 var test = require('./testutils.js')
 var expect = test.expect
-var StyledString = require('../lib/styled_string')
+var StyledString = require('styled_string')
 var splitLines = require('../lib/splitlines')
 
 describe('splitLines', function(){

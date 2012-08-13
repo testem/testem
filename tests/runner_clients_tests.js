@@ -1,12 +1,12 @@
 
-var runner_clients = require('../lib/runner_clients')
-  , BrowserClient = runner_clients.BrowserClient
-  , ProcessClient = runner_clients.ProcessClient
+var runner_clients = require('../lib/runners')
+  , BrowserRunner = runner_clients.BrowserRunner
+  , ProcessRunner = runner_clients.ProcessRunner
   , test = require('./testutils.js')
   , EventEmitter = require('events').EventEmitter
   , expect = test.expect
 
-describe('BrowserClient', function(){
+describe('BrowserRunner', function(){
     var socket, app, client, server
     beforeEach(function(){
         socket = new EventEmitter
@@ -18,7 +18,7 @@ describe('BrowserClient', function(){
         app = {
             server: server
         }
-        client = new BrowserClient({
+        client = new BrowserRunner({
             client: socket
             , app: app
         })
@@ -103,11 +103,11 @@ describe('BrowserClient', function(){
     })
 })
 
-describe('ProcessClient', function(){
+describe('ProcessRunner', function(){
     var client
     var onStdoutData
     beforeEach(function(){
-        client = new ProcessClient({
+        client = new ProcessRunner({
             app: {}
             , launcher: {
                 process: {
