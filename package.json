@@ -57,7 +57,8 @@
     "sinon": "*",
     "async": "*",
     "chai": "*",
-    "sinon-chai": "*"
+    "sinon-chai": "*",
+    "bufferstream": "*"
   },
   "bin": {
     "testem": "./testem.js"
