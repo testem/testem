@@ -1,4 +1,4 @@
-./testem.js ci -l
+./testem.js launchers
 cd examples
 for dir in $(ls)
 do

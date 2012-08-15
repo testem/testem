@@ -1,5 +1,5 @@
 @echo off
-node testem.js ci -l
+node testem.js launchers
 for /f %%a in ('dir /ad /b examples') do call :testem %%a
 
 exit /b
