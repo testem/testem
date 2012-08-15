@@ -1,21 +1,75 @@
 var Launcher = require('../lib/launcher')
-  , test = require('./testutils.js')
-  , expect = test.expect
+var expect = require('chai').expect
+var stub = require('sinon').stub
+var spy = require('sinon').spy
 
 describe('Launcher', function(){
-	it('should instantiate', function(){
-		var l = new Launcher('Foo')
-		expect(l.name).to.equal('Foo')
-	})
-	it('should launch something, and also kill it', function(done){
-		var launcher = new Launcher('Yes', {
-			exe: 'yes'
+	var settings, app, launcher
 
+	describe('via command', function(){
+		beforeEach(function(){
+			settings = {command: 'echo hello'}
+			app = {url: 'http://blah.com'}
+			launcher = new Launcher('say hello', settings, app)
 		})
-		launcher.launch()
-		setTimeout(function(){
+		it('should instantiate', function(){
+			expect(launcher.name).to.equal('say hello')
+			expect(launcher.settings).to.equal(settings)
+		})
+		it('should launch something, and also kill it', function(done){
+			launcher.launch()
+			var data = ''
+			launcher.process.stdout.on('data', function(chunk){
+				data += String(chunk)
+			})
+			setTimeout(function(){
+				expect(data).to.equal('hello\n')
+				launcher.kill('SIGKILL', function(){
+					done()
+				})
+			}, 10)
+		})
+		it('should be process iff protocol is not browser', function(){
+			settings.protocol = 'browser'
+			expect(launcher.isProcess()).not.to.be.ok
+			settings.protocol = 'tap'
+			expect(launcher.isProcess()).to.be.ok
+			delete settings.protocol
+			expect(launcher.isProcess()).to.be.ok
+		})
+		it('should launch if not a process and started', function(){
+			stub(launcher, 'isProcess').returns(false)
+			spy(launcher, 'launch')
+			launcher.start()
+			expect(launcher.launch.called).to.be.ok
+		})
+		it('should add new ProcessRunner if start() and is process', function(){
+			stub(launcher, 'isProcess').returns(true)
+			var push = spy()
+			app.runners = { push: push }
+			launcher.start()
+			var runner = push.args[0][0]
+			expect(runner.get('app')).to.equal(app)
+			expect(runner.get('launcher')).to.equal(launcher)
+		})
+	})
 
-			launcher.kill(done)
-		}, 1000)
+	describe('via exe', function(){
+		it('sholud launch and also kill it', function(done){
+			settings = {exe: 'echo', args: ['hello']}
+			app = {url: 'http://blah.com'}
+			launcher = new Launcher('say hello', settings, app)
+			launcher.launch()
+			var data = ''
+			launcher.process.stdout.on('data', function(chunk){
+				data += String(chunk)
+			})
+			setTimeout(function(){
+				expect(data).to.equal('hello http://blah.com\n')
+				launcher.kill('SIGKILL', function(){
+					done()
+				})
+			}, 10)
+		})
 	})
 })

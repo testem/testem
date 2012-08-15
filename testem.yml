@@ -1,9 +1,10 @@
 src_files:
-    - lib/catchem.js
-    - tests/catchem_tests.js
+    - lib/server.js
+    - tests/server_tests.js
 launchers:
     Mocha:
-        command: mocha tests/catchem_tests.js -R tap
+        command: mocha server_tests.js -R tap
         protocol: tap
-auto_launch_in_dev:
+        cwd: tests
+launch_in_dev:
     - Mocha
