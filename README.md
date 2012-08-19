@@ -3,7 +3,20 @@ Test&rsquo;em &rsquo;Scripts!
 
 [![Build Status](https://secure.travis-ci.org/airportyh/testem.png?branch=master)](http://travis-ci.org/airportyh/testem)
 
-Javascript unit testing can be tedious and painful. Testem aims to make Javascript unit testing in browsers as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. Testem supports [Jasmine](http://pivotal.github.com/jasmine/), [QUnit](http://docs.jquery.com/QUnit) and [Mocha](http://visionmedia.github.com/mocha/) right out of the box, and can be made to work with others via custom test framework adapters. It supports two distinct use-cases: the *test-driven-development(TDD)* workflow; and *continuous integration(CI)*. 
+Javascript unit testing can be tedious and painful - Testem aims to make this as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. 
+
+Features
+--------
+
+* Test framework agnostic. Support for
+    - [Jasmine](http://pivotal.github.com/jasmine/)
+    - [QUnit](http://docs.jquery.com/QUnit) and
+    - [Mocha](http://visionmedia.github.com/mocha/)
+    - Can be made to work with others through custom test framework adapters. 
+* Running tests in browsers as well as in [Node](http://nodejs.org)
+* Two distinct use-cases: 
+    - *Test-Driven-Development(TDD)* workflow
+    - *Continuous Integration(CI)*. 
 
 Screencast
 ----------
