@@ -3,7 +3,7 @@ Test&rsquo;em &rsquo;Scripts!
 
 [![Build Status](https://secure.travis-ci.org/airportyh/testem.png?branch=master)](http://travis-ci.org/airportyh/testem)
 
-Javascript unit testing can be tedious and painful - Testem aims to make this as easy as it possibly can be - so that you will no longer have *any* excuse for not writing tests. 
+Javascript unit testing can be tedious and painful, but Testem makes it so *easy* that you will actually *want to* write tests. 
 
 Features
 --------
