@@ -10,7 +10,7 @@ Features
 
 * Test framework agnostic. Support for
     - [Jasmine](http://pivotal.github.com/jasmine/)
-    - [QUnit](http://docs.jquery.com/QUnit) and
+    - [QUnit](http://docs.jquery.com/QUnit)
     - [Mocha](http://visionmedia.github.com/mocha/)
     - Can be made to work with others through custom test framework adapters. 
 * Running tests in browsers as well as in [Node](http://nodejs.org)
@@ -41,7 +41,8 @@ Usage
 
 As stated before, Testem supports two use cases: test-driven-development and continuous integration. Let's go over each one.
 
-### Development Mode
+Development Mode
+----------------
 
 The simplest way to use Testem, in the TDD spirit, is to start in an empty directory and run the command
 
@@ -78,7 +79,7 @@ So you should now see
 
 ![Green](https://github.com/airportyh/testem/raw/master/images/green.png)
     
-#### Using the Text User Interface
+### Using the Text User Interface
 
 In development mode, Testem has a text-based graphical user interface which uses keyboard-based controls. Here is a list of the control keys
 
@@ -88,14 +89,15 @@ In development mode, Testem has a text-based graphical user interface which uses
 * → RIGHT ARROW : Move to the next browser tab on the right
 * ↑ UP ARROW : scroll up in the error window
 * ↓ DOWN ARROW : scroll down in the error window
+* TAB : switch between the top and bottom halves of the split panel (if a split is present)
 
-#### Command line options
+### Command line options
 
 To see all command line options do
 
     testem --help
 
-#### DIY: Use Any Test Framework
+### DIY: Use Any Test Framework
 
 If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
@@ -105,7 +107,7 @@ Then, to use it, in your `testem.yml` simply set
 
 And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
 
-#### Example Projects
+### Example Projects
 
 I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
 
@@ -116,7 +118,8 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
 * [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
-### Continuous Integration Mode
+Continuous Integration Mode
+---------------------------
 
 To use Testem for continuous integration you'd do
 
@@ -156,18 +159,7 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
-#### Selecting Specific Browsers
-
-To select a specific browser or set of browsers, use the `-b` option:
-
-    testem ci -b IE9
-    testem ci -b Firefox,Chrome
-
-To skip a specific browser or set of browsers, use the `-s` option:
-
-    testem ci -s IE7  # don't run on IE7
-
-#### Command line options
+### Command line options
 
 To see all command line options for CI, do
 
@@ -208,8 +200,51 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
         document.write('<script src="/testem.js"></'+'script>')
     </script>
 
-Go Completely Headless with PhantomJS
--------------------------------------
+Launchers
+---------
+
+Testem has the ability to automatically launch browsers or processes for you. To see the list of launchers Testem knows about, you can use the command
+
+    testem launchers
+
+This will display something like the following
+
+    Have 5 launchers available; auto-launch info displayed on the right.
+
+    Launcher      Type          CI  Dev
+    ------------  ------------  --  ---
+    Chrome        browser       ✔           
+    Firefox       browser       ✔           
+    Safari        browser       ✔           
+    Opera         browser       ✔           
+    Mocha         process(TAP)  ✔
+
+This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process - as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in Dev-mode.
+
+Running Tests in Node
+---------------------
+
+To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.yml`
+
+    launchers:
+        Mocha:
+            command: mocha tests/*_tests.js
+
+When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
+
+### Processes with TAP Output
+
+If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
+
+    launchers:
+        Mocha:
+            command: mocha tests/*_tests.js -R tap
+            protocol: tap
+
+When this is done, Testem will read in the process' stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process' stdout output from the console log panel, although it will still display the stderr.
+
+PhantomJS
+---------
 
 If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
 
