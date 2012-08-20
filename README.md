@@ -17,6 +17,10 @@ Features
 * Two distinct use-cases: 
     - *Test-Driven-Development(TDD)* workflow
     - *Continuous Integration(CI)*. 
+* Cross platform support
+    - OSX
+    - Windows
+    - Linux
 
 Screencast
 ----------
