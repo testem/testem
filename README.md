@@ -131,11 +131,11 @@ To use Testem for continuous integration you'd do
     
 In CI mode, Testem runs your tests on all the browsers that are available on the system one after another. To find out what browsers are currently available - those that Testem knows about and can make use of
 
-    testem ci -l
+    testem launchers
     
 Will print them out. The output might look like
 
-    $ testem ci -l
+    $ testem launchers
     Browsers available on this system: 
     IE7
     IE8
