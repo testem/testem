@@ -252,6 +252,13 @@ PhantomJS
 
 If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
 
+Known Issues
+------------
+
+1. On Windows, Mocha fails to run under Testem due to an [issue](https://github.com/joyent/node/issues/3871) in Node core. Until that gets resolved, I've made a [workaround](https://github.com/airportyh/mocha/tree/windowsfix) for mocha. To install this fork of Mocha, do
+
+    npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
+
 Contributing
 ------------
 
