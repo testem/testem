@@ -101,28 +101,6 @@ To see all command line options do
 
     testem --help
 
-### DIY: Use Any Test Framework
-
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
-
-Then, to use it, in your `testem.yml` simply set
-
-    framework: custom
-
-And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
-
-### Example Projects
-
-I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
-
-* [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
-* [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
-* [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
-* [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
-* [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
-* [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
-
 Continuous Integration Mode
 ---------------------------
 
@@ -226,8 +204,8 @@ This will display something like the following
 
 This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process - as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in Dev-mode.
 
-Running Tests in Node
----------------------
+Running Tests in Node and Custom Process Launchers
+--------------------------------------------------
 
 To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.yml`
 
@@ -237,7 +215,8 @@ To run tests in Node you need to create a custom launcher which launchs a proces
 
 When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
 
-### Processes with TAP Output
+Processes with TAP Output
+-------------------------
 
 If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
@@ -252,6 +231,30 @@ PhantomJS
 ---------
 
 If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
+
+DIY: Use Any Test Framework
+---------------------------
+
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+
+Then, to use it, in your `testem.yml` simply set
+
+    framework: custom
+
+And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
+
+Example Projects
+----------------
+
+I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
+
+* [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
+* [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
+* [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
+* [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
+* [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
+* [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 Known Issues
 ------------
