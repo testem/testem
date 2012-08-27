@@ -291,6 +291,9 @@ Credits
 
 Testem depends on these great software
 
+* [Jasmine](http://pivotal.github.com/jasmine/)
+* [QUnit](http://code.google.com/p/jqunit/)
+* [Mocha](http://visionmedia.github.com/mocha/)
 * [Node](http://nodejs.org/)
 * [Socket.IO](http://socket.io/)
 * [PhantomJS](http://www.phantomjs.org/)
