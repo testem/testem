@@ -1,4 +1,3 @@
-auto_launch:
-    dev_mode:
-    - Safari
-    - Chrome
+launch_in_dev:
+- Safari
+- Chrome
