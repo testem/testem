@@ -261,7 +261,7 @@ Known Issues
 
 1. On Windows, Mocha fails to run under Testem due to an [issue](https://github.com/joyent/node/issues/3871) in Node core. Until that gets resolved, I've made a [workaround](https://github.com/airportyh/mocha/tree/windowsfix) for mocha. To install this fork of Mocha, do
 
-    npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
+        npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
 
 Contributing
 ------------
