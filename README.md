@@ -120,6 +120,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
+* [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
 * [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 Continuous Integration Mode
