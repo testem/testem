@@ -27,14 +27,11 @@ Screencast
 
 Watch this [screencast](http://youtu.be/ZyUN__C3xgY) to see it in action. 
 
-Requirements
-------------
-
-You need [Node](http://nodejs.org/) version 0.6.2 or later installed on your system.
-
 Installation
 ------------
-To install:
+You need [Node](http://nodejs.org/) version 0.6.2 or later installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
+
+Once you have Node installed:
 
     npm install testem -g
     
