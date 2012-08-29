@@ -25,7 +25,7 @@ Features
 Screencasts
 -----------
 
-Watch this *[introductory screencast](http://www.youtube.com/watch?v=-1mjv4yk5JM)* to see it in action!
+Watch this **[introductory screencast](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action!
 
 Installation
 ------------
