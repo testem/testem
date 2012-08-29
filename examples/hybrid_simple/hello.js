@@ -1,8 +1,8 @@
 function hello(){
-    return 'hello world'
+    return 'hello world';
 }
 
 
 if (typeof module !== 'undefined' && module.exports){
-    module.exports = hello
+    module.exports = hello;
 }
