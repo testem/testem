@@ -15,8 +15,8 @@ Features
     - Can be made to work with others through custom test framework adapters. 
 * Running tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
 * Two distinct use-cases: 
-    - *Test-Driven-Development(TDD)* workflow
-    - *Continuous Integration(CI)*. 
+    - Test-Driven-Development(TDD) - designed to streamline the TDD workflow
+    - Continuous Integration(CI) - designed to work well with popular CI servers like Jenkins or Teamcity 
 * Cross platform support
     - OSX
     - Windows
