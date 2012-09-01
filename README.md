@@ -228,7 +228,11 @@ When this is done, Testem will read in the process' stdout and parse it as TAP, 
 PhantomJS
 ---------
 
-If you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. In development mode, Testem will use it automatically to run your tests for your convenience. For CI, PhantomJS will be one of the available browsers and will be made use of by default.
+PhantomJS will be picked up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Do a
+
+    testem launchers
+
+And verify that it's in the list.
 
 DIY: Use Any Test Framework
 ---------------------------
