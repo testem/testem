@@ -273,12 +273,11 @@ If you want to [contribute to the project](https://github.com/airportyh/testem/b
 Roadmap
 -------
 
-1. Getting feedback from other folks using Testem in the real world, and improve the user experience.
-2. Preprocessor support to enable things like Coffeescript, Browserify, Sass, etc.
+1. Preprocessor support to enable things like Coffeescript, Browserify, Sass, etc.
 2. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
-4. Travis CI integration.
-5. Buster.JS integration.
-6. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
+3. Travis CI integration.
+4. Buster.JS integration.
+5. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
 
 Contributors
 ------------
