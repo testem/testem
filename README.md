@@ -273,14 +273,12 @@ If you want to [contribute to the project](https://github.com/airportyh/testem/b
 Roadmap
 -------
 
-1. Getting feedback from other folks using Testem in the real world, and then improve the user experience as much as possible.
-2. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - after seeing [Bunyip](http://www.thecssninja.com/javascript/bunyip) I was like oh snap! I need to get on this. 
-3. Support for testing Node programs.
-4. Browserify and Testling integration.
+1. Getting feedback from other folks using Testem in the real world, and improve the user experience.
+2. Preprocessor support to enable things like Coffeescript, Browserify, Sass, etc.
+2. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
 4. Travis CI integration.
 5. Buster.JS integration.
 6. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
-7. Direct Coffeescript support.
 
 Contributors
 ------------
