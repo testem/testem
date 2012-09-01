@@ -275,8 +275,6 @@ Roadmap
 
 1. Preprocessor support to enable things like Coffeescript, Browserify, Sass, etc.
 2. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
-3. Travis CI integration.
-4. Buster.JS integration.
 5. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
 
 Contributors
