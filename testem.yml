@@ -3,7 +3,8 @@ src_files:
     - tests/*_tests.js
 launchers:
     Mocha:
-        command: mocha *_tests.js
+        command: mocha *_tests.js -R tap
+        protocol: tap
         cwd: tests
 launch_in_dev:
     - Mocha
