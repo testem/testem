@@ -1,0 +1,4 @@
+framework: jasmine
+before_tests: coffee -c *.coffee
+src_files:
+- hello.js

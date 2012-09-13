@@ -1,0 +1,3 @@
+src_files:
+- browserified.js
+before_tests: browserify tests.js -o browserified.js
