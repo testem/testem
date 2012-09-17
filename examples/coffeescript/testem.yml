@@ -1,6 +1,6 @@
 framework: jasmine
 before_tests: coffee -c *.coffee
 src_files:
-- hello.js
-watch_files:
-- hello.coffee
+- "*.coffee"
+serve_files:
+- "*.js"
