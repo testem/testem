@@ -1,3 +1,6 @@
 src_files:
 - browserified.js
+watch_files:
+- hello.js
+- tests.js
 before_tests: browserify tests.js -o browserified.js

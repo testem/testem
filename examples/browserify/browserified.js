@@ -378,8 +378,8 @@ process.binding = function (name) {
 })();
 });
 
-require.define("/hello.js",function(require,module,exports,__dirname,__filename,process){function hello(){
-    return 'hello world'
+require.define("/hello.js",function(require,module,exports,__dirname,__filename,process){function hello(name){
+    return 'hello ' + (name || 'world')
 }
 
 module.exports = hello});
@@ -389,6 +389,10 @@ require.define("/tests.js",function(require,module,exports,__dirname,__filename,
 describe('hello', function(t){
     it('should return hello', function(){
         expect(hello()).toBe('hello world')
+    })
+
+    it('should say hello to subject', function(){
+        expect(hello('Bob')).toBe('hello Bob')
     })
 })
 });
