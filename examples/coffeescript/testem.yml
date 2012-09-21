@@ -1,0 +1,6 @@
+framework: jasmine
+before_tests: coffee -c *.coffee
+src_files:
+- "*.coffee"
+serve_files:
+- "*.js"

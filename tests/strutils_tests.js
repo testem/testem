@@ -1,7 +1,10 @@
 var test = require('./testutils.js')
 var expect = test.expect
 var StyledString = require('styled_string')
-var splitLines = require('../lib/splitlines')
+var strutils = require('../lib/strutils')
+var splitLines = strutils.splitLines
+var indent = strutils.indent
+var pad = strutils.pad
 
 describe('splitLines', function(){
     it('splits on newline', function(){
@@ -34,5 +37,12 @@ describe('splitLines', function(){
             expect(ss[2].toString()).to.equal('\u001b[31mjkl\u001b[0m')
         })
 
+    })
+})
+
+describe('indent', function(){
+    it('should indent', function(){
+        expect(indent('')).to.equal('    ')
+        expect(indent('abc\ndef')).to.equal('    abc\n    def')
     })
 })
