@@ -1,0 +1,2 @@
+framework: qunit
+before_tests: jshint *.js

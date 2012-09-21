@@ -283,7 +283,9 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
 * [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
 * [Coffeescript Project](https://github.com/airportyh/testem/tree/master/examples/coffeescript)
-* [Browserify Project](https://github.com/airportyh/testem/tree/master/examples/browserify)
+* [Browserify Project](https://github.
+com/airportyh/testem/tree/master/examples/browserify)
+* [JSHint Example](https://github.com/airportyh/testem/tree/master/examples/jshint)
 * [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 Known Issues
