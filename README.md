@@ -23,9 +23,9 @@ Features
     - Linux
 * Preprocessor support
     - Coffeescript
-    - Less
-    - Sass
+    - Less, Sass
     - Browserify
+    - JSHint/JSLint
     - whatever else
 
 Screencasts
