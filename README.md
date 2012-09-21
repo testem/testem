@@ -258,7 +258,7 @@ But, since you want to be serving the `.js` files that are generated and not the
     serve_files:
     - "*.js"
 
-Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like like jshint can used here as well.
+Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
 
 DIY: Use Any Test Framework
 ---------------------------
