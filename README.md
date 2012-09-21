@@ -241,8 +241,8 @@ PhantomJS will be picked up if you have [PhantomJS](http://www.phantomjs.org/) i
 
 And verify that it's in the list.
 
-Preprocessors (Coffeescript, LESS, Sass, etc)
----------------------------------------------
+Preprocessors (Coffeescript, LESS, Sass, Browserify, etc)
+---------------------------------------------------------
 
 If you need to run a preprocessor, or, indeed any shell command before the start of the tests, use the `before_tests` option, such as 
 
@@ -258,6 +258,7 @@ But, since you want to be serving the `.js` files that are generated and not the
     serve_files:
     - "*.js"
 
+Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like like jshint can used here as well.
 
 DIY: Use Any Test Framework
 ---------------------------
