@@ -21,6 +21,12 @@ Features
     - OSX
     - Windows
     - Linux
+* Preprocessor support
+    - Coffeescript
+    - Less
+    - Sass
+    - Browserify
+    - whatever else
 
 Screencasts
 -----------
@@ -257,6 +263,8 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
 * [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Coffeescript Project](https://github.com/airportyh/testem/tree/master/examples/coffeescript)
+* [Browserify Project](https://github.com/airportyh/testem/tree/master/examples/browserify)
 * [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
 
 Known Issues
