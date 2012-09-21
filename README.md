@@ -241,6 +241,24 @@ PhantomJS will be picked up if you have [PhantomJS](http://www.phantomjs.org/) i
 
 And verify that it's in the list.
 
+Preprocessors (Coffeescript, LESS, Sass, etc)
+---------------------------------------------
+
+If you need to run a preprocessor, or, indeed any shell command before the start of the tests, use the `before_tests` option, such as 
+
+    before_tests: coffee -c *.coffee
+
+And Testem will run it before each test run. For file watching, you may still use the `src_files` option
+
+    src_files:
+    - "*.coffee"
+
+But, since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
+
+    serve_files:
+    - "*.js"
+
+
 DIY: Use Any Test Framework
 ---------------------------
 
