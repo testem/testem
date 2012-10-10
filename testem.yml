@@ -8,3 +8,5 @@ launchers:
         cwd: tests
 launch_in_dev:
     - Mocha
+launch_in_ci:
+    - Mocha

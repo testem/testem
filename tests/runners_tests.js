@@ -66,7 +66,7 @@ describe('BrowserRunner', function(){
     })
     it('sets topLevelError when error emitted', function(){
         socket.emit('top-level-error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
-        expect(runner.get('messages').at(0).get('text')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45')
+        expect(runner.get('messages').at(0).get('text')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45\n')
     })
     describe('login', function(){
         beforeEach(function(){
