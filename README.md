@@ -99,6 +99,10 @@ In development mode, Testem has a text-based graphical user interface which uses
 * ↑ UP ARROW : scroll up in the error window
 * ↓ DOWN ARROW : scroll down in the error window
 * TAB : switch between the top and bottom halves of the split panel (if a split is present)
+* SPACE : page down
+* b : page up
+* d : half a page down
+* u : half a page up
 
 ### Command line options
 
