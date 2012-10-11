@@ -23,16 +23,15 @@ Features
     - Linux
 * Preprocessor support
     - Coffeescript
-    - Less, Sass
     - Browserify
     - JSHint/JSLint
-    - whatever else
+    - everything else
 
 Screencasts
 -----------
 
-* Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! Demonstrates the Test-Driven-Development workflow.
-* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) - more detail about launchers: how specify what to auto-launch; and how to configure one yourself to **run tests in Node**!
+* Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
+* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) - more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
 * [Continous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) - details about how CI mode works.
 
 Installation
