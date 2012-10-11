@@ -69,9 +69,9 @@ We see 0/0 for tests because at this point we haven't written any code, but as w
 
     describe('hello', function(){
         it('should say hello', function(){
-            expect(hello()).toBe('hello world')
-        })
-    })
+            expect(hello()).toBe('hello world');
+        });
+    });
     
 Save that file and now you should see
 
@@ -80,7 +80,7 @@ Save that file and now you should see
 Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
     function hello(){
-        return "hello world"
+        return "hello world";
     }
 
 So you should now see
