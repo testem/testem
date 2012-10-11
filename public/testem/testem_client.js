@@ -157,7 +157,7 @@ function initUI(){
 function initTestFrameworkHooks(){
     if (typeof jasmine === 'object'){
         jasmineAdapter(socket)
-    }else if (typeof mocha === 'function'){
+    }else if ((typeof mocha).match(/function|object/)){
         mochaAdapter(socket)
     }else if (typeof QUnit === 'object'){
         qunitAdapter(socket)
