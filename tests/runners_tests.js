@@ -22,19 +22,14 @@ describe('BrowserRunner', function(){
             , server: server
         }
         runner = new BrowserRunner({
-            client: socket
+            name: 'Chrome 19.0'
+            , socket: socket
             , app: app
         })
     })
     it('can create', function(){
-        expect(runner.client).to.equal(socket)
-        expect(runner.app).to.equal(app)
-    })
-    it('triggers change:name when browser-login', function(){
-        var onChange = test.spy()
-        runner.on('change:name', onChange)
-        socket.emit('browser-login', 'PhantomJS 1.9')
-        expect(onChange.callCount).to.equal(1)
+        expect(runner.get('socket')).to.equal(socket)
+        expect(runner.get('app')).to.equal(app)
     })
     describe('reset Test Results', function(){
         it('resets topLevelError', function(){
@@ -67,14 +62,6 @@ describe('BrowserRunner', function(){
     it('sets topLevelError when error emitted', function(){
         socket.emit('top-level-error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
         expect(runner.get('messages').at(0).get('text')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45\n')
-    })
-    describe('login', function(){
-        beforeEach(function(){
-            socket.emit('browser-login', 'IE 11.0')
-        })
-        it('sets browser name', function(){
-            expect(runner.get('name')).to.equal('IE 11.0')
-        })
     })
     it('emits tests-start on server on tests-start', function(){
         test.spy(runner, 'trigger')
