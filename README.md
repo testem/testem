@@ -235,7 +235,7 @@ When this is done, Testem will read in the process' stdout and parse it as TAP, 
 PhantomJS
 ---------
 
-PhantomJS will be picked up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Do a
+PhantomJS is a Webkit-based headless browser. It's fast and it's awesome! Testem will pick it up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Do a
 
     testem launchers
 
