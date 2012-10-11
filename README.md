@@ -186,10 +186,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` include to enable *Testem* with your test page
 
-    <script>
-    if (location.hash === '#testem')
-        document.write('<script src="/testem.js"></'+'script>')
-    </script>
+    <script src="/testem.js"></script>
 
 Launchers
 ---------
