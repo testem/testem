@@ -118,6 +118,7 @@ function syncConnectStatus(){
 }
 
 function startTests(){
+    socket.disconnect()
     window.location = '/'
 }
 
