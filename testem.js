@@ -15,6 +15,7 @@ program
     .option('-l, --launch [list]', 'list of launchers to launch(comma separated)')
     .option('-s, --skip [list]', 'list of launchers to skip(comma separated)')
     .option('-d, --debug', 'output debug to debug log - testem.log')
+    .option('-t, --test_page [page]', 'the html page to drive the tests')
 
 program
     .command('launchers')
