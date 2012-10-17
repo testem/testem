@@ -1,9 +1,11 @@
 src_files:
     - lib/*.js
+    - lib/ui/*.js
     - tests/*_tests.js
+    - tests/ui/*.js
 launchers:
     Mocha:
-        command: mocha *_tests.js -R tap
+        command: mocha ui/*_tests.js -R tap
         protocol: tap
         cwd: tests
 launch_in_dev:

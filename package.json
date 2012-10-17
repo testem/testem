@@ -58,7 +58,8 @@
     "async": "*",
     "chai": "*",
     "sinon-chai": "*",
-    "bufferstream": "*"
+    "bufferstream": "*",
+    "sandboxed-module": "~0.1.3"
   },
   "bin": {
     "testem": "./testem.js"
