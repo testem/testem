@@ -50,7 +50,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "cd tests; ../node_modules/.bin/mocha --timeout 3000 *_tests.js; cd .."
+    "test": "cd tests; ../node_modules/.bin/mocha --timeout 3000 *_tests.js ui/*_tests.js; cd .."
   },
   "devDependencies": {
     "mocha": "*",
