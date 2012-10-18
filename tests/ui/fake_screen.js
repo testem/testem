@@ -17,10 +17,17 @@ function initialize(){
 initialize()
 
 var FakeScreen = {
-    _setSize: function(w, h){
+    $setSize: function(w, h){
         width = w
         height = h
         initialize()
+    }
+    , $lines: function(start, end){
+        if (end === undefined){
+            end = start
+            start = 0
+        }
+        return buffer.slice(start, end)
     }
     , foreground: function(color){
         foreground = color
@@ -32,7 +39,7 @@ var FakeScreen = {
     }
     , position: function(_col, _line){
         col = _col
-        line = _line
+        line = _line - 1
         //console.error('position(' + col + ', ' + line + ')')
         return this
     }
