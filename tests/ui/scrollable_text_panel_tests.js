@@ -35,6 +35,11 @@ describe('ScrollableTextPanel', function(){
             expect(screen.buffer[0]).to.equal('hello ther')
             expect(screen.buffer[1]).to.equal('e tommy   ')
         })
+        it('does not render if not visible', function(){
+            panel.set('visible', false)
+            panel.set('text', 'hello')
+            expect(screen.buffer).to.deep.equal([ '          ', '          ', '          ' ])
+        })
 
         context('with paragraph text', function(){
             beforeEach(function(){
