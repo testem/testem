@@ -95,7 +95,8 @@ describe('ScrollableTextPanel', function(){
         })
 
         it('writes and wraps correctly', function(){
-            expect(screen.buffer).to.deep.equal([ '          ',
+            expect(screen.buffer).to.deep.equal([ 
+                '          ',
                 '          ',
                 '  Charm   ',
                 '  object  ',
