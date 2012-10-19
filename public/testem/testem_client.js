@@ -75,7 +75,7 @@ patchSocketIOReconnect()
 
 function getBrowserName(userAgent){
     var regexs = [
-        /MS(?:(IE) ([0-9]\.[0-9]))/,
+        /MS(?:(IE) (1?[0-9]\.[0-9]))/,
         /(Chrome)\/([0-9]+\.[0-9]+)/,
         /(Firefox)\/([0-9a-z]+\.[0-9a-z]+)/,
         /(Opera).*Version\/([0-9]+\.[0-9]+)/,
