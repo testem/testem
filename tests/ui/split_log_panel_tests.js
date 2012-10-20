@@ -43,13 +43,36 @@ describe('SplitLogPanel', function(){
 
     it('initializes', function(){})
 
-    it.only('gets results display text', function(){
-        expect(panel.getResultsDisplayText().unstyled()).to.equal('')
-        results.set('topLevelError', 'Shit happened.')
-        expect(panel.getResultsDisplayText().unstyled()).to.equal('Shit happened.')
+    describe('getResultsDisplayText', function(){
+        it('gets topLevelError', function(){
+            expect(panel.getResultsDisplayText().unstyled()).to.equal('')
+            results.set('topLevelError', 'Shit happened.')
+            expect(panel.getResultsDisplayText().unstyled()).to.equal('Top Level:\n    Shit happened.\n\n')
+        })
+        it('says "Please be patient" if not all results are in', function(){
+            var tests = new Backbone.Collection
+            results.set('tests', tests)
+            expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)')
+        })
+        it('says "No tests were run :(" when no tests but all is true', function(){
+            var tests = new Backbone.Collection
+            results.set('tests', tests)
+            results.set('all', true)
+            expect(panel.getResultsDisplayText().unstyled()).to.equal('No tests were run :(')
+        })
+        it('gives result when has results and all is true', function(){
+            results.set('total', 1)
+            var tests = new Backbone.Collection([
+                new Backbone.Model({ name: 'blah', passed: true })
+            ])
+            results.set('tests', tests)
+            results.set('all', true)
+            expect(panel.getResultsDisplayText().unstyled()).to.equal('\u2714 1 tests complete.')
+        })
     })
 
-    it('renders', function(){
+
+    xit('renders', function(){
         panel.render()
         expect(screen.buffer).to.deep.equal([])
     })

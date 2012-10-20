@@ -40,11 +40,9 @@ var FakeScreen = {
     , position: function(_col, _line){
         col = _col
         line = _line - 1
-        //console.error('position(' + col + ', ' + line + ')')
         return this
     }
     , write: function(str){
-        //console.error('write(' + str + ')')
         var original = buffer[line]
         if (!original){
             return this
@@ -53,14 +51,14 @@ var FakeScreen = {
         var after = original.substring(col + str.length)
         buffer[line] = (before + str + after).substring(0, width)
         col += str.length
-        //console.error('line: ' + line)
-        //console.error('buffer[line] ' + buffer[line])
         return this
     }
     , erase: function(){
         var original = buffer[line]
         if (!original) return this
-        buffer[line] = original.substring(0, col) + Array(width - col + 1).join(' ')
+        if (width - col + 1 > 0){
+            buffer[line] = original.substring(0, col) + Array(width - col + 1).join(' ')
+        }
         return this
     }
     , display: function(){
