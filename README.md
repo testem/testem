@@ -260,9 +260,11 @@ But, since you want to be serving the `.js` files that are generated and not the
 
 Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
 
-If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option. Note that this command is also run upon quitting.
+If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
     after_tests: rm *.js
+
+However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
 DIY: Use Any Test Framework
 ---------------------------
