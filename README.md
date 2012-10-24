@@ -10,7 +10,7 @@ Features
 
 * Test framework agnostic. Support for
     - [Jasmine](http://pivotal.github.com/jasmine/)
-    - [QUnit](http://docs.jquery.com/QUnit)
+    - [QUnit](http://qunitjs.com/)
     - [Mocha](http://visionmedia.github.com/mocha/)
     - Can be made to work with others through custom test framework adapters. 
 * Running tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
@@ -33,6 +33,7 @@ Screencasts
 * Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
 * [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) - more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
 * [Continous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) - details about how CI mode works.
+* [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) - a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
 
 Installation
 ------------
@@ -259,6 +260,12 @@ But, since you want to be serving the `.js` files that are generated and not the
     - "*.js"
 
 Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
+
+If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
+
+    after_tests: rm *.js
+
+However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
 DIY: Use Any Test Framework
 ---------------------------
