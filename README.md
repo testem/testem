@@ -304,7 +304,7 @@ Known Issues
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/docs/contributing.md), I am going to do my best to stay out of your way. 
+If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way. 
 
 Roadmap
 -------
