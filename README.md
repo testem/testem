@@ -267,6 +267,26 @@ If you need to run a command after your tests have completed (such as removing c
 
 However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
+Custom Routes
+-------------
+
+Sometimes you may want to re-map a URL to a different directory on the file system. Maybe you have the following file structure:
+
+    + src
+      + hello.coffee
+      + tests.coffee
+    + css
+      + styles.css
+    + public
+      tests.html
+
+Let's say you want to serve `tests.html` at the top level url '/tests.html', all the Javascripts under '/js' and all the css under '/css' you can use the "routes" option to do that
+
+    routes:
+        /tests.html: public/tests.html
+        /js: src
+        /css: css
+
 DIY: Use Any Test Framework
 ---------------------------
 
