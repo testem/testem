@@ -5,7 +5,7 @@ src_files:
     - tests/ui/*.js
 launchers:
     Mocha:
-        command: mocha ui/*_tests.js -R tap
+        command: mocha *_tests.js ui/*_tests.js -R tap
         protocol: tap
         cwd: tests
 launch_in_dev:
