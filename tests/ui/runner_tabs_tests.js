@@ -138,25 +138,4 @@ describe('RunnerTab', function(){
     })
 })
 
-describe('RunnerTabs', function(){
-    var tabs, appview, runner, tab
-    beforeEach(function(){
-        screen.$setSize(20, 10)
-        runner = new Backbone.Model({
-            name: 'Bob'
-            , messages: new Backbone.Collection
-        })
-        runner.hasMessages = function(){ return false }
-        appview = new Backbone.Model
-        appview.isPopupVisible = function(){ return false }
-        appview.runners = function(){ return new Backbone.Collection }
-        tab = new RunnerTab({
-            runner: runner
-            , appview: appview
-            , selected: true
-            , index: 0
-        })
-        
-    })
-    it('initializes', function(){})
-})
+// TODO test RunnerTabs
