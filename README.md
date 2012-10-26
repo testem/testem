@@ -273,8 +273,8 @@ Custom Routes
 Sometimes you may want to re-map a URL to a different directory on the file system. Maybe you have the following file structure:
 
     + src
-      + hello.coffee
-      + tests.coffee
+      + hello.js
+      + tests.js
     + css
       + styles.css
     + public
