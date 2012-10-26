@@ -23,7 +23,7 @@
   "dependencies": {
     "express": "== 2.5.10",
     "mustache": "0.4.0",
-    "socket.io": "== 0.9.5",
+    "socket.io": "== 0.9.10",
     "winston": "0.3.4",
     "charm": "0.0.5",
     "js-yaml": "0.3.5",
