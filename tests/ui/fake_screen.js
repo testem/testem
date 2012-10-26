@@ -43,13 +43,20 @@ var FakeScreen = {
         return this
     }
     , write: function(str){
+        // get rid of all display codes
+        str = str.replace(/\u001b\[[0-9]+m/g, '')
+        
         var original = buffer[line]
         if (!original){
-            return this
+            throw new Error('Attempt to draw out of bounds: ' + str)
         }
         var before = original.substring(0, col)
         var after = original.substring(col + str.length)
-        buffer[line] = (before + str + after).substring(0, width)
+        var result = (before + str + after)
+        if (result.length > width){
+            throw new Error('Attempt to draw out of bounds: ' + result)
+        }
+        buffer[line] = result
         col += str.length
         return this
     }

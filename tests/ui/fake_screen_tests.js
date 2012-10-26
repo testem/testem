@@ -40,17 +40,42 @@ describe('FakeScreen', function(){
         screen.display('reset')
         expect(screen.buffer[0]).to.equal('   hello  ')
     })
-    it('ignores characters that go over the end', function(){
-        screen.position(0, 1)
-        screen.write('hello world!')
-        expect(screen.buffer[0]).to.equal('hello worl')
-    })
     it('erases to end', function(){
         screen.position(0, 1)
         screen.write('helloworld')
         screen.position(5, 1)
         screen.erase('end')
         expect(screen.buffer[0]).to.equal('hello     ')
+    })
+    it('throws if drawing out of bounds vertically', function(){
+        screen.position(11, 0)
+        expect(function(){ screen.write('hello') }).to.throw(/out of bounds/)
+        expect(screen.buffer).to.deep.equal([ 
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ' ])
+    })
+    it('throws if drawing out of bounds horizontally', function(){
+        screen.position(0, 1)
+        expect(function(){ screen.write('hello world') }).to.throw(/out of bounds/)
+        expect(screen.buffer).to.deep.equal([ 
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ',
+            '          ' ])
     })
 
     context('has 3 lines of text', function(){

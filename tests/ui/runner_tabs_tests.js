@@ -21,52 +21,142 @@ var runnertabs = sandbox.require(libDir + 'ui/runner_tabs', {
     }
 })
 var RunnerTab = runnertabs.RunnerTab
+var RunnerTabs = runnertabs.RunnerTabs
 
 describe('RunnerTab', function(){
     var tab, runner, appview, results
+
+    context('has no results', function(){
+        beforeEach(function(){
+            screen.$setSize(20, 8)
+            runner = new Backbone.Model({
+                name: 'Bob'
+                , messages: new Backbone.Collection
+            })
+            runner.hasMessages = function(){ return false }
+            appview = new Backbone.Model
+            appview.isPopupVisible = function(){ return false }
+            tab = new RunnerTab({
+                runner: runner
+                , appview: appview
+                , selected: true
+                , index: 0
+            })
+        })
+
+        it('renders spinner', function(){
+            expect(screen.buffer).to.be.deep.equal([
+                '                    ',
+                '                    ',
+                '                    ',
+                ' ━━━━━━━━━━━━━━┓    ',
+                '       Bob     ┃    ',
+                '        ◜      ┃    ',
+                '               ┗    ',
+                '                    ' ])
+        })
+        it('renders checkmark if allPassed', function(){
+            runner.set('allPassed', true)
+            tab.render()
+            expect(screen.buffer).to.be.deep.equal([
+                '                    ',
+                '                    ',
+                '                    ',
+                ' ━━━━━━━━━━━━━━┓    ',
+                '       Bob     ┃    ',
+                '       ✔       ┃    ',
+                '               ┗    ',
+                '                    ' ])
+        })
+        it('renders no border when deselected', function(){
+            tab.set('selected', false)
+            expect(screen.buffer).to.be.deep.equal([ 
+                '                    ',
+                '                    ',
+                '                    ',
+                '                    ',
+                '       Bob          ',
+                '        ◝           ',
+                ' ━━━━━━━━━━━━━━━    ',
+                '                    ' ])
+        })
+        /*it('doesnt overwrite the screen boundary', function(){
+            tab.set('index', 1)
+
+        })*/
+    })
+
+    context('has results', function(){
+        beforeEach(function(){
+            screen.$setSize(20, 8)
+            results = new Backbone.Model()
+            runner = new Backbone.Model({
+                name: 'Bob'
+                , messages: new Backbone.Collection
+                , results: results
+            })
+            runner.hasMessages = function(){ return false }
+            appview = new Backbone.Model
+            appview.isPopupVisible = function(){ return false }
+            tab = new RunnerTab({
+                runner: runner
+                , appview: appview
+                , selected: true
+                , index: 0
+            })
+        })
+        it('renders test results', function(){
+            results.set('passed', 1)
+            results.set('total', 1)
+            expect(screen.buffer).to.be.deep.equal([
+                '                    ',
+                '                    ',
+                '                    ',
+                ' ━━━━━━━━━━━━━━┓    ',
+                '       Bob     ┃    ',
+                '     1/1 ◞     ┃    ',
+                '               ┗    ',
+                '                    ' ])
+        })
+        it('renders check mark if all passed', function(){
+            results.set({
+                passed: 1
+                , total: 1
+                , all: true
+            })
+            expect(screen.buffer).to.be.deep.equal([ 
+                '                    ',
+                '                    ',
+                '                    ',
+                ' ━━━━━━━━━━━━━━┓    ',
+                '       Bob     ┃    ',
+                '     1/1 ✔     ┃    ',
+                '               ┗    ',
+                '                    ' ])
+        })
+
+    })
+})
+
+describe('RunnerTabs', function(){
+    var tabs, appview, runner, tab
     beforeEach(function(){
-        screen.$setSize(20, 8)
-        results = new Backbone.Model
+        screen.$setSize(20, 10)
         runner = new Backbone.Model({
             name: 'Bob'
             , messages: new Backbone.Collection
-            , results: results
         })
         runner.hasMessages = function(){ return false }
         appview = new Backbone.Model
         appview.isPopupVisible = function(){ return false }
+        appview.runners = function(){ return new Backbone.Collection }
         tab = new RunnerTab({
             runner: runner
             , appview: appview
             , selected: true
             , index: 0
         })
+        
     })
-    it('renders', function(){
-        expect(screen.buffer).to.be.deep.equal([
-            '                    ',
-            '                    ',
-            '                    ',
-            ' ━━━━━━━━━━━━━━┓    ',
-            '       Bob     ┃    ',
-            '        ◜      ┃    ',
-            '               ┗    ',
-            '                    ' ])
-    })
-    /*it('renders test results', function(){
-        results.set('passed', 1)
-        results.set('total', 1)
-        expect(screen.buffer).to.be.deep.equal([
-            '                    ',
-            '                    ',
-            '                    ',
-            ' ━━━━━━━━━━━━━━┓    ',
-            '       Bob     ┃    ',
-            '     1/1 ◜     ┃    ',
-            '               ┗    ',
-            '                    ' ])
-    })*/
-    it('renders check mark if all passed', function(){
-
-    })
+    it('initializes', function(){})
 })
