@@ -161,25 +161,33 @@ Configuration File
 ------------------
 
 For the simplest Javascript projects, the TDD workflow described above will work fine, but there are times when you want
-to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.yml` configuration file (you can also alternatively use the JSON format with a `testem.json` file). It looks like this
+to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file). It looks like this
 
-    framework: jasmine
-    src_files:
-    - hello.js
-    - hello_spec.js
+    {
+        "framework": "jasmine",
+        "src_files": [
+            "hello.js",
+            "hello_spec.js"
+        ]
+    }
 
-The src_files can also be glob patterns (See: [node-glob](https://github.com/isaacs/node-glob))
+The src_files can also be unix glob patterns.
 
-    src_files:
-    - js/**/*.js
-    - spec/**/*.js
+    {
+        "src_files": [
+            "js/**/*.js",
+            "spec/**/*.js"
+        ]
+    }
 
 Custom Test Pages
 -----------------
 
 You can also use a custom page for testing. To do this, first you need to specify `test_page` to point to your test page in the config file(`framework` and `src_files` are irrelevant in this case)
 
-    test_page: tests.html
+    {
+        "test_page": "tests.html"
+    }
     
 Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
@@ -213,11 +221,13 @@ This displays the current list of launchers that are available. Launchers can la
 Running Tests in Node and Custom Process Launchers
 --------------------------------------------------
 
-To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.yml`
+To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
 
-    launchers:
-        Mocha:
-            command: mocha tests/*_tests.js
+    "launchers": {
+        "Mocha": {
+            "command": "mocha tests/*_tests.js"
+        }
+    }
 
 When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
 
@@ -226,10 +236,12 @@ Processes with TAP Output
 
 If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
-    launchers:
-        Mocha:
-            command: mocha tests/*_tests.js -R tap
-            protocol: tap
+    "launchers": {
+        "Mocha": {
+            "command": "mocha tests/*_tests.js -R tap"
+            "protocol": "tap"
+        }
+    }
 
 When this is done, Testem will read in the process' stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process' stdout output from the console log panel, although it will still display the stderr.
 
@@ -247,23 +259,25 @@ Preprocessors (Coffeescript, LESS, Sass, Browserify, etc)
 
 If you need to run a preprocessor, or, indeed any shell command before the start of the tests, use the `before_tests` option, such as 
 
-    before_tests: coffee -c *.coffee
+    "before_tests": "coffee -c *.coffee"
 
 And Testem will run it before each test run. For file watching, you may still use the `src_files` option
 
-    src_files:
-    - "*.coffee"
+    "src_files": [
+        "*.coffee"
+    ]
 
 But, since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
 
-    serve_files:
-    - "*.js"
+    "serve_files": [
+        "*.js"
+    ]
 
 Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
 
 If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
-    after_tests: rm *.js
+    "after_tests": "rm *.js"
 
 However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
@@ -282,19 +296,20 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
 
 Let's say you want to serve `tests.html` at the top level url '/tests.html', all the Javascripts under '/js' and all the css under '/css' you can use the "routes" option to do that
 
-    routes:
-        /tests.html: public/tests.html
-        /js: src
-        /css: css
+    "routes": {
+        "/tests.html": "public/tests.html",
+        "/js": "src",
+        "/css": "css"
+    }
 
 DIY: Use Any Test Framework
 ---------------------------
 
 If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
-Then, to use it, in your `testem.yml` simply set
+Then, to use it, in your config file simply set
 
-    framework: custom
+    "framework": "custom"
 
 And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
 
