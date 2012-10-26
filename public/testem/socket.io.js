@@ -104,7 +104,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
     return socket.of(uri.path.length > 1 ? uri.path : '');
   };
 
-})('object' === typeof module ? module.exports : (this.io = {}), this);
+})('object' === typeof module ? module.exports : io, this);
 /**
  * socket.io
  * Copyright(c) 2011 LearnBoost <dev@learnboost.com>
@@ -2312,7 +2312,6 @@ var io = ('undefined' === typeof module ? {} : module.exports);
  * Copyright(c) 2011 LearnBoost <dev@learnboost.com>
  * MIT Licensed
  */
-
 (function (exports, io, global) {
 
   /**
