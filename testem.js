@@ -42,6 +42,7 @@ log.remove(log.transports.Console)
 if (progOptions.debug){
     log.add(log.transports.File, {filename: 'testem.log'})
 }
+log.info("Test'em starting...")
 
 catchem.on('err', function(e){
     log.error(e.message)
