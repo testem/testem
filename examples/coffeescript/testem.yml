@@ -5,5 +5,3 @@ src_files:
 - "*.coffee"
 serve_files:
 - "*.js"
-launch_in_dev:
-- phantomjs

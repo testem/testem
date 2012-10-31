@@ -2,4 +2,4 @@ function hello(name){
     return 'hello ' + (name || 'world');
 }
 
-module.exports = hello
+module.exports = hello;

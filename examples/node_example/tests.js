@@ -1,13 +1,11 @@
 var assert = require('assert');
-
-function hello(){
-    return 'hello world';
-}
+var hello = require('./hello');
 
 describe('hello', function(){
-
-    it('returns "hello world"', function(){
+    it('says hello world', function(){
         assert.equal(hello(), 'hello world');
     });
-
+    it('says hello to person', function(){
+        assert.equal(hello('Bob'), 'hello Bob');
+    });
 });

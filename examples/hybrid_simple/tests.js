@@ -12,13 +12,8 @@ describe('hello', function(){
         expect(hello()).to.equal('hello world');
     });
 
-    it('should also delay', function(done){
-        setTimeout(done, 1000);
-        done();
-    });
-
-    it('should not change reality', function(done){
-        expect(1).to.equal(2)
+    it('should say hello to person', function(){
+        expect(hello('Bob')).to.equal('hello Bob')
     });
     
 });
