@@ -6,8 +6,10 @@
         <script type='text/javascript'>
             // Load funcunit and qunit first, then the testem.js,
             // then our qunit tests.
-            var testFiles = '{{#src_files}}{{.}} {{/src_files}}'.split(' ')
-            testFiles.pop()
+            var testFiles = [];
+            {{#src_files}}
+                testFiles.push('{{.}}');
+            {{/src_files}}
             steal('funcunit', 'funcunit/qunit')
                 .then('/testem.js')
                 .then.apply(null, testFiles);
