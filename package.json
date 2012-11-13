@@ -35,7 +35,8 @@
     "underscore": "*",
     "backbone": "*",
     "styled_string": "*",
-    "colors": "*"
+    "colors": "*",
+    "jsdom": "~0.2.19"
   },
   "files": [
     "docs",
