@@ -9,7 +9,7 @@ var fs = require('fs')
 
 var expect = test.expect
 
-describe.only('Server', function(){
+describe('Server', function(){
 	var server, runners, app, socketClient, config
 	var orgSetTimeout, baseUrl, port
 	before(function(done){
@@ -17,8 +17,8 @@ describe.only('Server', function(){
         config = new Config('dev', {
             port: port,
             src_files: [
-                'data/hello.js',
-                'data/hello_tests.js'
+                'web/hello.js',
+                'web/hello_tests.js'
             ]
         })
         baseUrl = 'http://localhost:' + port + '/'
@@ -50,8 +50,8 @@ describe.only('Server', function(){
                 '/testem.js',
                 '/testem/jasmine-html.js',
                 '',
-                'data/hello.js',
-                'data/hello_tests.js' ])
+                'web/hello.js',
+                'web/hello_tests.js' ])
             done()
         })
     })
@@ -64,13 +64,32 @@ describe.only('Server', function(){
     }
 
     it('gets src file', function(done){
-        assertUrlReturnsFileContents(baseUrl + 'data/hello.js', 'data/hello.js', done)
+        assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'web/hello.js', done)
     })
 
     it('gets bundled files', function(done){
         assertUrlReturnsFileContents(baseUrl + 'testem/jasmine.js', '../public/testem/jasmine.js', done)
     })
 
+    it('serves custom test page', function(done){
+        config.set('test_page', 'web/tests.html')
+        assertUrlReturnsFileContents(baseUrl, 'web/tests.html', done)
+    })
 
+    it('renders custom test page as template', function(done){
+        config.set('test_page', 'web/tests_template.html')
+        request(baseUrl, function(err, req, text){
+            expect(text).to.equal(
+                [
+                '<!doctype html>'
+                , '<html>'
+                , '<head>'
+                , '        <script src="web/hello.js"></script>'
+                , '        <script src="web/hello_tests.js"></script>'
+                , '    </head>'
+                ].join('\n'))
+            done()
+        })
+    })
     
 })
