@@ -147,3 +147,55 @@ describe('Config', function(){
 		})
 	})
 })
+
+
+function mockTopLevelProgOptions(){
+	var options = [
+		{ name: function(){ return 'timeout' } }
+	]
+	var commands = [
+		{ name: function(){ return 'ci' } }
+		, { name: function(){ return 'launchers' } }
+	]
+	var parentOptions = {
+		port: 8081
+		, options: [
+			{name: function(){ return 'port' }}
+			, { name: function(){ return 'launcher' } }
+		]
+	}
+	var progOptions = {
+		timeout: 2
+		, parent: parentOptions
+		, __proto__: parentOptions
+		, options: options
+		, commands: commands
+		, _events: []
+	}
+	return progOptions
+}
+
+describe('getTemplateData', function(){
+	it('should give templateData', function(done){
+		var fileConfig = {
+			src_files: [
+				"web/*.js",
+			]
+		}
+		var progOptions = mockTopLevelProgOptions()
+		var config = new Config('dev', progOptions, fileConfig)
+		config.getTemplateData(function(err, data){
+			expect(data).to.deep.equal({
+				timeout: 2,
+				port: 8081,
+				src_files: ['web/*.js'],
+				serve_files: [
+					'web/hello.js',
+					'web/hello_tests.js'
+				]
+			})
+			done()
+		})
+	})
+
+})

@@ -91,5 +91,24 @@ describe('Server', function(){
             done()
         })
     })
+
+    describe('routes', function(){
+        beforeEach(function(){
+            config.set('routes', {
+                '/index.html': 'web/tests.html'
+                , '/www': 'web'
+                , '/': 'web/tests.html'
+            })
+        })
+        it('routes file path', function(done){
+            assertUrlReturnsFileContents(baseUrl + 'index.html', 'web/tests.html', done)
+        })
+        it('routes dir path', function(done){
+            assertUrlReturnsFileContents(baseUrl + 'www/hello.js', 'web/hello.js', done)
+        })
+        it('route base path', function(done){
+            assertUrlReturnsFileContents(baseUrl, 'web/tests.html', done)
+        })
+    })
     
 })
