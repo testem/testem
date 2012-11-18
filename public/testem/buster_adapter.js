@@ -14,6 +14,9 @@ function busterAdapter(socket){
         socket.emit.apply(socket, arguments)
     }
 
+    var id = 1
+    var started = false
+
     var results = {
         failed: 0
         , passed: 0
@@ -25,34 +28,51 @@ function busterAdapter(socket){
     var currContext = null
 
     runner.on('context:start', function(context){
+        if (!started) emit('tests-start')
         currContext = context
     })
     runner.on('context:end', function(){
         currContext = null
     })
 
-    runner.on('test:success', function(test){
-        console.log('test success')
-        console.log(test)
-    })
+    function onSuccess(test){
+        var test = {
+            passed: 1
+            , failed: 0
+            , total: 1
+            , id: id++
+            , name: currContext ? (currContext.name + ' ' + test.name) : test.name
+        }
+        emit('test-result', test)
+        results.passed++
+        results.total++
+    }    
 
-    runner.on('test:failure', function(){
-        console.log('test failure')
-        printArgs(arguments)
-    })
+    function onFailure(test){
+        var test = {
+            passed: 0
+            , failed: 1
+            , total: 1
+            , id: id++
+            , name: currContext ? (currContext.name + ' ' + test.name) : test.name
+            , items: [{    
+                passed: false,
+                message: test.error.message,
+                stacktrace: test.error.stack ? test.error.stack : undefined
+            }]
+        }
+        emit('test-result', test)
+        results.failed++
+        results.total++
+    }
 
-    runner.on('test:error', function(){
-        console.log('test error')
-        printArgs(arguments)
-    })
-
-    runner.on('test:timeout', function(){
-        console.log('timeout')
-        printArgs(arguments)
-    })
+    runner.on('test:success', onSuccess)
+    runner.on('test:failure', onFailure)
+    runner.on('test:error', onFailure)
+    runner.on('test:timeout', onFailure)
 
     runner.on('suite:end', function(){
-        console.log('suite ended')
+        emit('all-test-results', results)
     })
 
 }

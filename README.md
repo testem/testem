@@ -12,6 +12,7 @@ Features
     - [Jasmine](http://pivotal.github.com/jasmine/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://visionmedia.github.com/mocha/)
+    - [Buster.js](http://docs.busterjs.org/)
     - Can be made to work with others through custom test framework adapters. 
 * Running tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
 * Two distinct use-cases: 

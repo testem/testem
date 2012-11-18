@@ -161,6 +161,8 @@ function initTestFrameworkHooks(){
         mochaAdapter(socket)
     }else if (typeof QUnit === 'object'){
         qunitAdapter(socket)
+    }else if (typeof buster !== 'undefined'){
+        busterAdapter(socket)
     }
 }
 
