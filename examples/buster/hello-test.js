@@ -1,18 +1,11 @@
-buster.testCase("My thing", {
-    "has the foo and bar": function () {
-        assert.equals("foo", "bar");
+buster.testCase("hello", {
+
+    "says hello": function(){
+        assert.equals(hello(), 'hello world');
     },
 
-    "states the obvious": function () {
-        assert(true);
-    },
-
-    "throws": function(){
-        throw new Error('foo bar')
-    },
-
-    "times out": function(done){
+    "says hello to bob": function(){
+        assert.equals(hello('bob'), 'hello bob');
     }
-
 
 })
