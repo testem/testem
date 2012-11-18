@@ -36,7 +36,8 @@
     "backbone": "*",
     "styled_string": "*",
     "colors": "*",
-    "jsdom": "~0.2.19"
+    "jsdom": "~0.2.19",
+    "fireworm": "0.0.2"
   },
   "files": [
     "docs",
