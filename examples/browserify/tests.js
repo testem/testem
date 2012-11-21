@@ -1,11 +1,12 @@
 var hello = require('./hello')
+var assert = require('assert')
 
-describe('hello', function(t){
+describe('hello', function(){
     it('should return hello', function(){
-        expect(hello()).toBe('hello world')
+        assert.equal(hello(), 'hello world')
     })
 
     it('should say hello to subject', function(){
-        expect(hello('Bob')).toBe('hello Bob')
+        assert.equal(hello('Bob'), 'hello Bob')
     })
 })
