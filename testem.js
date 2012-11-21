@@ -37,6 +37,21 @@ program
     })
 
 
+program.on('--help', function(){
+    console.log('  Keyboard Controls (in dev mode):\n')
+    console.log('    ENTER                  run the tests')
+    console.log('    q                      quit')
+    console.log('    LEFT ARROW             move to the next browser tab on the left')
+    console.log('    RIGHT ARROW            move to the next browser tab on the right')
+    console.log('    UP ARROW               scroll up in the target text panel')
+    console.log('    DOWN ARROW             scroll down in the target text panel')
+    console.log('    SPACE                  page down in the target text panel')
+    console.log('    b                      page up in the target text panel')
+    console.log('    d                      half a page down in the target text panel')
+    console.log('    u                      half a page up in the target text panel')
+    console.log()
+})
+
 program.parse(process.argv)
 log.remove(log.transports.Console)
 if (progOptions.debug){
