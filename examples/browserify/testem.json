@@ -1,4 +1,5 @@
 {
+    "framework": "mocha",
     "serve_files": [ "browserified.js" ],
     "src_files": [
         "hello.js",
