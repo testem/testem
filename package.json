@@ -35,8 +35,7 @@
     "underscore": "*",
     "backbone": "*",
     "styled_string": "*",
-    "colors": "*",
-    "jsdom": "~0.2.19"
+    "colors": "*"
   },
   "files": [
     "docs",
@@ -61,7 +60,8 @@
     "sinon-chai": "*",
     "bufferstream": "*",
     "sandboxed-module": "~0.1.3",
-    "request": "~2.12.0"
+    "request": "~2.12.0",
+    "jsdom": "~0.2.19"
   },
   "bin": {
     "testem": "./testem.js"
