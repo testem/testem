@@ -37,7 +37,7 @@
     "styled_string": "*",
     "colors": "*",
     "jsdom": "~0.2.19",
-    "fireworm": "0.0.2"
+    "fireworm": "*"
   },
   "files": [
     "docs",
