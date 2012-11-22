@@ -1,0 +1,9 @@
+{
+    "on_start": "forward 7357",
+    "launchers": {
+        "BrowserStackFirefox": {
+            "command": "browserstack launch firefox:17.0 http://localhost:7357 --attach",
+            "protocol": "browser"
+        }
+    }
+}
