@@ -35,7 +35,8 @@
     "underscore": "*",
     "backbone": "*",
     "styled_string": "*",
-    "colors": "*"
+    "colors": "*",
+    "fireworm": "*"
   },
   "files": [
     "docs",
