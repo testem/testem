@@ -11,7 +11,8 @@ describe('Config', function(){
 	beforeEach(function(){
 		appMode = 'dev'
 		progOptions = {
-			file: __dirname + '/testem.yml'
+			file: __dirname + '/testem.yml',
+			timeout: null
 		}
 		config = new Config(appMode, progOptions)
 	})
@@ -21,7 +22,7 @@ describe('Config', function(){
 	it('gives progOptions properties when got', function(){
 		expect(config.get('file')).to.equal(progOptions.file)
 	})
-	
+
 	describe('read yaml config file', function(){
 		beforeEach(function(done){
 			config.read(done)
@@ -29,6 +30,9 @@ describe('Config', function(){
 		it('gets properties from config file', function(){
 			expect(config.get('framework')).to.equal('jasmine')
 			expect(String(config.get('src_files'))).to.equal('implementation.js,tests.js')
+		})
+		it('falls back to config file value when progOptions is null', function(){
+			expect(config.get('timeout')).to.equal(2)
 		})
 	})
 	
