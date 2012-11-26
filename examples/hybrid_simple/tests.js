@@ -13,7 +13,7 @@ describe('hello', function(){
     });
 
     it('should say hello to person', function(){
-        expect(hello('Bob')).to.equal('hello Bob')
+        expect(hello('Bob')).to.equal('hello Bob');
     });
     
 });
