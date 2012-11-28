@@ -1,0 +1,2 @@
+rm Test.class
+javac Test.java -cp tap4j-3.1.jar && java -cp ".:tap4j-3.1.jar:commons-lang-2.6.jar" Test timeout.tap
