@@ -1,11 +1,11 @@
 {
     "src_files": [
         "Test.java",
-        "test.tap"
+        "*.tap"
     ],
     "launchers": {
         "run": {
-            "command": "./run"
+            "command": "./compile_run"
         }
     },
     "launch_in_dev": ["run"],

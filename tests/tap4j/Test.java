@@ -2,6 +2,7 @@ import org.tap4j.consumer.TapConsumerFactory;
 import org.tap4j.consumer.TapConsumer;
 import org.tap4j.model.TestSet;
 import org.tap4j.model.TestResult;
+import org.tap4j.parser.Tap13YamlParser;
 import java.io.*;
 
 public class Test{
@@ -22,7 +23,7 @@ public class Test{
 
         String tapText = contents.toString();
 
-        TapConsumer consumer = TapConsumerFactory.makeTap13Consumer();
+        TapConsumer consumer = TapConsumerFactory.makeTap13YamlConsumer();
         TestSet tests = consumer.load(tapText);
 
         for (int i = 0; i < tests.getNumberOfTestResults(); i++){
