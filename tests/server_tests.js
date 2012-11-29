@@ -10,7 +10,7 @@ var path = require('path')
 
 var expect = test.expect
 
-describe.only('Server', function(){
+describe('Server', function(){
 	var server, runners, app, socketClient, config
 	var orgSetTimeout, baseUrl, port
 	before(function(done){
