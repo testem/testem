@@ -6,10 +6,11 @@ var Backbone = require('backbone')
 var request = require('request')
 var jsdom = require('jsdom')
 var fs = require('fs')
+var path = require('path')
 
 var expect = test.expect
 
-describe('Server', function(){
+describe.only('Server', function(){
 	var server, runners, app, socketClient, config
 	var orgSetTimeout, baseUrl, port
 	before(function(done){
@@ -98,6 +99,7 @@ describe('Server', function(){
                 '/index.html': 'web/tests.html'
                 , '/www': 'web'
                 , '/': 'web/tests.html'
+                , '/config.js': path.join(__dirname, '../lib/config.js')
             })
         })
         it('routes file path', function(done){
@@ -108,6 +110,9 @@ describe('Server', function(){
         })
         it('route base path', function(done){
             assertUrlReturnsFileContents(baseUrl, 'web/tests.html', done)
+        })
+        it('can route files in parent directory', function(done){
+            assertUrlReturnsFileContents(baseUrl + 'config.js', '../lib/config.js', done)
         })
     })
     
