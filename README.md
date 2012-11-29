@@ -355,6 +355,11 @@ Contributors
 * [Toby Ho](https://github.com/airportyh)
 * [Raynos](https://github.com/Raynos)
 
+Community
+---------
+
+* **Mailing list**: <https://groups.google.com/forum/?fromgroups#!forum/testem-users>
+
 Credits
 -------
 
