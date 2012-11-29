@@ -5,6 +5,7 @@ var strutils = require('../lib/strutils')
 var splitLines = strutils.splitLines
 var indent = strutils.indent
 var pad = strutils.pad
+var template = strutils.template
 
 describe('splitLines', function(){
     it('splits on newline', function(){
@@ -44,5 +45,16 @@ describe('indent', function(){
     it('should indent', function(){
         expect(indent('')).to.equal('    ')
         expect(indent('abc\ndef')).to.equal('    abc\n    def')
+    })
+})
+
+describe('template', function(){
+    it('should replace parameters with their values', function() {
+        var str = "a<foo>c<bar>e<bar><baz>"
+        var params = {
+            foo: 'b',
+            bar: 'd'
+        }
+        expect(template(str, params)).to.equal('abcded<baz>')
     })
 })
