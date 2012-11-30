@@ -1,4 +1,5 @@
 var Launcher = require('../lib/launcher')
+var template = require('../lib/strutils').template
 var expect = require('chai').expect
 var stub = require('sinon').stub
 var spy = require('sinon').spy
@@ -6,10 +7,23 @@ var spy = require('sinon').spy
 describe('Launcher', function(){
 	var settings, app, launcher
 
+	function createMockApp() {
+		return {
+			url: 'http://blah.com',
+			port: '7357',
+			template: function(str) {
+				return template(str, {
+					url: this.url,
+					port: this.port
+				})
+			}
+		}
+	}
+
 	describe('via command', function(){
 		beforeEach(function(){
 			settings = {command: 'echo hello'}
-			app = {url: 'http://blah.com'}
+			app = createMockApp()
 			launcher = new Launcher('say hello', settings, app)
 		})
 		it('should instantiate', function(){
@@ -57,7 +71,7 @@ describe('Launcher', function(){
 	describe('via exe', function(){
 		it('sholud launch and also kill it', function(done){
 			settings = {exe: 'echo', args: ['hello']}
-			app = {url: 'http://blah.com'}
+			app = createMockApp()
 			launcher = new Launcher('say hello', settings, app)
 			launcher.launch()
 			var data = ''
