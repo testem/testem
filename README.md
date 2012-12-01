@@ -354,6 +354,7 @@ Contributors
 
 * [Toby Ho](https://github.com/airportyh)
 * [Raynos](https://github.com/Raynos)
+* [Derek Brans](https://github.com/dbrans)
 
 Community
 ---------
