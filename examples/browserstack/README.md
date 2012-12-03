@@ -11,6 +11,7 @@ Instructions
     * **username** - your BrowserStack username
     * **password** - your BrowserStack password
     * **key** - your BrowserStack API key, found on the [automated brower testing api page](http://www.browserstack.com/automated-browser-testing-api) given you are logged in to BrowerStack.
+3. Install browserstack-cli via `npm install browserstack-cli -g`.
 3. Run the command `testem ci -l bs_chrome` to test out the setup with just the Chrome browser hosted BrowserStack.
 4. Run `testem ci` to run it on all the listed browsers - see `testem launchers` for the full list.
 
