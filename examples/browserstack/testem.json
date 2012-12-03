@@ -1,9 +1,0 @@
-{
-    "test_page": "index.html",
-    "launchers": {
-        "BrowserStackFirefox": {
-            "command": "browserstack launch firefox:17.0 http://localhost:7357 --attach",
-            "protocol": "browser"
-        }
-    }
-}
