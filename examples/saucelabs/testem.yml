@@ -11,5 +11,9 @@ launchers:
         command: saucelauncher launch googlechrome <url>
         protocol: browser
 
-launch_in_ci: [SL_Chrome]
+    SL_IE_7:
+        command: saucelauncher launch iehta <url>
+        protocol: browser
+
+launch_in_ci: [SL_Chrome, SL_IE_7]
 launch_in_dev: [phantomjs]
