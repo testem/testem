@@ -5,6 +5,7 @@ var program = require('commander')
 var progOptions = program
 var Config = require('./lib/config')
 var catchem = require('./lib/catchem')
+var Api = require('./lib/api')
 var appMode = 'dev'
   
 program
@@ -53,11 +54,6 @@ program.on('--help', function(){
 })
 
 program.parse(process.argv)
-log.remove(log.transports.Console)
-if (progOptions.debug){
-    log.add(log.transports.File, {filename: 'testem.log'})
-}
-log.info("Test'em starting...")
 
 catchem.on('err', function(e){
     log.error(e.message)
@@ -70,12 +66,12 @@ if (appMode === 'launchers'){
         config.printLauncherInfo()
     })
 }else{
-    App = appMode === 'ci' ? 
-        require('./lib/ci_mode_app') :
-        require('./lib/dev_mode_app')
-    config.read(function(){
-        new App(config)
-    })
+    var api = new Api()
+    if (appMode === 'ci'){
+        api.startCI(progOptions)
+    }else{
+        api.startDev(progOptions)
+    }
 }
 
 
