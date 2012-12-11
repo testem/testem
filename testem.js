@@ -44,6 +44,7 @@ program.on('--help', function(){
     console.log('    q                      quit')
     console.log('    LEFT ARROW             move to the next browser tab on the left')
     console.log('    RIGHT ARROW            move to the next browser tab on the right')
+    console.log('    TAB                    switch between top and bottom panel (split mode only)')
     console.log('    UP ARROW               scroll up in the target text panel')
     console.log('    DOWN ARROW             scroll down in the target text panel')
     console.log('    SPACE                  page down in the target text panel')
