@@ -30,7 +30,7 @@ program
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-t, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
+    .option('-o, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
     .action(function(env){
         env.__proto__ = program
         progOptions = env
