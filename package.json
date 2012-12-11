@@ -67,6 +67,7 @@
   "bin": {
     "testem": "./testem.js"
   },
+  "main": "./lib/api.js",
   "bundleDependencies": [
     "tap"
   ],
