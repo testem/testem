@@ -18,6 +18,7 @@ program
     .option('-d, --debug', 'output debug to debug log - testem.log')
     .option('-t, --test_page [page]', 'the html page to drive the tests')
 
+
 program
     .command('launchers')
     .description('Print the list of available launchers (browsers & process launchers)')
@@ -30,7 +31,7 @@ program
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-o, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
+    .option('-T, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
     .action(function(env){
         env.__proto__ = program
         progOptions = env
