@@ -217,7 +217,9 @@ function takeOverConsole(){
 
 function interceptWindowOnError(){
     window.onerror = function(msg, url, line){
-        socket.emit('top-level-error', msg, url, line)
+        if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number'){
+            socket.emit('top-level-error', msg, url, line)
+        }
     }
 }
 
