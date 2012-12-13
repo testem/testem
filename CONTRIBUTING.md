@@ -13,6 +13,17 @@ The source code for the browser side is under the folders `public/testem` and `v
 * `public/testem` - is where the client side assets are (Javascript and CSS)
 * `views` - are HTML templates used to generate default test runner pages
 
+Debug Mode
+----------
+
+Use the `-d` flag to turn on debug mode. This will allow you to use
+
+    log.info('some log message')
+
+To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, just require winston like so at the top of the file
+
+    var log = require('winston')
+
 Tests and Examples
 ------------------
 
