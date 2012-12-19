@@ -340,6 +340,8 @@ Known Issues
 
         npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
 
+2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/airportyh/testem/issues/130).
+
 Contributing
 ------------
 
