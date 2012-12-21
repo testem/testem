@@ -69,21 +69,24 @@ Now open your browser and go to the specified URL. You should now see
 We see 0/0 for tests because at this point we haven't written any code, but as we write them, Testem will pickup any `.js` files
  that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
 
-    describe('hello', function(){
-        it('should say hello', function(){
-            expect(hello()).toBe('hello world');
-        });
-    });
-    
+```javascript
+describe('hello', function(){
+  it('should say hello', function(){
+    expect(hello()).toBe('hello world');
+  });
+});
+```    
 Save that file and now you should see
 
 ![Red](https://github.com/airportyh/testem/raw/master/images/red.png)
 
 Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
-    function hello(){
-        return "hello world";
-    }
+```javascript
+function hello(){
+  return "hello world";
+}
+```
 
 So you should now see
 
@@ -164,39 +167,47 @@ Configuration File
 For the simplest Javascript projects, the TDD workflow described above will work fine, but there are times when you want
 to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file). It looks like this
 
-    {
-        "framework": "jasmine",
-        "src_files": [
-            "hello.js",
-            "hello_spec.js"
-        ]
-    }
+```json
+{
+  "framework": "jasmine",
+  "src_files": [
+    "hello.js",
+    "hello_spec.js"
+  ]
+}
+```
 
 The src_files can also be unix glob patterns.
 
-    {
-        "src_files": [
-            "js/**/*.js",
-            "spec/**/*.js"
-        ]
-    }
+```json
+{
+  "src_files": [
+    "js/**/*.js",
+    "spec/**/*.js"
+  ]
+}
+```
 
 Custom Test Pages
 -----------------
 
 You can also use a custom page for testing. To do this, first you need to specify `test_page` to point to your test page in the config file(`framework` and `src_files` are irrelevant in this case)
 
-    {
-        "test_page": "tests.html"
-    }
-    
+```json
+{
+  "test_page": "tests.html"
+}
+```  
+
 Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
 ### Include Snippet
 
 Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` include to enable *Testem* with your test page
 
-    <script src="/testem.js"></script>
+```html
+<script src="/testem.js"></script>
+```
 
 Launchers
 ---------
@@ -224,11 +235,13 @@ Running Tests in Node and Custom Process Launchers
 
 To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
 
-    "launchers": {
-        "Mocha": {
-            "command": "mocha tests/*_tests.js"
-        }
-    }
+```json
+"launchers": {
+  "Mocha": {
+    "command": "mocha tests/*_tests.js"
+  }
+}
+```
 
 When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
 
@@ -237,12 +250,14 @@ Processes with TAP Output
 
 If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
-    "launchers": {
-        "Mocha": {
-            "command": "mocha tests/*_tests.js -R tap"
-            "protocol": "tap"
-        }
-    }
+```json
+"launchers": {
+  "Mocha": {
+    "command": "mocha tests/*_tests.js -R tap"
+    "protocol": "tap"
+  }
+}
+```
 
 When this is done, Testem will read in the process' stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process' stdout output from the console log panel, although it will still display the stderr.
 
@@ -264,21 +279,27 @@ If you need to run a preprocessor, or, indeed any shell command before the start
 
 And Testem will run it before each test run. For file watching, you may still use the `src_files` option
 
-    "src_files": [
-        "*.coffee"
-    ]
+```json
+"src_files": [
+  "*.coffee"
+]
+```
 
 But, since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
 
-    "serve_files": [
-        "*.js"
-    ]
+```json
+"serve_files": [
+  "*.js"
+]
+```
 
 Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
 
 If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
-    "after_tests": "rm *.js"
+```json
+"after_tests": "rm *.js"
+```
 
 However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
@@ -297,11 +318,13 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
 
 Let's say you want to serve `tests.html` at the top level url '/tests.html', all the Javascripts under '/js' and all the css under '/css' you can use the "routes" option to do that
 
-    "routes": {
-        "/tests.html": "public/tests.html",
-        "/js": "src",
-        "/css": "css"
-    }
+```json
+"routes": {
+  "/tests.html": "public/tests.html",
+  "/js": "src",
+  "/css": "css"
+}
+```
 
 DIY: Use Any Test Framework
 ---------------------------
@@ -310,7 +333,9 @@ If you want to use Testem with a test framework that's not supported out of the 
 
 Then, to use it, in your config file simply set
 
-    "framework": "custom"
+```json
+"framework": "custom"
+```
 
 And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
 
