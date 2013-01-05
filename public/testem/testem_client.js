@@ -8,6 +8,11 @@ It also restarts the tests by refreshing the page when instructed by the server 
 
 */
 
+
+patchSocketIOReconnect()
+// patch Socket.IO so it doesn't use the exponential delay algorithm for 
+// reconnection so that if you quit testem and then restart again, the 
+// reconnection will be quick.
 function patchSocketIOReconnect(){
 
   io.Socket.prototype.reconnect = function () {
@@ -71,7 +76,7 @@ function patchSocketIOReconnect(){
   };
 
 }
-patchSocketIOReconnect()
+
 
 function getBrowserName(userAgent){
     var regexs = [
