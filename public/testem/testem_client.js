@@ -206,6 +206,7 @@ function setupTestStats(){
     })
 
     function updateTitle(){
+        if (!total) return
         document.title = originalTitle + ' (' + passed + '/' + total + ')'
     }
 }
