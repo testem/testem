@@ -172,12 +172,8 @@ function initTestFrameworkHooks(){
 }
 
 var addListener = window.addEventListener ?
-    function(obj, evt, cb){
-        obj.addEventListener(evt, cb, false)
-    } :
-    function(obj, evt, cb){
-        obj.attachEvent('on' + evt, cb)
-    }
+    function(obj, evt, cb){ obj.addEventListener(evt, cb, false) } :
+    function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
 
 function init(){
     takeOverConsole()
