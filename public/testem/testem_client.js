@@ -191,6 +191,22 @@ function init(){
     socket.on('start-tests', startTests)
     initTestFrameworkHooks()
     addListener(window, 'load', initUI)
+    setupTestStats()
+}
+
+function setupTestStats(){
+    var originalTitle = document.title
+    var total = 0
+    var passed = 0
+    Testem.on('test-result', function(test){
+        total++
+        if (test.failed === 0) passed++
+        updateTitle()
+    })
+
+    function updateTitle(){
+        document.title = originalTitle + ' (' + passed + '/' + total + ')'
+    }
 }
 
 function takeOverConsole(){
@@ -223,10 +239,35 @@ function interceptWindowOnError(){
     }
 }
 
-init()
+function emit(){
+    Testem.emit.apply(Testem, arguments)
+}
 
 window.Testem = {
     useCustomAdapter: function(adapter){
         adapter(socket)
     }
+    , emit: function(evt){
+        socket.emit.apply(socket, arguments)
+        if (this.evtHandlers && this.evtHandlers[evt]){
+            var handlers = this.evtHandlers[evt]
+            var args = Array.prototype.slice.call(arguments, 1)
+            for (var i = 0; i < handlers.length; i++){
+                var handler = handlers[i]
+                handler.apply(this, args)
+            }
+        }
+    }
+    , on: function(evt, callback){
+        if (!this.evtHandlers){
+            this.evtHandlers = {}
+        }
+        if (!this.evtHandlers[evt]){
+            this.evtHandlers[evt] = []
+        }
+        this.evtHandlers[evt].push(callback)
+    }
 }
+
+
+init()

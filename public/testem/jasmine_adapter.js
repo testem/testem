@@ -16,10 +16,6 @@ function jasmineAdapter(socket){
         , tests: []
         }
 
-    function emit(){
-        socket.emit.apply(socket, arguments)
-    }
-
     function JasmineAdapterReporter(){}
     JasmineAdapterReporter.prototype.reportRunnerStarting = function(runner){
         emit('tests-start')

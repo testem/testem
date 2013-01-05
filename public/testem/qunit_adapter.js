@@ -24,10 +24,6 @@ function qunitAdapter(socket){
       , currentTest
       , currentModule
       , id = 1
-
-    function emit(){
-        socket.emit.apply(socket, arguments)
-    }
       
     function lineNumber(e){
         return e.line || e.lineNumber

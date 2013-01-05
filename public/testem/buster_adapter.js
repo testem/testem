@@ -10,10 +10,6 @@ Testem's adapter for Buster.js. It works by attaching event listeners to the tes
 
 function busterAdapter(socket){
 
-    function emit(){
-        socket.emit.apply(socket, arguments)
-    }
-
     var id = 1
     var started = false
 

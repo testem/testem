@@ -24,10 +24,6 @@ function mochaAdapter(socket){
 		console.error('Testem: failed to register adapter for mocha.')
 	}
 
-	function emit(){
-	    socket.emit.apply(socket, arguments)
-	}
-
 	function getFullName(test){
 		var name = ''
 		while (test){
