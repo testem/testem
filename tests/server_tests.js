@@ -43,7 +43,7 @@ describe('Server', function(){
         var port = config.get('port')
         jsdom.env(baseUrl, function(err, window){
             var document = window.document
-            expect(window.document.title).to.equal('Test\'em Runner')
+            expect(window.document.title).to.equal('Test\'em')
             var scripts = document.getElementsByTagName('script')
             var srcs = Array.prototype.map.call(scripts, function(s){ return s.src })
             expect(srcs).to.deep.equal([ 
