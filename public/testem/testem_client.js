@@ -218,13 +218,16 @@ function takeOverConsole(){
         var original = console[method]
         console[method] = function(){
             var message = Array.prototype.slice.apply(arguments).join(' ')
-            socket.emit(method, message)
-            if (original.apply){
-                // Do this for normal browsers
-                original.apply(console, arguments)
-            }else{
-                // Do this for IE
-                original(message)
+            var doDefault = Testem.handleConsoleMessage(message)
+            if (doDefault !== false){
+                socket.emit(method, message)
+                if (original.apply){
+                    // Do this for normal browsers
+                    original.apply(console, arguments)
+                }else{
+                    // Do this for IE
+                    original(message)
+                }
             }
         }
     }
@@ -269,6 +272,7 @@ window.Testem = {
         }
         this.evtHandlers[evt].push(callback)
     }
+    , handleConsoleMessage: function(){}
 }
 
 
