@@ -221,17 +221,17 @@ function takeOverConsole(){
             var doDefault = Testem.handleConsoleMessage(message)
             if (doDefault !== false){
                 socket.emit(method, message)
-                if (original.apply){
+                if (original && original.apply){
                     // Do this for normal browsers
                     original.apply(console, arguments)
-                }else{
+                }else if (original) {
                     // Do this for IE
                     original(message)
                 }
             }
         }
     }
-    var methods = ['log', 'warn', 'error']
+    var methods = ['log', 'warn', 'error', 'info']
     for (var i = 0; i < methods.length; i++)
         intercept(methods[i])
 }
