@@ -355,8 +355,9 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Browserify Project](https://github.com/airportyh/testem/tree/master/examples/browserify)
 * [JSHint Example](https://github.com/airportyh/testem/tree/master/examples/jshint)
 * [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
-* [BrowserStack Integration](https://github.com/airportyh/testem/tree/master/examples/browserstack) (*bleeding edge*)
-* [SauceLabs Integration](https://github.com/airportyh/testem/tree/master/examples/saucelabs) (*bleeding edge*)
+* [Tape Example](https://github.com/airportyh/testem/tree/master/examples/tape_example)
+* [BrowserStack Integration](https://github.com/airportyh/testem/tree/master/examples/browserstack) **bleeding edge**
+* [SauceLabs Integration](https://github.com/airportyh/testem/tree/master/examples/saucelabs) **bleeding edge**
 
 Known Issues
 ------------
