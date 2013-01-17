@@ -237,10 +237,17 @@ function takeOverConsole(){
 }
 
 function interceptWindowOnError(){
+    var originalErrorHandler = window.onerror
     window.onerror = function(msg, url, line){
         if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number'){
             socket.emit('top-level-error', msg, url, line)
         }
+
+        if (originalErrorHandler) {
+            return originalErrorHandler(msg, url, line)
+        }
+
+        return false
     }
 }
 

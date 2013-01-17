@@ -32,12 +32,6 @@ describe('BrowserRunner', function(){
         expect(runner.get('app')).to.equal(app)
     })
     describe('reset Test Results', function(){
-        it('resets topLevelError', function(){
-            var results = runner.get('results')
-            results.set('topLevelError', 'blah')
-            results.reset()
-            expect(results.get('topLevelError')).to.equal(null)
-        })
         it('resets results', function(){
             var results = runner.get('results')
             results.addResult({
@@ -59,9 +53,13 @@ describe('BrowserRunner', function(){
         results.reset.restore()
         socket.emit.restore()
     })
-    it('sets topLevelError when error emitted', function(){
-        socket.emit('top-level-error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
-        expect(runner.get('messages').at(0).get('text')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45\n')
+    describe('on test-error event', function() {
+        it ('sets the error message and emits top-level-error on app', function() {
+            socket.emit('top-level-error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
+            expect(app.emit.calledWith('top-level-error')).to.be.true
+            expect(runner.get('results').get('topLevelError')).to
+                .equal('TypeError: bad news at http://test.com/bad.js, line 45\n')
+        })
     })
     it('emits tests-start on server on tests-start', function(){
         test.spy(runner, 'trigger')
