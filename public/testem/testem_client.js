@@ -213,7 +213,14 @@ function setupTestStats(){
 
 function takeOverConsole(){
     var console = window.console
-    if (!console) return
+    if (!console) {
+        console = window.console = {
+            log: function () {}
+            , warn: function () {}
+            , error: function () {}
+            , info: function () {}
+        }
+    }
     function intercept(method){
         var original = console[method]
         console[method] = function(){
