@@ -58,6 +58,293 @@ module.exports = function(type){
 }); // module: browser/debug.js
 
 require.register("browser/diff.js", function(module, exports, require){
+/* See license.txt for terms of usage */
+
+/*
+ * Text diff implementation.
+ * 
+ * This library supports the following APIS:
+ * JsDiff.diffChars: Character by character diff
+ * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
+ * JsDiff.diffLines: Line based diff
+ * 
+ * JsDiff.diffCss: Diff targeted at CSS content
+ * 
+ * These methods are based on the implementation proposed in
+ * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ */
+var JsDiff = (function() {
+  function clonePath(path) {
+    return { newPos: path.newPos, components: path.components.slice(0) };
+  }
+  function removeEmpty(array) {
+    var ret = [];
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]) {
+        ret.push(array[i]);
+      }
+    }
+    return ret;
+  }
+  function escapeHTML(s) {
+    var n = s;
+    n = n.replace(/&/g, "&amp;");
+    n = n.replace(/</g, "&lt;");
+    n = n.replace(/>/g, "&gt;");
+    n = n.replace(/"/g, "&quot;");
+
+    return n;
+  }
+
+
+  var fbDiff = function(ignoreWhitespace) {
+    this.ignoreWhitespace = ignoreWhitespace;
+  };
+  fbDiff.prototype = {
+      diff: function(oldString, newString) {
+        // Handle the identity case (this is due to unrolling editLength == 0
+        if (newString == oldString) {
+          return [{ value: newString }];
+        }
+        if (!newString) {
+          return [{ value: oldString, removed: true }];
+        }
+        if (!oldString) {
+          return [{ value: newString, added: true }];
+        }
+
+        newString = this.tokenize(newString);
+        oldString = this.tokenize(oldString);
+
+        var newLen = newString.length, oldLen = oldString.length;
+        var maxEditLength = newLen + oldLen;
+        var bestPath = [{ newPos: -1, components: [] }];
+
+        // Seed editLength = 0
+        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
+        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
+          return bestPath[0].components;
+        }
+
+        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
+          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
+            var basePath;
+            var addPath = bestPath[diagonalPath-1],
+                removePath = bestPath[diagonalPath+1];
+            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
+            if (addPath) {
+              // No one else is going to attempt to use this value, clear it
+              bestPath[diagonalPath-1] = undefined;
+            }
+
+            var canAdd = addPath && addPath.newPos+1 < newLen;
+            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
+            if (!canAdd && !canRemove) {
+              bestPath[diagonalPath] = undefined;
+              continue;
+            }
+
+            // Select the diagonal that we want to branch from. We select the prior
+            // path whose position in the new string is the farthest from the origin
+            // and does not pass the bounds of the diff graph
+            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+              basePath = clonePath(removePath);
+              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+            } else {
+              basePath = clonePath(addPath);
+              basePath.newPos++;
+              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
+            }
+
+            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+
+            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
+              return basePath.components;
+            } else {
+              bestPath[diagonalPath] = basePath;
+            }
+          }
+        }
+      },
+
+      pushComponent: function(components, value, added, removed) {
+        var last = components[components.length-1];
+        if (last && last.added === added && last.removed === removed) {
+          // We need to clone here as the component clone operation is just
+          // as shallow array clone
+          components[components.length-1] =
+            {value: this.join(last.value, value), added: added, removed: removed };
+        } else {
+          components.push({value: value, added: added, removed: removed });
+        }
+      },
+      extractCommon: function(basePath, newString, oldString, diagonalPath) {
+        var newLen = newString.length,
+            oldLen = oldString.length,
+            newPos = basePath.newPos,
+            oldPos = newPos - diagonalPath;
+        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
+          newPos++;
+          oldPos++;
+          
+          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+        }
+        basePath.newPos = newPos;
+        return oldPos;
+      },
+
+      equals: function(left, right) {
+        var reWhitespace = /\S/;
+        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+          return true;
+        } else {
+          return left == right;
+        }
+      },
+      join: function(left, right) {
+        return left + right;
+      },
+      tokenize: function(value) {
+        return value;
+      }
+  };
+  
+  var CharDiff = new fbDiff();
+  
+  var WordDiff = new fbDiff(true);
+  WordDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/(\s+|\b)/));
+  };
+  
+  var CssDiff = new fbDiff(true);
+  CssDiff.tokenize = function(value) {
+    return removeEmpty(value.split(/([{}:;,]|\s+)/));
+  };
+  
+  var LineDiff = new fbDiff();
+  LineDiff.tokenize = function(value) {
+    return value.split(/^/m);
+  };
+  
+  return {
+    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
+    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
+    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
+
+    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
+
+    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
+      var ret = [];
+
+      ret.push("Index: " + fileName);
+      ret.push("===================================================================");
+      ret.push("--- " + fileName + (typeof oldHeader === "undefined" ? "" : "\t" + oldHeader));
+      ret.push("+++ " + fileName + (typeof newHeader === "undefined" ? "" : "\t" + newHeader));
+
+      var diff = LineDiff.diff(oldStr, newStr);
+      if (!diff[diff.length-1].value) {
+        diff.pop();   // Remove trailing newline add
+      }
+      diff.push({value: "", lines: []});   // Append an empty value to make cleanup easier
+
+      function contextLines(lines) {
+        return lines.map(function(entry) { return ' ' + entry; });
+      }
+      function eofNL(curRange, i, current) {
+        var last = diff[diff.length-2],
+            isLast = i === diff.length-2,
+            isLastOfType = i === diff.length-3 && (current.added === !last.added || current.removed === !last.removed);
+
+        // Figure out if this is the last line for the given file and missing NL
+        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
+          curRange.push('\\ No newline at end of file');
+        }
+      }
+
+      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
+          oldLine = 1, newLine = 1;
+      for (var i = 0; i < diff.length; i++) {
+        var current = diff[i],
+            lines = current.lines || current.value.replace(/\n$/, "").split("\n");
+        current.lines = lines;
+
+        if (current.added || current.removed) {
+          if (!oldRangeStart) {
+            var prev = diff[i-1];
+            oldRangeStart = oldLine;
+            newRangeStart = newLine;
+            
+            if (prev) {
+              curRange = contextLines(prev.lines.slice(-4));
+              oldRangeStart -= curRange.length;
+              newRangeStart -= curRange.length;
+            }
+          }
+          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?"+":"-") + entry; }));
+          eofNL(curRange, i, current);
+
+          if (current.added) {
+            newLine += lines.length;
+          } else {
+            oldLine += lines.length;
+          }
+        } else {
+          if (oldRangeStart) {
+            // Close out any changes that have been output (or join overlapping)
+            if (lines.length <= 8 && i < diff.length-2) {
+              // Overlapping
+              curRange.push.apply(curRange, contextLines(lines));
+            } else {
+              // end the range and output
+              var contextSize = Math.min(lines.length, 4);
+              ret.push(
+                  "@@ -" + oldRangeStart + "," + (oldLine-oldRangeStart+contextSize)
+                  + " +" + newRangeStart + "," + (newLine-newRangeStart+contextSize)
+                  + " @@");
+              ret.push.apply(ret, curRange);
+              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+              if (lines.length <= 4) {
+                eofNL(ret, i, current);
+              }
+
+              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
+            }
+          }
+          oldLine += lines.length;
+          newLine += lines.length;
+        }
+      }
+
+      return ret.join('\n') + '\n';
+    },
+
+    convertChangesToXML: function(changes){
+      var ret = [];
+      for ( var i = 0; i < changes.length; i++) {
+        var change = changes[i];
+        if (change.added) {
+          ret.push("<ins>");
+        } else if (change.removed) {
+          ret.push("<del>");
+        }
+
+        ret.push(escapeHTML(change.value));
+
+        if (change.added) {
+          ret.push("</ins>");
+        } else if (change.removed) {
+          ret.push("</del>");
+        }
+      }
+      return ret.join("");
+    }
+  };
+})();
+
+if (typeof module !== "undefined") {
+    module.exports = JsDiff;
+}
 
 }); // module: browser/diff.js
 
@@ -494,7 +781,9 @@ function Hook(title, fn) {
  * Inherit from `Runnable.prototype`.
  */
 
-Hook.prototype = new Runnable;
+function F(){};
+F.prototype = Runnable.prototype;
+Hook.prototype = new F;
 Hook.prototype.constructor = Hook;
 
 
@@ -937,6 +1226,14 @@ module.exports = function(suite){
       var test = context.test(title, fn);
       mocha.grep(test.fullTitle());
     };
+
+    /**
+     * Pending test case.
+     */
+
+    context.test.skip = function(title){
+      context.test(title);
+    };
   });
 };
 
@@ -997,6 +1294,7 @@ function image(name) {
  *   - `reporter` reporter instance, defaults to `mocha.reporters.Dot`
  *   - `globals` array of accepted globals
  *   - `timeout` timeout in milliseconds
+ *   - `bail` bail on the first test failure
  *   - `slow` milliseconds to wait before considering a test slow
  *   - `ignoreLeaks` ignore global leaks
  *   - `grep` string or regexp to filter tests with
@@ -1012,10 +1310,24 @@ function Mocha(options) {
   this.grep(options.grep);
   this.suite = new exports.Suite('', new exports.Context);
   this.ui(options.ui);
+  this.bail(options.bail);
   this.reporter(options.reporter);
   if (options.timeout) this.timeout(options.timeout);
   if (options.slow) this.slow(options.slow);
 }
+
+/**
+ * Enable or disable bailing on the first failure.
+ *
+ * @param {Boolean} [bail]
+ * @api public
+ */
+
+Mocha.prototype.bail = function(bail){
+  if (null == bail) bail = true;
+  this.suite.bail(bail);
+  return this;
+};
 
 /**
  * Add test `file`.
@@ -1032,7 +1344,7 @@ Mocha.prototype.addFile = function(file){
 /**
  * Set reporter to `reporter`, defaults to "dot".
  *
- * @param {String|Function} reporter name of a reporter or a reporter constructor
+ * @param {String|Function} reporter name or constructor
  * @api public
  */
 
@@ -1212,6 +1524,18 @@ Mocha.prototype.slow = function(slow){
 };
 
 /**
+ * Makes all tests async (accepting a callback)
+ *
+ * @return {Mocha}
+ * @api public
+ */
+
+Mocha.prototype.asyncOnly = function(){
+  this.options.asyncOnly = true;
+  return this;
+};
+
+/**
  * Run tests and invoke `fn()` when complete.
  *
  * @param {Function} fn
@@ -1226,6 +1550,7 @@ Mocha.prototype.run = function(fn){
   var runner = new exports.Runner(suite);
   var reporter = new this._reporter(runner);
   runner.ignoreLeaks = options.ignoreLeaks;
+  runner.asyncOnly = options.asyncOnly;
   if (options.grep) runner.grep(options.grep, options.invert);
   if (options.globals) runner.globals(options.globals);
   if (options.growl) this._growl(runner, reporter);
@@ -1306,14 +1631,14 @@ function parse(str) {
  */
 
 function format(ms) {
-  if (ms == d) return (ms / d) + ' day';
-  if (ms > d) return (ms / d) + ' days';
-  if (ms == h) return (ms / h) + ' hour';
-  if (ms > h) return (ms / h) + ' hours';
-  if (ms == m) return (ms / m) + ' minute';
-  if (ms > m) return (ms / m) + ' minutes';
-  if (ms == s) return (ms / s) + ' second';
-  if (ms > s) return (ms / s) + ' seconds';
+  if (ms == d) return Math.round(ms / d) + ' day';
+  if (ms > d) return Math.round(ms / d) + ' days';
+  if (ms == h) return Math.round(ms / h) + ' hour';
+  if (ms > h) return Math.round(ms / h) + ' hours';
+  if (ms == m) return Math.round(ms / m) + ' minute';
+  if (ms > m) return Math.round(ms / m) + ' minutes';
+  if (ms == s) return Math.round(ms / s) + ' second';
+  if (ms > s) return Math.round(ms / s) + ' seconds';
   return ms + ' ms';
 }
 }); // module: ms.js
@@ -1381,6 +1706,23 @@ exports.colors = {
   , 'diff added': 42
   , 'diff removed': 41
 };
+
+/**
+ * Default symbol map.
+ */
+ 
+exports.symbols = {
+  ok: '✓',
+  err: '✖',
+  dot: '․'
+};
+
+// With node.js on Windows: use symbols available in terminal default fonts
+if ('win32' == process.platform) {
+  exports.symbols.ok = '\u221A';
+  exports.symbols.err = '\u00D7';
+  exports.symbols.dot = '.';
+}
 
 /**
  * Color `str` with the given `type`,
@@ -1598,7 +1940,7 @@ Base.prototype.epilogue = function(){
 
   // failure
   if (stats.failures) {
-    fmt = color('bright fail', '  ✖')
+    fmt = color('bright fail', '  ' + exports.symbols.err)
       + color('fail', ' %d of %d %s failed')
       + color('light', ':')
 
@@ -1613,7 +1955,7 @@ Base.prototype.epilogue = function(){
   }
 
   // pass
-  fmt = color('bright pass', '  ✔')
+  fmt = color('bright pass', ' ')
     + color('green', ' %d %s complete')
     + color('light', ' (%s)');
 
@@ -1624,7 +1966,7 @@ Base.prototype.epilogue = function(){
 
   // pending
   if (stats.pending) {
-    fmt = color('pending', '  •')
+    fmt = color('pending', ' ')
       + color('pending', ' %d %s pending');
 
     console.log(fmt, stats.pending, pluralize(stats.pending));
@@ -1774,7 +2116,6 @@ function Dot(runner) {
   var self = this
     , stats = this.stats
     , width = Base.window.width * .75 | 0
-    , c = '․'
     , n = 0;
 
   runner.on('start', function(){
@@ -1782,21 +2123,21 @@ function Dot(runner) {
   });
 
   runner.on('pending', function(test){
-    process.stdout.write(color('pending', c));
+    process.stdout.write(color('pending', Base.symbols.dot));
   });
 
   runner.on('pass', function(test){
     if (++n % width == 0) process.stdout.write('\n  ');
     if ('slow' == test.speed) {
-      process.stdout.write(color('bright yellow', c));
+      process.stdout.write(color('bright yellow', Base.symbols.dot));
     } else {
-      process.stdout.write(color(test.speed, c));
+      process.stdout.write(color(test.speed, Base.symbols.dot));
     }
   });
 
   runner.on('fail', function(test, err){
     if (++n % width == 0) process.stdout.write('\n  ');
-    process.stdout.write(color('fail', c));
+    process.stdout.write(color('fail', Base.symbols.dot));
   });
 
   runner.on('end', function(){
@@ -1809,7 +2150,9 @@ function Dot(runner) {
  * Inherit from `Base.prototype`.
  */
 
-Dot.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+Dot.prototype = new F;
 Dot.prototype.constructor = Dot;
 
 }); // module: reporters/dot.js
@@ -1899,7 +2242,7 @@ exports = module.exports = HTML;
  * Stats template.
  */
 
-var statsTemplate = '<ul id="stats">'
+var statsTemplate = '<ul id="mocha-stats">'
   + '<li class="progress"><canvas width="40" height="40"></canvas></li>'
   + '<li class="passes"><a href="#">passes:</a> <em>0</em></li>'
   + '<li class="failures"><a href="#">failures:</a> <em>0</em></li>'
@@ -1927,7 +2270,7 @@ function HTML(runner, root) {
     , failuresLink = items[2].getElementsByTagName('a')[0]
     , duration = items[3].getElementsByTagName('em')[0]
     , canvas = stat.getElementsByTagName('canvas')[0]
-    , report = fragment('<ul id="report"></ul>')
+    , report = fragment('<ul id="mocha-report"></ul>')
     , stack = [report]
     , progress
     , ctx
@@ -1987,14 +2330,14 @@ function HTML(runner, root) {
   });
 
   runner.on('fail', function(test, err){
-    if ('hook' == test.type || err.uncaught) runner.emit('test end', test);
+    if ('hook' == test.type) runner.emit('test end', test);
   });
 
   runner.on('test end', function(test){
     window.scrollTo(0, document.body.scrollHeight);
 
     // TODO: add to stats
-    var percent = stats.tests / total * 100 | 0;
+    var percent = stats.tests / this.total * 100 | 0;
     if (progress) progress.update(percent).draw(ctx);
 
     // update stats
@@ -2005,11 +2348,11 @@ function HTML(runner, root) {
 
     // test
     if ('passed' == test.state) {
-      var el = fragment('<li class="test pass %e"><h2>%e<span class="duration">%ems</span></h2></li>', test.speed, test.title, test.duration);
+      var el = fragment('<li class="test pass %e"><h2>%e<span class="duration">%ems</span> <a href="?grep=%e" class="replay">‣</a></h2></li>', test.speed, test.title, test.duration, encodeURIComponent(test.fullTitle()));
     } else if (test.pending) {
       var el = fragment('<li class="test pass pending"><h2>%e</h2></li>', test.title);
     } else {
-      var el = fragment('<li class="test fail"><h2>%e</h2></li>', test.title);
+      var el = fragment('<li class="test fail"><h2>%e <a href="?grep=%e" class="replay">‣</a></h2></li>', test.title, encodeURIComponent(test.fullTitle()));
       var str = test.err.stack || test.err.toString();
 
       // FF / Opera do not add the message
@@ -2036,7 +2379,7 @@ function HTML(runner, root) {
 
       on(h2, 'click', function(){
         pre.style.display = 'none' == pre.style.display
-          ? 'inline-block'
+          ? 'block'
           : 'none';
       });
 
@@ -2045,7 +2388,8 @@ function HTML(runner, root) {
       pre.style.display = 'none';
     }
 
-    stack[0].appendChild(el);
+    // Don't call .appendChild if #mocha-report was already .shift()'ed off the stack.
+    if (stack[0]) stack[0].appendChild(el);
   });
 }
 
@@ -2054,7 +2398,7 @@ function HTML(runner, root) {
  */
 
 function error(msg) {
-  document.body.appendChild(fragment('<div id="error">%s</div>', msg));
+  document.body.appendChild(fragment('<div id="mocha-error">%s</div>', msg));
 }
 
 /**
@@ -2231,6 +2575,10 @@ function map(cov) {
     ret.misses += data.misses;
     ret.sloc += data.sloc;
   }
+
+  ret.files.sort(function(a, b) {
+    return a.filename.localeCompare(b.filename);
+  });
 
   if (ret.sloc > 0) {
     ret.coverage = (ret.hits / ret.sloc) * 100;
@@ -2536,7 +2884,9 @@ function Landing(runner) {
  * Inherit from `Base.prototype`.
  */
 
-Landing.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+Landing.prototype = new F;
 Landing.prototype.constructor = Landing;
 
 }); // module: reporters/landing.js
@@ -2586,7 +2936,7 @@ function List(runner) {
   });
 
   runner.on('pass', function(test){
-    var fmt = color('checkmark', '  ✓')
+    var fmt = color('checkmark', '  '+Base.symbols.dot)
       + color('pass', ' %s: ')
       + color(test.speed, '%dms');
     cursor.CR();
@@ -2605,7 +2955,9 @@ function List(runner) {
  * Inherit from `Base.prototype`.
  */
 
-List.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+List.prototype = new F;
 List.prototype.constructor = List;
 
 
@@ -2637,7 +2989,6 @@ function Markdown(runner) {
 
   var self = this
     , stats = this.stats
-    , total = runner.total
     , level = 0
     , buf = '';
 
@@ -2682,7 +3033,7 @@ function Markdown(runner) {
   runner.on('suite', function(suite){
     ++level;
     var slug = utils.slug(suite.fullTitle());
-    buf += '<a name="' + slug + '" />' + '\n';
+    buf += '<a name="' + slug + '"></a>' + '\n';
     buf += title(suite.title) + '\n';
   });
 
@@ -2744,7 +3095,9 @@ function Min(runner) {
  * Inherit from `Base.prototype`.
  */
 
-Min.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+Min.prototype = new F;
 Min.prototype.constructor = Min;
 
 }); // module: reporters/min.js
@@ -3008,7 +3361,9 @@ function write(string) {
  * Inherit from `Base.prototype`.
  */
 
-NyanCat.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+NyanCat.prototype = new F;
 NyanCat.prototype.constructor = NyanCat;
 
 
@@ -3058,7 +3413,7 @@ function Progress(runner, options) {
   // default chars
   options.open = options.open || '[';
   options.complete = options.complete || '▬';
-  options.incomplete = options.incomplete || '⋅';
+  options.incomplete = options.incomplete || Base.symbols.dot;
   options.close = options.close || ']';
   options.verbose = false;
 
@@ -3100,7 +3455,9 @@ function Progress(runner, options) {
  * Inherit from `Base.prototype`.
  */
 
-Progress.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+Progress.prototype = new F;
 Progress.prototype.constructor = Progress;
 
 
@@ -3167,13 +3524,13 @@ function Spec(runner) {
   runner.on('pass', function(test){
     if ('fast' == test.speed) {
       var fmt = indent()
-        + color('checkmark', '  ✓')
+        + color('checkmark', '  ' + Base.symbols.ok)
         + color('pass', ' %s ');
       cursor.CR();
       console.log(fmt, test.title);
     } else {
       var fmt = indent()
-        + color('checkmark', '  ✓')
+        + color('checkmark', '  ' + Base.symbols.ok)
         + color('pass', ' %s ')
         + color(test.speed, '(%dms)');
       cursor.CR();
@@ -3193,7 +3550,9 @@ function Spec(runner) {
  * Inherit from `Base.prototype`.
  */
 
-Spec.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+Spec.prototype = new F;
 Spec.prototype.constructor = Spec;
 
 
@@ -3227,7 +3586,9 @@ function TAP(runner) {
 
   var self = this
     , stats = this.stats
-    , n = 1;
+    , n = 1
+    , passes = 0
+    , failures = 0;
 
   runner.on('start', function(){
     var total = runner.grepTotal(runner.suite);
@@ -3243,12 +3604,20 @@ function TAP(runner) {
   });
 
   runner.on('pass', function(test){
+    passes++;
     console.log('ok %d %s', n, title(test));
   });
 
   runner.on('fail', function(test, err){
+    failures++;
     console.log('not ok %d %s', n, title(test));
-    console.log(err.stack.replace(/^/gm, '  '));
+    if (err.stack) console.log(err.stack.replace(/^/gm, '  '));
+  });
+
+  runner.on('end', function(){
+    console.log('# tests ' + (passes + failures));
+    console.log('# pass ' + passes);
+    console.log('# fail ' + failures);
   });
 }
 
@@ -3402,7 +3771,9 @@ function XUnit(runner) {
  * Inherit from `Base.prototype`.
  */
 
-XUnit.prototype = new Base;
+function F(){};
+F.prototype = Base.prototype;
+XUnit.prototype = new F;
 XUnit.prototype.constructor = XUnit;
 
 
@@ -3477,6 +3848,12 @@ var Date = global.Date
   , clearInterval = global.clearInterval;
 
 /**
+ * Object#toString().
+ */
+
+var toString = Object.prototype.toString;
+
+/**
  * Expose `Runnable`.
  */
 
@@ -3504,7 +3881,9 @@ function Runnable(title, fn) {
  * Inherit from `EventEmitter.prototype`.
  */
 
-Runnable.prototype = new EventEmitter;
+function F(){};
+F.prototype = EventEmitter.prototype;
+Runnable.prototype = new F;
 Runnable.prototype.constructor = Runnable;
 
 
@@ -3649,7 +4028,7 @@ Runnable.prototype.run = function(fn){
   if (this.async) {
     try {
       this.fn.call(ctx, function(err){
-        if (err instanceof Error) return done(err);
+        if (err instanceof Error || toString.call(err) === "[object Error]") return done(err);
         if (null != err) return done(new Error('done() invoked with non-Error: ' + err));
         done();
       });
@@ -3658,7 +4037,11 @@ Runnable.prototype.run = function(fn){
     }
     return;
   }
-  
+
+  if (this.asyncOnly) {
+    return done(new Error('--async-only option in use without declaring `done()`'));
+  }
+
   // sync
   try {
     if (!this.pending) this.fn.call(ctx);
@@ -3684,6 +4067,19 @@ var EventEmitter = require('browser/events').EventEmitter
   , filter = utils.filter
   , keys = utils.keys
   , noop = function(){};
+
+/**
+ * Non-enumerable globals.
+ */
+
+var globals = [
+  'setTimeout',
+  'clearTimeout',
+  'setInterval',
+  'clearInterval',
+  'XMLHttpRequest',
+  'Date'
+];
 
 /**
  * Expose `Runner`.
@@ -3719,14 +4115,16 @@ function Runner(suite) {
   this.on('test end', function(test){ self.checkGlobals(test); });
   this.on('hook end', function(hook){ self.checkGlobals(hook); });
   this.grep(/.*/);
-  this.globals(utils.keys(global).concat(['errno']));
+  this.globals(this.globalProps().concat(['errno']));
 }
 
 /**
  * Inherit from `EventEmitter.prototype`.
  */
 
-Runner.prototype = new EventEmitter;
+function F(){};
+F.prototype = EventEmitter.prototype;
+Runner.prototype = new F;
 Runner.prototype.constructor = Runner;
 
 
@@ -3771,6 +4169,25 @@ Runner.prototype.grepTotal = function(suite) {
 };
 
 /**
+ * Return a list of global properties.
+ *
+ * @return {Array}
+ * @api private
+ */
+
+Runner.prototype.globalProps = function() {
+  var props = utils.keys(global);
+
+  // non-enumerables
+  for (var i = 0; i < globals.length; ++i) {
+    if (~utils.indexOf(props, globals[i])) continue;
+    props.push(globals[i]);
+  }
+
+  return props;
+};
+
+/**
  * Allow the given `arr` of globals.
  *
  * @param {Array} arr
@@ -3796,7 +4213,7 @@ Runner.prototype.globals = function(arr){
 Runner.prototype.checkGlobals = function(test){
   if (this.ignoreLeaks) return;
   var ok = this._globals;
-  var globals = keys(global);
+  var globals = this.globalProps();
   var isNode = process.kill;
   var leaks;
 
@@ -3825,9 +4242,11 @@ Runner.prototype.checkGlobals = function(test){
 Runner.prototype.fail = function(test, err){
   ++this.failures;
   test.state = 'failed';
+
   if ('string' == typeof err) {
     err = new Error('the string "' + err + '" was thrown, throw an Error :)');
   }
+  
   this.emit('fail', test, err);
 };
 
@@ -3975,6 +4394,8 @@ Runner.prototype.parents = function(){
 Runner.prototype.runTest = function(fn){
   var test = this.test
     , self = this;
+
+  if (this.asyncOnly) test.asyncOnly = true;
 
   try {
     test.on('error', function(err){
@@ -4127,15 +4548,12 @@ Runner.prototype.run = function(fn){
 
   debug('start');
 
-  // uncaught callback
-  function uncaught(err) {
-    self.uncaught(err);
-  }
-
   // callback
   this.on('end', function(){
     debug('end');
-    process.removeListener('uncaughtException', uncaught);
+    process.removeListener('uncaughtException', function(err){
+      self.uncaught(err);
+    });
     fn(self.failures);
   });
 
@@ -4147,7 +4565,9 @@ Runner.prototype.run = function(fn){
   });
 
   // uncaught exception
-  process.on('uncaughtException', uncaught);
+  process.on('uncaughtException', function(err){
+    self.uncaught(err);
+  });
 
   return this;
 };
@@ -4165,6 +4585,8 @@ function filterLeaks(ok, globals) {
   return filter(globals, function(key){
     var matched = filter(ok, function(ok){
       if (~ok.indexOf('*')) return 0 == key.indexOf(ok.split('*')[0]);
+      // Opera and IE expose global variables for HTML element IDs (issue #243)
+      if (/^mocha-/.test(key)) return true;
       return key == ok;
     });
     return matched.length == 0 && (!global.navigator || 'onerror' !== key);
@@ -4242,7 +4664,9 @@ function Suite(title, ctx) {
  * Inherit from `EventEmitter.prototype`.
  */
 
-Suite.prototype = new EventEmitter;
+function F(){};
+F.prototype = EventEmitter.prototype;
+Suite.prototype = new F;
 Suite.prototype.constructor = Suite;
 
 
@@ -4507,7 +4931,9 @@ function Test(title, fn) {
  * Inherit from `Runnable.prototype`.
  */
 
-Test.prototype = new Runnable;
+function F(){};
+F.prototype = Runnable.prototype;
+Test.prototype = new F;
 Test.prototype.constructor = Test;
 
 
@@ -4856,7 +5282,9 @@ process.removeListener = function(e){
 
 process.on = function(e, fn){
   if ('uncaughtException' == e) {
-    window.onerror = fn;
+    window.onerror = function(err, url, line){
+      fn(new Error(err + ' (' + url + ':' + line + ')'));
+    };
   }
 };
 
@@ -4901,6 +5329,7 @@ process.on = function(e, fn){
 
     var query = Mocha.utils.parseQuery(window.location.search || '');
     if (query.grep) mocha.grep(query.grep);
+    if (query.invert) mocha.invert();
 
     return Mocha.prototype.run.call(mocha, function(){
       Mocha.utils.highlightTags('code');
