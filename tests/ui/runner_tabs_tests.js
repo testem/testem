@@ -105,18 +105,21 @@ describe('RunnerTab', function(){
                 , index: 0
             })
         })
-        it('renders test results', function(){
+        it('renders test results', function(done){
             results.set('passed', 1)
             results.set('total', 1)
-            expect(screen.buffer).to.be.deep.equal([
-                '                    ',
-                '                    ',
-                '                    ',
-                ' ━━━━━━━━━━━━━━┓    ',
-                '       Bob     ┃    ',
-                '     1/1 ◞     ┃    ',
-                '               ┗    ',
-                '                    ' ])
+            process.nextTick(function(){
+                expect(screen.buffer).to.be.deep.equal([
+                    '                    ',
+                    '                    ',
+                    '                    ',
+                    ' ━━━━━━━━━━━━━━┓    ',
+                    '       Bob     ┃    ',
+                    '     1/1 ◞     ┃    ',
+                    '               ┗    ',
+                    '                    ' ])
+                done()
+            })
         })
         it('renders check mark if all passed', function(){
             results.set({

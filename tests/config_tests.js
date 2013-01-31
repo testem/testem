@@ -150,6 +150,57 @@ describe('Config', function(){
 			expect(config.getWantedLauncherNames()).to.deep.equal(['Firefox'])
 		})
 	})
+
+	describe('getSrcFiles', function(){
+		it('by defaults list all .js files', function(done){
+			config.getSrcFiles(function(err, files){
+				expect(files.length).be.above(5) // because this dir should have a bunch of .js files
+				done()
+			})
+		})
+		it('gets src files', function(done){
+			config.set('src_files', ['config_tests.js'])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal(['config_tests.js'])
+				done()
+			})
+		})
+		it('excludes usig src_files_ignore', function(done){
+			config.set('src_files', ['integration/*'])
+			config.set('src_files_ignore', ['**/*.sh'])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				done()
+			})
+		})
+		it('can also use space delimited string', function(done){
+			config.set('src_files', 'integration/*')
+			config.set('src_files_ignore', '**/*.sh')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				done()
+			})
+		})
+	})
+
+	describe('getServeFiles', function(){
+		it('by default just gets src files', function(done){
+			config.set('src_files', 'integration/*')
+			config.set('src_files_ignore', '**/*.sh')
+			config.getServeFiles(function(err, files){
+				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				done()
+			})
+		})
+		it('globs serve_files if specified', function(done){
+			config.set('serve_files', 'integration/*')
+			config.set('serve_files_ignore', '**/*.sh')
+			config.getServeFiles(function(err, files){
+				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				done()
+			})
+		})
+	})
 })
 
 

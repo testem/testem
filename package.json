@@ -36,7 +36,8 @@
     "backbone": "*",
     "styled_string": "*",
     "colors": "*",
-    "fireworm": "*"
+    "fireworm": "*",
+    "fileset": "~0.1.4"
   },
   "files": [
     "docs",
