@@ -37,7 +37,8 @@
     "styled_string": "*",
     "colors": "*",
     "fireworm": "*",
-    "fileset": "~0.1.4"
+    "fileset": "~0.1.4",
+    "growl": "~1.7.0"
   },
   "files": [
     "docs",
