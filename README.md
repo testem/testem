@@ -348,6 +348,11 @@ Then, to use it, in your config file simply set
 
 And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
 
+Growl Notifications
+-------------------
+
+If you'd prefer not to be looking at the terminal while developing, you can us growl notification (or simply desktop notifications on some platforms) using the `-g` option.
+
 Example Projects
 ----------------
 
