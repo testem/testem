@@ -33,6 +33,7 @@ program
     .command('ci')
     .description('Continuous integration mode')
     .option('-T, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
+    .option('-b, --bail_on_uncaught_error', 'Bail on any uncaught errors')
     .action(function(env){
         env.__proto__ = program
         progOptions = env
