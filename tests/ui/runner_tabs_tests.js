@@ -35,6 +35,7 @@ describe('RunnerTab', function(){
             })
             runner.hasMessages = function(){ return false }
             appview = new Backbone.Model({currentTab: 0})
+            appview.app = {config: {}}
             appview.isPopupVisible = function(){ return false }
             tab = new RunnerTab({
                 runner: runner
@@ -97,6 +98,7 @@ describe('RunnerTab', function(){
             })
             runner.hasMessages = function(){ return false }
             appview = new Backbone.Model({currentTab: 0})
+            appview.app = {config: {}}
             appview.isPopupVisible = function(){ return false }
             tab = new RunnerTab({
                 runner: runner
