@@ -181,6 +181,61 @@ describe('Config', function(){
 				done()
 			})
 		})
+		it('can use remote schemas', function(done){
+			config.set('src_files', [
+				'http://example.com/a.js',
+				'https://exmaple.com/b.js',
+				'//example.com/c.js'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					'http://example.com/a.js',
+					'https://exmaple.com/b.js',
+					'//example.com/c.js'
+				])
+				done()
+			})
+		})
+		it('can also use remote schemas with globs', function(done){
+			config.set('src_files', [
+				'config_tests.js',
+				'http://example.com/a.js',
+				'integration/*',
+				'https://exmaple.com/b.js',
+				'//example.com/c.js'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					'http://example.com/a.js',
+					'https://exmaple.com/b.js',
+					'//example.com/c.js',
+					'config_tests.js',
+					'integration/browser_tests.bat',
+					'integration/browser_tests.sh'
+				])
+				done()
+			})
+		})
+		it('can also use remote schemas with globs and respects exclusions', function(done){
+			config.set('src_files', [
+				'config_tests.js',
+				'http://example.com/a.js',
+				'integration/*',
+				'https://exmaple.com/b.js',
+				'//example.com/c.js'
+			])
+			config.set('src_files_ignore', '**/*.sh')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					'http://example.com/a.js',
+					'https://exmaple.com/b.js',
+					'//example.com/c.js',
+					'config_tests.js',
+					'integration/browser_tests.bat'
+				])
+				done()
+			})
+		})
 	})
 
 	describe('getServeFiles', function(){
