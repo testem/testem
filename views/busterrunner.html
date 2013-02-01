@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="/testem/buster-test.css">
 <script src="/testem/buster-test.js"></script>
 <script src="/testem.js"></script>
-{{#scripts}}<script src="{{.}}"></script>{{/scripts}}
+{{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
 </head>
 <body></body>
 </html>
