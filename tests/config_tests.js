@@ -161,7 +161,7 @@ describe('Config', function(){
 		it('gets src files', function(done){
 			config.set('src_files', ['config_tests.js'])
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['config_tests.js'])
+				expect(files).to.deep.equal([{src:'config_tests.js', attrs:[]}])
 				done()
 			})
 		})
@@ -169,7 +169,7 @@ describe('Config', function(){
 			config.set('src_files', ['integration/*'])
 			config.set('src_files_ignore', ['**/*.sh'])
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal([{src:'integration/browser_tests.bat', attrs:[]}])
 				done()
 			})
 		})
@@ -177,7 +177,42 @@ describe('Config', function(){
 			config.set('src_files', 'integration/*')
 			config.set('src_files_ignore', '**/*.sh')
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal([{src:'integration/browser_tests.bat', attrs:[]}])
+				done()
+			})
+		})
+		it('populates attributes', function(done){
+			config.set('src_files', [{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]}])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']}])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs', function(done){
+			config.set('src_files', [
+				{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]},
+				'integration/*'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']},
+					{src:'integration/browser_tests.bat', attrs:[]},
+					{src:'integration/browser_tests.sh', attrs:[]}
+				])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs and excludes usig src_files_ignore', function(done){
+			config.set('src_files', [
+				{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]},
+				'integration/*'
+			])
+			config.set('src_files_ignore', '**/*.sh')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']},
+					{src:'integration/browser_tests.bat', attrs:[]}
+				])
 				done()
 			})
 		})
@@ -188,7 +223,7 @@ describe('Config', function(){
 			config.set('src_files', 'integration/*')
 			config.set('src_files_ignore', '**/*.sh')
 			config.getServeFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal([{ src:'integration/browser_tests.bat', attrs:[]}])
 				done()
 			})
 		})
@@ -196,7 +231,42 @@ describe('Config', function(){
 			config.set('serve_files', 'integration/*')
 			config.set('serve_files_ignore', '**/*.sh')
 			config.getServeFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal([{ src:'integration/browser_tests.bat', attrs:[]}])
+				done()
+			})
+		})
+		it('populates attributes', function(done){
+			config.set('serve_files', [{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]}])
+			config.getServeFiles(function(err, files){
+				expect(files).to.deep.equal([{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']}])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs', function(done){
+			config.set('serve_files', [
+				{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]},
+				'integration/*'
+			])
+			config.getServeFiles(function(err, files){
+				expect(files).to.deep.equal([
+					{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']},
+					{src:'integration/browser_tests.bat', attrs:[]},
+					{src:'integration/browser_tests.sh', attrs:[]}
+				])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs and excludes usig serve_files_ignore', function(done){
+			config.set('serve_files', [
+				{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]},
+				'integration/*'
+			])
+			config.set('serve_files_ignore', '**/*.sh')
+			config.getServeFiles(function(err, files){
+				expect(files).to.deep.equal([
+					{src:'config_tests.js', attrs:['data-foo="true"', 'data-bar']},
+					{src:'integration/browser_tests.bat', attrs:[]}
+				])
 				done()
 			})
 		})
@@ -245,8 +315,8 @@ describe('getTemplateData', function(){
 				port: 8081,
 				src_files: ['web/*.js'],
 				serve_files: [
-					'web/hello.js',
-					'web/hello_tests.js'
+					{src:'web/hello.js', attrs: []},
+					{src:'web/hello_tests.js', attrs: []}
 				]
 			})
 			done()

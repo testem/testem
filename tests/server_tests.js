@@ -19,7 +19,7 @@ describe('Server', function(){
             port: port,
             src_files: [
                 'web/hello.js',
-                'web/hello_tests.js'
+                {src:'web/hello_tests.js', attrs: ['data-foo="true"', 'data-bar']}
             ]
         })
         baseUrl = 'http://localhost:' + port + '/'
@@ -86,7 +86,7 @@ describe('Server', function(){
                 , '<html>'
                 , '<head>'
                 , '        <script src="web/hello.js"></script>'
-                , '        <script src="web/hello_tests.js"></script>'
+                , '        <script src="web/hello_tests.js" data-foo="true"  data-bar ></script>'
                 , '    </head>'
                 ].join('\n'))
             done()

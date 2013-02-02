@@ -6,7 +6,7 @@
 <script src="/testem/mocha.js"></script>
 <script src="/testem.js"></script>
 <script>mocha.setup('bdd')</script>
-{{#scripts}}<script src="{{.}}"></script>{{/scripts}}
+{{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
 </head>
 <body>
 <div id="mocha"></div>
