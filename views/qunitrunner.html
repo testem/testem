@@ -4,7 +4,7 @@
 <title>Test'em</title>
 <script src="/testem/qunit.js"></script>
 <script src="/testem.js"></script>
-{{#scripts}}<script src="{{.}}"></script>{{/scripts}}
+{{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
 <link rel="stylesheet" href="/testem/qunit.css"/>
 </head>
 <body>

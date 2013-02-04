@@ -151,7 +151,12 @@ describe('Config', function(){
 		})
 	})
 
+	function fileEntry(filename, attrs){
+		return { src: filename, attrs: attrs || [] }
+	}
+
 	describe('getSrcFiles', function(){
+		
 		it('by defaults list all .js files', function(done){
 			config.getSrcFiles(function(err, files){
 				expect(files.length).be.above(5) // because this dir should have a bunch of .js files
@@ -161,7 +166,7 @@ describe('Config', function(){
 		it('gets src files', function(done){
 			config.set('src_files', ['config_tests.js'])
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['config_tests.js'])
+				expect(files).to.deep.equal([fileEntry('config_tests.js')])
 				done()
 			})
 		})
@@ -169,14 +174,18 @@ describe('Config', function(){
 			config.set('src_files', ['integration/*'])
 			config.set('src_files_ignore', ['**/*.sh'])
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal([
+					fileEntry('integration/browser_tests.bat')])
 				done()
 			})
 		})
 		it('can also use space delimited string', function(done){
 			config.set('src_files', 'integration/browser_tests.bat integration/browser_tests.sh')
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat', 'integration/browser_tests.sh'])
+				expect(files).to.deep.equal([
+					fileEntry('integration/browser_tests.bat'), 
+					fileEntry('integration/browser_tests.sh')
+				])
 				done()
 			})
 		})
@@ -187,8 +196,45 @@ describe('Config', function(){
 			])
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
-					'integration/browser_tests.bat',
-					'filewatcher_tests.js'
+					fileEntry('integration/browser_tests.bat'),
+					fileEntry('filewatcher_tests.js')
+				])
+				done()
+			})
+		})
+		it('populates attributes', function(done){
+			config.set('src_files', [{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]}])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
+				])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs', function(done){
+			config.set('src_files', [
+				{src:'config_tests.js', attrs: [ 'data-foo="true"', 'data-bar' ]},
+				'integration/*'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
+					fileEntry('integration/browser_tests.bat'),
+					fileEntry('integration/browser_tests.sh')
+				])
+				done()
+			})
+		})
+		it('populates attributes for only the desired globs and excludes usig src_files_ignore', function(done){
+			config.set('src_files', [
+				fileEntry('config_tests.js', [ 'data-foo="true"', 'data-bar' ]),
+				'integration/*'
+			])
+			config.set('src_files_ignore', '**/*.sh')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
+					fileEntry('integration/browser_tests.bat')
 				])
 				done()
 			})
@@ -196,19 +242,17 @@ describe('Config', function(){
 	})
 
 	describe('getServeFiles', function(){
-		it('by default just gets src files', function(done){
+		it('just delegates to getFileSet', function(done){
+			var egg = []
 			config.set('src_files', 'integration/*')
 			config.set('src_files_ignore', '**/*.sh')
+			config.getFileSet = function(want, dontWant, cb){
+				expect(want).to.equal('integration/*')
+				expect(dontWant).to.equal('**/*.sh')
+				process.nextTick(function(){ cb(null, egg) })
+			}
 			config.getServeFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
-				done()
-			})
-		})
-		it('globs serve_files if specified', function(done){
-			config.set('serve_files', 'integration/*')
-			config.set('serve_files_ignore', '**/*.sh')
-			config.getServeFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.equal(egg)
 				done()
 			})
 		})
@@ -257,8 +301,8 @@ describe('getTemplateData', function(){
 				port: 8081,
 				src_files: ['web/*.js'],
 				serve_files: [
-					'web/hello.js',
-					'web/hello_tests.js'
+					{src:'web/hello.js', attrs: []},
+					{src:'web/hello_tests.js', attrs: []}
 				]
 			})
 			done()
