@@ -1,4 +1,5 @@
 /*global equal:true, hello:true, test:true */
+/*jshint globalstrict: true*/
 'use strict';
 
 test('say hello world', function () {

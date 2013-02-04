@@ -1,4 +1,4 @@
-/*jshint unused:false */
+/*jshint unused:false, globalstrict: true*/
 'use strict';
 
 function hello(name) {
