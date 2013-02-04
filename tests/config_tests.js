@@ -174,10 +174,22 @@ describe('Config', function(){
 			})
 		})
 		it('can also use space delimited string', function(done){
-			config.set('src_files', 'integration/*')
-			config.set('src_files_ignore', '**/*.sh')
+			config.set('src_files', 'integration/browser_tests.bat integration/browser_tests.sh')
 			config.getSrcFiles(function(err, files){
-				expect(files).to.deep.equal(['integration/browser_tests.bat'])
+				expect(files).to.deep.equal(['integration/browser_tests.bat', 'integration/browser_tests.sh'])
+				done()
+			})
+		})
+		it('respects order', function(done){
+			config.set('src_files', [
+				'integration/browser_tests.bat',
+				'filewatcher_tests.js'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					'integration/browser_tests.bat',
+					'filewatcher_tests.js'
+				])
 				done()
 			})
 		})
