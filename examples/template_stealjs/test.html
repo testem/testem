@@ -8,7 +8,7 @@
             // then our qunit tests.
             var testFiles = [];
             {{#serve_files}}
-                testFiles.push('{{.}}');
+                testFiles.push('{{src}}');
             {{/serve_files}}
             steal('funcunit/qunit')
                 .then('/testem.js')
