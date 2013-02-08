@@ -188,7 +188,7 @@ The src_files can also be unix glob patterns.
 }
 ```
 
-You can also ignore certains files using `src_files_ignore`, and you can alternatively use a space separated string for the patterns
+You can also ignore certain files using `src_files_ignore`, and you can alternatively use a space separated string for the patterns
 
 ```json
 {
@@ -242,7 +242,7 @@ This displays the current list of launchers that are available. Launchers can la
 Running Tests in Node and Custom Process Launchers
 --------------------------------------------------
 
-To run tests in Node you need to create a custom launcher which launchs a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
+To run tests in Node you need to create a custom launcher which launches a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
 
 ```json
 "launchers": {
