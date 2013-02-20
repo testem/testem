@@ -5,3 +5,4 @@ testem.log2
 *.log
 tunnel
 node_modules
+.idea
