@@ -353,7 +353,7 @@ Growl or Growl-ish Notifications
 
 If you'd prefer not to be looking at the terminal while developing, you can us growl notification (or simply desktop notifications on some platforms) using the `-g` option.
 
-But, to use this option, you may first need to install some additional software, see the [node-growl page](https://github.com/visionmedia/node-growl) for more details.
+But, to use this option, you may first need to install some additional software, see the [node-growl page](https://github.com/visionmedia/node-growl#install) for more details.
 
 Example Projects
 ----------------
