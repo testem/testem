@@ -1,4 +1,4 @@
-Test&rsquo;em &rsquo;Scripts!
+Got Scripts? Test&rsquo;em!
 =================
 
 [![Build Status](https://secure.travis-ci.org/airportyh/testem.png?branch=master)](http://travis-ci.org/airportyh/testem)
@@ -8,22 +8,22 @@ Unit testing in Javascript can be tedious and painful, but Testem makes it so ea
 Features
 --------
 
-* Test framework agnostic. Support for
+* Test-framework agnostic. Support for
     - [Jasmine](http://pivotal.github.com/jasmine/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://visionmedia.github.com/mocha/)
     - [Buster.js](http://docs.busterjs.org/)
-    - Can be made to work with others through custom test framework adapters. 
-* Running tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
+    - Others, through custom test framework adapters. 
+* Run tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
 * Two distinct use-cases: 
-    - Test-Driven-Development(TDD) - designed to streamline the TDD workflow
-    - Continuous Integration(CI) - designed to work well with popular CI servers like Jenkins or Teamcity 
-* Cross platform support
-    - OSX
+    - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
+    - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or Teamcity 
+* Cross-platform support
+    - OS X
     - Windows
     - Linux
 * Preprocessor support
-    - Coffeescript
+    - CoffeeScript
     - Browserify
     - JSHint/JSLint
     - everything else
@@ -32,9 +32,9 @@ Screencasts
 -----------
 
 * Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
-* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) - more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
-* [Continous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) - details about how CI mode works.
-* [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) - a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
+* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) &mdash; more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
+* [Continous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) &mdash; details about how CI mode works.
+* [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) &mdash; a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
 
 Installation
 ------------
@@ -66,8 +66,8 @@ Now open your browser and go to the specified URL. You should now see
 
 ![Zero of zero](https://github.com/airportyh/testem/raw/master/images/zeros.png)
     
-We see 0/0 for tests because at this point we haven't written any code, but as we write them, Testem will pickup any `.js` files
- that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
+We see 0/0 for tests because at this point we haven't written any code. As we write them, Testem will pick up any `.js` files
+that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
 
 ```javascript
 describe('hello', function(){
@@ -80,7 +80,7 @@ Save that file and now you should see
 
 ![Red](https://github.com/airportyh/testem/raw/master/images/red.png)
 
-Testem should automatically pickup the new files you've added and also any changes that you make to them, and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
+Testem should automatically pick up the new files you've added and also any changes that you make to them and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
 ```javascript
 function hello(){
@@ -110,14 +110,14 @@ In development mode, Testem has a text-based graphical user interface which uses
 
 ### Command line options
 
-To see all command line options do
+To see all command line options
 
     testem --help
 
 Continuous Integration Mode
 ---------------------------
 
-To use Testem for continuous integration you'd do
+To use Testem for continuous integration
 
     testem ci
     
@@ -157,15 +157,16 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 
 ### Command line options
 
-To see all command line options for CI, do
+To see all command line options for CI
 
     testem ci --help
     
 Configuration File
 ------------------
 
-For the simplest Javascript projects, the TDD workflow described above will work fine, but there are times when you want
-to structure your sources files into separate directories, or want to have finer control over what files to include, this calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file). It looks like this
+For the simplest JavaScript projects, the TDD workflow described above will work fine. There are times when you want
+to structure your source files into separate directories, or want to have finer control over what files to include.
+This calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file). It looks like
 
 ```json
 {
@@ -177,7 +178,7 @@ to structure your sources files into separate directories, or want to have finer
 }
 ```
 
-The src_files can also be unix glob patterns.
+The `src_files` can also be unix glob patterns.
 
 ```json
 {
@@ -200,7 +201,7 @@ You can also ignore certain files using `src_files_ignore`, and you can alternat
 Custom Test Pages
 -----------------
 
-You can also use a custom page for testing. To do this, first you need to specify `test_page` to point to your test page in the config file(`framework` and `src_files` are irrelevant in this case)
+You can also use a custom page for testing. To do this, first you need to specify `test_page` to point to your test page in the config file (`framework` and `src_files` are irrelevant in this case)
 
 ```json
 {
@@ -237,12 +238,12 @@ This will display something like the following
     Opera         browser       ✔           
     Mocha         process(TAP)  ✔
 
-This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process - as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in Dev-mode.
+This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process &mdash; as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in dev-mode.
 
 Running Tests in Node and Custom Process Launchers
 --------------------------------------------------
 
-To run tests in Node you need to create a custom launcher which launches a process which will run your tests: this is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
+To run tests in Node you need to create a custom launcher which launches a process which will run your tests. This is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
 
 ```json
 "launchers": {
@@ -268,21 +269,21 @@ If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_
 }
 ```
 
-When this is done, Testem will read in the process' stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process' stdout output from the console log panel, although it will still display the stderr.
+When this is done, Testem will read in the process's stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process's stdout output from the console log panel, although it will still display the stderr.
 
 PhantomJS
 ---------
 
-PhantomJS is a Webkit-based headless browser. It's fast and it's awesome! Testem will pick it up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Do a
+PhantomJS is a Webkit-based headless browser. It's fast and it's awesome! Testem will pick it up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Run
 
     testem launchers
 
 And verify that it's in the list.
 
-Preprocessors (Coffeescript, LESS, Sass, Browserify, etc)
+Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
 
-If you need to run a preprocessor, or, indeed any shell command before the start of the tests, use the `before_tests` option, such as 
+If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as 
 
     "before_tests": "coffee -c *.coffee"
 
@@ -294,7 +295,7 @@ And Testem will run it before each test run. For file watching, you may still us
 ]
 ```
 
-But, since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
+Since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
 
 ```json
 "serve_files": [
@@ -310,7 +311,7 @@ If you need to run a command after your tests have completed (such as removing c
 "after_tests": "rm *.js"
 ```
 
-However, if you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
+If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
 Custom Routes
 -------------
@@ -325,7 +326,7 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
     + public
       tests.html
 
-Let's say you want to serve `tests.html` at the top level url '/tests.html', all the Javascripts under '/js' and all the css under '/css' you can use the "routes" option to do that
+Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css` you can use the "routes" option to do that
 
 ```json
 "routes": {
