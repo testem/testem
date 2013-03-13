@@ -10,8 +10,8 @@ It also restarts the tests by refreshing the page when instructed by the server 
 
 
 patchSocketIOReconnect()
-// patch Socket.IO so it doesn't use the exponential delay algorithm for 
-// reconnection so that if you quit testem and then restart again, the 
+// patch Socket.IO so it doesn't use the exponential delay algorithm for
+// reconnection so that if you quit testem and then restart again, the
 // reconnection will be quick.
 function patchSocketIOReconnect(){
 
@@ -66,7 +66,7 @@ function patchSocketIOReconnect(){
       self.connect();
       self.publish('reconnecting', self.reconnectionDelay, self.reconnectionAttempts);
       self.reconnectionTimer = setTimeout(maybeReconnect, self.reconnectionDelay);
-      
+
     };
 
     this.options['try multiple transports'] = false;
@@ -156,7 +156,7 @@ function initUI(){
     elm.innerHTML = markup
     document.body.appendChild(elm)
 
-    
+
 }
 
 function initTestFrameworkHooks(){
@@ -224,7 +224,16 @@ function takeOverConsole(){
     function intercept(method){
         var original = console[method]
         console[method] = function(){
-            var message = Array.prototype.slice.apply(arguments).join(' ')
+            var message = Array.prototype.slice
+                .apply(arguments)
+                .map(function (value) {
+                    if (typeof value === "string") {
+                        return value
+                    }
+
+                    return JSON.stringify(value, null, "\t")
+                })
+                .join(' ')
             var doDefault = Testem.handleConsoleMessage(message)
             if (doDefault !== false){
                 socket.emit(method, message)
