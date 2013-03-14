@@ -39,7 +39,8 @@
     "fireworm": "*",
     "fileset": "~0.1.4",
     "growl": "~1.7.0",
-    "consolidate": "~0.8.0"
+    "consolidate": "~0.8.0",
+    "bufferstream": "~0.5.1"
   },
   "files": [
     "docs",
