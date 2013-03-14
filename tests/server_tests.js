@@ -50,9 +50,10 @@ describe('Server', function(){
                 '/testem/jasmine.js',
                 '/testem.js',
                 '/testem/jasmine-html.js',
-                '',
+                null,
                 'web/hello.js',
-                'web/hello_tests.js' ])
+                'web/hello_tests.js'
+            ])
             done()
         })
     })
