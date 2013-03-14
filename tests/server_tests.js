@@ -106,6 +106,13 @@ describe('Server', function(){
         })
     })
 
+    it('lists directories', function(done){
+        request(baseUrl + 'data', function(err, req, text){
+            expect(text).to.equal('<a href="blah.txt">blah.txt</a>')
+            done()
+        })
+    })
+
     describe('routes', function(){
         beforeEach(function(){
             config.set('routes', {
