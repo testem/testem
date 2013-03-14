@@ -37,6 +37,13 @@ describe('Server', function(){
         server.stop(function(){
             done()
         })
+        setTimeout(done, 100)
+    })
+
+    it('gets the home page', function(done){
+        request(baseUrl, function(err, req, text){
+            done()
+        })
     })
 
     it('gets scripts for the home page', function(done){
@@ -53,6 +60,12 @@ describe('Server', function(){
                 'web/hello.js',
                 'web/hello_tests.js'
             ])
+            done()
+        })
+    })
+
+    it('gets testem.js', function(done){
+        request(baseUrl + '/testem.js', function(err, req, text){
             done()
         })
     })
