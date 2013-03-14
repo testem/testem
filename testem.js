@@ -40,6 +40,15 @@ program
         appMode = 'ci'
     })
 
+program
+    .command('server')
+    .description('Run just the server')
+    .action(function(env){
+        env.__proto__ = program
+        progOptions = env
+        appMode = 'server'
+    })
+
 
 program.on('--help', function(){
     console.log('  Keyboard Controls (in dev mode):\n')
@@ -73,8 +82,10 @@ if (appMode === 'launchers'){
     var api = new Api()
     if (appMode === 'ci'){
         api.startCI(progOptions)
-    }else{
+    }else if (appMode === 'dev'){
         api.startDev(progOptions)
+    }else if (appMode === 'server'){
+        api.startServer(progOptions)
     }
 }
 
