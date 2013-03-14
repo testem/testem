@@ -39,8 +39,7 @@ describe('Server', function(){
         })
     })
 
-    it('gets home page', function(done){
-        var port = config.get('port')
+    it('gets scripts for the home page', function(done){
         jsdom.env(baseUrl, function(err, window){
             var document = window.document
             expect(window.document.title).to.equal('Test\'em')
