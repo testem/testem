@@ -72,7 +72,7 @@
   },
   "main": "./lib/api.js",
   "bundleDependencies": [
-    "tap"
+    "tap", "express"
   ],
   "optionalDependencies": {}
 }
