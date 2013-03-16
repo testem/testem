@@ -1,18 +1,6 @@
-var libDir = '../../lib/'
-var sandbox = require('sandboxed-module')
 var expect = require('chai').expect
 var screen = require('./fake_screen')
-var ScrollableTextPanel = sandbox.require(libDir + 'ui/scrollable_text_panel', {
-    requires: {
-        './screen': screen
-    }
-})
-var ErrorMessagesPanel = sandbox.require(libDir + 'ui/error_messages_panel', {
-    requires: {
-        './screen': screen
-        , './scrollable_text_panel': ScrollableTextPanel
-    }
-})
+var ErrorMessagesPanel = require('../../lib/ui/error_messages_panel')
 
 describe('ErrorMessagesPanel', function(){
     var panel
@@ -24,6 +12,7 @@ describe('ErrorMessagesPanel', function(){
             , width: 10
             , height: 10
             , text: 'blah'
+            , screen: screen
         })
     })
     it('initializes', function(){})

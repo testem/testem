@@ -12,6 +12,9 @@ launchers:
         command: mocha server_tests.js -R tap
         protocol: tap
         cwd: tests
+    UI:
+        command: mocha tests/ui/error_messages_panel_tests.js -R tap
+        protocol: tap
 launch_in_dev:
     - All
 launch_in_ci:

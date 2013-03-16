@@ -1,20 +1,8 @@
 var expect = require('chai').expect
-var sandbox = require('sandboxed-module')
 var Backbone = require('backbone')
 var sinon = require('sinon')
-var libDir = '../../lib/'
 var screen = require('./fake_screen')
-var ScrollableTextPanel = sandbox.require(libDir + 'ui/scrollable_text_panel', {
-    requires: {
-        './screen': screen
-    }
-})
-var SplitLogPanel = sandbox.require(libDir + 'ui/split_log_panel', {
-    requires: {
-        './screen': screen
-        , './scrollable_text_panel': ScrollableTextPanel
-    }
-})
+var SplitLogPanel = require('../../lib/ui/split_log_panel')
 
 describe('SplitLogPanel', function(){
 
@@ -38,6 +26,7 @@ describe('SplitLogPanel', function(){
             runner: runner
             , appview: appview
             , visible: true
+            , screen: screen
         })
     })
 

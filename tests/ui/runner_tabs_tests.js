@@ -1,25 +1,7 @@
-var libDir = '../../lib/'
-var sandbox = require('sandboxed-module')
 var expect = require('chai').expect
 var screen = require('./fake_screen')
 var Backbone = require('backbone')
-var ScrollableTextPanel = sandbox.require(libDir + 'ui/scrollable_text_panel', {
-    requires: {
-        './screen': screen
-    }
-})
-var SplitLogPanel = sandbox.require(libDir + 'ui/split_log_panel', {
-    requires: {
-        './screen': screen
-        , './scrollable_text_panel': ScrollableTextPanel
-    }
-})
-var runnertabs = sandbox.require(libDir + 'ui/runner_tabs', {
-    requires: {
-        './screen': screen
-        , './split_log_panel': SplitLogPanel
-    }
-})
+var runnertabs = require('../../lib/ui/runner_tabs')
 var RunnerTab = runnertabs.RunnerTab
 var RunnerTabs = runnertabs.RunnerTabs
 
@@ -42,6 +24,7 @@ describe('RunnerTab', function(){
                 , appview: appview
                 , selected: true
                 , index: 0
+                , screen: screen
             })
         })
 
@@ -105,6 +88,7 @@ describe('RunnerTab', function(){
                 , appview: appview
                 , selected: true
                 , index: 0
+                , screen: screen
             })
         })
         it('renders test results', function(done){
@@ -143,4 +127,33 @@ describe('RunnerTab', function(){
     })
 })
 
-// TODO test RunnerTabs
+
+describe('RunnerTabs', function(){
+
+    it('initializes', function(){
+        screen.$setSize(20, 8)
+        var runner = new Backbone.Model({
+            name: 'Bob'
+            , messages: new Backbone.Collection
+        })
+        runner.hasMessages = function(){ return false }
+        var appview = new Backbone.Model({currentTab: 0, cols: 20})
+        appview.app = {config: {}}
+        appview.isPopupVisible = function(){ return false }
+        appview.runners = function(){ return new Backbone.Collection }
+        var tab = new RunnerTab({
+            runner: runner
+            , appview: appview
+            , selected: true
+            , index: 0
+            , screen: screen
+        })
+        appview.isPopupVisible = function(){ return false }
+        var tabs = new RunnerTabs([tab], {
+            appview: appview,
+            screen: screen
+        })
+        tabs.reRenderAll()
+        tabs.eraseLast()
+    })
+})

@@ -1,3 +1,5 @@
+var EventEmitter = require('events').EventEmitter
+
 var width = 100
 var height = 100
 var line = 0
@@ -17,7 +19,8 @@ function initialize(){
 initialize()
 
 var FakeScreen = {
-    $setSize: function(w, h){
+    __proto__: EventEmitter.prototype
+    , $setSize: function(w, h){
         width = w
         height = h
         initialize()
@@ -48,13 +51,14 @@ var FakeScreen = {
         
         var original = buffer[line]
         if (!original){
-            throw new Error('Attempt to draw out of bounds: ' + str)
+            //throw new Error('Attempt to draw out of bounds: ' + str)
+            original = ''
         }
         var before = original.substring(0, col)
         var after = original.substring(col + str.length)
         var result = (before + str + after)
         if (result.length > width){
-            throw new Error('Attempt to draw out of bounds: ' + result)
+            //throw new Error('Attempt to draw out of bounds: ' + result)
         }
         buffer[line] = result
         col += str.length
@@ -69,6 +73,15 @@ var FakeScreen = {
         return this
     }
     , display: function(){
+        return this
+    }
+    , reset: function(){
+        return this
+    }
+    , cursor: function(){
+        return this
+    }
+    , enableScroll: function(){
         return this
     }
 }

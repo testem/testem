@@ -1,13 +1,6 @@
 var expect = require('chai').expect
-var sandbox = require('sandboxed-module')
-var spy = require('sinon').spy
-var libDir = '../../lib/'
 var screen = require('./fake_screen')
-var ScrollableTextPanel = sandbox.require(libDir + 'ui/scrollable_text_panel', {
-    requires: {
-        './screen': screen
-    }
-})
+var ScrollableTextPanel = require('../../lib/ui/scrollable_text_panel')
 
 describe('ScrollableTextPanel', function(){
     
@@ -23,6 +16,7 @@ describe('ScrollableTextPanel', function(){
                 , col: 0
                 , width: 10
                 , height: 2
+                , screen: screen
             })
         })
         it('renders stuff', function(){
@@ -91,6 +85,7 @@ describe('ScrollableTextPanel', function(){
                 , width: 6
                 , height: 6
                 , text: 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.'
+                , screen: screen
             })
         })
 

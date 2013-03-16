@@ -47,6 +47,9 @@ describe('FakeScreen', function(){
         screen.erase('end')
         expect(screen.buffer[0]).to.equal('hello     ')
     })
+
+    /* I am now thinking that screen should be smart and just
+       trim extra characters, so don't need these
     it('throws if drawing out of bounds vertically', function(){
         screen.position(11, 0)
         expect(function(){ screen.write('hello') }).to.throw(/out of bounds/)
@@ -77,6 +80,7 @@ describe('FakeScreen', function(){
             '          ',
             '          ' ])
     })
+*/
 
     context('has 3 lines of text', function(){
         beforeEach(function(){

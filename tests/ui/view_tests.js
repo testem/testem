@@ -1,5 +1,4 @@
 var expect = require('chai').expect
-var sandbox = require('sandboxed-module')
 var spy = require('sinon').spy
 var View = require('../../lib/ui/view')
 var Backbone = require('backbone')
