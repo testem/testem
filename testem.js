@@ -4,7 +4,6 @@ var log = require('winston')
 var program = require('commander')
 var progOptions = program
 var Config = require('./lib/config')
-var catchem = require('./lib/catchem')
 var Api = require('./lib/api')
 var appMode = 'dev'
   
@@ -67,11 +66,6 @@ program.on('--help', function(){
 })
 
 program.parse(process.argv)
-
-catchem.on('err', function(e){
-    log.error(e.message)
-    log.error(e.stack)
-})
 
 var config = new Config(appMode, progOptions)
 if (appMode === 'launchers'){
