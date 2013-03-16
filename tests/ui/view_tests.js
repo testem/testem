@@ -1,11 +1,7 @@
 var expect = require('chai').expect
 var sandbox = require('sandboxed-module')
 var spy = require('sinon').spy
-var View = sandbox.require('../../lib/ui/view', {
-    requires: {
-        './screen': {}
-    }
-})
+var View = require('../../lib/ui/view')
 var Backbone = require('backbone')
 
 describe('view', function(){
