@@ -52,7 +52,7 @@ describe('Config', function(){
 	})
 
 	it('give precendence to json config file', function(done){
-		var config = new Config('dev', {})
+		var config = new Config('dev', {cwd: 'tests'})
 		config.read(function(){
 			expect(config.get('framework')).to.equal('mocha')
 			done()
@@ -157,6 +157,10 @@ describe('Config', function(){
 
 	describe('getSrcFiles', function(){
 		
+		beforeEach(function(){
+			config.set('cwd', 'tests')
+		})
+
 		it('by defaults list all .js files', function(done){
 			config.getSrcFiles(function(err, files){
 				expect(files.length).be.above(5) // because this dir should have a bunch of .js files
@@ -274,6 +278,7 @@ function mockTopLevelProgOptions(){
 			{name: function(){ return 'port' }}
 			, { name: function(){ return 'launcher' } }
 		]
+		, cwd: 'tests'
 	}
 	var progOptions = {
 		timeout: 2

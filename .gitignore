@@ -6,3 +6,5 @@ testem.log2
 tunnel
 node_modules
 .idea
+.coverage_data
+cover_html

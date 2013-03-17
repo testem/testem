@@ -5,13 +5,11 @@ src_files:
     - tests/ui/*.js
 launchers:
     All:
-        command: mocha *_tests.js ui/*_tests.js -R tap
+        command: mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js -R tap
         protocol: tap
-        cwd: tests
     Server:
         command: mocha server_tests.js -R tap
         protocol: tap
-        cwd: tests
     UI:
         command: mocha tests/ui/error_messages_panel_tests.js -R tap
         protocol: tap
