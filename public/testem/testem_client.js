@@ -121,11 +121,28 @@ function syncConnectStatus(){
     var elm = document.getElementById('__testem_ui__')
     if (elm) elm.className = connectStatus
 }
+/* whitecolor */
+function startTests(data){
 
-function startTests(){
-    socket.disconnect()
-    window.location = '/'
+    console.log('testem data', data)
+    if (data && data.match(/(.+\.(less|css))$/)){
+        $('link[type="text/css"]').each(function(){
+            var el = $(this),
+                $link = $(this).clone();
+            $link.html('')
+            $(document.head).append($link)
+            setTimeout(function(){
+                el.remove()
+            },250)
+            console.log('replace style', $link.attr('href'))
+        })
+
+    } else {
+        window.location.reload()
+    }
+
 }
+/* whitecolor */
 
 function initUI(){
     var markup = '\
@@ -140,6 +157,10 @@ function initUI(){
         font-family: Monaco, monospace;\
         text-transform: uppercase;\
         opacity: 0.8;\
+        /* whitecolor */\
+        z-index: 1000;\
+        cursor: pointer;\
+        /* whitecolor */\
     }\
     #__testem_ui__.connected{\
         color: #89e583;\
@@ -155,7 +176,16 @@ function initUI(){
     elm.className = connectStatus
     elm.innerHTML = markup
     document.body.appendChild(elm)
+    /* whitecolor */
+    elm.addEventListener('click', function(){
+        if (connectStatus === 'disconnected'){
+            reconnect()
+        } else {
+            disconnect()
+        }
 
+    })
+    /* whitecolor */
 
 }
 
@@ -190,10 +220,28 @@ function init(){
     })
     socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
-    initTestFrameworkHooks()
+    //initTestFrameworkHooks()
     addListener(window, 'load', initUI)
     setupTestStats()
 }
+
+/* whitecolor */
+function reconnect(){
+    socket.on('reconnect', startTests)
+    socket.on('start-tests', startTests)
+    connectStatus = 'connected'
+    syncConnectStatus()
+}
+
+
+function disconnect(){
+    //alert(1)
+    socket.removeAllListeners('reconnect')
+    socket.removeAllListeners('start-tests')
+    connectStatus = 'disconnected'
+    syncConnectStatus()
+}
+/* whitecolor */
 
 function setupTestStats(){
     var originalTitle = document.title
@@ -212,6 +260,7 @@ function setupTestStats(){
 }
 
 function takeOverConsole(){
+
     var console = window.console
     if (!console) {
         console = window.console = {
@@ -247,7 +296,8 @@ function takeOverConsole(){
             }
         }
     }
-    var methods = ['log', 'warn', 'error', 'info']
+    // removed method 'log',
+    var methods = ['warn', 'error', 'info']
     for (var i = 0; i < methods.length; i++)
         intercept(methods[i])
 }

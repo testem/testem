@@ -68,20 +68,22 @@ program.on('--help', function(){
 program.parse(process.argv)
 
 var config = new Config(appMode, progOptions)
-if (appMode === 'launchers'){
-    config.read(function(){
-        config.printLauncherInfo()
-    })
-}else{
-    var api = new Api()
-    if (appMode === 'ci'){
-        api.startCI(progOptions)
-    }else if (appMode === 'dev'){
-        api.startDev(progOptions)
-    }else if (appMode === 'server'){
-        api.startServer(progOptions)
-    }
-}
+//if (appMode === 'launchers'){
+//    config.read(function(){
+//        config.printLauncherInfo()
+//    })
+//}else{
+//    var api = new Api()
+//    if (appMode === 'ci'){
+//        api.startCI(progOptions)
+//    }else if (appMode === 'dev'){
+//        api.startDev(progOptions)
+//    }else if (appMode === 'server'){
+//        api.startServer(progOptions)
+//    }
+//}
 
+//var App = require('./lib/dev_mode_app.js')
 
-
+var api = new Api()
+api.startDev(progOptions)
