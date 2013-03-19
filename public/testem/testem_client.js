@@ -224,16 +224,7 @@ function takeOverConsole(){
     function intercept(method){
         var original = console[method]
         console[method] = function(){
-            var message = Array.prototype.slice
-                .apply(arguments)
-                .map(function (value) {
-                    if (typeof value === "string") {
-                        return value
-                    }
-
-                    return stringify(value, null, "\t")
-                })
-                .join(' ')
+            var message = stringifyArgs(arguments)
             var doDefault = Testem.handleConsoleMessage(message)
             if (doDefault !== false){
                 socket.emit(method, message)
@@ -291,24 +282,23 @@ window.Testem = {
     , handleConsoleMessage: function(){}
 }
 
-function getSerialize (fn) {
-  var seen = [];
-  return function(key, value) {
-    var ret = value;
-    if (typeof value === 'object' && value) {
-      if (seen.indexOf(value) !== -1)
-        ret = '[Circular]';
-      else
-        seen.push(value);
+var JSON = window.JSON || JSON2()
+
+function stringifyArgs(args){
+    var strings = []
+    for (var i = 0; i < args.length; i++){
+        strings.push(stringify(args[i]))
     }
-    if (fn) ret = fn(key, ret);
-    return ret;
-  }
+    return strings.join(' ')
 }
 
 function stringify(obj, fn, spaces) {
-  return JSON.stringify(obj, getSerialize(fn), spaces);
+    if (typeof obj === 'string') return obj
+    try{
+        return JSON.stringify(obj)
+    }catch(e){
+        return '' + obj
+    }
 }
-
 
 init()
