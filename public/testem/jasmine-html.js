@@ -89,7 +89,7 @@ jasmine.HtmlReporter = function(_doc) {
   };
 
   self.reportSuiteResults = function(suite) {
-    reporterView.suiteComplete(suite);
+    reporterView && reporterView.suiteComplete(suite);
   };
 
   self.reportSpecStarting = function(spec) {
@@ -99,7 +99,7 @@ jasmine.HtmlReporter = function(_doc) {
   };
 
   self.reportSpecResults = function(spec) {
-    reporterView.specComplete(spec);
+    reporterView && reporterView.specComplete(spec);
   };
 
   self.log = function() {
