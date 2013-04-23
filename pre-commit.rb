@@ -3,10 +3,8 @@
 commands = [
   'grep -n describe.only -r tests/',
   'grep -n it.only -r tests/',
-  'grep -n xdescribe -r tests/',
-  'grep -n xit -r tests/',
-  'grep -n debugger $(find . -name "*.js")',
-  'grep -n "console.log(" $(find . -name "*.js")'
+  'grep -n "xdescribe" -r tests/',
+  'grep -n debugger $(find lib -name "*.js")'
 ]
 
 
