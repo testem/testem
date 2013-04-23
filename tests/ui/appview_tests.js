@@ -1,20 +1,36 @@
 var AppView = require('../../lib/ui/appview')
 var Backbone = require('backbone')
+var Config = require('../../lib/config')
 var screen = require('./fake_screen')
+var assert = require('chai').assert
 
 describe('AppView', function(){
 
-  it('initializes', function(){
-    var app = new Backbone.Model
-    app.config = {get: function(){ return 1234 }}
+  var appview, app, config
+
+  beforeEach(function(){
+    app = new Backbone.Model
+    app.url = 'http://localhost:1234'
+    config = app.config = new Config({}, {port: 1234})
     app.runners = new Backbone.Collection
-    var appview = new AppView({
+    appview = new AppView({
       app: app
       , screen: screen
     })
+    screen.$setSize(10, 10)
+  })
+
+  it('initializes', function(){
     appview.renderTop()
     appview.renderMiddle()
     appview.renderBottom()
+
+  })
+
+  it('renderTop renders the host thats configured', function(){
+    app.url = 'abc'
+    appview.renderTop()
+    assert.equal(screen.buffer[2].trim(), 'abc')
   })
 
 })

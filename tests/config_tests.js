@@ -5,6 +5,7 @@ var expect = test.expect
 var spy = require('sinon').spy
 var stub = require('sinon').stub
 var browser_launcher = require('../lib/browser_launcher')
+var assert = require('chai').assert
 
 describe('Config', function(){
 	var config, appMode, progOptions
@@ -77,6 +78,12 @@ describe('Config', function(){
 		})
 		expect(config.isCwdMode()).to.not.be.ok
 		config.get.restore()
+	})
+
+	it('has fallbacks for host and port', function(){
+		var config = new Config()
+		assert.equal(config.get('host'), 'localhost')
+		assert.equal(config.get('port'), 7357)
 	})
 
 	it('should getLaunchers should call getAvailable browsers', function(){

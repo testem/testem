@@ -12,6 +12,7 @@ program
     .usage('[options]')
     .option('-f, --file [file]', 'config file - defaults to testem.json or testem.yml')
     .option('-p, --port [num]', 'server port - defaults to 7357', Number)
+    .option('-h, --host [hostname]', 'host name - defaults to localhost', String)
     .option('-l, --launch [list]', 'list of launchers to launch(comma separated)')
     .option('-s, --skip [list]', 'list of launchers to skip(comma separated)')
     .option('-d, --debug', 'output debug to debug log - testem.log')
