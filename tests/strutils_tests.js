@@ -6,6 +6,7 @@ var splitLines = strutils.splitLines
 var indent = strutils.indent
 var pad = strutils.pad
 var template = strutils.template
+var assert = require('chai').assert
 
 describe('splitLines', function(){
   it('splits on newline', function(){
@@ -38,7 +39,18 @@ describe('splitLines', function(){
       expect(ss[2].toString()).to.equal('\u001b[31mjkl\u001b[0m')
     })
 
+    it('handles empty lines', function(){
+      var s = StyledString('abc\n\ndef')
+      var lines = splitLines(s, 5)
+      assert.equal(lines.length, 3)
+      assert.equal(lines[0].toString(), 'abc')
+      assert.equal(lines[1].toString(), '')
+      assert.equal(lines[2].toString(), 'def')
+    })
+
   })
+
+
 })
 
 describe('indent', function(){
