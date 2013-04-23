@@ -30,8 +30,6 @@ describe('SplitLogPanel', function(){
         })
     })
 
-    it('initializes', function(){})
-
     describe('getResultsDisplayText', function(){
         it('gets topLevelError', function(){
             expect(panel.getResultsDisplayText().unstyled()).to.equal('')
