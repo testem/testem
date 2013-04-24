@@ -100,13 +100,6 @@ describe('Server', function(){
     })
   })
 
-  it('gets a file using a POST request', function(done) {
-    request.post(baseUrl + 'web/hello.js', function(err, req, text) {
-      expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString())
-      done()
-    })
-  })
-
   function assertUrlReturnsFileContents(url, file, done){
     request(url, function(err, req, text){
       expect(text).to.equal(fs.readFileSync(file).toString())
