@@ -6,6 +6,7 @@
 <script src="/testem.js"></script>
 {{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
 <link rel="stylesheet" href="/testem/qunit.css"/>
+{{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 </head>
 <body>
 <h1 id="qunit-header">Tests</h1>
