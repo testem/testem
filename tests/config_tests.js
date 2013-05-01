@@ -200,6 +200,14 @@ describe('Config', function(){
 				done()
 			})
 		})
+		it('can read files from directories with spaces', function(done){
+			config.set('cwd', 'tests/space test/')
+			config.set('src_files', 'test.js')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([fileEntry('test.js')])
+				done()
+			})
+		})
 		it('respects order', function(done){
 			config.set('src_files', [
 				'integration/browser_tests.bat',
