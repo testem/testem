@@ -190,6 +190,7 @@ The `src_files` can also be unix glob patterns.
 ```
 
 You can also ignore certain files using `src_files_ignore`.
+***Update: I've removed the ability to use a space-separated list of globs as a string in the src_files property because it disallowed matching files or directories with spaces in them.***
 
 ```json
 {
