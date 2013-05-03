@@ -189,11 +189,14 @@ The `src_files` can also be unix glob patterns.
 }
 ```
 
-You can also ignore certain files using `src_files_ignore`, and you can alternatively use a space separated string for the patterns
+You can also ignore certain files using `src_files_ignore`.
 
 ```json
 {
-  "src_files": "js/**/*.js spec/**/*.js",
+  "src_files": [
+    "js/**/*.js",
+    "spec/**/*.js"
+  ],
   "src_files_ignore": "js/toxic/*.js"
 }
 ```
