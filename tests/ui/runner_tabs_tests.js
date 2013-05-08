@@ -70,6 +70,45 @@ describe('RunnerTab', function(){
     })*/
   })
 
+  context('has no tests', function(){
+      beforeEach(function(){
+          screen.$setSize(20, 8)
+          results = new Backbone.Model()
+          runner = new Backbone.Model({
+            name: 'Bob'
+            , messages: new Backbone.Collection
+            , results: results
+          })
+          runner.hasMessages = function(){ return false }
+          appview = new Backbone.Model({currentTab: 0})
+          appview.app = {config: {}}
+          appview.isPopupVisible = function(){ return false }
+          tab = new RunnerTab({
+            runner: runner
+            , appview: appview
+            , selected: true
+            , index: 0
+            , screen: screen
+          })
+          results.set('all', true)
+          results.set('passed', 0)
+          results.set('total', 0)
+      })
+
+      it('renders failure-x', function(){
+          tab.render()
+          expect(screen.buffer).to.be.deep.equal([
+              '                    ',
+              '                    ',
+              '                    ',
+              ' ━━━━━━━━━━━━━━┓    ',
+              '       Bob     ┃    ',
+              '     0/0 ✘     ┃    ',
+              '               ┗    ',
+              '                    ' ])
+      })
+  })
+
   context('has results', function(){
     beforeEach(function(){
       screen.$setSize(20, 8)
