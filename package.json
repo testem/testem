@@ -54,7 +54,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha --timeout 3000 -R nyan tests/*_tests.js tests/ui/*_tests.js; cd ..",
+    "test": "./node_modules/.bin/mocha --timeout 3000 -R nyan tests/*_tests.js tests/ui/*_tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
