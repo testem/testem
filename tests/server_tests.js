@@ -29,6 +29,9 @@ describe('Server', function(){
   app = {config: config, runners: runners, removeBrowser: function(){}}
   server = new Server(app)
   server.start()
+  server.server.addListener('connection', function(stream){
+    stream.setTimeout(100) // don't tolerate idleness in tests
+  })
   server.once('server-start', function(){
     done()
   })
@@ -38,7 +41,6 @@ describe('Server', function(){
     server.stop(function(){
       done()
     })
-    setTimeout(done, 100)
   })
 
   it('gets the home page', function(done){

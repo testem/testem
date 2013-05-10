@@ -17,7 +17,7 @@
     "url": "http://github.com/airportyh/testem/issues"
   },
   "engines": [
-    "node >= 0.6.2"
+    "node >= 0.8.0"
   ],
   "license": "MIT",
   "dependencies": {
@@ -54,7 +54,7 @@
     "tests"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha --timeout 3000 -R nyan tests/*_tests.js tests/ui/*_tests.js",
+    "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
