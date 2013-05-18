@@ -2,6 +2,7 @@ var expect = require('chai').expect
 var screen = require('./fake_screen')
 var Backbone = require('backbone')
 var runnertabs = require('../../lib/ui/runner_tabs')
+var Config = require('../../lib/config')
 var RunnerTab = runnertabs.RunnerTab
 var RunnerTabs = runnertabs.RunnerTabs
 
@@ -17,7 +18,7 @@ describe('RunnerTab', function(){
       })
       runner.hasMessages = function(){ return false }
       appview = new Backbone.Model({currentTab: 0})
-      appview.app = {config: {}}
+      appview.app = {config: new Config}
       appview.isPopupVisible = function(){ return false }
       tab = new RunnerTab({
         runner: runner
@@ -81,7 +82,7 @@ describe('RunnerTab', function(){
           })
           runner.hasMessages = function(){ return false }
           appview = new Backbone.Model({currentTab: 0})
-          appview.app = {config: {}}
+          appview.app = {config: new Config(null, {fail_on_zero_tests: true})}
           appview.isPopupVisible = function(){ return false }
           tab = new RunnerTab({
             runner: runner
@@ -120,7 +121,7 @@ describe('RunnerTab', function(){
       })
       runner.hasMessages = function(){ return false }
       appview = new Backbone.Model({currentTab: 0})
-      appview.app = {config: {}}
+      appview.app = {config: new Config}
       appview.isPopupVisible = function(){ return false }
       tab = new RunnerTab({
         runner: runner
@@ -177,7 +178,7 @@ describe('RunnerTabs', function(){
     })
     runner.hasMessages = function(){ return false }
     var appview = new Backbone.Model({currentTab: 0, cols: 20})
-    appview.app = {config: {}}
+    appview.app = {config: new Config}
     appview.isPopupVisible = function(){ return false }
     appview.runners = function(){ return new Backbone.Collection }
     var tab = new RunnerTab({
