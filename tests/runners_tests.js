@@ -7,30 +7,20 @@ var spy = require('sinon').spy
 var stub = require('sinon').stub
 var EventEmitter = require('events').EventEmitter
 var expect = test.expect
+var assert = require('chai').assert
 var BufferStream = require('bufferstream')
 
 describe('BrowserRunner', function(){
-  var socket, app, runner, server
+  var socket, runner
   beforeEach(function(){
     socket = new EventEmitter
-    server = {
-      emit: test.spy()
-      , cleanUpConnections: test.spy()
-      , removeBrowser: test.spy()
-    }
-    app = {
-      emit: test.spy()
-      , server: server
-    }
     runner = new BrowserRunner({
       name: 'Chrome 19.0'
       , socket: socket
-      , app: app
     })
   })
   it('can create', function(){
     expect(runner.get('socket')).to.equal(socket)
-    expect(runner.get('app')).to.equal(app)
   })
   describe('reset Test Results', function(){
     it('resets topLevelError', function(){
@@ -83,15 +73,6 @@ describe('BrowserRunner', function(){
     socket.emit('all-test-results')
     expect(runner.get('results').get('all')).to.be.ok
   })
-  it('emits all-test-results on server on all-tests-results', function(){
-    socket.emit('all-test-results')
-    expect(app.emit.calledWith('all-test-results', runner.get('results'), runner))
-      .to.be.ok
-  })
-  it('removes self from server if disconnect', function(){
-    socket.emit('disconnect')
-    expect(server.removeBrowser.calledWith(runner))
-  })
 })
 
 describe('ProcessRunner', function(){
@@ -129,8 +110,7 @@ describe('ProcessRunner', function(){
         }
       }
       runner = new ProcessRunner({
-        app: {}
-        , launcher: launcher
+        launcher: launcher
       })
     })
     it('should instantiate', function(){
@@ -198,8 +178,7 @@ describe('ProcessRunner', function(){
         , kill: function(){}
       }
       runner = new ProcessRunner({
-        app: {emit: function(){}}
-        , launcher: launcher
+        launcher: launcher
       })
     })
     it('should have a results object', function(){

@@ -57,15 +57,6 @@ describe('Launcher', function(){
       launcher.start()
       expect(launcher.launch.called).to.be.ok
     })
-    it('should add new ProcessRunner if start() and is process', function(){
-      stub(launcher, 'isProcess').returns(true)
-      var push = spy()
-      app.runners = { push: push }
-      launcher.start()
-      var runner = push.args[0][0]
-      expect(runner.get('app')).to.equal(app)
-      expect(runner.get('launcher')).to.equal(launcher)
-    })
   })
 
   describe('via exe', function(){

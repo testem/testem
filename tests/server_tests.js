@@ -26,8 +26,7 @@ describe('Server', function(){
   baseUrl = 'http://localhost:' + port + '/'
   runners = new Backbone.Collection
 
-  app = {config: config, runners: runners, removeBrowser: function(){}}
-  server = new Server(app)
+  server = new Server(config)
   server.start()
   server.server.addListener('connection', function(stream){
     stream.setTimeout(100) // don't tolerate idleness in tests
