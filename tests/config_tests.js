@@ -36,6 +36,11 @@ describe('Config', function(){
 			expect(config.get('timeout')).to.equal(2)
 		})
 	})
+
+	it('calculates url for you', function(){
+		var config = new Config
+		assert.equal(config.get('url'), 'http://localhost:7357/')
+	})
 	
 	describe('read json config file', function(){
 		var config
