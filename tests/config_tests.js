@@ -86,44 +86,40 @@ describe('Config', function(){
 		assert.equal(config.get('port'), 7357)
 	})
 
-	it('should getLaunchers should call getAvailable browsers', function(){
+	it('should getLaunchers should call getAvailable browsers', function(done){
 		stub(config, 'getWantedLaunchers', function(n){return n})
 		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
-		var availableBrowsers = [
-			{name: 'Chrome', exe: 'chrome.exe'}
-			, {name: 'Firefox'}
-		]
 		browser_launcher.getAvailableBrowsers = function(cb){
-			cb(availableBrowsers)
+			cb([
+				{name: 'Chrome', exe: 'chrome.exe'},
+				{name: 'Firefox'}
+			])
 		}
-		var cb = spy()
-		config.getLaunchers({}, cb)
-		expect(cb.called).to.be.ok
-		var launchers = cb.args[0][0]
-		expect(launchers.chrome.name).to.equal('Chrome')
-		expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
-		expect(launchers.firefox.name).to.equal('Firefox')
-		browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+		
+		config.getLaunchers(function(launchers){
+			expect(launchers.chrome.name).to.equal('Chrome')
+			expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
+			expect(launchers.firefox.name).to.equal('Firefox')
+			browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+			done()
+		})
 	})
 
-	it('should install custom launchers', function(){
+	it('should install custom launchers', function(done){
 		stub(config, 'getWantedLaunchers', function(n){return n})
-		var launchers = {
-			Node: {
-				command: 'node tests.js'
+		config.config = {
+			launchers: {
+				Node: {
+					command: 'node tests.js'
+				}
 			}
 		}
-		config.config = {
-			launchers: launchers
-		}
-		browser_launcher.getAvailableBrowsers = function(cb){
-			cb([])
-		}
-		var cb = spy()
-		config.getLaunchers({}, cb)
-		var launchers = cb.args[0][0]
-		expect(launchers.node.name).to.equal('Node')
-		expect(launchers.node.settings.command).to.equal('node tests.js')
+		browser_launcher.getAvailableBrowsers = function(cb){cb([])}
+		config.getLaunchers(function(launchers){
+			expect(launchers.node.name).to.equal('Node')
+			expect(launchers.node.settings.command).to.equal('node tests.js')
+			done()
+		})
 	})
 
 	it('getWantedLaunchers uses getWantedLauncherNames', function(){
