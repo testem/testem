@@ -8,5 +8,5 @@ test('hello says hello', function(t){
 
 test('hello says hello to bob', function(t){
     t.plan(1);
-    t.equal(hello('bob'), 'hello bob', 'hello(bob) should be "hello bob"');
+    t.equal(hello('bob'), 'heloueolo bob', 'hello(bob) should be "hello bob"');
 });

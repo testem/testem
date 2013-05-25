@@ -19,9 +19,4 @@ describe('BaseApp', function(){
     app.runners.add([runner1, runner2])
   })
 
-  it('initializes url to configured host', function(){
-    config = new Config('dev', {host: 'blah.com', port: 3000})
-    app = new BaseApp(config)
-    assert.equal(app.url, 'http://blah.com:3000')
-  })
 })
