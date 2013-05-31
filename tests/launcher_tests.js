@@ -63,6 +63,22 @@ describe('Launcher', function(){
       }
       launcher.start()
     })
+    it('returns exit code, stdout and stderr on processExit', function(done){
+      launcher.start()
+      launcher.on('processExit', function(code, stdout){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'hello\n')
+        done()
+      })
+    })
+    it('returns stderr on processExit', function(done){
+      settings.command = 'echo hello 1>&2'
+      launcher.start()
+      launcher.on('processExit', function(code, stdout, stderr){
+        assert.equal(stderr, 'hello\n')
+        done()
+      })
+    })
   })
 
   describe('via exe', function(){
@@ -112,5 +128,15 @@ describe('Launcher', function(){
         done()
       }, 10)
     })
+
+    it('returns exit code and stdout on processExit', function(done){
+      launcher.start()
+      launcher.on('processExit', function(code, stdout){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'hello\n')
+        done()
+      })
+    })
+    
   })
 })
