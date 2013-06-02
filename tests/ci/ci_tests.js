@@ -11,30 +11,34 @@ describe('ci mode app', function(){
 
   it('runs them tests', function(done){
     this.timeout(20000)
-    var config = new Config('ci', null, {
-      port: 7457,
-      src_files: [
-        'tests/web/*.js'
-      ]
+    var config = new Config('ci', {
+      file: 'tests/fixtures/tape/testem.json',
+      port: 7359,
+      cwd: 'tests/fixtures/tape/',
+      launch_in_ci: ['node', 'nodeplain', 'phantomjs']
     })
-    var app = new App(config)
-    app.process = {exit: sinon.spy()}
-    var reporter = app.reporter = new FakeReporter(function(){
-      process.nextTick(checkResults)
-    })
-    app.start()
+    config.read(function(){
+      var app = new App(config)
+      app.process = {exit: sinon.spy()}
+      var reporter = app.reporter = new FakeReporter(function(){
+        setTimeout(checkResults, 100)
+      })
+      app.start()
 
-    function checkResults(){
-      assert(reporter.results.every(function(arg){
-        return arg[1].passed
-      }), 'all tests passed')
-      assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
-      assert(reporter.results.every(function(arg){
-        return arg[1].name === 'hello says hello.'
-      }), 'have the right test name')
-      assert(app.process.exit.called, 'called process.exit()')
-      done()
-    }
+      function checkResults(){
+        var browsers = reporter.results.map(function(r){
+          return r[0]
+        })
+        assert.include(browsers, 'Node')
+        assert.include(browsers, 'NodePlain')
+        assert(reporter.results.every(function(arg){
+          return arg[1].passed
+        }), 'all tests passed')
+        assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
+        assert(app.process.exit.called, 'called process.exit()')
+        done()
+      }
+    })
   })
 
 })
