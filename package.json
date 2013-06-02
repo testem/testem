@@ -7,7 +7,7 @@
     "unittest",
     "browser"
   ],
-  "version": "0.2.96",
+  "version": "0.2.96-dev",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
@@ -39,7 +39,8 @@
     "fileset": "~0.1.4",
     "growl": "~1.7.0",
     "consolidate": "~0.8.0",
-    "did_it_work": "~0.0.2"
+    "did_it_work": "~0.0.2",
+    "split": "~0.2.5"
   },
   "files": [
     "docs",
