@@ -26,14 +26,27 @@ describe('ci mode app', function(){
       app.start()
 
       function checkResults(){
+        var helloWorld = reporter.results.filter(function(r){
+          return r[1].name.match(/hello world/)
+        })
+        var helloBob = reporter.results.filter(function(r){
+          return r[1].name.match(/hello bob/)
+        })
+        var nodePlain = reporter.results.filter(function(r){
+          return r[0] === 'NodePlain'
+        })
+        assert(helloWorld.every(function(r){
+          return r[1].passed
+        }), 'hello world should pass')
+        assert(helloBob.every(function(r){
+          return !r[1].passed
+        }), 'hello bob should fail')
+        assert(!nodePlain[0][1].passed, 'node plain should fail')
         var browsers = reporter.results.map(function(r){
           return r[0]
         })
         assert.include(browsers, 'Node')
         assert.include(browsers, 'NodePlain')
-        assert(reporter.results.every(function(arg){
-          return arg[1].passed
-        }), 'all tests passed')
         assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
         assert(app.process.exit.called, 'called process.exit()')
         done()
