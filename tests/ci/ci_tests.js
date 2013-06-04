@@ -13,7 +13,7 @@ describe('ci mode app', function(){
     this.timeout(20000)
     var config = new Config('ci', {
       file: 'tests/fixtures/tape/testem.json',
-      port: 7359,
+      port: 7358,
       cwd: 'tests/fixtures/tape/',
       launch_in_ci: ['node', 'nodeplain', 'phantomjs']
     })
