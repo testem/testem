@@ -1,8 +1,8 @@
 src_files:
     - lib/*.js
-    - lib/ui/*.js
+    - lib/*/*.js
     - tests/*_tests.js
-    - tests/**/*.js
+    - tests/*/*.js
 launchers:
     All:
         command: mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js -R tap
