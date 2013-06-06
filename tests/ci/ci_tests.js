@@ -9,6 +9,13 @@ log.remove(log.transports.Console)
 
 describe('ci mode app', function(){
 
+  beforeEach(function(done){
+    var fs = require('fs')
+    fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
+      done()
+    })
+  })
+
   it('runs them tests', function(done){
     this.timeout(5000)
     var config = new Config('ci', {
