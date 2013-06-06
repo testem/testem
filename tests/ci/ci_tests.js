@@ -15,7 +15,7 @@ describe('ci mode app', function(){
       file: 'tests/fixtures/tape/testem.json',
       port: 7358,
       cwd: 'tests/fixtures/tape/',
-      launch_in_ci: ['node', 'nodeplain']
+      launch_in_ci: ['node', 'nodeplain', 'phantomjs']
     })
     config.read(function(){
       var app = new App(config)
@@ -47,7 +47,7 @@ describe('ci mode app', function(){
         })
         assert.include(browsers, 'Node')
         assert.include(browsers, 'NodePlain')
-        //assert.include(browsers, 'PhantomJS 1.9')
+        assert.include(browsers, 'PhantomJS 1.9')
         assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
         assert(app.process.exit.called, 'called process.exit()')
         done()
