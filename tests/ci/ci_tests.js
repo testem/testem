@@ -17,7 +17,7 @@ describe('ci mode app', function(){
   })
 
   it('runs them tests', function(done){
-    this.timeout(5000)
+    this.timeout(10000)
     var config = new Config('ci', {
       file: 'tests/fixtures/tape/testem.json',
       port: 7358,
