@@ -30,7 +30,7 @@
     "tap": "*",
     "commander": "*",
     "glob": "~3.1.21",
-    "async": "0.1.15",
+    "async": "0.2.7",
     "rimraf": "*",
     "underscore": "*",
     "backbone": "*",
