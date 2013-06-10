@@ -1,9 +1,11 @@
 var App = require('../../lib/ci')
 var Config = require('../../lib/config')
+var BodyDouble = require('../support/body_double')
 var path = require('path')
 var assert = require('chai').assert
 var log = require('winston')
 var sinon = require('sinon')
+var Process = require('did_it_work')
 
 log.remove(log.transports.Console)
 
@@ -74,3 +76,72 @@ FakeReporter.prototype.report = function(){
 FakeReporter.prototype.finish = function(){
   this.done()
 }
+
+
+
+describe('runHook', function(){
+
+  var fakeP
+
+  beforeEach(function(){
+    fakeP = BodyDouble(Process(''), {
+      fluent: true,
+      override: {
+        complete: function(callback){
+          process.nextTick(function(){
+            callback(null)
+          })
+          return this
+        }
+      }
+    })
+  })
+
+  it('runs hook', function(done){
+    var config = new Config('ci', null, {
+      on_start: 'launch nuclear-missile'
+    })
+    var app = new App(config)
+    sinon.stub(app, 'Process').returns(fakeP)
+    app.runHook('on_start', function(){
+      assert(app.Process.called, 'how come you dont call me?')
+      assert.equal(app.Process.getCall(0).args, 'launch nuclear-missile')
+      done()
+    })
+  })
+
+  it('waits for text', function(done){
+    var config = new Config('ci', null, {
+      on_start: {
+        command: 'launch nuclear-missile',
+        wait_for_text: 'launched.'
+      }
+    })
+    var app = new App(config)
+    sinon.stub(app, 'Process').returns(fakeP)
+    app.runHook('on_start', function(){
+      assert.equal(app.Process.getCall(0).args[0], 'launch nuclear-missile')
+      assert.equal(fakeP.goodIfMatches.getCall(0).args[0], 'launched.')
+      done()
+    })
+  })
+
+  it('substitutes port and host', function(done){
+    var config = new Config('ci', {
+      port: 2837,
+      host: 'dev.app.com'
+    }, {
+      on_start: {
+        command: 'tunnel <host>:<port> -u <url>'
+      }
+    })
+    var app = new App(config)
+    sinon.stub(app, 'Process').returns(fakeP)
+    app.runHook('on_start', function(){
+      assert.equal(app.Process.getCall(0).args[0], 
+        'tunnel dev.app.com:2837 -u http://dev.app.com:2837/')
+      done()
+    })
+  })
+
+})

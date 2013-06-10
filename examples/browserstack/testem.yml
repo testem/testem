@@ -2,7 +2,7 @@ framework: jasmine
 
 on_start: 
   command: browserstack tunnel localhost:<port>
-  wait_for_text: You can now access your local server(s) in our remote browser
+  wait_for_text: Tunnel is running
 
 launchers:
 
