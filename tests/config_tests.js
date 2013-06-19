@@ -2,13 +2,12 @@ var Config = require('../lib/config.js')
 var test = require('./testutils.js')
 var EventEmitter = require('events').EventEmitter
 var expect = test.expect
-var spy = require('sinon').spy
-var stub = require('sinon').stub
+var sinon = require('sinon')
 var browser_launcher = require('../lib/browser_launcher')
 var assert = require('chai').assert
 
 describe('Config', function(){
-	var config, appMode, progOptions
+	var config, appMode, progOptions, spies
 	beforeEach(function(){
 		appMode = 'dev'
 		progOptions = {
@@ -16,7 +15,12 @@ describe('Config', function(){
 			timeout: null
 		}
 		config = new Config(appMode, progOptions)
+		spies = sinon.sandbox.create()
 	})
+	afterEach(function(){
+		spies.restore()
+	})
+	
 	it('can create', function(){
 		expect(config.progOptions).to.equal(progOptions)
 	})
@@ -35,6 +39,11 @@ describe('Config', function(){
 		it('falls back to config file value when progOptions is null', function(){
 			expect(config.get('timeout')).to.equal(2)
 		})
+	})
+
+	it('calculates url for you', function(){
+		var config = new Config
+		assert.equal(config.get('url'), 'http://localhost:7357/')
 	})
 	
 	describe('read json config file', function(){
@@ -59,20 +68,20 @@ describe('Config', function(){
 			done()
 		})
 	})
-
+	
 	it('returns whether isCwdMode (read js files from current dir)', function(){
-		test.stub(config, 'get', function(key){
+		spies.stub(config, 'get', function(key){
 			return null
 		})
 		expect(config.isCwdMode()).to.be.ok
 		config.get.restore()
-		test.stub(config, 'get', function(key){
+		spies.stub(config, 'get', function(key){
 			if (key === 'src_files') return ['implementation.js']
 			return null
 		})
 		expect(config.isCwdMode()).to.not.be.ok
 		config.get.restore()
-		test.stub(config, 'get', function(key){
+		spies.stub(config, 'get', function(key){
 			if (key === 'test_page') return 'tests.html'
 			return null
 		})
@@ -85,54 +94,53 @@ describe('Config', function(){
 		assert.equal(config.get('host'), 'localhost')
 		assert.equal(config.get('port'), 7357)
 	})
-
-	it('should getLaunchers should call getAvailable browsers', function(){
-		stub(config, 'getWantedLaunchers', function(n){return n})
+	
+	it('should getLaunchers should call getAvailable browsers', function(done){
+		spies.stub(config, 'getWantedLaunchers', function(n){return n})
 		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
-		var availableBrowsers = [
-			{name: 'Chrome', exe: 'chrome.exe'}
-			, {name: 'Firefox'}
-		]
 		browser_launcher.getAvailableBrowsers = function(cb){
-			cb(availableBrowsers)
+			cb([
+				{name: 'Chrome', exe: 'chrome.exe'},
+				{name: 'Firefox'}
+			])
 		}
-		var cb = spy()
-		config.getLaunchers({}, cb)
-		expect(cb.called).to.be.ok
-		var launchers = cb.args[0][0]
-		expect(launchers.chrome.name).to.equal('Chrome')
-		expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
-		expect(launchers.firefox.name).to.equal('Firefox')
-		browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+		
+		config.getLaunchers(function(launchers){
+			expect(launchers.chrome.name).to.equal('Chrome')
+			expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
+			expect(launchers.firefox.name).to.equal('Firefox')
+			browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+			done()
+		})
 	})
 
-	it('should install custom launchers', function(){
-		stub(config, 'getWantedLaunchers', function(n){return n})
-		var launchers = {
-			Node: {
-				command: 'node tests.js'
+	it('should install custom launchers', function(done){
+		spies.stub(config, 'getWantedLaunchers', function(n){return n})
+		config.config = {
+			launchers: {
+				Node: {
+					command: 'node tests.js'
+				}
 			}
 		}
-		config.config = {
-			launchers: launchers
-		}
-		browser_launcher.getAvailableBrowsers = function(cb){
-			cb([])
-		}
-		var cb = spy()
-		config.getLaunchers({}, cb)
-		var launchers = cb.args[0][0]
-		expect(launchers.node.name).to.equal('Node')
-		expect(launchers.node.settings.command).to.equal('node tests.js')
+		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
+		browser_launcher.getAvailableBrowsers = function(cb){cb([])}
+		config.getLaunchers(function(launchers){
+			expect(launchers.node.name).to.equal('Node')
+			expect(launchers.node.settings.command).to.equal('node tests.js')
+			browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+			done()
+		})
 	})
-
+	
 	it('getWantedLaunchers uses getWantedLauncherNames', function(){
-		stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox'])
+		spies.stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox'])
 		var results = config.getWantedLaunchers({
 			chrome: { name: 'Chrome' }
 			, firefox: { name: 'Firefox' }
 		})
 		expect(results).to.deep.equal([{ name: 'Chrome' }, { name: 'Firefox' }])
+
 	})
 
 	describe('getWantedLauncherNames', function(){
@@ -319,7 +327,7 @@ describe('getTemplateData', function(){
 				src_files: ['web/*.js'],
 				serve_files: [
 					{src:'web/hello.js', attrs: []},
-					{src:'web/hello_tests.js', attrs: []}
+					{src:'web/hello_tst.js', attrs: []}
 				]
 			})
 			done()

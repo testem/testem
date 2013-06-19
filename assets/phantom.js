@@ -1,3 +1,3 @@
 var page = new WebPage()
-var port = phantom.args[0]
-page.open('http://localhost:' + port + '/')
+var url = phantom.args[0]
+page.open(url)

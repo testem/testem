@@ -30,7 +30,7 @@
     "tap": "*",
     "commander": "*",
     "glob": "~3.1.21",
-    "async": "0.1.15",
+    "async": "0.2.7",
     "rimraf": "*",
     "underscore": "*",
     "backbone": "*",
@@ -39,7 +39,7 @@
     "fileset": "~0.1.4",
     "growl": "~1.7.0",
     "consolidate": "~0.8.0",
-    "did_it_work": "~0.0.2"
+    "did_it_work": "~0.0.5"
   },
   "files": [
     "docs",
@@ -54,8 +54,8 @@
     "tests"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js",
-    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js; cover report html; open cover_html/index.html"
+    "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js",
+    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/*/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
     "mocha": "*",

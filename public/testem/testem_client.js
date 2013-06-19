@@ -124,7 +124,7 @@ function syncConnectStatus(){
 
 function startTests(){
     socket.disconnect()
-    window.location = '/'
+    window.location.reload()
 }
 
 function initUI(){
@@ -175,11 +175,19 @@ var addListener = window.addEventListener ?
     function(obj, evt, cb){ obj.addEventListener(evt, cb, false) } :
     function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
 
+function getId(){
+    var m = location.href.match(/^.+\/([0-9]+)/)
+    return m ? m[1] : null
+}
+
 function init(){
     takeOverConsole()
     interceptWindowOnError()
     socket = io.connect()
-    socket.emit('browser-login', getBrowserName(navigator.userAgent))
+    var id = getId()
+    socket.emit('browser-login', 
+        getBrowserName(navigator.userAgent), 
+        id)
     socket.on('connect', function(){
         connectStatus = 'connected'
         syncConnectStatus()

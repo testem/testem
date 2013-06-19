@@ -27,10 +27,4 @@ describe('AppView', function(){
 
   })
 
-  it('renderTop renders the host thats configured', function(){
-    app.url = 'abc'
-    appview.renderTop()
-    assert.equal(screen.buffer[2].trim(), 'abc')
-  })
-
 })

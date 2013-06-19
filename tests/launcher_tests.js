@@ -1,30 +1,19 @@
 var Launcher = require('../lib/launcher')
 var template = require('../lib/strutils').template
+var Config = require('../lib/config')
 var expect = require('chai').expect
+var assert = require('chai').assert
 var stub = require('sinon').stub
 var spy = require('sinon').spy
 
 describe('Launcher', function(){
-  var settings, app, launcher
-
-  function createMockApp() {
-    return {
-      url: 'http://blah.com',
-      port: '7357',
-      template: function(str) {
-        return template(str, {
-          url: this.url,
-          port: this.port
-        })
-      }
-    }
-  }
+  var settings, launcher, config
 
   describe('via command', function(){
     beforeEach(function(){
       settings = {command: 'echo hello'}
-      app = createMockApp()
-      launcher = new Launcher('say hello', settings, app)
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
+      launcher = new Launcher('say hello', settings, config)
     })
     it('should instantiate', function(){
       expect(launcher.name).to.equal('say hello')
@@ -38,9 +27,7 @@ describe('Launcher', function(){
       })
       setTimeout(function(){
         expect(data).to.equal('hello\n')
-        launcher.kill('SIGKILL', function(){
-          done()
-        })
+        done()
       }, 10)
     })
     it('should be process iff protocol is not browser', function(){
@@ -57,33 +44,99 @@ describe('Launcher', function(){
       launcher.start()
       expect(launcher.launch.called).to.be.ok
     })
-    it('should add new ProcessRunner if start() and is process', function(){
-      stub(launcher, 'isProcess').returns(true)
-      var push = spy()
-      app.runners = { push: push }
+    it('substitutes variables', function(done){
+      settings.command = 'echo <url> <port>'
       launcher.start()
-      var runner = push.args[0][0]
-      expect(runner.get('app')).to.equal(app)
-      expect(runner.get('launcher')).to.equal(launcher)
+      var data = ''
+      launcher.process.stdout.on('data', function(chunk){
+        data += String(chunk)
+      })
+      setTimeout(function(){
+        expect(data).to.match(/http:\/\/blah.com\/([0-9]+) 7357\n/)
+        done()
+      }, 10)
+    })
+    it('executes setup', function(done){
+      settings.setup = function(_config, _done){
+        assert.strictEqual(_config, config)
+        done()
+      }
+      launcher.start()
+    })
+    it('returns exit code, stdout and stderr on processExit', function(done){
+      launcher.start()
+      launcher.on('processExit', function(code, stdout){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'hello\n')
+        done()
+      })
+    })
+    it('returns stderr on processExit', function(done){
+      settings.command = 'echo hello 1>&2'
+      launcher.start()
+      launcher.on('processExit', function(code, stdout, stderr){
+        assert.equal(stderr, 'hello\n')
+        done()
+      })
     })
   })
 
   describe('via exe', function(){
-    it('sholud launch and also kill it', function(done){
+
+    it('should launch and also kill it', function(done){
       settings = {exe: 'echo', args: ['hello']}
-      app = createMockApp()
-      launcher = new Launcher('say hello', settings, app)
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
+      launcher = new Launcher('say hello', settings, config)
       launcher.launch()
       var data = ''
       launcher.process.stdout.on('data', function(chunk){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.equal('hello http://blah.com\n')
+        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+\n/)
         launcher.kill('SIGKILL', function(){
           done()
         })
       }, 10)
     })
+    it('should substitute variables for args', function(done){
+      settings = {exe: 'echo', args: ['<port>', '<url>']}
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
+      launcher = new Launcher('say url', settings, config)
+      launcher.launch()
+      var data = ''
+      launcher.process.stdout.on('data', function(chunk){
+        data += String(chunk)
+      })
+      setTimeout(function(){
+        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+\n/)
+        launcher.kill('SIGKILL', function(){
+          done()
+        })
+      }, 10)
+    })
+    it('calls args as function with config', function(done){
+      settings = {exe: 'echo'}
+      settings.args = function(_config){
+        assert.strictEqual(_config, config)
+        return ['hello']
+      }
+      config = new Config
+      launcher = new Launcher('say hello', settings, config)
+      launcher.launch()
+      setTimeout(function(){
+        done()
+      }, 10)
+    })
+
+    it('returns exit code and stdout on processExit', function(done){
+      launcher.start()
+      launcher.on('processExit', function(code, stdout){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'hello\n')
+        done()
+      })
+    })
+    
   })
 })

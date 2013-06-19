@@ -19,15 +19,14 @@ describe('Server', function(){
     port: port,
     src_files: [
       'web/hello.js',
-      {src:'web/hello_tests.js', attrs: ['data-foo="true"', 'data-bar']}
+      {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
     ],
     cwd: 'tests'
   })
   baseUrl = 'http://localhost:' + port + '/'
   runners = new Backbone.Collection
 
-  app = {config: config, runners: runners, removeBrowser: function(){}}
-  server = new Server(app)
+  server = new Server(config)
   server.start()
   server.server.addListener('connection', function(stream){
     stream.setTimeout(100) // don't tolerate idleness in tests
@@ -61,7 +60,7 @@ describe('Server', function(){
         '/testem/jasmine-html.js',
         null,
         'web/hello.js',
-        'web/hello_tests.js'
+        'web/hello_tst.js'
       ])
       done()
     })
@@ -95,7 +94,7 @@ describe('Server', function(){
         , '<html>'
         , '<head>'
         , '        <script src="web/hello.js"></script>'
-        , '        <script src="web/hello_tests.js" data-foo="true"  data-bar ></script>'
+        , '        <script src="web/hello_tst.js" data-foo="true"  data-bar ></script>'
         , '    </head>'
         ].join('\n'))
       done()
