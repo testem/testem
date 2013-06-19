@@ -89,9 +89,9 @@ function qunitAdapter(socket){
     QUnit.moduleStart( function(params){
         currentModule = params.name
     })
-    QUnit.moduleEnd( function(params){
+    QUnit.moduleEnd = function(params){
         currentModule = undefined
-    })
+    }
     QUnit.done( function(params){
         results.runDuration = params.runtime
         emit('all-test-results', results)
