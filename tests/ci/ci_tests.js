@@ -144,4 +144,31 @@ describe('runHook', function(){
     })
   })
 
+  it('launches via spawn', function(done){
+    var config = new Config('ci', null, {
+      on_start: {
+        exe: 'launch',
+        args: ['nuclear-missile']
+      }
+    })
+    var app = new App(config)
+    sinon.stub(app, 'Process').returns(fakeP)
+    app.runHook('on_start', function(){
+      assert(app.Process.called, 'call Process')
+      assert.deepEqual(app.Process.lastCall.args, ['launch', ['nuclear-missile']])
+      done()
+    })
+  })
+
+  it('dies if neither command or exe specified', function(){
+    var config = new Config('ci', null, {
+      on_start: {
+      }
+    })
+    var app = new App(config)
+    assert.throw(function(){
+      app.runHook('on_start', function(){})
+    }, 'No command or exe/args specified for hook on_start')
+  })
+
 })
