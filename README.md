@@ -121,7 +121,13 @@ To use Testem for continuous integration
 
     testem ci
     
-In CI mode, Testem runs your tests on all the browsers that are available on the system one after another. To find out what browsers are currently available - those that Testem knows about and can make use of
+In CI mode, Testem runs your tests on all the browsers that are available on the system one after another.
+
+You can run multiple browsers in parallel in CI mode by specifying the `--parallel` (or `-P`) option to be the number of concurrent running browsers.
+
+    testem ci -P 5 # run 5 browser in parallel
+
+To find out what browsers are currently available - those that Testem knows about and can make use of
 
     testem launchers
     
