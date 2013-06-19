@@ -23,11 +23,11 @@ program
 program
   .command('launchers')
   .description('Print the list of available launchers (browsers & process launchers)')
-  .action(function(env){
+  .action(act(function(env){
     env.__proto__ = program
     progOptions = env
     appMode = 'launchers'
-  })
+  }))
 
 program
   .command('ci')
@@ -35,20 +35,20 @@ program
   .option('-T, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
   .option('-P, --parallel [num]', 'number of browsers to run in parallel, defaults to 1', Number)
   .option('-b, --bail_on_uncaught_error', 'Bail on any uncaught errors')
-  .action(function(env){
+  .action(act(function(env){
     env.__proto__ = program
     progOptions = env
     appMode = 'ci'
-  })
+  }))
 
 program
   .command('server')
   .description('Run just the server')
-  .action(function(env){
+  .action(act(function(env){
     env.__proto__ = program
     progOptions = env
     appMode = 'server'
-  })
+  }))
 
 
 program.on('--help', function(){
@@ -67,20 +67,35 @@ program.on('--help', function(){
   console.log()
 })
 
-program.parse(process.argv)
 
-var config = new Config(appMode, progOptions)
-if (appMode === 'launchers'){
-  config.read(function(){
-    config.printLauncherInfo()
-  })
-}else{
-  var api = new Api()
-  if (appMode === 'ci'){
-    api.startCI(progOptions)
-  }else if (appMode === 'dev'){
-    api.startDev(progOptions)
-  }else if (appMode === 'server'){
-    api.startServer(progOptions)
+main()
+function main(){
+  program.parse(process.argv)
+
+  var config = new Config(appMode, progOptions)
+  if (appMode === 'launchers'){
+    config.read(function(){
+      config.printLauncherInfo()
+    })
+  }else{
+    var api = new Api()
+    if (appMode === 'ci'){
+      api.startCI(progOptions)
+    }else if (appMode === 'dev'){
+      api.startDev(progOptions)
+    }else if (appMode === 'server'){
+      api.startServer(progOptions)
+    }
+  }
+}
+
+// this is to workaround the weird behavior in command where
+// if you provide additional command line arguments that aren't
+// options, it goes in as a string as the 1st arguments of the 
+// "action" callback, we don't want this
+function act(fun){
+  return function(){
+    var options = arguments[arguments.length - 1]
+    fun(options)
   }
 }
