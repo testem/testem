@@ -12,7 +12,7 @@ describe('Launcher', function(){
   describe('via command', function(){
     beforeEach(function(){
       settings = {command: 'echo hello'}
-      config = new Config(null, {port: '7357', url: 'http://blah.com'})
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
       launcher = new Launcher('say hello', settings, config)
     })
     it('should instantiate', function(){
@@ -45,14 +45,14 @@ describe('Launcher', function(){
       expect(launcher.launch.called).to.be.ok
     })
     it('substitutes variables', function(done){
-      settings.command = 'echo <url>:<port>'
+      settings.command = 'echo <url> <port>'
       launcher.start()
       var data = ''
       launcher.process.stdout.on('data', function(chunk){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.equal('http://blah.com:7357\n')
+        expect(data).to.match(/http:\/\/blah.com\/([0-9]+) 7357\n/)
         done()
       }, 10)
     })
@@ -85,7 +85,7 @@ describe('Launcher', function(){
 
     it('should launch and also kill it', function(done){
       settings = {exe: 'echo', args: ['hello']}
-      config = new Config(null, {port: '7357', url: 'http://blah.com'})
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
       launcher = new Launcher('say hello', settings, config)
       launcher.launch()
       var data = ''
@@ -93,7 +93,7 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.equal('hello http://blah.com\n')
+        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+\n/)
         launcher.kill('SIGKILL', function(){
           done()
         })
@@ -101,7 +101,7 @@ describe('Launcher', function(){
     })
     it('should substitute variables for args', function(done){
       settings = {exe: 'echo', args: ['<port>', '<url>']}
-      config = new Config(null, {port: '7357', url: 'http://blah.com'})
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'})
       launcher = new Launcher('say url', settings, config)
       launcher.launch()
       var data = ''
@@ -109,7 +109,7 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.equal('7357 http://blah.com http://blah.com\n')
+        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+\n/)
         launcher.kill('SIGKILL', function(){
           done()
         })
