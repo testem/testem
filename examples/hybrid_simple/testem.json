@@ -9,9 +9,6 @@
         "Node": {
             "command": "mocha tests.js -R tap",
             "protocol": "tap"
-        },
-        "NodePlain": {
-            "command": "node tests.js"
         }
     }
 }

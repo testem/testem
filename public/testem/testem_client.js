@@ -176,10 +176,8 @@ var addListener = window.addEventListener ?
     function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
 
 function getId(){
-    var url = location.href.split('#')[0]
-    var parts = url.split('/')
-    var id = parts[parts.length - 1]
-    return id
+    var m = location.href.match(/^.+\/([0-9]+)/)
+    return m ? m[1] : null
 }
 
 function init(){
