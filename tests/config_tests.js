@@ -146,9 +146,9 @@ describe('Config', function(){
 	describe('getWantedLauncherNames', function(){
 		it('adds "launch" param', function(){
 			config.progOptions.launch = 'Chrome,Firefox'
-			expect(config.getWantedLauncherNames()).to.deep.equal(['Chrome', 'Firefox'])
+			expect(config.getWantedLauncherNames()).to.deep.equal(['chrome', 'firefox'])
 			config.progOptions.launch = 'IE'
-			expect(config.getWantedLauncherNames()).to.deep.equal(['IE'])
+			expect(config.getWantedLauncherNames()).to.deep.equal(['ie'])
 		})
 		it('adds "launch_in_dev" config', function(){
 			config.config = {launch_in_dev: ['Chrome', 'Firefox']}
@@ -162,7 +162,7 @@ describe('Config', function(){
 		it('removes skip param', function(){
 			config.progOptions.launch = 'Chrome,Firefox'
 			config.progOptions.skip = 'Chrome'
-			expect(config.getWantedLauncherNames()).to.deep.equal(['Firefox'])
+			expect(config.getWantedLauncherNames()).to.deep.equal(['firefox'])
 		})
 	})
 
