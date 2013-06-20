@@ -64,6 +64,8 @@ describe('ci mode app', function(){
     })
   })
 
+  
+
 })
 
 function FakeReporter(done){
@@ -105,7 +107,7 @@ describe('runHook', function(){
     sinon.stub(app, 'Process').returns(fakeP)
     app.runHook('on_start', function(){
       assert(app.Process.called, 'how come you dont call me?')
-      assert.equal(app.Process.getCall(0).args, 'launch nuclear-missile')
+      assert.equal(app.Process.lastCall.args, 'launch nuclear-missile')
       done()
     })
   })
@@ -120,8 +122,8 @@ describe('runHook', function(){
     var app = new App(config)
     sinon.stub(app, 'Process').returns(fakeP)
     app.runHook('on_start', function(){
-      assert.equal(app.Process.getCall(0).args[0], 'launch nuclear-missile')
-      assert.equal(fakeP.goodIfMatches.getCall(0).args[0], 'launched.')
+      assert.equal(app.Process.lastCall.args[0], 'launch nuclear-missile')
+      assert.equal(fakeP.goodIfMatches.lastCall.args[0], 'launched.')
       done()
     })
   })
@@ -138,7 +140,7 @@ describe('runHook', function(){
     var app = new App(config)
     sinon.stub(app, 'Process').returns(fakeP)
     app.runHook('on_start', function(){
-      assert.equal(app.Process.getCall(0).args[0], 
+      assert.equal(app.Process.lastCall.args[0], 
         'tunnel dev.app.com:2837 -u http://dev.app.com:2837/')
       done()
     })
@@ -169,6 +171,32 @@ describe('runHook', function(){
     assert.throw(function(){
       app.runHook('on_start', function(){})
     }, 'No command or exe/args specified for hook on_start')
+  })
+
+  it('kills on_start process on exit', function(done){
+    this.timeout(10000)
+    var config = new Config('ci', {
+      file: 'tests/fixtures/tape/testem.json',
+      port: 7358,
+      cwd: 'tests/fixtures/tape/',
+      launch_in_ci: ['node']
+    })
+    config.read(function(){
+      config.set('on_start', 'launch missile')
+      config.set('before_tests', null)
+      var app = new App(config)
+      app.process = {exit: sinon.spy()}
+      sinon.stub(app, 'Process').returns(fakeP)
+      var reporter = app.reporter = new FakeReporter(function(){
+        setTimeout(checkResults, 100)
+      })
+      app.start()
+      function checkResults(){
+        assert.deepEqual(app.Process.getCall(0).args[0], 'launch missile')
+        assert(fakeP.kill.called, 'should have killed')
+        done()
+      }
+    })
   })
 
 })
