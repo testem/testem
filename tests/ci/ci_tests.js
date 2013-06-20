@@ -148,14 +148,14 @@ describe('runHook', function(){
     var config = new Config('ci', null, {
       on_start: {
         exe: 'launch',
-        args: ['nuclear-missile']
+        args: ['nuclear-missile', '<port>']
       }
     })
     var app = new App(config)
     sinon.stub(app, 'Process').returns(fakeP)
     app.runHook('on_start', function(){
       assert(app.Process.called, 'call Process')
-      assert.deepEqual(app.Process.lastCall.args, ['launch', ['nuclear-missile']])
+      assert.deepEqual(app.Process.lastCall.args, ['launch', ['nuclear-missile', '7357']])
       done()
     })
   })
