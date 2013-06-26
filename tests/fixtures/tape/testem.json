@@ -13,7 +13,7 @@
     "src_files": [
         "*.js"
     ],
-    "before_tests": "browserify tests.js -o public/bundle.js",
+    "before_tests": "./node_modules/.bin/browserify tests.js -o public/bundle.js",
     "test_page": "public/tests.html",
     "launch_in_dev": ["Node", "PhantomJS"]
 }

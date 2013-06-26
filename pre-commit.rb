@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 
 commands = [
-  'grep -n describe.only -r tests/',
-  'grep -n it.only -r tests/',
+  'grep -n "describe\.only" -r tests/',
+  'grep -n "it\.only" -r tests/',
   'grep -n "xdescribe" -r tests/',
   'grep -n debugger $(find lib -name "*.js")'
 ]
