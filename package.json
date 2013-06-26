@@ -43,15 +43,13 @@
   },
   "files": [
     "docs",
-    "examples",
     "lib",
     "public",
     "README.md",
     "testem.js",
     "assets",
     "package.json",
-    "views",
-    "tests"
+    "views"
   ],
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js",
