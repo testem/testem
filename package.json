@@ -42,7 +42,6 @@
     "did_it_work": "~0.0.5"
   },
   "files": [
-    "docs",
     "lib",
     "public",
     "README.md",
