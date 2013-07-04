@@ -189,7 +189,7 @@ describe('Config', function(){
 				done()
 			})
 		})
-		it('excludes usig src_files_ignore', function(done){
+		it('excludes using src_files_ignore', function(done){
 			config.set('src_files', ['integration/*'])
 			config.set('src_files_ignore', ['**/*.sh'])
 			config.getSrcFiles(function(err, files){
