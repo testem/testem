@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em</title>
+<link rel="stylesheet" href="/testem/mocha.css">
+<script src="/testem/mocha.js"></script>
+<script src="/testem/chai.js"></script>
+<script src="/testem.js"></script>
+<script>mocha.setup('bdd')</script>
+<script data-main="testem-require-config.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.6/require.min.js"></script>
+</head>
+<body>
+<div id="mocha"></div>
+<script>
+  var files = [];
+  {{#scripts}}files.push("../{{src}}");{{/scripts}}
+  require(files, function() {
+    mocha.run();
+  });
+</script>
+</body>
+</html>
