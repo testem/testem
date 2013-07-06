@@ -71,7 +71,7 @@ describe('ci mode app', function(){
         assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
         assert(processUtils.exit.called, 'called processUtils.exit()')
         assert.equal(processUtils.exit.lastCall.args[0], app.process)
-        assert.equal(processUtils.exit.lastCall.args[1], 0)
+        assert.equal(processUtils.exit.lastCall.args[1], 1)
         done()
       }
     })
