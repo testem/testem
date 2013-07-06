@@ -8,6 +8,7 @@ var path = require('path')
 var assert = require('chai').assert
 var log = require('winston')
 var Process = require('did_it_work')
+var processUtils = require('../../lib/process_utils')
 
 log.remove(log.transports.Console)
 
@@ -31,6 +32,7 @@ describe('ci mode app', function(){
     config.read(function(){
       var app = new App(config)
       stub(app, 'process', mock(process))
+      stub(processUtils, 'exit')
       var reporter = stub(app, 'reporter', new TestReporter(true))
       app.once('tests-finish', function(){
         setTimeout(checkResults, 100)
@@ -67,14 +69,16 @@ describe('ci mode app', function(){
         assert.include(launchers, 'PhantomJS 1.9')
 
         assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
-        assert(app.process.exit.called, 'called process.exit()')
-        assert(app.process.exit.lastCall.args[0], 0)
+        assert(processUtils.exit.called, 'called processUtils.exit()')
+        assert.equal(processUtils.exit.lastCall.args[0], app.process)
+        assert.equal(processUtils.exit.lastCall.args[1], 0)
         done()
       }
     })
   })
 
   it('fails and returns exit code of 1', function(done){
+    this.timeout(20000);
     var config = new Config('ci', {
       cwd: 'tests/fixtures/fail/',
       port: 7359
@@ -83,12 +87,14 @@ describe('ci mode app', function(){
     })
     var app = new App(config)
     stub(app, 'process', mock(process))
+    stub(processUtils, 'exit')
     var reporter = stub(app, 'reporter', new TestReporter(true))
       
     app.once('tests-finish', function(){
       setTimeout(function(){
-        assert(app.process.exit.called, 'should have exited')
-        assert.equal(app.process.exit.lastCall.args[0], 1)
+        assert(processUtils.exit.called, 'should have exited')
+        assert.equal(processUtils.exit.lastCall.args[0], app.process)
+        assert.equal(processUtils.exit.lastCall.args[1], 1)
         done()
       }, 100)
     })
@@ -106,11 +112,13 @@ describe('ci mode app', function(){
     config.read(function(){
       var app = new App(config)
       stub(app, 'process', mock(process))
+      stub(processUtils, 'exit')
       var reporter = stub(app, 'reporter', new TestReporter(true))
       app.once('tests-finish', function(){
         setTimeout(function(){
-          assert(app.process.exit.called, 'should have exited')
-          assert.equal(app.process.exit.lastCall.args[0], 1)
+          assert(processUtils.exit.called, 'should have exited')
+          assert.equal(processUtils.exit.lastCall.args[0], app.process)
+          assert.equal(processUtils.exit.lastCall.args[1], 1)
           done()
         }, 100)
       })
