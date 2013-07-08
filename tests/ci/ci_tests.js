@@ -1,3 +1,4 @@
+var fs = require('fs')    
 var App = require('../../lib/ci')
 var TestReporter = require('../../lib/ci/test_reporter')
 var Config = require('../../lib/config')
@@ -14,7 +15,6 @@ log.remove(log.transports.Console)
 describe('ci mode app', function(){
 
   beforeEach(function(done){
-    var fs = require('fs')
     fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
       done()
     })
@@ -32,13 +32,8 @@ describe('ci mode app', function(){
       var app = new App(config)
       stub(app, 'cleanExit')
       var reporter = stub(app, 'reporter', new TestReporter(true))
-      app.once('tests-finish', function(){
-        setTimeout(checkResults, 100)
-      })
       app.start()
-
-      function checkResults(){
-        
+      app.cleanExit.once('call', function(){
         var helloWorld = reporter.results.filter(function(r){
           return r.result.name.match(/hello world/)
         })
@@ -70,7 +65,8 @@ describe('ci mode app', function(){
         assert(app.cleanExit.called, 'called process.exit()')
         assert(app.cleanExit.lastCall.args[0], 0)
         done()
-      }
+      })
+      
     })
   })
 
@@ -82,17 +78,14 @@ describe('ci mode app', function(){
       launch_in_ci: ['phantomjs']
     })
     var app = new App(config)
-    stub(app, 'cleanExit')
     var reporter = stub(app, 'reporter', new TestReporter(true))
-      
-    app.once('tests-finish', function(){
-      setTimeout(function(){
-        assert(app.cleanExit.called, 'should have exited')
-        assert.equal(app.cleanExit.lastCall.args[0], 1)
-        done()
-      }, 100)
-    })
+    stub(app, 'cleanExit')
     app.start()
+    app.cleanExit.once('call', function(){
+      assert(app.cleanExit.called, 'should have exited')
+      assert.equal(app.cleanExit.lastCall.args[0], 1)
+      done()
+    })
   })
 
   it('fails if before_tests fails', function(done){
@@ -105,16 +98,32 @@ describe('ci mode app', function(){
     })
     config.read(function(){
       var app = new App(config)
-      stub(app, 'cleanExit')
       var reporter = stub(app, 'reporter', new TestReporter(true))
-      app.once('tests-finish', function(){
-        setTimeout(function(){
-          assert(app.cleanExit.called, 'should have exited')
-          assert.equal(app.cleanExit.lastCall.args[0], 1)
-          done()
-        }, 100)
-      })
+      stub(app, 'cleanExit')
       app.start()
+      app.cleanExit.once('call', function(){
+        assert(app.cleanExit.called, 'should have exited')
+        assert.equal(app.cleanExit.lastCall.args[0], 1)
+        done()
+      })
+    })
+  })
+
+  it('fails if zero tests when fail_on_zero_tests', function(done){
+    var config = new Config('ci', {
+      cwd: 'tests/fixtures/zero_tests/',
+      port: 7344
+    }, {
+      fail_on_zero_tests: true,
+      launch_in_ci: ['phantomjs']
+    })
+    var app = new App(config)
+    stub(app, 'reporter', new TestReporter(true))
+    stub(app, 'cleanExit')
+    app.start()
+    app.cleanExit.once('call', function(exitCode){
+      assert.equal(exitCode, 1)
+      done()
     })
   })
 
@@ -224,18 +233,15 @@ describe('runHook', function(){
       config.set('on_start', 'launch missile')
       config.set('before_tests', null)
       var app = new App(config)
-      stub(app, 'cleanExit')
       stub(app, 'Process').returns(fakeP)
       var reporter = stub(app, 'reporter', new TestReporter(true))
-      app.once('tests-finish', function(){
-        setTimeout(checkResults, 100)
-      })
+      stub(app, 'cleanExit')
       app.start()
-      function checkResults(){
+      app.cleanExit.once('call', function(){
         assert.deepEqual(app.Process.lastCall.args[0], 'launch missile')
         assert(fakeP.kill.called, 'should have killed')
         done()
-      }
+      })
     })
   })
 
