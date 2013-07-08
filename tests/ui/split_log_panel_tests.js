@@ -1,8 +1,9 @@
 var expect = require('chai').expect
 var Backbone = require('backbone')
-var sinon = require('sinon')
 var screen = require('./fake_screen')
 var SplitLogPanel = require('../../lib/ui/split_log_panel')
+var stub = require('bodydouble').stub
+var spy = require('ispy')
 
 describe('SplitLogPanel', function(){
 
@@ -143,19 +144,19 @@ describe('SplitLogPanel', function(){
 
   describe('targetPanel', function(){
     it('is the top if only has test results', function(){
-      sinon.stub(runner, 'hasResults').returns(true)
-      sinon.stub(runner, 'hasMessages').returns(false)
+      stub(runner, 'hasResults').returns(true)
+      stub(runner, 'hasMessages').returns(false)
       expect(panel.targetPanel()).to.equal(panel.topPanel)
     })
     it('is the bottom if only has messages', function(){
-      sinon.stub(runner, 'hasResults').returns(false)
-      sinon.stub(runner, 'hasMessages').returns(true)
+      stub(runner, 'hasResults').returns(false)
+      stub(runner, 'hasMessages').returns(true)
       expect(panel.targetPanel()).to.equal(panel.bottomPanel)
     })
     context('has both results and messages', function(){
       beforeEach(function(){
-        sinon.stub(runner, 'hasResults').returns(true)
-        sinon.stub(runner, 'hasMessages').returns(true)
+        stub(runner, 'hasResults').returns(true)
+        stub(runner, 'hasMessages').returns(true)
       })
       it('is the top if focused on top', function(){
         panel.set('focus', 'top')
@@ -167,8 +168,8 @@ describe('SplitLogPanel', function(){
       })
     })
     it('is the top if has neither', function(){
-      sinon.stub(runner, 'hasResults').returns(false)
-      sinon.stub(runner, 'hasMessages').returns(false)
+      stub(runner, 'hasResults').returns(false)
+      stub(runner, 'hasMessages').returns(false)
       expect(panel.targetPanel()).to.equal(panel.topPanel)
     })
   })
@@ -177,8 +178,8 @@ describe('SplitLogPanel', function(){
     'scrollUp scrollDown pageUp pageDown halfPageUp halfPageDown'.split(' ').forEach(function(method){
       it('delegates ' + method + ' to the target Panel', function(){
         var targetPanel = {}
-        targetPanel[method] = sinon.spy()
-        sinon.stub(panel, 'targetPanel').returns(targetPanel)
+        targetPanel[method] = spy()
+        stub(panel, 'targetPanel').returns(targetPanel)
         panel[method]()
         expect(targetPanel[method].called).to.be.ok
       })
@@ -187,22 +188,22 @@ describe('SplitLogPanel', function(){
 
   describe('syncDimensions', function(){
     it('shows both panels if has both results and messages', function(){
-      sinon.stub(runner, 'hasResults').returns(true)
-      sinon.stub(runner, 'hasMessages').returns(true)
+      stub(runner, 'hasResults').returns(true)
+      stub(runner, 'hasMessages').returns(true)
       panel.syncDimensions()
       expect(panel.topPanel.get('height')).to.equal(6)
       expect(panel.bottomPanel.get('height')).to.equal(6)
     })
     it('show top panel only if only has results', function(){
-      sinon.stub(runner, 'hasResults').returns(true)
-      sinon.stub(runner, 'hasMessages').returns(false)
+      stub(runner, 'hasResults').returns(true)
+      stub(runner, 'hasMessages').returns(false)
       panel.syncDimensions()
       expect(panel.topPanel.get('height')).to.equal(12)
       expect(panel.bottomPanel.get('height')).to.equal(0)
     })
     it('show bottom panel only if only has messages', function(){
-      sinon.stub(runner, 'hasResults').returns(false)
-      sinon.stub(runner, 'hasMessages').returns(true)
+      stub(runner, 'hasResults').returns(false)
+      stub(runner, 'hasMessages').returns(true)
       panel.syncDimensions()
       expect(panel.topPanel.get('height')).to.equal(0)
       expect(panel.bottomPanel.get('height')).to.equal(12)
@@ -211,8 +212,8 @@ describe('SplitLogPanel', function(){
 
   describe('render', function(){
     it('renders', function(){
-      sinon.stub(panel, 'getResultsDisplayText').returns('1 tests passed.')
-      sinon.stub(panel, 'getMessagesText').returns('This is a message.')
+      stub(panel, 'getResultsDisplayText').returns('1 tests passed.')
+      stub(panel, 'getMessagesText').returns('This is a message.')
       panel.syncResultsDisplay()
       panel.syncMessages()
       panel.render()

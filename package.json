@@ -56,14 +56,12 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "sinon": "*",
-    "async": "*",
     "chai": "*",
-    "sinon-chai": "*",
     "bufferstream": "*",
     "request": "~2.12.0",
     "jsdom": "~0.5.2",
-    "bodydouble": "~0.1.1"
+    "bodydouble": "~0.1.1",
+    "ispy": "~0.1.1"
   },
   "bin": {
     "testem": "./testem.js"

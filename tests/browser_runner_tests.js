@@ -1,8 +1,10 @@
 var BrowserRunner = require('../lib/browser_runner')
-var sinon = require('sinon')
 var EventEmitter = require('events').EventEmitter
 var expect = require('chai').expect
 var assert = require('chai').assert
+var bd = require('bodydouble')
+var stub = bd.stub
+var mock = bd.mock
 
 describe('BrowserRunner', function(){
   var socket, runner
@@ -12,6 +14,9 @@ describe('BrowserRunner', function(){
       name: 'Chrome 19.0'
       , socket: socket
     })
+  })
+  afterEach(function(){
+    bd.restoreStubs()
   })
   it('can create', function(){
     expect(runner.get('socket')).to.equal(socket)
@@ -36,23 +41,20 @@ describe('BrowserRunner', function(){
   })
   it('emits start-tests and resets when startTests', function(){
     var results = runner.get('results')
-    sinon.spy(results, 'reset')
-    sinon.spy(socket, 'emit')
+    stub(results, 'reset')
+    stub(socket, 'emit')
     runner.startTests()
     expect(results.reset.callCount).to.equal(1)
-    expect(socket.emit.calledWith('start-tests')).to.be.ok
-    results.reset.restore()
-    socket.emit.restore()
+    expect(socket.emit.lastCall.args).to.deep.equal(['start-tests'])
   })
   it('sets topLevelError when error emitted', function(){
     socket.emit('top-level-error', 'TypeError: bad news', 'http://test.com/bad.js', 45)
     expect(runner.get('messages').at(0).get('text')).to.equal('TypeError: bad news at http://test.com/bad.js, line 45\n')
   })
   it('emits tests-start on server on tests-start', function(){
-    sinon.spy(runner, 'trigger')
+    stub(runner, 'trigger')
     socket.emit('tests-start')
-    expect(runner.trigger.calledWith('tests-start')).to.be.ok
-    runner.trigger.restore()
+    expect(runner.trigger.lastCall.args).to.deep.equal(['tests-start'])
   })
   it('updates results on test-result', function(){
     var results = runner.get('results')

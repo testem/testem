@@ -2,16 +2,9 @@ var fs = require('fs')
   , spawn = require('child_process').spawn
   , dataDir = __dirname + '/data'
   , chai = require('chai')
-  , sinon = require('sinon')
   , util = require('util')
 
 exports.expect = chai.expect
-
-exports.sinon = sinon
-
-exports.spy = sinon.spy
-
-exports.stub = sinon.stub
 
 exports.dataDir = dataDir
 

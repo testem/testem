@@ -3,8 +3,8 @@ var template = require('../lib/strutils').template
 var Config = require('../lib/config')
 var expect = require('chai').expect
 var assert = require('chai').assert
-var stub = require('sinon').stub
-var spy = require('sinon').spy
+var bd = require('bodydouble')
+var stub = bd.stub
 
 describe('Launcher', function(){
   var settings, launcher, config
@@ -40,7 +40,7 @@ describe('Launcher', function(){
     })
     it('should launch if not a process and started', function(){
       stub(launcher, 'isProcess').returns(false)
-      spy(launcher, 'launch')
+      stub(launcher, 'launch')
       launcher.start()
       expect(launcher.launch.called).to.be.ok
     })

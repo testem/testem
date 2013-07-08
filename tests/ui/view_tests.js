@@ -1,7 +1,7 @@
 var expect = require('chai').expect
-var spy = require('sinon').spy
 var View = require('../../lib/ui/view')
 var Backbone = require('backbone')
+var spy = require('ispy')
 
 describe('view', function(){
   var view
@@ -14,8 +14,6 @@ describe('view', function(){
     })
     view = new MyView()
   })
-    
-  it('can subclass', function(){})
 
   it('can observe and then destroy', function(){
     var onNameChange = spy()

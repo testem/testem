@@ -1,15 +1,15 @@
 var FileWatcher = require('../lib/filewatcher.js')
-  , test = require('./testutils.js')
-  , async = require('async')
-  , expect = test.expect
-  
+var test = require('./testutils.js')
+var async = require('async')
+var expect = require('chai').expect
+var spy = require('ispy')
 
 describe('FileWatcher', function(){
   var watcher
     , changed
   beforeEach(function(done){
     watcher = new FileWatcher
-    changed = test.spy()
+    changed = spy()
     watcher.on('change', changed)
     test.refreshDataDir(done)
   })
@@ -17,20 +17,6 @@ describe('FileWatcher', function(){
   it('should add', function(){
     watcher.add(test.dataDir)
   })
-    
-  /*
-  it('should watch for directory changes', function(done){
-    watcher.add(test.dataDir)
-    async.series([function(next)
-        
-    { setTimeout(next, 1000) }, function(next)
-    { test.touchFile('blah.txt', next) }, function(next)
-    { setTimeout(next, 750) }, function(next)
-    { expect(changed.calledWith(test.dataDir)).to.be.ok; done() }
-        
-    ])
-  })
-  */
     
   it('should ignore(not blow up) if watched file does not exist' , function(){
     watcher.add('thisfiledoesnotexist')
@@ -44,7 +30,7 @@ describe('FileWatcher', function(){
     { setTimeout(next, 500) }, function(next)
     { test.touchFile('blah.txt', next) }, function(next)
     { setTimeout(next, 500) }, function(next)
-    { expect(changed.calledWith(test.filePath('blah.txt'))).to.be.ok, done()}
+    { expect(changed.lastCall.args).to.deep.equal([test.filePath('blah.txt')]), done()}
         
     ])
   })
@@ -70,7 +56,7 @@ describe('FileWatcher', function(){
     { watcher.clear(), next() }, function(next)
     { test.touchFile('blah.txt', next) }, function(next)
     { setTimeout(next, 500) }, function(next)
-    { expect(changed.calledWith(test.filePath('blah.txt'))).to.not.be.ok, done()}
+    { expect(changed.called).to.not.be.ok, done()}
         
     ])
   })

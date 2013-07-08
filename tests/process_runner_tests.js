@@ -1,8 +1,8 @@
 var ProcessRunner = require('../lib/process_runner')
-var sinon = require('sinon')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var BufferStream = require('bufferstream')
+var stub = require('bodydouble').stub
 
 describe('ProcessRunner', function(){
   var runner
@@ -51,7 +51,7 @@ describe('ProcessRunner', function(){
       expect(runner.isTap()).not.to.be.ok
     })
     it('should have results if tap', function(){
-      sinon.stub(runner, 'isTap').returns(true)
+      stub(runner, 'isTap').returns(true)
       expect(runner.hasResults()).to.be.ok
       runner.isTap.returns(false)
       expect(runner.hasResults()).not.to.be.ok

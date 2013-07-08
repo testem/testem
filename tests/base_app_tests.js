@@ -1,7 +1,6 @@
 var BaseApp = require('../lib/base_app')
 var expect = require('./testutils.js').expect
 var assert = require('chai').assert
-var spy = require('sinon').spy
 var Model = require('backbone').Model
 var Config = require('../lib/config')
 

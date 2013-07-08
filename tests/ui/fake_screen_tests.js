@@ -1,5 +1,4 @@
 var expect = require('chai').expect
-var spy = require('sinon').spy
 var screen = require('./fake_screen')
 
 describe('FakeScreen', function(){
