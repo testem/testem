@@ -25,10 +25,10 @@ describe('Launcher', function(){
       launcher.process.stdout.on('data', function(chunk){
         data += String(chunk)
       })
-      setTimeout(function(){
+      launcher.process.on('close', function(){
         expect(data).to.equal('hello\n')
         done()
-      }, 10)
+      })
     })
     it('should be process iff protocol is not browser', function(){
       settings.protocol = 'browser'
