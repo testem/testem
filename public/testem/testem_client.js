@@ -183,7 +183,7 @@ function getId(){
 function init(){
     takeOverConsole()
     interceptWindowOnError()
-    socket = io.connect()
+    socket = io.connect(socketConnectionPath)
     var id = getId()
     socket.emit('browser-login', 
         getBrowserName(navigator.userAgent), 
