@@ -13,6 +13,7 @@ function mochaAdapter(socket){
 		{ failed: 0
 	    , passed: 0
 	    , total: 0
+	    , pending: 0
 	    , tests: []
 		}
 	var id = 1
@@ -46,6 +47,7 @@ function mochaAdapter(socket){
 					{ passed: 1
 					, failed: 0
 					, total: 1
+					, pending: 0
 					, id: id++
 					, name: name
 					, items: []
@@ -65,11 +67,25 @@ function mochaAdapter(socket){
 					{ passed: 0
 					, failed: 1
 					, total: 1
+					, pending: 0
 					, id: id++
 					, name: name
 					, items: items
 					}
 				results.failed++
+				results.total++
+				results.tests.push(tst)
+				emit('test-result', tst)
+			}else if (test.pending){
+				var tst =
+				{ passed: 0
+				, failed: 0
+				, total: 1
+				, pending: 1
+				, id: id++
+				, name: name
+				, items: []
+				}
 				results.total++
 				results.tests.push(tst)
 				emit('test-result', tst)

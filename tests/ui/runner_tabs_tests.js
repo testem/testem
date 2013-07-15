@@ -94,6 +94,7 @@ describe('RunnerTab', function(){
           results.set('all', true)
           results.set('passed', 0)
           results.set('total', 0)
+          results.set('pending', 0)
       })
 
       it('renders failure-x', function(){
@@ -107,6 +108,10 @@ describe('RunnerTab', function(){
               '     0/0 ✘     ┃    ',
               '               ┗    ',
               '                    ' ])
+      })
+
+      it('renders the tab red', function(){
+          expect(tab.color()).to.equal('red')
       })
   })
 
@@ -133,7 +138,8 @@ describe('RunnerTab', function(){
     })
     it('renders test results', function(done){
       results.set('passed', 1)
-      results.set('total', 1)
+      results.set('total', 2)
+      results.set('pending', 1)
       process.nextTick(function(){
         expect(screen.buffer).to.be.deep.equal([
           '                    ',
@@ -141,16 +147,17 @@ describe('RunnerTab', function(){
           '                    ',
           ' ━━━━━━━━━━━━━━┓    ',
           '       Bob     ┃    ',
-          '     1/1 ◞     ┃    ',
+          '     1/2 ◞     ┃    ',
           '               ┗    ',
           '                    ' ])
         done()
       })
     })
-    it('renders check mark if all passed', function(){
+    it('renders check mark if none failed', function(){
       results.set({
         passed: 1
-        , total: 1
+        , total: 2
+        , pending: 1
         , all: true
       })
       expect(screen.buffer).to.be.deep.equal([ 
@@ -159,11 +166,32 @@ describe('RunnerTab', function(){
         '                    ',
         ' ━━━━━━━━━━━━━━┓    ',
         '       Bob     ┃    ',
-        '     1/1 ✔     ┃    ',
+        '     1/2 ✔     ┃    ',
         '               ┗    ',
         '                    ' ])
     })
-
+    context('when there are no pending tests', function(){
+      it('renders the tab green', function(){
+        results.set({
+          passed: 1
+          , pending: 0
+          , total: 1
+          , all: true
+        })
+        expect(tab.color()).to.equal('green')
+      })
+    })
+    context('when there are pending tests', function(){
+      it('renders the tab yellow', function(){
+        results.set({
+          passed: 0
+          , pending: 1
+          , total: 1
+          , all: true
+        })
+        expect(tab.color()).to.equal('yellow')
+      })
+    })
   })
 })
 

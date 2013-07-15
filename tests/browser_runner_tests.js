@@ -37,6 +37,7 @@ describe('BrowserRunner', function(){
       results.reset()
       expect(results.get('total')).to.equal(0)
       expect(results.get('passed')).to.equal(0)
+      expect(results.get('pending')).to.equal(0)
     })
   })
   it('emits start-tests and resets when startTests', function(){
@@ -63,7 +64,9 @@ describe('BrowserRunner', function(){
     expect(results.get('failed')).to.equal(1)
     socket.emit('test-result', {failed: 0})
     expect(results.get('passed')).to.equal(1)
-    expect(results.get('tests').length).to.equal(2)
+    socket.emit('test-result', {pending: 1})
+    expect(results.get('pending')).to.equal(1);
+    expect(results.get('tests').length).to.equal(3)
   })
   it('sets "all" on all-tests-results', function(){
     socket.emit('all-test-results')
