@@ -223,11 +223,26 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` include to enable *Testem* with your test page
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` or `buster.js` include to enable *Testem* with your test page. 
 
 ```html
 <script src="/testem.js"></script>
 ```
+
+Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
+
+### Dynamic Substitution
+
+To enable dynamically substituting in the Javascript files in your custom test page, you must
+
+1. name your test page using `.mustache` as the extension
+2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path
+
+Example:
+
+    {{#serve_files}}
+    <script src="{{src}}"></script>
+    {{/serve_files}}
 
 Launchers
 ---------

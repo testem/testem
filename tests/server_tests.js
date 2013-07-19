@@ -86,7 +86,7 @@ describe('Server', function(){
   })
 
   it('renders custom test page as template', function(done){
-    config.set('test_page', 'web/tests_template.html')
+    config.set('test_page', 'web/tests_template.mustache')
     request(baseUrl, function(err, req, text){
       expect(text).to.equal(
         [
@@ -114,14 +114,14 @@ describe('Server', function(){
       done()
     })
   }
-//
-  //it('lists directories', function(done){
-  //    request(baseUrl + 'data', function(err, req, text){
-  //        expect(text).to.equal('<a href="blah.txt">blah.txt</a>')
-  //        done()
-  //    })
-  //})
-//
+
+  it('lists directories', function(done){
+      request(baseUrl + 'data', function(err, req, text){
+          expect(text).to.equal('<a href="blah.txt">blah.txt</a>')
+          done()
+      })
+  })
+
   //describe('routes', function(){
   //    beforeEach(function(){
   //        config.set('routes', {

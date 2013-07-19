@@ -1,5 +1,5 @@
 {
-    "test_page": "test.html",
+    "test_page": "test.mustache",
     "src_files": [
         "src/*.js",
         "tests/*.js"
