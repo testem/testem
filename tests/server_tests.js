@@ -117,7 +117,7 @@ describe('Server', function(){
 
   it('lists directories', function(done){
       request(baseUrl + 'data', function(err, req, text){
-          expect(text).to.equal('<a href="blah.txt">blah.txt</a>')
+          expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/)
           done()
       })
   })
