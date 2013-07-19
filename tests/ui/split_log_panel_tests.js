@@ -56,7 +56,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('✔ 1 tests complete (0 pending).')
+      expect(panel.getResultsDisplayText().unstyled()).to.equal('✔ 1 tests complete.')
     })
     it('shows pending tests in yellow when has results, all is true, no tests failed and there are pending tests', function(){
       results.set('total', 1)
