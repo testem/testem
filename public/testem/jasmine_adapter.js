@@ -45,7 +45,7 @@ function jasmineAdapter(socket){
             test.items.push({    
                 passed: passed,
                 message: item.message,
-                stacktrace: item.trace.stack ? item.trace.stack : undefined
+                stack: item.trace.stack ? item.trace.stack : undefined
             })
         }
         

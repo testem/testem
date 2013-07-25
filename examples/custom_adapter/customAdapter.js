@@ -80,12 +80,12 @@ function customTestFrameworkAdapter(socket) {
                 passed = true  // we passed!
             } catch (err) {
                 // On failure, we want to recored the
-                // error message and, if available - the stacktrace
+                // error message and, if available - the stack
                 // and add to `result.items` to be reported back
                 result.items.push({
                     passed: false
                     , message: err.message
-                    , stacktrace: err.stack ? err.stack : undefined
+                    , stack: err.stack ? err.stack : undefined
                 })
             }
 

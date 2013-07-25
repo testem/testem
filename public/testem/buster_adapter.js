@@ -57,7 +57,7 @@ function busterAdapter(socket){
             , items: [{    
                 passed: false,
                 message: test.error.message,
-                stacktrace: test.error.stack ? test.error.stack : undefined
+                stack: test.error.stack ? test.error.stack : undefined
             }]
         }
         emit('test-result', test)

@@ -50,7 +50,7 @@ function qunitAdapter(socket){
                 passed: params.result,
                 line: lineNumber(e),
                 file: sourceFile(e),
-                stacktrace: stacktrace(e),
+                stack: stacktrace(e),
                 message: message(e)
             })
         }else{

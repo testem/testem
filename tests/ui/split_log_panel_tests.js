@@ -116,7 +116,7 @@ describe('SplitLogPanel', function(){
           items: [ 
             {
               message: 'should not be null', passed: false, 
-              stacktrace: [
+              stack: [
                 'AssertionError: ',
                 '    at Module._compile (module.js:437:25)',
                 '    at Object.Module._extensions..js (module.js:467:10)'

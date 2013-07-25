@@ -1,6 +1,6 @@
 var fs = require('fs')    
 var App = require('../../lib/ci')
-var TestReporter = require('../../lib/ci/test_reporter')
+var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var Config = require('../../lib/config')
 var bd = require('bodydouble')
 var mock = bd.mock

@@ -60,7 +60,7 @@ function mochaAdapter(socket){
 				var items = [
 					{ passed: false
 					, message: test.err.message
-					, stacktrace: (test.err && test.err.stack) ? test.err.stack : undefined
+					, stack: (test.err && test.err.stack) ? test.err.stack : undefined
 					}
 				]
 				var tst = 
