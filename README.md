@@ -146,7 +146,7 @@ Will print them out. The output might look like
     
 Did you notice that this system has IE versions 7-9? Yes, actually it has only IE9 installed, but Testem uses IE's compatibility mode feature to emulate IE 7 and 8.
 
-When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format, which looks like
+When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/wiki/index.php/Main_Page) format by default, which looks like
 
     ok 1 Chrome 16.0 - hello should say hello.
 
@@ -160,6 +160,12 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
+
+## Other Test Reporters
+
+Testem has other test reporters than TAP: `dot` and `xunit`. You can use the `-R` to specify them
+
+    testem ci -R dot
 
 ### Command line options
 
