@@ -1,6 +1,7 @@
+framework: jasmine
+
 on_start:
-    command: saucelauncher tunnel
-    wait_for_text: Connected! You may start your tests.
+    command: npm install
 
 src_files:
     - hello.js
@@ -8,12 +9,10 @@ src_files:
 
 launchers:
     SL_Chrome:
-        command: saucelauncher launch googlechrome <url>
-        protocol: browser
+        command: node lib/saucelauncher-webdriver.js --browserNameSL='chrome' --versionSL='' --platformSL='Linux'
 
     SL_IE_7:
-        command: saucelauncher launch iehta <url>
-        protocol: browser
+        command: node lib/saucelauncher-webdriver.js --browserNameSL='internet explorer' --versionSL='7' --platformSL='Windows XP'
 
 launch_in_ci: [SL_Chrome, SL_IE_7]
 launch_in_dev: [phantomjs]

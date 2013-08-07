@@ -1,0 +1,13 @@
+{
+  "name": "saucelabs",
+  "description": "example",
+  "version": "0.0.1",
+  "devDependencies": {
+    "sauce-connect-launcher": "~0.1.11",
+    "optimist":               "~0.6.0",
+    "wd":                     "~0.0.34",
+    "async":                  "~0.2.9",
+    "q":                      "~0.9.6",
+    "request":                "~2.25.0"
+  }
+}
