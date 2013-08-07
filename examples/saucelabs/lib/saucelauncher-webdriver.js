@@ -6,7 +6,7 @@ launcher(config.launcherOptions, function (err, sauceConnectProcess) {
   console.log("Started Sauce Connect Process");
 
   integrationTest(
-    "http://localhost:7357",
+    "http://localhost:8080",
     "{failedCount: jasmine.currentEnv_.currentRunner_.results().failedCount}",
 
     function() {
