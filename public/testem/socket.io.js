@@ -2596,11 +2596,13 @@ var io = {};
     this.socket.setBuffer(true);
 
     function stateChange () {
-      if (this.readyState == 4) {
-        this.onreadystatechange = empty;
+      /* "this" is not the XHR on IE6, it is the window */
+      var thisXHR = self.sendXHR;
+      if (thisXHR.readyState == 4) {
+        thisXHR.onreadystatechange = empty;
         self.posting = false;
 
-        if (this.status == 200){
+        if (thisXHR.status == 200){
           self.socket.setBuffer(false);
         } else {
           self.onClose();
