@@ -28,6 +28,19 @@ describe('Config', function(){
 		expect(config.get('file')).to.equal(progOptions.file)
 	})
 
+	describe('accepts empty config file', function(){
+		var config
+		beforeEach(function(done){
+			var progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js'}
+			config = new Config('dev', progOptions)
+			config.read(done)
+		})
+		it('gets properties from config file', function(){
+			expect(config.get('framework')).to.equal('mocha')
+			expect(String(config.get('src_files'))).to.equal('impl.js,tests.js')
+		})
+	})
+
 	describe('read yaml config file', function(){
 		beforeEach(function(done){
 			config.read(done)
