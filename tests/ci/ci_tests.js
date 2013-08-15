@@ -160,6 +160,35 @@ describe('runHook', function(){
     })
   })
 
+  it('runs hook with arguments', function(done){
+    var config = new Config('ci', null, {
+      on_start: 'launch <type> nuclear-missile'
+    })
+    var app = new App(config)
+    stub(app, 'Process').returns(fakeP)
+    app.runHook('on_start', {type: 'soviet'}, function(){
+      assert(app.Process.called, 'how come you dont call me?')
+      assert.equal(app.Process.lastCall.args, 'launch soviet nuclear-missile')
+      done()
+    })
+  })
+
+  it('runs javascript hook', function(done){
+    var config = new Config('ci', null, {
+      port: 777,
+      on_start: function (cfg, data, callback) {
+        assert.equal(cfg.get('port'), 777)
+        assert.equal(data.viva, 'la revolucion')
+        callback(1)
+      }
+    })
+    var app = new App(config)
+    app.runHook('on_start', {viva: 'la revolucion'}, function(error){
+      assert.equal(error, 1)
+      done()
+    })
+  })
+
   it('waits for text', function(done){
     var config = new Config('ci', null, {
       on_start: {
