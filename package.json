@@ -61,7 +61,8 @@
     "jsdom": "~0.5.2",
     "bodydouble": "~0.1.1",
     "ispy": "~0.1.1",
-    "concat-stream": "~1.0.0"
+    "concat-stream": "~1.0.0",
+    "sinon": "~1.7.3"
   },
   "bin": {
     "testem": "./testem.js"
