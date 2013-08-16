@@ -47,6 +47,7 @@ Common Configuration Options
 
 ### Config-level options:
 
+    launchers:            [Object]  a specification for all custom launchers
     launch_in_dev:        [Array]   list of launchers to use for dev runs
     launch_in_ci:         [Array]   list of launchers to use for CI runs
     timeout:              [Number]  timeout for a browser
@@ -60,7 +61,7 @@ Common Configuration Options
     parallel:             [Number]  max number of parallel runners (1)
     routes:               [Hash]    overrides for assets paths
     fail_on_zero_tests:   [Boolean] whether process should exit with error status when no tests found
-    launchers:            [Object]  a specification for all custom launchers
+    unsafe_file_serving:  [Boolean] allow serving directories that are not in your CWD (false)
 
 ### Available hooks:
 
