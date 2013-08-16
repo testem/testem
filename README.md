@@ -214,6 +214,8 @@ You can also ignore certain files using `src_files_ignore`.
 }
 ```
 
+Read [more details](docs/config_file.md) about the config options.
+
 Custom Test Pages
 -----------------
 
