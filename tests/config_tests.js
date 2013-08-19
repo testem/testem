@@ -288,6 +288,19 @@ describe('Config', function(){
 				done()
 			})
 		})
+		it('allows URLs', function(done){
+			config.set('src_files', [
+				'file://integration/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
+			])
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('integration/browser_tests.bat'),
+					fileEntry('integration/browser_tests.sh'),
+					fileEntry('http://codeorigin.jquery.com/jquery-2.0.3.min.js')
+				])
+				done()
+			})
+		})
 	})
 
 	describe('getServeFiles', function(){
