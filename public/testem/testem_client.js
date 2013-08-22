@@ -160,8 +160,10 @@ function initUI(){
 }
 
 function initTestFrameworkHooks(){
-    if (typeof jasmine === 'object'){
-        jasmineAdapter(socket)
+	if (typeof getJasmineRequireObj === 'function'){
+		jasmine2Adapter(socket)
+	}else if (typeof jasmine === 'object'){
+		jasmineAdapter(socket)
     }else if ((typeof mocha).match(/function|object/)){
         mochaAdapter(socket)
     }else if (typeof QUnit === 'object'){
