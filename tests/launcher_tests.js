@@ -79,6 +79,9 @@ describe('Launcher', function(){
         done()
       })
     })
+    it('returns commandLine', function(){
+      assert.equal(launcher.commandLine(), '"echo hello"')
+    })
   })
 
   describe('via exe', function(){
@@ -136,6 +139,10 @@ describe('Launcher', function(){
         assert.equal(stdout, 'hello\n')
         done()
       })
+    })
+
+    it('returns commandLine', function(){
+      assert.equal(launcher.commandLine(), '"echo hello"')
     })
     
   })
