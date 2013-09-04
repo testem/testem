@@ -2,6 +2,7 @@ Got Scripts? Test&rsquo;em!
 =================
 
 [![Build Status](https://secure.travis-ci.org/airportyh/testem.png?branch=master)](http://travis-ci.org/airportyh/testem)
+[![Node dependencies status](https://david-dm.org/airportyh/testem.png)](https://david-dm.org/airportyh/testem)
 
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests. 
 
