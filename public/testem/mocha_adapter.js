@@ -35,63 +35,80 @@ function mochaAdapter(socket){
 	}
 
 	var oEmit = Runner.prototype.emit
-	Runner.prototype.emit = function(evt, test){
-	 	if (evt === 'start'){
+	Runner.prototype.emit = function(evt, test, err){
+		if (evt === 'start'){
 			emit('tests-start')
 		}else if (evt === 'end'){
 			emit('all-test-results', results)
 		}else if (evt === 'test end'){
 			var name = getFullName(test)
 			if (test.state === 'passed'){
-				var tst = 
-					{ passed: 1
-					, failed: 0
-					, total: 1
-					, pending: 0
-					, id: id++
-					, name: name
-					, items: []
-					}
-				results.passed++
-				results.total++
-				results.tests.push(tst)
-				emit('test-result', tst)
+				testPass(test)
 			}else if (test.state === 'failed'){
-				var items = [
-					{ passed: false
-					, message: test.err.message
-					, stack: (test.err && test.err.stack) ? test.err.stack : undefined
-					}
-				]
-				var tst = 
-					{ passed: 0
-					, failed: 1
-					, total: 1
-					, pending: 0
-					, id: id++
-					, name: name
-					, items: items
-					}
-				results.failed++
-				results.total++
-				results.tests.push(tst)
-				emit('test-result', tst)
+				testFail(test, err)
 			}else if (test.pending){
-				var tst =
-				{ passed: 0
+				testPending(test)
+			}
+		}else if(evt === 'fail'){
+			testFail(test, err)
+		}
+
+
+		oEmit.apply(this, arguments)
+
+		function testPass(test){
+			var tst = 
+				{ passed: 1
 				, failed: 0
 				, total: 1
-				, pending: 1
+				, pending: 0
 				, id: id++
 				, name: name
 				, items: []
 				}
-				results.total++
-				results.tests.push(tst)
-				emit('test-result', tst)
-			}
+			results.passed++
+			results.total++
+			results.tests.push(tst)
+			emit('test-result', tst)
 		}
-		oEmit.apply(this, arguments)
+
+		function testFail(test, err){
+			err = err || test.err
+			var items = [
+				{ passed: false
+				, message: err.message
+				, stack: (err && err.stack) ? err.stack : undefined
+				}
+			]
+			var tst = 
+				{ passed: 0
+				, failed: 1
+				, total: 1
+				, pending: 0
+				, id: id++
+				, name: name
+				, items: items
+				}
+			results.failed++
+			results.total++
+			results.tests.push(tst)
+			emit('test-result', tst)
+		}
+
+		function testPending(test){
+			var tst =
+			{ passed: 0
+			, failed: 0
+			, total: 1
+			, pending: 1
+			, id: id++
+			, name: name
+			, items: []
+			}
+			results.total++
+			results.tests.push(tst)
+			emit('test-result', tst)
+		}
 	}
 
 }
