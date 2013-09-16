@@ -127,6 +127,15 @@ describe('ci mode app', function(){
     })
   })
 
+  it('allows passing in reporter from config', function(){
+    var fakeReporter = {}
+    var config = new Config('ci', {
+      reporter: fakeReporter
+    })
+    var app = new App(config)
+    assert.strictEqual(app.reporter, fakeReporter)
+  })
+
 })
 
 describe('runHook', function(){
