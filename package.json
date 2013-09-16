@@ -27,7 +27,7 @@
     "winston": "~0.7.1",
     "charm": "~0.0.5",
     "js-yaml": "~0.3.5",
-    "tap": "*",
+    "tap": "~0.4.4",
     "commander": "*",
     "glob": "~3.1.21",
     "async": "~0.2.7",
@@ -57,7 +57,6 @@
   "devDependencies": {
     "mocha": "*",
     "chai": "*",
-    "bufferstream": "*",
     "request": "~2.12.0",
     "jsdom": "~0.5.2",
     "bodydouble": "~0.1.1",
@@ -70,7 +69,6 @@
   },
   "main": "./lib/api.js",
   "bundleDependencies": [
-    "tap",
     "express"
   ],
   "optionalDependencies": {}

@@ -245,8 +245,7 @@ describe('Config', function(){
 			])
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
-					fileEntry('integration/browser_tests.bat'),
-					fileEntry('filewatcher_tests.js')
+					fileEntry('integration/browser_tests.bat')
 				])
 				done()
 			})

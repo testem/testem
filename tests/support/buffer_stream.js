@@ -1,19 +1,33 @@
-var Writable = require('stream').Writable;
+var Duplex = require('stream').Duplex;
 
 module.exports = bufferStream
 
 function bufferStream(){
-  var ws = Writable()
-  ws.string = ''
-  ws.lines = function(){
-    return ws.string.split('\n')
+  var s = Duplex()
+  s.string = ''
+  s.lines = function(){
+    return s.string.split('\n')
   }
-  ws._write = function (chunk, enc, next) {
-      ws.string += chunk
-      next()
+  s._write = function (chunk, enc, next) {
+    s.string += chunk
+    s.emit('data', chunk, enc)
+    next()
   }
-  ws.reset = function(){
-    ws.string = ''
+  s._read = function (){
+    var str = s.string
+    if (this._writableState.ended){
+      if (str.length > 0){
+        s.push(str)
+        s.string = ''
+      }
+      s.push(null)
+    }else{
+      s.push(str)
+      s.string = ''
+    }
   }
-  return ws
+  s.reset = function(){
+    s.string = ''
+  }
+  return s
 }

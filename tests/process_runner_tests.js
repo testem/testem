@@ -1,13 +1,14 @@
 var ProcessRunner = require('../lib/process_runner')
 var expect = require('chai').expect
 var assert = require('chai').assert
-var BufferStream = require('bufferstream')
-var stub = require('bodydouble').stub
+var child_process = require('child_process')
+var BufferStream = require('./support/buffer_stream')
+var Launcher = require('../lib/launcher')
+var bd = require('bodydouble')
+var stub = bd.stub
 
 describe('ProcessRunner', function(){
   var runner
-  var onStdoutData
-  var onStderrData
   var launcher
   var settings
   var process
@@ -16,44 +17,20 @@ describe('ProcessRunner', function(){
 
     beforeEach(function(){
       settings = { protocol: 'process' }
-      process = {
-        on: function(){}
-        , stdout: {
-          on: function(evt, cb){
-            if (evt === 'data')
-              onStdoutData = cb
-          }
-        }
-        , stderr: {
-          on: function(evt, cb){
-            if (evt === 'data')
-              onStderrData = cb
-          }
-        }
-      }
-      launcher = {
-        settings: settings
-        , process: process
-        , launch: function(cb){
-          cb(process)
-        }
-      }
+      process = FakeProcess()
+      launcher = new Launcher('launcher', settings)
+      launcher.process = process
+      bd.stub(launcher, 'launch').delegatesTo(function(cb){
+        cb(process)
+      })
       runner = new ProcessRunner({
         launcher: launcher
       })
     })
-    it('should instantiate', function(){
-    })
-    it('should return whether is tap', function(){
-      settings.protocol = 'tap'
-      expect(runner.isTap()).to.be.ok
-      delete settings.protocol
+    it('should not be tap', function(){
       expect(runner.isTap()).not.to.be.ok
     })
-    it('should have results if tap', function(){
-      stub(runner, 'isTap').returns(true)
-      expect(runner.hasResults()).to.be.ok
-      runner.isTap.returns(false)
+    it('should not have results', function(){
       expect(runner.hasResults()).not.to.be.ok
     })
     it('initially has 0 messages', function(){
@@ -65,14 +42,14 @@ describe('ProcessRunner', function(){
       expect(runner.hasMessages()).to.be.ok
     })
     it('reads stdout into messages', function(){
-      onStdoutData('foobar')
+      process.stdout.write('foobar')
       expect(runner.get('messages').length).to.equal(1)
       var message = runner.get('messages').at(0)
       expect(message.get('type')).to.equal('log')
       expect(message.get('text')).to.equal('foobar')
     })
     it('reads stderr into messages', function(){
-      onStderrData('foobar')
+      process.stderr.write('foobar')
       expect(runner.get('messages').length).to.equal(1)
       var message = runner.get('messages').at(0)
       expect(message.get('type')).to.equal('error')
@@ -84,49 +61,48 @@ describe('ProcessRunner', function(){
   })
 
   describe('tap', function(){
-    var stdout
     beforeEach(function(){
-      settings = { protocol: 'tap' }
-      stdout = new BufferStream([{encoding:'utf8', size:'none'}])
-      process = {
-        on: function(){}
-        , stdout: stdout
-        , stderr: {
-          on: function(evt, cb){
-            if (evt === 'data')
-              onStderrData = cb
-          }
-        }
-      }
-      launcher = {
-        settings: settings
-        , process: process
-        , launch: function(cb){
-          cb(process)
-        }
-        , kill: function(){}
-      }
+      process = FakeProcess()
+      launcher = new Launcher('launcher', { protocol: 'tap' })
+      launcher.process = process
+      bd.stub(launcher, 'launch').delegatesTo(function(cb){
+        cb(process)
+      })
       runner = new ProcessRunner({
         launcher: launcher
       })
     })
+    it('should is tap', function(){
+      expect(runner.isTap()).to.be.ok
+    })
+    it('should have results', function(){
+      expect(runner.hasResults()).to.be.ok
+    })
     it('should have a results object', function(){
       expect(runner.get('results')).not.to.equal(null)
     })
-    it('reads tap into testresult object', function(){
-      settings.protocol = 'tap'
+    it('reads tap into testresult object', function(done){
       var tapOutput = '1..1\nok 1 foobar that'
-      stdout.end(tapOutput)
-      var results = runner.get('results')
-      var total = results.get('total')
-      var pass = results.get('passed')
-      var fail = results.get('failed')
-      expect(pass).to.equal(1)
-      expect(total).to.equal(1)
-      expect(fail).to.equal(0)
+      process.stdout.end(tapOutput)
+      setTimeout(function(){
+        var results = runner.get('results')
+        var total = results.get('total')
+        var pass = results.get('passed')
+        var fail = results.get('failed')
+        expect(pass).to.equal(1)
+        expect(total).to.equal(1)
+        expect(fail).to.equal(0)
+        done()
+      }, 0)
     })
-
-
+    
   })
 
 })
+
+function FakeProcess(){
+  var p = bd.mock(child_process.exec(''))
+  p.stdout = BufferStream()
+  p.stderr = BufferStream()
+  return p
+}
