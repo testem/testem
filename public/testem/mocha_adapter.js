@@ -42,17 +42,18 @@ function mochaAdapter(socket){
 			emit('all-test-results', results)
 		}else if (evt === 'test end'){
 			var name = getFullName(test)
-			if (test.state === 'passed'){
-				testPass(test)
-			}else if (test.state === 'failed'){
-				testFail(test, err)
-			}else if (test.pending){
-				testPending(test)
-			}
+			setTimeout(function(){
+				if (test.state === 'passed'){
+					testPass(test)
+				}else if (test.state === 'failed'){
+					testFail(test, err)
+				}else if (test.pending){
+					testPending(test)
+				}
+			}, 0)
 		}else if(evt === 'fail'){
-			testFail(test, err)
+			test.err = test.err || err
 		}
-
 
 		oEmit.apply(this, arguments)
 
@@ -72,7 +73,7 @@ function mochaAdapter(socket){
 			emit('test-result', tst)
 		}
 
-		function testFail(test, err){
+		function makeFailingTest(test, err){
 			err = err || test.err
 			var items = [
 				{ passed: false
@@ -89,10 +90,16 @@ function mochaAdapter(socket){
 				, name: name
 				, items: items
 				}
+			return tst
+		}
+
+		function testFail(test, err){
+			var tst = makeFailingTest(test, err)
 			results.failed++
 			results.total++
 			results.tests.push(tst)
 			emit('test-result', tst)
+
 		}
 
 		function testPending(test){
