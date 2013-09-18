@@ -92,7 +92,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('blah\n    ✘ failed')
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    ✘ failed/)
     })
     it('shows the error message', function(){
       results.set('total', 1)
@@ -106,7 +106,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('blah\n    ✘ should not be null')
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    ✘ should not be null/)
     })
     it('shows the stacktrace', function(){
       results.set('total', 1)
