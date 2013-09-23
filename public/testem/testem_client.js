@@ -145,6 +145,7 @@ function startTests(data){
 /* whitecolor */
 
 function initUI(){
+    var ua = navigator.userAgent
     var markup = '\
     <style>\
     #__testem_ui__{\
@@ -155,8 +156,10 @@ function initUI(){
         padding: 3px;\
         color: #fff;\
         font-family: Monaco, monospace;\
-        text-transform: uppercase;\
+        font-size: 12px;\
         opacity: 0.8;\
+        width:500px;\
+        max-width:100%;\
         /* whitecolor */\
         z-index: 1000;\
         cursor: pointer;\
@@ -168,9 +171,7 @@ function initUI(){
     #__testem_ui__.disconnected{\
         color: #cc7575;\
     }\
-    </style>\
-    TEST\u0027EM \u0027SCRIPTS!\
-    '
+    </style>' + ua
     var elm = document.createElement('div')
     elm.id = '__testem_ui__'
     elm.className = connectStatus
