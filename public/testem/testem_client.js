@@ -158,8 +158,7 @@ function initUI(){
         font-family: Monaco, monospace;\
         font-size: 12px;\
         opacity: 0.8;\
-        width:500px;\
-        max-width:100%;\
+        max-width:400px;\
         /* whitecolor */\
         z-index: 1000;\
         cursor: pointer;\
@@ -171,17 +170,20 @@ function initUI(){
     #__testem_ui__.disconnected{\
         color: #cc7575;\
     }\
-    </style>' + ua
+    </style>'
     var elm = document.createElement('div')
     elm.id = '__testem_ui__'
     elm.className = connectStatus
-    elm.innerHTML = markup
+    elm.innerHTML = markup + 'TEST\'EM SCRIPTS!'
     document.body.appendChild(elm)
     /* whitecolor */
     elm.addEventListener('click', function(){
         if (connectStatus === 'disconnected'){
+            console.log('innerHtml', document.getElementById(elm.id).innerHtml)
+            document.getElementById(elm.id).innerHTML = markup + 'TEST\'EM SCRIPTS!'
             reconnect()
         } else {
+            document.getElementById(elm.id).innerHTML = markup + ua
             disconnect()
         }
 
