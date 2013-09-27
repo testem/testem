@@ -178,7 +178,7 @@ var addListener = window.addEventListener ?
     function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
 
 function getId(){
-    var m = location.href.match(/^.+\/([0-9]+)\//)
+    var m = location.pathname.match(/^\/([0-9]+)/)
     return m ? m[1] : null
 }
 
