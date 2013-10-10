@@ -8,10 +8,13 @@
             "command": "node tests.js"
         }
     },
+    "framework": "tap",
     "src_files": [
         "*.js"
     ],
-    "before_tests": "browserify tests.js -o public/bundle.js",
-    "test_page": "public/tests.html",
+    "serve_files": [
+        "bundle.js"
+    ],
+    "before_tests": "browserify tests.js -o bundle.js",
     "launch_in_dev": ["Node", "PhantomJS"]
 }
