@@ -146,11 +146,12 @@ describe('ProcessRunner', function(){
         var failItems = tests.at(0).get('items')
         
         // this tests for case documented in <https://github.com/airportyh/testem/issues/291>
-        expect(failItems[0].message).to.equal(null)
+        expect(!failItems[0].message).to.equal(true)
         expect(failItems[0].operator).to.equal('equal')
         expect(failItems[0].expected).to.equal('"hell world"')
         expect(failItems[0].actual).to.equal('"hello world"')
         expect(failItems[0].at).to.equal('Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)')
+        
         done()
       }, 0)
     })
