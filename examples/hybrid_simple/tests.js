@@ -13,7 +13,6 @@ describe('hello', function(){
     });
 
     it('should say hello to person', function(){
-        ethueo
         expect(hello('Bob')).to.equal('hello Bob');
     });
     
