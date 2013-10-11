@@ -1,6 +1,6 @@
 var expect = require('chai').expect
 var screen = require('./fake_screen')
-var ErrorMessagesPanel = require('../../lib/ui/error_messages_panel')
+var ErrorMessagesPanel = require('../../lib/dev/ui/error_messages_panel')
 
 describe('ErrorMessagesPanel', function(){
   var panel

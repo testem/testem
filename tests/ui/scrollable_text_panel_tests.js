@@ -1,6 +1,6 @@
 var expect = require('chai').expect
 var screen = require('./fake_screen')
-var ScrollableTextPanel = require('../../lib/ui/scrollable_text_panel')
+var ScrollableTextPanel = require('../../lib/dev/ui/scrollable_text_panel')
 
 describe('ScrollableTextPanel', function(){
     

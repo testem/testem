@@ -1,4 +1,4 @@
-var AppView = require('../../lib/ui/appview')
+var AppView = require('../../lib/dev/ui/appview')
 var Backbone = require('backbone')
 var Config = require('../../lib/config')
 var screen = require('./fake_screen')

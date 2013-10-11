@@ -3,19 +3,18 @@
 <head>
 <title>Test'em</title>
 <script src="/testem.js"></script>
+</head>
+<body>
+<h1>TAP</h1>
+<pre id="log"></pre>
 <script>
-var log
+var log = document.getElementById('log')
 Testem.handleConsoleMessage = function(msg){
   Testem.emit('tap', msg)
-  log = log || document.getElementById('log')
   log.appendChild(document.createTextNode(msg + '\n'))
   return false
 }
 </script>
 {{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
-</head>
-<body>
-<h1>TAP</h1>
-<pre id="log"></pre>
 </body>
 </html>
