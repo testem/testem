@@ -132,6 +132,7 @@ describe('ProcessRunner', function(){
       ].join('\n')
       process.stdout.end(tap)
       setTimeout(function(){
+        
         var results = runner.get('results')
         var total = results.get('total')
         var pass = results.get('passed')
@@ -141,12 +142,11 @@ describe('ProcessRunner', function(){
         expect(fail).to.equal(1)
         var tests = results.get('tests')
         expect(tests.length).to.equal(2)
+        
         expect(tests.at(0).get('name')).to.equal('hello() should be "hello world"')
         expect(tests.at(1).get('name')).to.equal('hello(bob) should be "hello bob"')
         var failItems = tests.at(0).get('items')
         
-        // this tests for case documented in <https://github.com/airportyh/testem/issues/291>
-        expect(!failItems[0].message).to.equal(true)
         expect(failItems[0].operator).to.equal('equal')
         expect(failItems[0].expected).to.equal('"hell world"')
         expect(failItems[0].actual).to.equal('"hello world"')
@@ -196,6 +196,40 @@ describe('ProcessRunner', function(){
         var stack = failingItems[0].stack
         expect(typeof stack).to.equal('string')
         expect(stack).to.match(/Error\:/)
+        done()
+      }, 0)
+    })
+
+    it('reads tap output from mocha with stacktrace', function(done){
+      var tap = [
+        '1..2',
+        'ok 1 hello should say hello',
+        'not ok 2 hello should say hello to person',
+        '  ReferenceError: ethueo is not defined',
+        '      at Context.<anonymous> (/Users/airportyh/Home/Code/testem/examples/hybrid_simple/tests.js:16:9)',
+        '      at Test.Runnable.run (/usr/local/lib/node_modules/mocha/lib/runnable.js:211:32)',
+        '      at Runner.runTest (/usr/local/lib/node_modules/mocha/lib/runner.js:355:10)',
+        '      at /usr/local/lib/node_modules/mocha/lib/runner.js:401:12',
+        '      at next (/usr/local/lib/node_modules/mocha/lib/runner.js:281:14)',
+        '      at /usr/local/lib/node_modules/mocha/lib/runner.js:290:7',
+        '      at next (/usr/local/lib/node_modules/mocha/lib/runner.js:234:23)',
+        '      at Object._onImmediate (/usr/local/lib/node_modules/mocha/lib/runner.js:258:5)',
+        '      at processImmediate [as _immediateCallback] (timers.js:330:15)',
+        '# tests 2',
+        '# pass 1',
+        '# fail 1'
+      ].join('\n')
+      process.stdout.end(tap)
+      setTimeout(function(){
+        var results = runner.get('results')
+        expect(results.get('total')).to.equal(2)
+        expect(results.get('passed')).to.equal(1)
+        expect(results.get('failed')).to.equal(1)
+        var tests = results.get('tests')
+        var failingTest = tests.at(1)
+        var error = failingTest.get('items')[0]
+        expect(error.stack).to.match(/Error\:/)
+        expect(typeof error.stack).to.equal('string')
         done()
       }, 0)
     })
