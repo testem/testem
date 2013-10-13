@@ -29,6 +29,9 @@ module.exports = function(script_for_sauce_data_schemas, callback) {
       var data = resultScript = obj.resultScript || {};
       data.passed = resultScript.passed || resultScript.failedCount === 0;
 
+      if (data.passed) console.log("ok");
+      else console.log("not ok");
+
       api(data).then( function(body) {
         obj.body = body;
         console.warn("Check out test results at http://saucelabs.com/jobs/" + browser.sessionID + "\n");

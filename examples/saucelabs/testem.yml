@@ -10,9 +10,11 @@ src_files:
 launchers:
     SL_Chrome:
         command: node lib/saucelauncher-webdriver.js --browserNameSL='chrome' --versionSL='' --platformSL='Linux'
+        protocol: tap
 
     SL_IE_7:
         command: node lib/saucelauncher-webdriver.js --browserNameSL='internet explorer' --versionSL='7' --platformSL='Windows XP'
+        protocol: tap
 
 launch_in_ci: [SL_Chrome, SL_IE_7]
 launch_in_dev: [phantomjs]
