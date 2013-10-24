@@ -36,32 +36,34 @@ Common Configuration Options
 
 ### CLI-level options:
 
-    file:                 [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.yml)
-    host:                 [String]  server host to use (localhost)
-    port:                 [Number]  server port to use (7357)
-    launch:               [Array]   list of launchers to use for current runs (defaults to current mode)
-    skip:                 [Array]   list of launchers to skip
-    debug:                [Boolean] debug mode (false)
-    test_page:            [String]  path to the page to use to run tests
-    growl:                [Boolean] enables growl (false)
+    file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.ym   l)
+    host:                    [String]  server host to use (localhost)
+    port:                    [Number]  server port to use (7357)
+    launch:                  [Array]   list of launchers to use for current runs (defaults to current mo   de)
+    skip:                    [Array]   list of launchers to skip
+    debug:                   [Boolean] debug mode (false)
+    test_page:               [String]  path to the page to use to run tests
+    growl:                   [Boolean] enables growl (false)
+    bail_on_uncaught_error:  [Boolean] whether process should exit with error status when there are top level uncaught errors (via `window.onerror`) - in CI mode only
 
 ### Config-level options:
 
-    launchers:            [Object]  a specification for all custom launchers
-    launch_in_dev:        [Array]   list of launchers to use for dev runs
-    launch_in_ci:         [Array]   list of launchers to use for CI runs
-    timeout:              [Number]  timeout for a browser
-    framework:            [String]  test framework to use
-    url:                  [String]  url server runs at (http://{host}:{port}/)
-    src_files:            [Array]   list of files or file patterns to use
-    serve_files:          [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
-    watch_files:          [Array]   list of files or file patterns to watch changes of (defaults to src_files)
-    css_files:            [Array]   additionals stylesheets to include
-    cwd:                  [Path]    directory to use as root
-    parallel:             [Number]  max number of parallel runners (1)
-    routes:               [Hash]    overrides for assets paths
-    fail_on_zero_tests:   [Boolean] whether process should exit with error status when no tests found
-    unsafe_file_serving:  [Boolean] allow serving directories that are not in your CWD (false)
+    launchers:              [Object]  a specification for all custom launchers
+    launch_in_dev:          [Array]   list of launchers to use for dev runs
+    launch_in_ci:           [Array]   list of launchers to use for CI runs
+    timeout:                [Number]  timeout for a browser
+    framework:              [String]  test framework to use
+    url:                    [String]  url server runs at (http://{host}:{port}/)
+    src_files:              [Array]   list of files or file patterns to use
+    serve_files:            [Array]   list of files or file patterns to inject into test playground (defaults t  o src_files)
+    watch_files:            [Array]   list of files or file patterns to watch changes of (defaults to src_files  )
+    css_files:              [Array]   additionals stylesheets to include
+    cwd:                    [Path]    directory to use as root
+    parallel:               [Number]  max number of parallel runners (1)
+    routes:                 [Hash]    overrides for assets paths
+    fail_on_zero_tests:     [Boolean] whether process should exit with error status when no tests found  
+    unsafe_file_serving:    [Boolean] allow serving directories that are not in your CWD (false)
+    
 
 ### Available hooks:
 
