@@ -4,6 +4,7 @@ var screen = require('./fake_screen')
 var SplitLogPanel = require('../../lib/dev/ui/split_log_panel')
 var stub = require('bodydouble').stub
 var spy = require('ispy')
+var Chars = require('../../lib/chars')
 
 describe('SplitLogPanel', function(){
 
@@ -56,7 +57,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('✔ 1 tests complete.')
+      expect(panel.getResultsDisplayText().unstyled()).to.equal(Chars.success + ' 1 tests complete.')
     })
     it('shows pending tests in yellow when has results, all is true, no tests failed and there are pending tests', function(){
       results.set('total', 1)
@@ -74,7 +75,7 @@ describe('SplitLogPanel', function(){
       var resultText = text.children[0]
       var pendingText = text.children[1]
 
-      expect(resultText.str).to.equal('✔ 1 tests complete (1 pending).')
+      expect(resultText.str).to.equal(Chars.success + ' 1 tests complete (1 pending).')
       expect(resultText.attrs.foreground).to.equal('cyan')
 
       expect(pendingText.str).to.equal('\n\n[PENDING] blah')
@@ -92,7 +93,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    ✘ failed/)
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    [x✘] failed/)
     })
     it('shows the error message', function(){
       results.set('total', 1)
@@ -106,7 +107,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    ✘ should not be null/)
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    [x✘] should not be null/)
     })
     it('shows the stacktrace', function(){
       results.set('total', 1)
@@ -127,7 +128,7 @@ describe('SplitLogPanel', function(){
       ])
       results.set('tests', tests)
       results.set('all', true)
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('blah\n    ✘ should not be null\n        AssertionError: \n            at Module._compile (module.js:437:25)\n            at Object.Module._extensions..js (module.js:467:10)')
+      expect(panel.getResultsDisplayText().unstyled()).to.equal('blah\n    ' + Chars.fail + ' should not be null\n        AssertionError: \n            at Module._compile (module.js:437:25)\n            at Object.Module._extensions..js (module.js:467:10)')
     })
     it('says "Looking good..." if all is false but all passed so far', function(){
       results.set('total', 1)
