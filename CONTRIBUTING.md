@@ -6,7 +6,7 @@ Open source is all about DIY! If you want something fixed, it's sometimes faster
 Brief Code Walk Through
 -----------------------
 
-`testem.js` is the main entry point of the program. It then delegates to either `lib/dev_mode_app.js` or `lib/ci/index.js` depending on whether it's development mode `testem` or continuous integration mode `testem ci`. All of the rest of the Node application's source is under the `lib` folder. You can probably figure out the rest from there.
+`testem.js` is the main entry point of the program. It then delegates to either `lib/dev/index.js` or `lib/ci/index.js` depending on whether it's development mode `testem` or continuous integration mode `testem ci`. All of the rest of the Node application's source is under the `lib` folder. You can probably figure out the rest from there.
 
 The source code for the browser side is under the folders `public/testem` and `views`
 
