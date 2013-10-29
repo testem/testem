@@ -124,17 +124,28 @@ function syncConnectStatus(){
 /* whitecolor */
 function startTests(data){
 
-    console.log('testem data', data)
+
     if (data && data.match(/(.+\.(less|css))$/)){
+        console.log('testem data', data)
+
         $('link[type="text/css"]').each(function(){
-            var el = $(this),
-                $link = $(this).clone();
+            data = data.replace(/\\/g, '/')
+
+            var el = $(this)
+
+            var url = el.attr('href')
+                .replace(/http(s)*:\/\/[^/]*/,'') // remove host
+
+            //console.log('data',data,'style url', url, data.indexOf(url))
+            if (data.indexOf(url) < 0) return
+
+            var $link = $(this).clone();
             $link.html('')
             $(document.head).append($link)
             setTimeout(function(){
                 el.remove()
             },250)
-            console.log('replace style', $link.attr('href'))
+            console.log('replace style', url)
         })
 
     } else {
