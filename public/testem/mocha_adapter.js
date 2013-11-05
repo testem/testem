@@ -8,7 +8,6 @@ Testem`s adapter for Mocha. It works by monkey-patching `Runner.prototype.emit`.
 */
 
 function mochaAdapter(socket){
-
 	var results = 
 		{ failed: 0
 	    , passed: 0
@@ -18,6 +17,7 @@ function mochaAdapter(socket){
 		}
 	var id = 1
 	var Runner
+	var ended = false
 	
 	try{
 		Runner = mocha.Runner || Mocha.Runner
@@ -40,6 +40,7 @@ function mochaAdapter(socket){
 			emit('tests-start')
 		}else if (evt === 'end'){
 			emit('all-test-results', results)
+			ended = true
 		}else if (evt === 'test end'){
 			var name = getFullName(test)
 			setTimeout(function(){
@@ -49,6 +50,9 @@ function mochaAdapter(socket){
 					testFail(test, err)
 				}else if (test.pending){
 					testPending(test)
+				}
+				if (ended){
+					emit('all-test-results', results)
 				}
 			}, 0)
 		}else if(evt === 'fail'){
