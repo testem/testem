@@ -313,6 +313,8 @@ PhantomJS is a Webkit-based headless browser. It's fast and it's awesome! Testem
 
 And verify that it's in the list.
 
+If you want to debug tests in PhantomJS, include the `phantomjs_debug_port` option in your testem configuration, referencing an available port number.  Once testem has started PhantomJS, navigate (with a traditional browser) to http://localhost:<port> and attach to one of PhantomJS's browser tabs (probably the second one in the list).  `debugger` statements will now break in the debugging console.
+
 Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
 
