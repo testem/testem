@@ -7,7 +7,7 @@
     "unittest",
     "browser"
   ],
-  "version": "0.5.8",
+  "version": "0.5.9",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
