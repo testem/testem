@@ -18,6 +18,7 @@ function mochaAdapter(socket){
 	var id = 1
 	var Runner
 	var ended = false
+	var waiting = 0
 	
 	try{
 		Runner = mocha.Runner || Mocha.Runner
@@ -39,11 +40,15 @@ function mochaAdapter(socket){
 		if (evt === 'start'){
 			emit('tests-start')
 		}else if (evt === 'end'){
-			emit('all-test-results', results)
+			if (waiting === 0) {
+				emit('all-test-results', results)
+			}
 			ended = true
 		}else if (evt === 'test end'){
 			var name = getFullName(test)
+			waiting++
 			setTimeout(function(){
+				waiting--
 				if (test.state === 'passed'){
 					testPass(test)
 				}else if (test.state === 'failed'){
@@ -51,7 +56,7 @@ function mochaAdapter(socket){
 				}else if (test.pending){
 					testPending(test)
 				}
-				if (ended){
+				if (ended && waiting === 0){
 					emit('all-test-results', results)
 				}
 			}, 0)
