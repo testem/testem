@@ -19,7 +19,7 @@ describe('ci mode app', function(){
       done()
     })
   })
-
+  
   it('runs them tests on node, nodetap, and browser', function(done){
     this.timeout(10000)
     var config = new Config('ci', {
@@ -70,63 +70,6 @@ describe('ci mode app', function(){
     })
   })
 
-  it('fails and returns exit code of 1', function(done){
-    var config = new Config('ci', {
-      cwd: 'tests/fixtures/fail/',
-      port: 7359
-    }, {
-      launch_in_ci: ['phantomjs']
-    })
-    var app = new App(config)
-    var reporter = stub(app, 'reporter', new TestReporter(true))
-    stub(app, 'cleanExit')
-    app.start()
-    app.cleanExit.once('call', function(){
-      assert(app.cleanExit.called, 'should have exited')
-      assert.equal(app.cleanExit.lastCall.args[0], 1)
-      done()
-    })
-  })
-
-  it('fails if before_tests fails', function(done){
-    var config = new Config('ci', {
-      file: 'tests/fixtures/hook_fail/testem.yml',
-      cwd: 'tests/fixtures/hook_fail/',
-      port: 7344
-    }, {
-      launch_in_ci: ['phantomjs']
-    })
-    config.read(function(){
-      var app = new App(config)
-      var reporter = stub(app, 'reporter', new TestReporter(true))
-      stub(app, 'cleanExit')
-      app.start()
-      app.cleanExit.once('call', function(){
-        assert(app.cleanExit.called, 'should have exited')
-        assert.equal(app.cleanExit.lastCall.args[0], 1)
-        done()
-      })
-    })
-  })
-
-  it('fails if zero tests when fail_on_zero_tests', function(done){
-    var config = new Config('ci', {
-      cwd: 'tests/fixtures/zero_tests/',
-      port: 7344
-    }, {
-      fail_on_zero_tests: true,
-      launch_in_ci: ['phantomjs']
-    })
-    var app = new App(config)
-    stub(app, 'reporter', new TestReporter(true))
-    stub(app, 'cleanExit')
-    app.start()
-    app.cleanExit.once('call', function(exitCode){
-      assert.equal(exitCode, 1)
-      done()
-    })
-  })
-
   it('allows passing in reporter from config', function(){
     var fakeReporter = {}
     var config = new Config('ci', {
@@ -134,6 +77,52 @@ describe('ci mode app', function(){
     })
     var app = new App(config)
     assert.strictEqual(app.reporter, fakeReporter)
+  })
+
+  it('wrapUp reports error to reporter', function(){
+    var app = new App(new Config('ci'))
+    var reporter = new TestReporter(true)
+    stub(app, 'reporter', reporter)
+    app.wrapUp(new Error('blarg'))
+    assert.equal(reporter.total, 1)
+    assert.equal(reporter.pass, 0)
+    var result = reporter.results[0].result
+    assert.equal(result.name, 'Error')
+    assert.equal(result.error.message, 'blarg')
+  })
+
+  describe('getExitCode', function(){
+
+    it('returns 0 if all passed', function(){
+      var app = new App(new Config('ci'))
+      var reporter = { total: 1, pass: 1 }
+      stub(app, 'reporter', reporter)
+      assert.equal(app.getExitCode(), 0)
+    })
+
+    it('returns 1 if fails', function(){
+      var app = new App(new Config('ci'))
+      var reporter = { total: 1, pass: 0 }
+      stub(app, 'reporter', reporter)
+      assert.equal(app.getExitCode(), 1)
+    })
+
+    it('returns 0 if no tests ran', function(){
+      var app = new App(new Config('ci'))
+      var reporter = { total: 0, pass: 0 }
+      stub(app, 'reporter', reporter)
+      assert.equal(app.getExitCode(), 0)
+    })
+
+    it('returns 1 if no tests and fail_on_zero_tests config is on', function(){
+      var app = new App(new Config('ci', {
+        fail_on_zero_tests: true
+      }))
+      var reporter = { total: 0, pass: 0 }
+      stub(app, 'reporter', reporter)
+      assert.equal(app.getExitCode(), 1)
+    })
+
   })
 
 })
