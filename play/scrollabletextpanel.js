@@ -4,7 +4,7 @@ var ScrollableTextPanel = appview.ScrollableTextPanel
 var StyledString = require('../lib/styled_string')
 var View = appview.View
 var getTermSize = require('../lib/gettermsize')
-var log = require('winston')
+var log = require('npmlog')
 
 var setRawMode = process.stdin.setRawMode ? 
     function(bool){ process.stdin.setRawMode(bool) } :

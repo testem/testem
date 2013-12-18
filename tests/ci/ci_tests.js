@@ -7,10 +7,7 @@ var mock = bd.mock
 var stub = bd.stub
 var path = require('path')
 var assert = require('chai').assert
-var log = require('winston')
 var Process = require('did_it_work')
-
-log.remove(log.transports.Console)
 
 describe('ci mode app', function(){
 

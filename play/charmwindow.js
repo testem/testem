@@ -1,7 +1,7 @@
 var charm = require('charm')(process),
     tty = require('tty'),
     spawn = require('child_process').spawn,
-    log = require('winston')
+    log = require('npmlog')
 
 log.add(log.transports.File, {filename: 'charmwindow.log'})
 var width, height

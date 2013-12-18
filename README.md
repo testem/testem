@@ -459,7 +459,6 @@ Testem depends on these great software
 * [Node-Charm](https://github.com/substack/node-charm)
 * [Node Commander](http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
-* [Winston](http://blog.nodejitsu.com/put-your-logs-anywhere-with-winston)
 * [Express](http://expressjs.com/)
 * [jQuery](http://jquery.com/)
 * [Backbone](http://backbonejs.org/)

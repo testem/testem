@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var log = require('winston')
+var log = require('npmlog')
 var program = require('commander')
 var progOptions = program
 var Config = require('./lib/config')

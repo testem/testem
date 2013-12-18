@@ -20,9 +20,9 @@ Use the `-d` flag to turn on debug mode. This will allow you to use
 
     log.info('some log message')
 
-To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, just require winston like so at the top of the file
+To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, just require npmlog like so at the top of the file
 
-    var log = require('winston')
+    var log = require('npmlog')
 
 Then, in a separate terminal you can tail the log and monitor debug messages
 

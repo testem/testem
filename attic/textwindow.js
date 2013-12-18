@@ -1,5 +1,5 @@
 var curses = require('ncurses'),
-    log = require('winston'),
+    log = require('npmlog'),
     fs = require('fs')
 
 // http://jsfromhell.com/string/pad
