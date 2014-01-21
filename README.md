@@ -398,6 +398,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 
 * [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
 * [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
+* [Jasmine 2](https://github.com/airportyh/testem/tree/master/examples/jasmine2)
 * [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
 * [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
