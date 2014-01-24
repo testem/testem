@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<title>My Test Page</title>
+<link rel="stylesheet" href="/testem/jasmine.css">
+<script src="/testem/jasmine.js"></script>
+<script src="/testem.js"></script>
+<script>
+Testem.on('all-test-results', function(results){
+  var xhr = new XMLHttpRequest()
+  xhr.open('POST', 'http://localhost:7358/')
+  xhr.send(JSON.stringify(window.__coverage__))
+})
+</script>
+<script src="/testem/jasmine-html.js"></script>
+<script src="instrumented/hello.js"></script>
+<script src="instrumented/hello_tests.js"></script>
+</head>
+<body>
+<h1>Test Page</h1>
+<script>
+var reporter = new jasmine.TrivialReporter
+  , env = jasmine.getEnv()
+env.specFilter = function(spec){
+  return reporter.specFilter(spec)
+}
+env.addReporter(reporter)
+env.execute()
+</script>
+</body>
+</html>

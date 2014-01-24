@@ -1,0 +1,13 @@
+{
+  "serve_files": [
+    "instrumented/*.js"
+  ],
+  "src_files": [
+    "src/*.js"
+  ],
+  "before_tests": "istanbul instrument --output instrumented src",
+  "after_tests": "istanbul report",
+  "test_page": "tests.html",
+  "launch_in_dev": ["chrome"],
+  "launch_in_ci": ["chrome"]
+}
