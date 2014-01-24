@@ -38,7 +38,7 @@
     "growl": "~1.7.0",
     "consolidate": "~0.8.0",
     "did_it_work": "~0.0.5",
-    "fireworm": "~0.5.0",
+    "fireworm": "~0.6.0",
     "npmlog": "~0.0.6"
   },
   "files": [
