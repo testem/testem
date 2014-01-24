@@ -3,11 +3,14 @@ var screen = require('./fake_screen')
 var Backbone = require('backbone')
 var runnertabs = require('../../lib/dev/ui/runner_tabs')
 var Config = require('../../lib/config')
+var Chars = require('../../lib/chars')
 var RunnerTab = runnertabs.RunnerTab
 var RunnerTabs = runnertabs.RunnerTabs
 
 describe('RunnerTab', function(){
-  var tab, runner, appview, results
+  var tab, runner, appview, results, ___ = []
+  ___.length = 15
+  ___ = ___.join(Chars.horizontal)
 
   context('has no results', function(){
     beforeEach(function(){
@@ -30,39 +33,42 @@ describe('RunnerTab', function(){
     })
 
     it('renders spinner', function(){
+      var border = ' ' + ___ + Chars.topRight + '    '
       expect(screen.buffer).to.be.deep.equal([
         '                    ',
         '                    ',
         '                    ',
-        ' ━━━━━━━━━━━━━━┓    ',
-        '       Bob     ┃    ',
-        '        ◜      ┃    ',
-        '               ┗    ',
+        border,
+        '       Bob     ' + Chars.vertical + '    ',
+        '        ' + Chars.spinner.charAt(0) + '      ' + Chars.vertical + '    ',
+        '               ' + Chars.bottomLeft + '    ',
         '                    ' ])
     })
     it('renders checkmark if allPassed', function(){
       runner.set('allPassed', true)
       tab.render()
+      var border = ' ' + ___ + Chars.topRight + '    '
       expect(screen.buffer).to.be.deep.equal([
         '                    ',
         '                    ',
         '                    ',
-        ' ━━━━━━━━━━━━━━┓    ',
-        '       Bob     ┃    ',
-        '       ✔       ┃    ',
-        '               ┗    ',
+        border,
+        '       Bob     ' + Chars.vertical + '    ',
+        '       ' + Chars.success + '       ' + Chars.vertical + '    ',
+        '               ' + Chars.bottomLeft + '    ',
         '                    ' ])
     })
     it('renders no border when deselected', function(){
       tab.set('selected', false)
+      var border = ' ' + ___ + Chars.horizontal + '    '
       expect(screen.buffer).to.be.deep.equal([ 
         '                    ',
         '                    ',
         '                    ',
         '                    ',
         '       Bob          ',
-        '        ◝           ',
-        ' ━━━━━━━━━━━━━━━    ',
+        '        ' + Chars.spinner.charAt(1) + '           ',
+        border,
         '                    ' ])
     })
     /*it('doesnt overwrite the screen boundary', function(){
@@ -99,14 +105,15 @@ describe('RunnerTab', function(){
 
       it('renders failure-x', function(){
           tab.render()
+          var border = ' ' + ___ + Chars.topRight + '    '
           expect(screen.buffer).to.be.deep.equal([
               '                    ',
               '                    ',
               '                    ',
-              ' ━━━━━━━━━━━━━━┓    ',
-              '       Bob     ┃    ',
-              '     0/0 ✘     ┃    ',
-              '               ┗    ',
+              border,
+              '       Bob     ' + Chars.vertical + '    ',
+              '     0/0 ' + Chars.fail + '     ' + Chars.vertical + '    ',
+              '               ' + Chars.bottomLeft + '    ',
               '                    ' ])
       })
 
@@ -141,14 +148,15 @@ describe('RunnerTab', function(){
       results.set('total', 2)
       results.set('pending', 1)
       process.nextTick(function(){
+        var border = ' ' + ___ + Chars.topRight + '    '
         expect(screen.buffer).to.be.deep.equal([
           '                    ',
           '                    ',
           '                    ',
-          ' ━━━━━━━━━━━━━━┓    ',
-          '       Bob     ┃    ',
-          '     1/2 ◞     ┃    ',
-          '               ┗    ',
+          border,
+          '       Bob     ' + Chars.vertical + '    ',
+          '     1/2 ' + Chars.spinner.charAt(2) + '     ' + Chars.vertical + '    ',
+          '               ' + Chars.bottomLeft + '    ',
           '                    ' ])
         done()
       })
@@ -160,14 +168,15 @@ describe('RunnerTab', function(){
         , pending: 1
         , all: true
       })
+      var border = ' ' + ___ + Chars.topRight + '    '
       expect(screen.buffer).to.be.deep.equal([ 
         '                    ',
         '                    ',
         '                    ',
-        ' ━━━━━━━━━━━━━━┓    ',
-        '       Bob     ┃    ',
-        '     1/2 ✔     ┃    ',
-        '               ┗    ',
+        border,
+        '       Bob     ' + Chars.vertical + '    ',
+        '     1/2 ' + Chars.success + '     ' + Chars.vertical + '    ',
+        '               ' + Chars.bottomLeft + '    ',
         '                    ' ])
     })
     context('when there are no pending tests', function(){
