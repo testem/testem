@@ -51,7 +51,7 @@
     "views"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js",
+    "test": "./node_modules/.bin/mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js -R spec",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/*/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
