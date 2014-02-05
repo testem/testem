@@ -1,0 +1,9 @@
+{
+    "framework": "jasmine",
+    "src_files": [
+        "maxstackjasminebug/bugSpec.js"
+    ], 
+    "launch_in_dev": [
+        "PhantomJS"
+    ]
+}
