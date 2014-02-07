@@ -412,7 +412,7 @@ I've created [examples](https://github.com/airportyh/testem/tree/master/examples
 * [Tape Example](https://github.com/airportyh/testem/tree/master/examples/tape_example)
 * [BrowserStack Integration](https://github.com/airportyh/testem/tree/master/examples/browserstack) **bleeding edge**
 * [SauceLabs Integration](https://github.com/airportyh/testem/tree/master/examples/saucelabs) **bleeding edge**
-* [Code Coverage with Istanbul](https://github.com/airportyh/testem/tree/master/examples/coverage_istanbul) ** bleeding edge**
+* [Code Coverage with Istanbul](https://github.com/airportyh/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
 
 Known Issues
 ------------
