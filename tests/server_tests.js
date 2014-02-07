@@ -19,7 +19,20 @@ describe('Server', function(){
       'web/hello.js',
       {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
     ],
-    cwd: 'tests'
+    cwd: 'tests',
+    middlewares: [function(req, res, next){
+      if (req.url === '/middleware') {
+        res.send('hello from first middleware')
+      } else {
+        next()
+      }
+    }, function(req, res, next){
+      if (req.url === '/error') {
+        res.send(501, 'oh snap')
+      } else {
+        next()
+      }
+    }]
   })
   baseUrl = 'http://localhost:' + port + '/'
   runners = new Backbone.Collection
@@ -142,5 +155,27 @@ describe('Server', function(){
   //        assertUrlReturnsFileContents(baseUrl + 'config.js', '../lib/config.js', done)
   //    })
   //})
-    
+
+  it('uses additional middleware', function(done){
+      request(baseUrl + 'middleware', function(err, req, text){
+          expect(text).to.match(/hello from first middleware/)
+          done()
+      })
+  })
+
+  it('posts an error', function(done){
+      request.post(baseUrl + 'error', function(err, req, text){
+          expect(req.statusCode).to.equal(501)
+          expect(text).to.match(/oh snap/)
+          done()
+      })
+  })
+
+  it('sends an error for missing resources', function(done){
+    request(baseUrl + 'im/sure/the_path/is/missing', function(err, req, text){
+      expect(req.statusCode).to.equal(404)
+      expect(text).to.match(/Error: ENOENT/)
+      done()
+    })
+  })
 })
