@@ -268,7 +268,15 @@ function emit(){
     Testem.emit.apply(Testem, arguments)
 }
 
-window.Testem = {
+function extend(host, properties){
+    host = host || {}
+    for (var name in properties){
+        if (!host[name]) host[name] = properties[name]
+    }
+    return host
+}
+
+window.Testem = extend(window.Testem, {
     useCustomAdapter: function(adapter){
         adapter(socket)
     }
@@ -293,7 +301,7 @@ window.Testem = {
         this.evtHandlers[evt].push(callback)
     }
     , handleConsoleMessage: function(){}
-}
+})
 
 var JSON = window.JSON || JSON2()
 
