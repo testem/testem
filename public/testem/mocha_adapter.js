@@ -35,6 +35,10 @@ function mochaAdapter(socket){
 		return name.replace(/^ /, '')
 	}
 
+	/* Store a reference to the global setTimeout function, in case it's
+	 * manipulated by test helpers */
+	var _setTimeout = setTimeout
+
 	var oEmit = Runner.prototype.emit
 	Runner.prototype.emit = function(evt, test, err){
 		if (evt === 'start'){
@@ -47,7 +51,7 @@ function mochaAdapter(socket){
 		}else if (evt === 'test end'){
 			var name = getFullName(test)
 			waiting++
-			setTimeout(function(){
+			_setTimeout(function(){
 				waiting--
 				if (test.state === 'passed'){
 					testPass(test)
