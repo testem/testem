@@ -315,7 +315,8 @@ window.Testem = {
     adapter(socket)
   },
   emit: function(evt){
-    socket.emit.apply(socket, circularSafe(arguments))
+    var args = Array.prototype.slice.apply(arguments)
+    socket.emit.apply(socket, circularSafe(args))
     if (this.evtHandlers && this.evtHandlers[evt]){
       var handlers = this.evtHandlers[evt]
       var args = Array.prototype.slice.call(arguments, 1)
