@@ -79,239 +79,264 @@ function patchSocketIOReconnect(){
 
 
 function getBrowserName(userAgent){
-    var regexs = [
-        /MS(?:(IE) (1?[0-9]\.[0-9]))/,
-        [/(OPR)\/([0-9]+\.[0-9]+)/, function(m){
-            return ['Opera', m[2]].join(' ')
-        }],
-        /(Opera).*Version\/([0-9]+\.[0-9]+)/,
-        /(Chrome)\/([0-9]+\.[0-9]+)/,
-        /(Firefox)\/([0-9a-z]+\.[0-9a-z]+)/,
-        /(PhantomJS)\/([0-9]+\.[0-9]+)/,
-        [/(Android).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
-            return [m[1], m[3], m[2]].join(' ')
-        }],
-        [/(iPhone).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
-            return [m[1], m[3], m[2]].join(' ')
-        }],
-        [/(iPad).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
-            return [m[1], m[3], m[2]].join(' ')
-        }],
-        [/Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
-            return [m[2], m[1]].join(' ')
-        }]
-    ]
-    for (var i = 0; i < regexs.length; i++){
-        var regex = regexs[i]
-        var pick = function(m){
-            return m.slice(1).join(' ')
-        }
-        if (regex instanceof Array){
-            pick = regex[1]
-            regex = regex[0]
-        }
-        var match = userAgent.match(regex)
-        if (match){
-            return pick(match)
-        }
+  var regexs = [
+    /MS(?:(IE) (1?[0-9]\.[0-9]))/,
+    [/(OPR)\/([0-9]+\.[0-9]+)/, function(m){
+      return ['Opera', m[2]].join(' ')
+    }],
+    /(Opera).*Version\/([0-9]+\.[0-9]+)/,
+    /(Chrome)\/([0-9]+\.[0-9]+)/,
+    /(Firefox)\/([0-9a-z]+\.[0-9a-z]+)/,
+    /(PhantomJS)\/([0-9]+\.[0-9]+)/,
+    [/(Android).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
+      return [m[1], m[3], m[2]].join(' ')
+    }],
+    [/(iPhone).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
+      return [m[1], m[3], m[2]].join(' ')
+    }],
+    [/(iPad).*Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
+      return [m[1], m[3], m[2]].join(' ')
+    }],
+    [/Version\/([0-9]+\.[0-9]+).*(Safari)/, function(m){
+      return [m[2], m[1]].join(' ')
+    }]
+  ]
+  for (var i = 0; i < regexs.length; i++){
+    var regex = regexs[i]
+    var pick = function(m){
+      return m.slice(1).join(' ')
     }
-    return userAgent
+    if (regex instanceof Array){
+      pick = regex[1]
+      regex = regex[0]
+    }
+    var match = userAgent.match(regex)
+    if (match){
+      return pick(match)
+    }
+  }
+  return userAgent
 }
 
 var socket, connectStatus = 'disconnected'
 
 function syncConnectStatus(){
-    var elm = document.getElementById('__testem_ui__')
-    if (elm) elm.className = connectStatus
+  var elm = document.getElementById('__testem_ui__')
+  if (elm) elm.className = connectStatus
 }
 
 function startTests(){
-    socket.disconnect()
-    window.location.reload()
+  socket.disconnect()
+  window.location.reload()
 }
 
 function initUI(){
-    var markup = '\
-    <style>\
-    #__testem_ui__{\
-        position: fixed;\
-        bottom: 5px;\
-        right: 5px;\
-        background-color: #444;\
-        padding: 3px;\
-        color: #fff;\
-        font-family: Monaco, monospace;\
-        text-transform: uppercase;\
-        opacity: 0.8;\
-    }\
-    #__testem_ui__.connected{\
-        color: #89e583;\
-    }\
-    #__testem_ui__.disconnected{\
-        color: #cc7575;\
-    }\
-    </style>\
-    TEST\u0027EM \u0027SCRIPTS!\
-    '
-    var elm = document.createElement('div')
-    elm.id = '__testem_ui__'
-    elm.className = connectStatus
-    elm.innerHTML = markup
-    document.body.appendChild(elm)
-
-
+  var markup = '\
+  <style>\
+  #__testem_ui__{\
+    position: fixed;\
+    bottom: 5px;\
+    right: 5px;\
+    background-color: #444;\
+    padding: 3px;\
+    color: #fff;\
+    font-family: Monaco, monospace;\
+    text-transform: uppercase;\
+    opacity: 0.8;\
+  }\
+  #__testem_ui__.connected{\
+    color: #89e583;\
+  }\
+  #__testem_ui__.disconnected{\
+    color: #cc7575;\
+  }\
+  </style>\
+  TEST\u0027EM \u0027SCRIPTS!\
+  '
+  var elm = document.createElement('div')
+  elm.id = '__testem_ui__'
+  elm.className = connectStatus
+  elm.innerHTML = markup
+  document.body.appendChild(elm)
 }
 
 function initTestFrameworkHooks(){
-	if (typeof getJasmineRequireObj === 'function'){
-		jasmine2Adapter(socket)
-	}else if (typeof jasmine === 'object'){
-		jasmineAdapter(socket)
-    }else if ((typeof mocha).match(/function|object/)){
-        mochaAdapter(socket)
-    }else if (typeof QUnit === 'object'){
-        qunitAdapter(socket)
-    }else if (typeof buster !== 'undefined'){
-        busterAdapter(socket)
-    }
+  if (typeof getJasmineRequireObj === 'function'){
+    jasmine2Adapter(socket)
+  }else if (typeof jasmine === 'object'){
+    jasmineAdapter(socket)
+  }else if ((typeof mocha).match(/function|object/)){
+    mochaAdapter(socket)
+  }else if (typeof QUnit === 'object'){
+    qunitAdapter(socket)
+  }else if (typeof buster !== 'undefined'){
+    busterAdapter(socket)
+  }
 }
 
 var addListener = window.addEventListener ?
-    function(obj, evt, cb){ obj.addEventListener(evt, cb, false) } :
-    function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
+  function(obj, evt, cb){ obj.addEventListener(evt, cb, false) } :
+  function(obj, evt, cb){ obj.attachEvent('on' + evt, cb) }
 
 function getId(){
-    var m = location.pathname.match(/^\/([0-9]+)/)
-    return m ? m[1] : null
+  var m = location.pathname.match(/^\/([0-9]+)/)
+  return m ? m[1] : null
 }
 
 function init(){
-    takeOverConsole()
-    interceptWindowOnError()
-    socket = io.connect()
-    var id = getId()
-    socket.emit('browser-login', 
-        getBrowserName(navigator.userAgent), 
-        id)
-    socket.on('connect', function(){
-        connectStatus = 'connected'
-        syncConnectStatus()
-    })
-    socket.on('disconnect', function(){
-        connectStatus = 'disconnected'
-        syncConnectStatus()
-    })
-    socket.on('reconnect', startTests)
-    socket.on('start-tests', startTests)
-    initTestFrameworkHooks()
-    addListener(window, 'load', initUI)
-    setupTestStats()
+  takeOverConsole()
+  interceptWindowOnError()
+  socket = io.connect()
+  var id = getId()
+  socket.emit('browser-login', 
+    getBrowserName(navigator.userAgent), 
+    id)
+  socket.on('connect', function(){
+    connectStatus = 'connected'
+    syncConnectStatus()
+  })
+  socket.on('disconnect', function(){
+    connectStatus = 'disconnected'
+    syncConnectStatus()
+  })
+  socket.on('reconnect', startTests)
+  socket.on('start-tests', startTests)
+  initTestFrameworkHooks()
+  addListener(window, 'load', initUI)
+  setupTestStats()
 }
 
 function setupTestStats(){
-    var originalTitle = document.title
-    var total = 0
-    var passed = 0
-    Testem.on('test-result', function(test){
-        total++
-        if (test.failed === 0) passed++
-        updateTitle()
-    })
+  var originalTitle = document.title
+  var total = 0
+  var passed = 0
+  Testem.on('test-result', function(test){
+    total++
+    if (test.failed === 0) passed++
+    updateTitle()
+  })
 
-    function updateTitle(){
-        if (!total) return
-        document.title = originalTitle + ' (' + passed + '/' + total + ')'
-    }
+  function updateTitle(){
+    if (!total) return
+    document.title = originalTitle + ' (' + passed + '/' + total + ')'
+  }
 }
 
 function takeOverConsole(){
-    var console = window.console
-    if (!console) {
-        console = window.console = {
-            log: function () {}
-            , warn: function () {}
-            , error: function () {}
-            , info: function () {}
-        }
+  var console = window.console
+  if (!console) {
+    console = window.console = {
+      log: function () {},
+      warn: function () {},
+      error: function () {},
+      info: function () {}
     }
-    function intercept(method){
-        var original = console[method]
-        console[method] = function(){
-            var message = stringifyArgs(arguments)
-            var doDefault = Testem.handleConsoleMessage(message)
-            if (doDefault !== false){
-                socket.emit(method, message)
-                if (original && original.apply){
-                    // Do this for normal browsers
-                    original.apply(console, arguments)
-                }else if (original) {
-                    // Do this for IE
-                    original(message)
-                }
-            }
+  }
+  function intercept(method){
+    var original = console[method]
+    console[method] = function(){
+      var args = Array.prototype.slice.apply(arguments)
+      var message = circularSafe(args).join(' ')
+      var doDefault = Testem.handleConsoleMessage(message)
+      if (doDefault !== false){
+        socket.emit(method, circularSafe(message))
+        if (original && original.apply){
+          // Do this for normal browsers
+          original.apply(console, arguments)
+        }else if (original) {
+          // Do this for IE
+          original(message)
         }
+      }
     }
-    var methods = ['log', 'warn', 'error', 'info']
-    for (var i = 0; i < methods.length; i++)
-        intercept(methods[i])
+  }
+  var methods = ['log', 'warn', 'error', 'info']
+  for (var i = 0; i < methods.length; i++)
+    intercept(methods[i])
 }
 
 function interceptWindowOnError(){
-    window.onerror = function(msg, url, line){
-        if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number'){
-            socket.emit('top-level-error', msg, url, line)
-        }
+  window.onerror = function(msg, url, line){
+    if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number'){
+      socket.emit('top-level-error', msg, url, line)
     }
+  }
+}
+
+function getSerialize (fn, decycle) {
+  var seen = [], keys = [];
+  decycle = decycle || function(key, value) {
+    return '[Circular ' + getPath(value, seen, keys) + ']'
+  };
+  return function(key, value) {
+    var ret = value;
+    if (value && typeof value.nodeType === 'number'){
+      return String(value);
+    }
+    if (typeof value === 'object' && value) {
+      if (seen.indexOf(value) !== -1)
+        ret = decycle(key, value);
+      else {
+        seen.push(value);
+        keys.push(key);
+      }
+    }
+    if (fn) ret = fn(key, ret);
+    return ret;
+  }
+}
+
+function getPath (value, seen, keys) {
+  var index = seen.indexOf(value);
+  var path = [ keys[index] ];
+  for (index--; index >= 0; index--) {
+    if (seen[index][ path[0] ] === value) {
+      value = seen[index];
+      path.unshift(keys[index]);
+    }
+  }
+  return '~' + path.join('.');
+}
+
+function stringify(obj, fn, spaces, decycle) {
+  return JSON.stringify(obj, getSerialize(fn, decycle), spaces);
+}
+
+function circularSafe(obj){
+  return JSON.parse(stringify(obj))
 }
 
 function emit(){
-    Testem.emit.apply(Testem, arguments)
+  Testem.emit.apply(Testem, arguments)
 }
 
 window.Testem = {
-    useCustomAdapter: function(adapter){
-        adapter(socket)
+  useCustomAdapter: function(adapter){
+    adapter(socket)
+  },
+  emit: function(evt){
+    socket.emit.apply(socket, circularSafe(arguments))
+    if (this.evtHandlers && this.evtHandlers[evt]){
+      var handlers = this.evtHandlers[evt]
+      var args = Array.prototype.slice.call(arguments, 1)
+      for (var i = 0; i < handlers.length; i++){
+        var handler = handlers[i]
+        handler.apply(this, args)
+      }
     }
-    , emit: function(evt){
-        socket.emit.apply(socket, arguments)
-        if (this.evtHandlers && this.evtHandlers[evt]){
-            var handlers = this.evtHandlers[evt]
-            var args = Array.prototype.slice.call(arguments, 1)
-            for (var i = 0; i < handlers.length; i++){
-                var handler = handlers[i]
-                handler.apply(this, args)
-            }
-        }
+  },
+  on: function(evt, callback){
+    if (!this.evtHandlers){
+      this.evtHandlers = {}
     }
-    , on: function(evt, callback){
-        if (!this.evtHandlers){
-            this.evtHandlers = {}
-        }
-        if (!this.evtHandlers[evt]){
-            this.evtHandlers[evt] = []
-        }
-        this.evtHandlers[evt].push(callback)
+    if (!this.evtHandlers[evt]){
+      this.evtHandlers[evt] = []
     }
-    , handleConsoleMessage: function(){}
+    this.evtHandlers[evt].push(callback)
+  },
+  handleConsoleMessage: function(){}
 }
 
 var JSON = window.JSON || JSON2()
-
-function stringifyArgs(args){
-    var strings = []
-    for (var i = 0; i < args.length; i++){
-        strings.push(stringify(args[i]))
-    }
-    return strings.join(' ')
-}
-
-function stringify(obj, fn, spaces) {
-    if (typeof obj === 'string') return obj
-    try{
-        return JSON.stringify(obj)
-    }catch(e){
-        return '' + obj
-    }
-}
 
 init()
