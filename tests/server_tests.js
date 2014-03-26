@@ -52,7 +52,7 @@ describe('Server', function(){
       //expect(window.document.title).to.equal('Test\'em')
       var scripts = document.getElementsByTagName('script')
       var srcs = Array.prototype.map.call(scripts, function(s){ return s.src })
-      /*expect(srcs).to.deep.equal([ 
+      /*expect(srcs).to.deep.equal([
         '/testem/jasmine.js',
         '/testem.js',
         '/testem/jasmine-html.js',
@@ -113,6 +113,10 @@ describe('Server', function(){
     })
   }
 
+    function assertUrlReturnsTestFileContents(url, file, done){
+        assertUrlReturnsFileContents(url, path.join(__dirname, file), done);
+    }
+
   it('lists directories', function(done){
       request(baseUrl + 'data', function(err, req, text){
           expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/)
@@ -120,27 +124,40 @@ describe('Server', function(){
       })
   })
 
-  //describe('routes', function(){
-  //    beforeEach(function(){
-  //        config.set('routes', {
-  //            '/index.html': 'web/tests.html'
-  //            , '/www': 'web'
-  //            , '/': 'web/tests.html'
-  //            , '/config.js': path.join(__dirname, '../lib/config.js')
-  //        })
-  //    })
-  //    it('routes file path', function(done){
-  //        assertUrlReturnsFileContents(baseUrl + 'index.html', 'web/tests.html', done)
-  //    })
-  //    it('routes dir path', function(done){
-  //        assertUrlReturnsFileContents(baseUrl + 'www/hello.js', 'web/hello.js', done)
-  //    })
-  //    it('route base path', function(done){
-  //        assertUrlReturnsFileContents(baseUrl, 'web/tests.html', done)
-  //    })
-  //    it('can route files in parent directory', function(done){
-  //        assertUrlReturnsFileContents(baseUrl + 'config.js', '../lib/config.js', done)
-  //    })
-  //})
-    
+  describe('routes', function(){
+     beforeEach(function(){
+         config.set('routes', {
+             '/index.html': 'web/tests.html'
+             , '/www': 'web'
+             , '/': 'web/tests.html'
+             , '/config.js': path.join(__dirname, '../lib/config.js')
+             ,'/many' : ['web/many1', 'web/many2']
+         })
+     })
+     it('routes file path', function(done){
+         assertUrlReturnsTestFileContents(baseUrl + 'index.html', 'web/tests.html', done)
+     })
+     it('routes dir path', function(done){
+         assertUrlReturnsTestFileContents(baseUrl + 'www/hello.js', 'web/hello.js', done)
+     })
+     it('route base path', function(done){
+         assertUrlReturnsTestFileContents(baseUrl, 'web/tests.html', done)
+     })
+     it('can route files in parent directory', function(done){
+         assertUrlReturnsTestFileContents(baseUrl + 'config.js', '../lib/config.js', done)
+     })
+     it('can route files from different folder locations (case 1)', function (done) {
+         assertUrlReturnsTestFileContents(baseUrl + 'many/many1.html', 'web/many1/many1.html', done)
+     });
+     it('can route files from different folder locations (case 2)', function (done) {
+         assertUrlReturnsTestFileContents(baseUrl + 'many/many2.html', 'web/many2/many2.html', done)
+     })
+     it ("does not fail on missing file", function (done) {
+         request(baseUrl + 'many/many3.html', function (err, req, text) {
+             expect(err).to.equal(null);
+             done();
+         })
+     });
+  })
+
 })
