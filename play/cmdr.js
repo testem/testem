@@ -23,7 +23,7 @@ program
 program
     .command('ci')
     .description('Continuous integration mode')
-    .option('-t, --timeout [sec]', 'timeout a browser after [sec] seconds', null)
+    .option('-t, --timeout [ms]', 'timeout a browser after [ms] milliseconds', null)
     .action(function(e){
         env = e
         console.log(env.skip)
