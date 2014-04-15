@@ -19,7 +19,10 @@ describe('Server', function(){
       'web/hello.js',
       {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
     ],
-    cwd: 'tests'
+    cwd: 'tests',
+    plugins: [{
+      path: '../testcases/server_plugins/test_plugin'
+    }]
   })
   baseUrl = 'http://localhost:' + port + '/'
   runners = new Backbone.Collection
@@ -118,6 +121,13 @@ describe('Server', function(){
           expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/)
           done()
       })
+  })
+
+  it('configures plugins', function(done){
+    request(baseUrl + 'plugin', function(err, req, text){
+      expect(text).to.equal('plugin successfully configured')
+      done()
+    })
   })
 
   //describe('routes', function(){

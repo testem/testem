@@ -31,6 +31,7 @@ Common Configuration Options
 * **serve_files** - the location of the source files to be served to the browser. If don't have a compilation step, don't set this option, and it will default to *src_files*. If you have a compilation step, you should set this to the `*.js` file(s) that result from the compilation.
 * **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `jasmine.js`.
 * **launchers** - this option allows you to set up custom process launchers which can be used to run Node programs and indeed any kind of process within Testem. 
+* **plugins** - Testem's server configuration can be extended using a simple plugin system. Some possible uses for this would be stubbing out test urls or proxying API through to an app server. See the [plugins doc](plugins.md) for more details.
 
 ## Option Reference
 
