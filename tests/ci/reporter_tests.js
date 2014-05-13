@@ -74,18 +74,18 @@ describe('test reporters', function(){
   })
 
   describe('xunit reporter', function(){
-    it('writes out results', function(){
+    it('writes out and XML escapes results', function(){
       var stream = BufferStream()
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
-        name: 'it does stuff',
+        name: 'it does <cool> \"cool\" \'cool\' stuff',
         passed: 1,
         total: 1,
         failed: 0
       })
       reporter.finish()
       assert.match(stream.string, /<testsuite name="Testem Tests" tests="1" failures="0" timestamp="(.+)" time="([0-9]+)">/)
-      assert.match(stream.string, /<testcase name="phantomjs it does stuff"\/>/)
+      assert.match(stream.string, /<testcase name="phantomjs it does &lt;cool&gt; &quot;cool&quot; &apos;cool&apos; stuff"\/>/)
     })
     it('outputs errors', function(){
       var stream = BufferStream()
