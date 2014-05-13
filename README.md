@@ -278,7 +278,7 @@ Running Tests in Node and Custom Process Launchers
 
 To run tests in Node you need to create a custom launcher which launches a process which will run your tests. This is nice because it means you can use any test framework - or lack thereof. For example, to make a launcher that runs mocha tests, you would write the following in the config file `testem.json`
 
-```json
+```javascript
 "launchers": {
   "Mocha": {
     "command": "mocha tests/*_tests.js"
@@ -293,7 +293,7 @@ Processes with TAP Output
 
 If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
-```json
+```javascript
 "launchers": {
   "Mocha": {
     "command": "mocha tests/*_tests.js -R tap"
@@ -324,7 +324,7 @@ If you need to run a preprocessor (or indeed any shell command before the start 
 
 And Testem will run it before each test run. For file watching, you may still use the `src_files` option
 
-```json
+```javascript
 "src_files": [
   "*.coffee"
 ]
@@ -332,7 +332,7 @@ And Testem will run it before each test run. For file watching, you may still us
 
 Since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
 
-```json
+```javascript
 "serve_files": [
   "*.js"
 ]
@@ -342,7 +342,7 @@ Testem will throw up a big ol' error dialog if the preprocessor command exits wi
 
 If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
-```json
+```javascript
 "after_tests": "rm *.js"
 ```
 
@@ -363,7 +363,7 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
 
 Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css` you can use the "routes" option to do that
 
-```json
+```javascript
 "routes": {
   "/tests.html": "public/tests.html",
   "/js": "src",
@@ -378,7 +378,7 @@ If you want to use Testem with a test framework that's not supported out of the 
 
 Then, to use it, in your config file simply set
 
-```json
+```javascript
 "framework": "custom"
 ```
 
