@@ -359,7 +359,7 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
     + css
       + styles.css
     + public
-      tests.html
+      + tests.html
 
 Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css` you can use the "routes" option to do that
 
