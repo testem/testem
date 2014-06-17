@@ -124,30 +124,10 @@ function syncConnectStatus(){
 /* whitecolor */
 function startTests(data){
 
-
-    if (data && data.match(/(.+\.(less|css))$/)){
-        console.log('testem data', data)
-
-        $('link[type="text/css"]').each(function(){
-            data = data.replace(/\\/g, '/')
-
-            var el = $(this)
-
-            var url = el.attr('href')
-                .replace(/http(s)*:\/\/[^/]*/,'') // remove host
-
-            //console.log('data',data,'style url', url, data.indexOf(url))
-            if (data.indexOf(url) < 0) return
-
-            var $link = $(this).clone();
-            $link.html('')
-            $(document.head).append($link)
-            setTimeout(function(){
-                el.remove()
-            },250)
-            console.log('replace style', url)
+    if (window.Testem.onStart){
+        window.Testem.onStart(data, function(){
+            window.location.reload()
         })
-
     } else {
         window.location.reload()
     }
@@ -226,13 +206,15 @@ function init(){
     socket.emit('browser-login', getBrowserName(navigator.userAgent))
     socket.on('connect', function(){
         connectStatus = 'connected'
+        console.log('connect')
+        socket.emit('browser-login', getBrowserName(navigator.userAgent))
         syncConnectStatus()
     })
     socket.on('disconnect', function(){
         connectStatus = 'disconnected'
         syncConnectStatus()
     })
-    socket.on('reconnect', startTests)
+    //socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
     //initTestFrameworkHooks()
     addListener(window, 'load', initUI)
@@ -244,6 +226,7 @@ function reconnect(){
     socket.on('reconnect', startTests)
     socket.on('start-tests', startTests)
     connectStatus = 'connected'
+    socket.emit('browser-login', getBrowserName(navigator.userAgent))
     syncConnectStatus()
 }
 
