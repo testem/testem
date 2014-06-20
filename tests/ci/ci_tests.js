@@ -1,4 +1,4 @@
-var fs = require('fs')    
+var fs = require('fs')
 var App = require('../../lib/ci')
 var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var Config = require('../../lib/config')
@@ -16,7 +16,7 @@ describe('ci mode app', function(){
       done()
     })
   })
-  
+
   it('runs them tests on node, nodetap, and browser', function(done){
     this.timeout(10000)
     var config = new Config('ci', {
@@ -43,27 +43,27 @@ describe('ci mode app', function(){
         assert(helloWorld.every(function(r){
           return r.result.passed
         }), 'hello world should pass')
-        
+
         assert(helloBob.every(function(r){
           return !r.result.passed
         }), 'hello bob should fail')
-        
+
         assert(!nodePlain[0].result.passed, 'node plain should fail')
-        
+
         var launchers = reporter.results.map(function(r){
           return r.launcher
         })
-        
+
         assert.include(launchers, 'Node')
         assert.include(launchers, 'NodePlain')
-        assert.include(launchers, 'PhantomJS 1.9')
+        assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS')
 
         assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
         assert(app.cleanExit.called, 'called process.exit()')
         assert(app.cleanExit.lastCall.args[0], 0)
         done()
       })
-      
+
     })
   })
 
@@ -212,7 +212,7 @@ describe('runHook', function(){
     var app = new App(config)
     stub(app, 'Process').returns(fakeP)
     app.runHook('on_start', function(){
-      assert.equal(app.Process.lastCall.args[0], 
+      assert.equal(app.Process.lastCall.args[0],
         'tunnel dev.app.com:2837 -u http://dev.app.com:2837/')
       done()
     })
