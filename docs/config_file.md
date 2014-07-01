@@ -63,6 +63,7 @@ Common Configuration Options
     routes:                 [Hash]    overrides for assets paths
     fail_on_zero_tests:     [Boolean] whether process should exit with error status when no tests found  
     unsafe_file_serving:    [Boolean] allow serving directories that are not in your CWD (false)
+    reporter:               [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
     
 
 ### Available hooks:
