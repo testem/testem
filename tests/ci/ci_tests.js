@@ -12,6 +12,11 @@ var Process = require('did_it_work')
 describe('ci mode app', function(){
 
   beforeEach(function(done){
+    fs.exists('test-output.xml', function(exists) {
+     if(exists) {
+       fs.unlinkSync('test-output.xml');
+     }
+    });
     fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
       done()
     })
@@ -74,6 +79,18 @@ describe('ci mode app', function(){
     })
     var app = new App(config)
     assert.strictEqual(app.reporter, fakeReporter)
+  })
+  
+  it('allow passing in out_file from config', function() {
+    var outFile = 'test-output.xml';
+    assert.equal(fs.existsSync(outFile),false)
+    var config = new Config('ci', {
+      'out_file': outFile 
+    });
+    var app = new App(config);
+    console.log('app in test:', app)
+    assert.strictEqual(app.outFile.path, outFile);
+    assert.equal(fs.existsSync(outFile),true);
   })
 
   it('wrapUp reports error to reporter', function(){
