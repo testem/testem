@@ -40,7 +40,8 @@
     "did_it_work": "~0.0.5",
     "fireworm": "~0.6.0",
     "npmlog": "~0.0.6",
-    "xml-escape": "~1.0.0"
+    "xml-escape": "~1.0.0",
+    "http-proxy": "~0.10.2"
   },
   "files": [
     "lib",
