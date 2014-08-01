@@ -391,6 +391,31 @@ If you'd prefer not to be looking at the terminal while developing, you can us g
 
 But, to use this option, you may first need to install some additional software, see the [node-growl page](https://github.com/visionmedia/node-growl#install) for more details.
 
+API Proxy
+--------------------------------
+
+The proxy option allows you to transparently forward http requests to an external endpoint.
+
+Simply add a `proxies` section to the `testem.json` configuration file.
+
+```json
+{
+  "proxies": {
+    "/api": {
+      "port": 4200,
+      "host": "localhost"
+    },
+    "/xmlapi": {
+      "port": 8000,
+      "host": "localhost"
+    }
+  }
+}
+```
+
+This functionality is implemented as a *transparent proxy* hence a request to
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix.
+
 Example Projects
 ----------------
 
