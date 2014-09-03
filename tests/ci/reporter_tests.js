@@ -15,14 +15,16 @@ describe('test reporters', function(){
         name: 'it does stuff',
         passed: 1,
         total: 1,
-        failed: 0
+        failed: 0,
+        logs: []
       })
       reporter.report('phantomjs', {
         name: 'it fails',
         passed: 0,
         total: 1,
         failed: 1,
-        error: { message: 'it crapped out' }
+        error: { message: 'it crapped out' },
+        logs: ["I am a log", "Useful information"]
       })
       reporter.finish()
       assert.deepEqual(stream.lines(), [
@@ -31,6 +33,9 @@ describe('test reporters', function(){
         '    ---',
         '        message: >',
         '            it crapped out',
+        '        Log: >',
+        '            I am a log',
+        '            Useful information',
         '    ...',
         '',
         '1..2',
