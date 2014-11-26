@@ -11,7 +11,7 @@ Features
 * Test-framework agnostic. Support for
     - [Jasmine](http://pivotal.github.com/jasmine/)
     - [QUnit](http://qunitjs.com/)
-    - [Mocha](http://visionmedia.github.com/mocha/)
+    - [Mocha](http://mochajs.org/)
     - [Buster.js](http://docs.busterjs.org/)
     - Others, through custom test framework adapters. 
 * Run tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
