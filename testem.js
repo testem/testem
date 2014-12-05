@@ -18,6 +18,7 @@ program
   .option('-d, --debug', 'output debug to debug log - testem.log')
   .option('-t, --test_page [page]', 'the html page to drive the tests')
   .option('-g, --growl', 'turn on growl notifications')
+  .option('--tempDir [folder]', 'custom path to temporary folder')
 
 
 program
