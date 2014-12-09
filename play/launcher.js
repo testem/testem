@@ -9,7 +9,7 @@ var spawn = require('child_process').spawn
 
 var browsers = [
   ["PhantomJS", "/usr/local/bin/phantomjs"],
-  ["Chrome", "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome", ["--user-data-dir=/tmp/chrome", "--no-default-browser-check", "--no-first-run"]],
+  ["Chrome", "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome", ["--user-data-dir=/tmp/chrome", "--no-default-browser-check", "--no-first-run", "--ignore-certificate-errors"]],
   ["Safari", "/Applications/Safari.app/Contents/MacOS/Safari"],
   ["Firefox", "/Applications/Firefox.app/Contents/MacOS/firefox"]
 ]
