@@ -194,6 +194,42 @@ function interceptWindowOnError(){
   }
 }
 
+function arrayIndexOf (obj, searchElement, fromIndex) {
+  if (Array.prototype.indexOf) {
+    return obj.indexOf(searchElement, fromIndex);
+  }
+  // Array.indexOf polyfill required for IE <= 8
+  // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+  var k;
+
+  if (obj == null) {
+    throw new TypeError('"obj" is null or not defined');
+  }
+
+  var O = Object(obj);
+  var len = O.length >>> 0;
+  if (len === 0) {
+    return -1;
+  }
+
+  var n = +fromIndex || 0;
+  if (Math.abs(n) === Infinity) {
+    n = 0;
+  }
+  if (n >= len) {
+    return -1;
+  }
+
+  k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+  while (k < len) {
+    if (k in O && O[k] === searchElement) {
+      return k;
+    }
+    k++;
+  }
+  return -1;
+}
+
 function getSerialize (fn, decycle) {
   var seen = [], keys = [];
   decycle = decycle || function(key, value) {
@@ -205,7 +241,7 @@ function getSerialize (fn, decycle) {
       return String(value);
     }
     if (typeof value === 'object' && value) {
-      if (seen.indexOf(value) !== -1)
+      if (arrayIndexOf(seen, value) !== -1)
         ret = decycle(key, value);
       else {
         seen.push(value);
@@ -218,7 +254,7 @@ function getSerialize (fn, decycle) {
 }
 
 function getPath (value, seen, keys) {
-  var index = seen.indexOf(value);
+  var index = arrayIndexOf(seen, value);
   var path = [ keys[index] ];
   for (index--; index >= 0; index--) {
     if (seen[index][ path[0] ] === value) {
