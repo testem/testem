@@ -2437,7 +2437,7 @@ JSONPPolling.prototype.doPoll = function () {
   this.script = script;
 
   var isUAgecko = 'undefined' != typeof navigator && /gecko/i.test(navigator.userAgent);
-  
+
   if (isUAgecko) {
     setTimeout(function () {
       var iframe = document.createElement('iframe');
@@ -3896,6 +3896,20 @@ var utf8 = _dereq_('utf8');
 var isAndroid = navigator.userAgent.match(/Android/i);
 
 /**
+* Check if we are running in PhantomJS.
+* Uploading a Blob with PhantomJS does not work correctly, as reported here:
+* https://github.com/ariya/phantomjs/issues/11395
+* @type boolean
+*/
+var isPhantomJS = /PhantomJS/i.test(navigator.userAgent);
+
+/**
+* When true, avoids using Blobs to encode payloads.
+* @type boolean
+*/
+var dontSendBlobs = isAndroid || isPhantomJS;
+
+/**
  * Current protocol version.
  */
 
@@ -4017,7 +4031,7 @@ function encodeBlob(packet, supportsBinary, callback) {
     return exports.encodeBase64Packet(packet, callback);
   }
 
-  if (isAndroid) {
+  if (dontSendBlobs) {
     return encodeBlobAsArrayBuffer(packet, supportsBinary, callback);
   }
 
@@ -4150,7 +4164,7 @@ exports.encodePayload = function (packets, supportsBinary, callback) {
   }
 
   if (supportsBinary) {
-    if (Blob && !isAndroid) {
+    if (Blob && !dontSendBlobs) {
       return exports.encodePayloadAsBlob(packets, callback);
     }
 
