@@ -70,8 +70,5 @@
     "testem": "./testem.js"
   },
   "main": "./lib/api.js",
-  "bundleDependencies": [
-    "express"
-  ],
   "optionalDependencies": {}
 }
