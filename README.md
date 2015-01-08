@@ -33,7 +33,7 @@ Screencasts
 
 * Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
 * [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) &mdash; more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
-* [Continous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) &mdash; details about how CI mode works.
+* [Continuous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) &mdash; details about how CI mode works.
 * [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) &mdash; a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
 
 Installation
