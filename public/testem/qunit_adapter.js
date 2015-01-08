@@ -24,7 +24,7 @@ function qunitAdapter(socket){
       , currentTest
       , currentModule
       , id = 1
-      
+
     function lineNumber(e){
         return e.line || e.lineNumber
     }
@@ -43,7 +43,7 @@ function qunitAdapter(socket){
             return e.stack
         return undefined
     }
-      
+
     QUnit.log( function(params, e){
         if (e){
             currentTest.items.push({
@@ -54,14 +54,23 @@ function qunitAdapter(socket){
                 message: message(e)
             })
         }else{
-            currentTest.items.push({
-                passed: params.result,
-                actual: params.actual,
-                expected: params.expected,
-                message: params.message
-            })
+            if(params.result) {
+                currentTest.items.push({
+                    passed: params.result,
+                    message: params.message
+                })
+            }
+            else {
+                currentTest.items.push({
+                    passed: params.result,
+                    actual: params.actual,
+                    expected: params.expected,
+                    message: params.message
+                })
+            }
+
         }
-        
+
     })
     QUnit.testStart( function(params){
         currentTest = {
@@ -75,15 +84,15 @@ function qunitAdapter(socket){
         currentTest.failed = params.failed
         currentTest.passed = params.passed
         currentTest.total = params.total
-        
+
         results.total++
         if (currentTest.failed > 0)
             results.failed++
         else
             results.passed++
-        
+
         results.tests.push(currentTest)
-        
+
         emit('test-result', currentTest)
     })
     QUnit.moduleStart( function(params){

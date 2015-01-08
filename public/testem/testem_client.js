@@ -167,10 +167,10 @@ function takeOverConsole(){
     var original = console[method]
     console[method] = function(){
       var args = Array.prototype.slice.apply(arguments)
-      var message = circularSafe(args).join(' ')
+      var message = decycle(args).join(' ')
       var doDefault = Testem.handleConsoleMessage(message)
       if (doDefault !== false){
-        socket.emit(method, circularSafe(message))
+        socket.emit(method, decycle(message))
         if (original && original.apply){
           // Do this for normal browsers
           original.apply(console, arguments)
@@ -194,85 +194,6 @@ function interceptWindowOnError(){
   }
 }
 
-function arrayIndexOf (obj, searchElement, fromIndex) {
-  if (Array.prototype.indexOf) {
-    return obj.indexOf(searchElement, fromIndex);
-  }
-  // Array.indexOf polyfill required for IE <= 8
-  // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
-  var k;
-
-  if (obj == null) {
-    throw new TypeError('"obj" is null or not defined');
-  }
-
-  var O = Object(obj);
-  var len = O.length >>> 0;
-  if (len === 0) {
-    return -1;
-  }
-
-  var n = +fromIndex || 0;
-  if (Math.abs(n) === Infinity) {
-    n = 0;
-  }
-  if (n >= len) {
-    return -1;
-  }
-
-  k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-  while (k < len) {
-    if (k in O && O[k] === searchElement) {
-      return k;
-    }
-    k++;
-  }
-  return -1;
-}
-
-function getSerialize (fn, decycle) {
-  var seen = [], keys = [];
-  decycle = decycle || function(key, value) {
-    return '[Circular ' + getPath(value, seen, keys) + ']'
-  };
-  return function(key, value) {
-    var ret = value;
-    if (value && typeof value.nodeType === 'number'){
-      return String(value);
-    }
-    if (typeof value === 'object' && value) {
-      if (arrayIndexOf(seen, value) !== -1)
-        ret = decycle(key, value);
-      else {
-        seen.push(value);
-        keys.push(key);
-      }
-    }
-    if (fn) ret = fn(key, ret);
-    return ret;
-  }
-}
-
-function getPath (value, seen, keys) {
-  var index = arrayIndexOf(seen, value);
-  var path = [ keys[index] ];
-  for (index--; index >= 0; index--) {
-    if (seen[index][ path[0] ] === value) {
-      value = seen[index];
-      path.unshift(keys[index]);
-    }
-  }
-  return '~' + path.join('.');
-}
-
-function stringify(obj, fn, spaces, decycle) {
-  return xJSON.stringify(obj, getSerialize(fn, decycle), spaces);
-}
-
-function circularSafe(obj){
-  return xJSON.parse(stringify(obj))
-}
-
 function emit(){
   Testem.emit.apply(Testem, arguments)
 }
@@ -283,15 +204,22 @@ window.Testem = {
   },
   emit: function(evt){
     var args = Array.prototype.slice.apply(arguments)
-    socket.emit.apply(socket, circularSafe(args))
-    if (this.evtHandlers && this.evtHandlers[evt]){
-      var handlers = this.evtHandlers[evt]
-      var args = Array.prototype.slice.call(arguments, 1)
-      for (var i = 0; i < handlers.length; i++){
-        var handler = handlers[i]
-        handler.apply(this, args)
-      }
-    }
+    var argsWithoutFirst = Array.prototype.slice.call(arguments, 1)
+    var self = this;
+    // Workaround IE 8 max instructions
+    setTimeout(function() {
+      var decycled = decycle(args);
+      setTimeout(function() {
+        socket.emit.apply(socket, decycled);
+        if (self.evtHandlers && self.evtHandlers[evt]){
+          var handlers = self.evtHandlers[evt]
+          for (var i = 0; i < handlers.length; i++){
+            var handler = handlers[i]
+            handler.apply(self, argsWithoutFirst)
+          }
+        }
+      }, 0);
+    }, 0);
   },
   on: function(evt, callback){
     if (!this.evtHandlers){
@@ -304,8 +232,5 @@ window.Testem = {
   },
   handleConsoleMessage: function(){}
 }
-
-var localJSON3 = JSON3.noConflict()
-var xJSON = window.JSON || localJSON3
 
 init()
