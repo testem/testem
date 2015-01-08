@@ -53,8 +53,8 @@
     "views"
   ],
   "scripts": {
-    "test": "mocha --timeout 3000 tests/*_tests.js tests/*/*_tests.js tests/*/*_tests.js -R spec",
-    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/*/*_tests.js; cover report html; open cover_html/index.html"
+    "test": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
+    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
     "mocha": "*",
