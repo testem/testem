@@ -3370,6 +3370,7 @@ WS.prototype.check = function(){
 },{"../transport":13,"component-inherit":20,"debug":21,"engine.io-parser":24,"parseqs":32,"ws":34}],19:[function(_dereq_,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = _dereq_('has-cors');
+var XMLHttpRequest = window.XMLHttpRequest;
 
 module.exports = function(opts) {
   var xdomain = opts.xdomain;
