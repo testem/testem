@@ -1,12 +1,12 @@
 /*!
- * QUnit 1.17.0
+ * QUnit 1.16.0
  * http://qunitjs.com/
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright 2006, 2014 jQuery Foundation and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2015-01-19T11:58Z
+ * Date: 2014-12-03T16:32Z
  */
 
 (function( window ) {
@@ -103,6 +103,10 @@ config = {
 	// block until document ready
 	blocking: true,
 
+	// when enabled, show only failing tests
+	// gets persisted through sessionStorage and can be changed in UI via checkbox
+	hidepassed: false,
+
 	// by default, run previously failed tests first
 	// very useful in combination with "Hide passed tests" checked
 	reorder: true,
@@ -174,10 +178,6 @@ config.modules.push( config.currentModule );
 				urlParams[ current[ 0 ] ] = current[ 1 ];
 			}
 		}
-	}
-
-	if ( urlParams.filter === true ) {
-		delete urlParams.filter;
 	}
 
 	QUnit.urlParams = urlParams;
@@ -361,6 +361,24 @@ extend( QUnit, {
 			return "object";
 		}
 		return undefined;
+	},
+
+	url: function( params ) {
+		params = extend( extend( {}, QUnit.urlParams ), params );
+		var key,
+			querystring = "?";
+
+		for ( key in params ) {
+			if ( hasOwn.call( params, key ) ) {
+				querystring += encodeURIComponent( key );
+				if ( params[ key ] !== true ) {
+					querystring += "=" + encodeURIComponent( params[ key ] );
+				}
+				querystring += "&";
+			}
+		}
+		return location.protocol + "//" + location.host +
+			location.pathname + querystring.slice( 0, -1 );
 	},
 
 	extend: extend,
@@ -560,7 +578,7 @@ function process( last ) {
 		process( last );
 	}
 	var start = now();
-	config.depth = ( config.depth || 0 ) + 1;
+	config.depth = config.depth ? config.depth + 1 : 1;
 
 	while ( config.queue.length && !config.blocking ) {
 		if ( !defined.setTimeout || config.updateRate <= 0 ||
@@ -1123,7 +1141,7 @@ Test.prototype = {
 
 	valid: function() {
 		var include,
-			filter = config.filter,
+			filter = config.filter && config.filter.toLowerCase(),
 			module = QUnit.urlParams.module && QUnit.urlParams.module.toLowerCase(),
 			fullName = ( this.module.name + ": " + this.testName ).toLowerCase();
 
@@ -1146,7 +1164,7 @@ Test.prototype = {
 
 		include = filter.charAt( 0 ) !== "!";
 		if ( !include ) {
-			filter = filter.toLowerCase().slice( 1 );
+			filter = filter.slice( 1 );
 		}
 
 		// If the filter matches, we need to honour include
@@ -1969,15 +1987,12 @@ if ( typeof window !== "undefined" ) {
 }
 
 // For nodejs
-if ( typeof module !== "undefined" && module && module.exports ) {
+if ( typeof module !== "undefined" && module.exports ) {
 	module.exports = QUnit;
-
-	// For consistency with CommonJS environments' exports
-	module.exports.QUnit = QUnit;
 }
 
 // For CommonJS with exports, but without module.exports, like Rhino
-if ( typeof exports !== "undefined" && exports ) {
+if ( typeof exports !== "undefined" ) {
 	exports.QUnit = QUnit;
 }
 
@@ -2325,10 +2340,7 @@ function getUrlConfigHtml() {
 		escaped = escapeText( val.id );
 		escapedTooltip = escapeText( val.tooltip );
 
-		if ( config[ val.id ] === undefined ) {
-			config[ val.id ] = QUnit.urlParams[ val.id ];
-		}
-
+		config[ val.id ] = QUnit.urlParams[ val.id ];
 		if ( !val.value || typeof val.value === "string" ) {
 			urlConfigHtml += "<input id='qunit-urlconfig-" + escaped +
 				"' name='" + escaped + "' type='checkbox'" +
@@ -2387,7 +2399,7 @@ function toolbarChanged() {
 	}
 
 	params[ field.name ] = value;
-	updatedUrl = setUrl( params );
+	updatedUrl = QUnit.url( params );
 
 	if ( "hidepassed" === field.name && "replaceState" in window.history ) {
 		config[ field.name ] = value || false;
@@ -2404,47 +2416,10 @@ function toolbarChanged() {
 	}
 }
 
-function setUrl( params ) {
-	var key,
-		querystring = "?";
-
-	params = QUnit.extend( QUnit.extend( {}, QUnit.urlParams ), params );
-
-	for ( key in params ) {
-		if ( hasOwn.call( params, key ) ) {
-			if ( params[ key ] === undefined ) {
-				continue;
-			}
-			querystring += encodeURIComponent( key );
-			if ( params[ key ] !== true ) {
-				querystring += "=" + encodeURIComponent( params[ key ] );
-			}
-			querystring += "&";
-		}
-	}
-	return location.protocol + "//" + location.host +
-		location.pathname + querystring.slice( 0, -1 );
-}
-
-function applyUrlParams() {
-	var selectBox = id( "qunit-modulefilter" ),
-		selection = decodeURIComponent( selectBox.options[ selectBox.selectedIndex ].value ),
-		filter = id( "qunit-filter-input" ).value;
-
-	window.location = setUrl({
-		module: ( selection === "" ) ? undefined : selection,
-		filter: ( filter === "" ) ? undefined : filter,
-
-		// Remove testId filter
-		testId: undefined
-	});
-}
-
 function toolbarUrlConfigContainer() {
 	var urlConfigContainer = document.createElement( "span" );
 
 	urlConfigContainer.innerHTML = getUrlConfigHtml();
-	addClass( urlConfigContainer, "qunit-url-config" );
 
 	// For oldIE support:
 	// * Add handlers to the individual elements instead of the container
@@ -2453,40 +2428,6 @@ function toolbarUrlConfigContainer() {
 	addEvents( urlConfigContainer.getElementsByTagName( "select" ), "change", toolbarChanged );
 
 	return urlConfigContainer;
-}
-
-function toolbarLooseFilter() {
-	var filter = document.createElement( "form" ),
-		label = document.createElement( "label" ),
-		input = document.createElement( "input" ),
-		button = document.createElement( "button" );
-
-	addClass( filter, "qunit-filter" );
-
-	label.innerHTML = "Filter: ";
-
-	input.type = "text";
-	input.value = config.filter || "";
-	input.name = "filter";
-	input.id = "qunit-filter-input";
-
-	button.innerHTML = "Go";
-
-	label.appendChild( input );
-
-	filter.appendChild( label );
-	filter.appendChild( button );
-	addEvent( filter, "submit", function( ev ) {
-		applyUrlParams();
-
-		if ( ev && ev.preventDefault ) {
-			ev.preventDefault();
-		}
-
-		return false;
-	});
-
-	return filter;
 }
 
 function toolbarModuleFilterHtml() {
@@ -2529,7 +2470,18 @@ function toolbarModuleFilter() {
 	moduleFilter.setAttribute( "id", "qunit-modulefilter-container" );
 	moduleFilter.innerHTML = moduleFilterHtml;
 
-	addEvent( moduleFilter.lastChild, "change", applyUrlParams );
+	addEvent( moduleFilter.lastChild, "change", function() {
+		var selectBox = moduleFilter.getElementsByTagName( "select" )[ 0 ],
+			selection = decodeURIComponent( selectBox.options[ selectBox.selectedIndex ].value );
+
+		window.location = QUnit.url({
+			module: ( selection === "" ) ? undefined : selection,
+
+			// Remove any existing filters
+			filter: undefined,
+			testId: undefined
+		});
+	});
 
 	toolbar.appendChild( moduleFilter );
 }
@@ -2539,17 +2491,6 @@ function appendToolbar() {
 
 	if ( toolbar ) {
 		toolbar.appendChild( toolbarUrlConfigContainer() );
-		toolbar.appendChild( toolbarLooseFilter() );
-	}
-}
-
-function appendHeader() {
-	var header = id( "qunit-header" );
-
-	if ( header ) {
-		header.innerHTML = "<a href='" +
-			setUrl({ filter: undefined, module: undefined, testId: undefined }) +
-			"'>" + header.innerHTML + "</a> ";
 	}
 }
 
@@ -2558,6 +2499,9 @@ function appendBanner() {
 
 	if ( banner ) {
 		banner.className = "";
+		banner.innerHTML = "<a href='" +
+			QUnit.url({ filter: undefined, module: undefined, testId: undefined }) +
+			"'>" + banner.innerHTML + "</a> ";
 	}
 }
 
@@ -2589,8 +2533,7 @@ function storeFixture() {
 function appendUserAgent() {
 	var userAgent = id( "qunit-userAgent" );
 	if ( userAgent ) {
-		userAgent.innerHTML = "";
-		userAgent.appendChild( document.createTextNode( navigator.userAgent ) );
+		userAgent.innerHTML = navigator.userAgent;
 	}
 }
 
@@ -2625,7 +2568,7 @@ function appendTest( name, testId, moduleName ) {
 
 	rerunTrigger = document.createElement( "a" );
 	rerunTrigger.innerHTML = "Rerun";
-	rerunTrigger.href = setUrl({ testId: testId });
+	rerunTrigger.href = QUnit.url({ testId: testId });
 
 	testBlock = document.createElement( "li" );
 	testBlock.appendChild( title );
@@ -2647,16 +2590,17 @@ QUnit.begin(function( details ) {
 	// Fixture is the only one necessary to run without the #qunit element
 	storeFixture();
 
-	if ( qunit ) {
-		qunit.innerHTML =
-			"<h1 id='qunit-header'>" + escapeText( document.title ) + "</h1>" +
-			"<h2 id='qunit-banner'></h2>" +
-			"<div id='qunit-testrunner-toolbar'></div>" +
-			"<h2 id='qunit-userAgent'></h2>" +
-			"<ol id='qunit-tests'></ol>";
+	if ( !qunit ) {
+		return;
 	}
 
-	appendHeader();
+	qunit.innerHTML =
+		"<h1 id='qunit-header'>" + escapeText( document.title ) + "</h1>" +
+		"<h2 id='qunit-banner'></h2>" +
+		"<div id='qunit-testrunner-toolbar'></div>" +
+		"<h2 id='qunit-userAgent'></h2>" +
+		"<ol id='qunit-tests'></ol>";
+
 	appendBanner();
 	appendTestResults();
 	appendUserAgent();
@@ -2664,7 +2608,7 @@ QUnit.begin(function( details ) {
 	appendTestsList( details.modules );
 	toolbarModuleFilter();
 
-	if ( qunit && config.hidepassed ) {
+	if ( config.hidepassed ) {
 		addClass( qunit.lastChild, "hidepass" );
 	}
 });
@@ -2844,7 +2788,7 @@ QUnit.testDone(function( details ) {
 		details.assertions.length + ")</b>";
 
 	if ( details.skipped ) {
-		testItem.className = "skipped";
+		addClass( testItem, "skipped" );
 		skipped = document.createElement( "em" );
 		skipped.className = "qunit-skipped-label";
 		skipped.innerHTML = "skipped";

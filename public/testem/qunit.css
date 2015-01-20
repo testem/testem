@@ -1,12 +1,12 @@
 /*!
- * QUnit 1.17.0
+ * QUnit 1.16.0
  * http://qunitjs.com/
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright 2006, 2014 jQuery Foundation and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2015-01-19T11:58Z
+ * Date: 2014-12-03T16:32Z
  */
 
 /** Font Family and Sizes */
@@ -77,18 +77,6 @@
 
 #qunit-modulefilter-container {
 	float: right;
-	padding: 0.2em;
-}
-
-.qunit-url-config {
-	display: inline-block;
-	padding: 0.1em;
-}
-
-.qunit-filter {
-	display: block;
-	float: right;
-	margin-left: 1em;
 }
 
 /** Tests: Pass/Fail */
@@ -107,15 +95,11 @@
 	display: none;
 }
 
-#qunit-tests li.running,
-#qunit-tests li.pass,
-#qunit-tests li.fail,
-#qunit-tests li.skipped {
+#qunit-tests li.pass, #qunit-tests li.running, #qunit-tests li.fail {
 	display: list-item;
 }
 
-#qunit-tests.hidepass li.running,
-#qunit-tests.hidepass li.pass {
+#qunit-tests.hidepass li.pass, #qunit-tests.hidepass li.running  {
 	display: none;
 }
 
