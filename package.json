@@ -57,14 +57,14 @@
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "request": "~2.12.0",
-    "jsdom": "~0.5.2",
-    "bodydouble": "~0.1.1",
-    "ispy": "~0.1.1",
-    "concat-stream": "~1.0.0",
-    "sinon": "~1.7.3"
+    "bodydouble": "^0.1.2",
+    "chai": "^1.10.0",
+    "concat-stream": "^1.4.7",
+    "ispy": "^0.1.2",
+    "jsdom": "^3.0.1",
+    "mocha": "^2.1.0",
+    "request": "^2.51.0",
+    "sinon": "^1.12.2"
   },
   "bin": {
     "testem": "./testem.js"
