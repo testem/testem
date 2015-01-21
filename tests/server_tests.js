@@ -3,7 +3,7 @@ var Config = require('../lib/config')
 var EventEmitter = require('events').EventEmitter
 var Backbone = require('backbone')
 var request = require('request')
-var jsdom = require('jsdom')
+var cheerio = require('cheerio')
 var fs = require('fs')
 var path = require('path')
 var expect = require('chai').expect
@@ -12,7 +12,7 @@ describe('Server', function(){
   var server, runners, app, socketClient, config
   var orgSetTimeout, baseUrl, port
   before(function(done){
-  port = 73571
+  port = 63571
   config = new Config('dev', {
     port: port,
     src_files: [
@@ -47,19 +47,16 @@ describe('Server', function(){
   })
 
   it('gets scripts for the home page', function(done){
-    jsdom.env(baseUrl, function(err, window){
-      var document = window.document
-      //expect(window.document.title).to.equal('Test\'em')
-      var scripts = document.getElementsByTagName('script')
-      var srcs = Array.prototype.map.call(scripts, function(s){ return s.src })
-      /*expect(srcs).to.deep.equal([ 
-        '/testem/jasmine.js',
-        '/testem.js',
-        '/testem/jasmine-html.js',
-        null,
-        'web/hello.js',
-        'web/hello_tst.js'
-      ])*/
+    request(baseUrl, function(err, req, text){
+      var $ = cheerio.load(text)
+      var srcs = $('script').map(function() { return $(this).attr('src') }).get()
+      expect(srcs).to.deep.equal([
+          '/testem/jasmine.js',
+          '/testem.js',
+          '/testem/jasmine-html.js',
+          'web/hello.js',
+          'web/hello_tst.js'
+      ])
       done()
     })
   })
@@ -142,5 +139,5 @@ describe('Server', function(){
   //        assertUrlReturnsFileContents(baseUrl + 'config.js', '../lib/config.js', done)
   //    })
   //})
-    
+
 })

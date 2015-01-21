@@ -59,9 +59,9 @@
   "devDependencies": {
     "bodydouble": "^0.1.2",
     "chai": "^1.10.0",
+    "cheerio": "^0.18.0",
     "concat-stream": "^1.4.7",
     "ispy": "^0.1.2",
-    "jsdom": "^3.0.1",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "sinon": "^1.12.2"
