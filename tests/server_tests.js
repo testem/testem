@@ -12,7 +12,7 @@ describe('Server', function(){
   var server, runners, app, socketClient, config
   var orgSetTimeout, baseUrl, port
   before(function(done){
-  port = 73571
+  port = 63571
   config = new Config('dev', {
     port: port,
     src_files: [
