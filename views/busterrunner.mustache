@@ -6,7 +6,7 @@
 {{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 <script src="/testem/buster-test.js"></script>
 <script src="/testem.js"></script>
-{{#scripts}}<script src="{{src}}"{{#attrs}} {{&.}} {{/attrs}}></script>{{/scripts}}
+{{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
 </head>
 <body></body>
 </html>

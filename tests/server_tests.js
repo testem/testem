@@ -88,9 +88,10 @@ describe('Server', function(){
         '<!doctype html>'
         , '<html>'
         , '<head>'
-        , '        <script src="web/hello.js"></script>'
-        , '        <script src="web/hello_tst.js" data-foo="true"  data-bar ></script>'
-        , '    </head>'
+        , '    <script src="web/hello.js"></script>'
+        , '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>'
+        , '</head>'
+        , ''
         ].join('\n'))
       done()
     })
