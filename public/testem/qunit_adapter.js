@@ -5,8 +5,8 @@ qunit_adapter.js
 
 Testem's QUnit adapter. Works by using QUnit's hooks:
 
-* `begin`
-* `done`
+* `testStart`
+* `testDone`
 * `moduleStart`
 * `moduleEnd`
 * `done`
@@ -72,7 +72,7 @@ function qunitAdapter(socket){
         }
 
     })
-    QUnit.begin( function(params){
+    QUnit.testStart( function(params){
         currentTest = {
             id: id++,
             name: (currentModule ? currentModule + ': ' : '') + params.name,
@@ -80,7 +80,7 @@ function qunitAdapter(socket){
         }
         emit('tests-start')
     })
-    QUnit.done( function(params){
+    QUnit.testDone( function(params){
         currentTest.failed = params.failed
         currentTest.passed = params.passed
         currentTest.total = params.total
