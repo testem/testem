@@ -236,8 +236,7 @@ describe('runHook', function(){
 
   it('dies if neither command or exe specified', function(){
     var config = new Config('ci', null, {
-      on_start: {
-      }
+      on_start: {}
     })
     var app = new App(config)
     assert.throw(function(){

@@ -14,8 +14,8 @@ describe('AppView', function(){
     config = app.config = new Config({}, {port: 1234})
     app.runners = new Backbone.Collection
     appview = new AppView({
-      app: app
-      , screen: screen
+      app: app,
+      screen: screen
     })
     screen.$setSize(10, 10)
   })

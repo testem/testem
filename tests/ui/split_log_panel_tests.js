@@ -15,20 +15,20 @@ describe('SplitLogPanel', function(){
     results = new Backbone.Model
     messages = new Backbone.Collection
     runner = new Backbone.Model({
-      results: results
-      , messages: messages
+      results: results,
+      messages: messages
     })
     appview = new Backbone.Model({
-      cols: 10
-      , lines: 20
+      cols: 10,
+      lines: 20
     })
     runner.hasMessages = function(){ return true }
     runner.hasResults = function(){ return true }
     panel = new SplitLogPanel({
-      runner: runner
-      , appview: appview
-      , visible: true
-      , screen: screen
+      runner: runner,
+      appview: appview,
+      visible: true,
+      screen: screen
     })
   })
 

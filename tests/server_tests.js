@@ -51,11 +51,11 @@ describe('Server', function(){
       var $ = cheerio.load(text)
       var srcs = $('script').map(function() { return $(this).attr('src') }).get()
       expect(srcs).to.deep.equal([
-          '/testem/jasmine.js',
-          '/testem.js',
-          '/testem/jasmine-html.js',
-          'web/hello.js',
-          'web/hello_tst.js'
+        '/testem/jasmine.js',
+        '/testem.js',
+        '/testem/jasmine-html.js',
+        'web/hello.js',
+        'web/hello_tst.js'
       ])
       done()
     })
@@ -85,13 +85,13 @@ describe('Server', function(){
     request(baseUrl, function(err, req, text){
       expect(text).to.equal(
         [
-        '<!doctype html>'
-        , '<html>'
-        , '<head>'
-        , '    <script src="web/hello.js"></script>'
-        , '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>'
-        , '</head>'
-        , ''
+        '<!doctype html>',
+        '<html>',
+        '<head>',
+        '    <script src="web/hello.js"></script>',
+        '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+        '</head>',
+        ''
         ].join('\n'))
       done()
     })
