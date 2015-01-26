@@ -12,11 +12,11 @@ describe('ScrollableTextPanel', function(){
     beforeEach(function(){
       screen.$setSize(10, 3)
       panel = new ScrollableTextPanel({
-        line: 0
-        , col: 0
-        , width: 10
-        , height: 2
-        , screen: screen
+        line: 0,
+        col: 0,
+        width: 10,
+        height: 2,
+        screen: screen
       })
     })
     it('renders stuff', function(){
@@ -80,12 +80,12 @@ describe('ScrollableTextPanel', function(){
     beforeEach(function(){
       screen.$setSize(10, 10)
       panel = new ScrollableTextPanel({
-        line: 2
-        , col: 2
-        , width: 6
-        , height: 6
-        , text: 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.'
-        , screen: screen
+        line: 2,
+        col: 2,
+        width: 6,
+        height: 6,
+        text: 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.',
+        screen: screen
       })
     })
 

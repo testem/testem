@@ -19,33 +19,33 @@ function initialize(){
 initialize()
 
 var FakeScreen = {
-  __proto__: EventEmitter.prototype
-  , $setSize: function(w, h){
+  __proto__: EventEmitter.prototype,
+  $setSize: function(w, h){
     width = w
     height = h
     initialize()
-  }
-  , $lines: function(start, end){
+  },
+  $lines: function(start, end){
     if (end === undefined){
       end = start
       start = 0
     }
     return buffer.slice(start, end)
-  }
-  , foreground: function(color){
+  },
+  foreground: function(color){
     foreground = color
     return this
-  }
-  , background: function(color){
+  },
+  background: function(color){
     background = color
     return this
-  }
-  , position: function(_col, _line){
+  },
+  position: function(_col, _line){
     col = _col
     line = _line - 1
     return this
-  }
-  , write: function(str){
+  },
+  write: function(str){
     // get rid of all display codes
     str = str.replace(/\u001b\[[0-9]+m/g, '')
         
@@ -63,25 +63,25 @@ var FakeScreen = {
     buffer[line] = result
     col += str.length
     return this
-  }
-  , erase: function(){
+  },
+  erase: function(){
     var original = buffer[line]
     if (!original) return this
     if (width - col + 1 > 0){
       buffer[line] = original.substring(0, col) + Array(width - col + 1).join(' ')
     }
     return this
-  }
-  , display: function(){
+  },
+  display: function(){
     return this
-  }
-  , reset: function(){
+  },
+  reset: function(){
     return this
-  }
-  , cursor: function(){
+  },
+  cursor: function(){
     return this
-  }
-  , enableScroll: function(){
+  },
+  enableScroll: function(){
     return this
   }
 }

@@ -1,8 +1,8 @@
 var fs = require('fs')
-  , spawn = require('child_process').spawn
-  , dataDir = __dirname + '/data'
-  , chai = require('chai')
-  , util = require('util')
+var spawn = require('child_process').spawn
+var dataDir = __dirname + '/data'
+var chai = require('chai')
+var util = require('util')
 
 exports.expect = chai.expect
 
@@ -28,12 +28,13 @@ function refreshDataDir(done){
     })
   }
   fs.stat(dataDir, function(err, stat){
-    if (err)
+    if (err){
       mkdir()
-    else
+    }else{
       system(['rm', ['-fr', dataDir]], function(code){
         mkdir()
       })
+    }
   })
 }
 exports.refreshDataDir = refreshDataDir

@@ -161,8 +161,8 @@ describe('Config', function(){
 	it('getWantedLaunchers uses getWantedLauncherNames', function(){
 		stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox'])
 		var results = config.getWantedLaunchers({
-			chrome: { name: 'Chrome' }
-			, firefox: { name: 'Firefox' }
+			chrome: { name: 'Chrome' },
+			firefox: { name: 'Firefox' }
 		})
 		expect(results).to.deep.equal([{ name: 'Chrome' }, { name: 'Firefox' }])
 
@@ -326,24 +326,24 @@ function mockTopLevelProgOptions(){
 		{ name: function(){ return 'timeout' } }
 	]
 	var commands = [
-		{ name: function(){ return 'ci' } }
-		, { name: function(){ return 'launchers' } }
+		{ name: function(){ return 'ci' } },
+		{ name: function(){ return 'launchers' } }
 	]
 	var parentOptions = {
-		port: 8081
-		, options: [
-			{name: function(){ return 'port' }}
-			, { name: function(){ return 'launcher' } }
-		]
-		, cwd: 'tests'
+		port: 8081,
+		options: [
+			{name: function(){ return 'port' }},
+			{name: function(){ return 'launcher' }}
+		],
+		cwd: 'tests'
 	}
 	var progOptions = {
-		timeout: 2
-		, parent: parentOptions
-		, __proto__: parentOptions
-		, options: options
-		, commands: commands
-		, _events: []
+		timeout: 2,
+		parent: parentOptions,
+		__proto__: parentOptions,
+		options: options,
+		commands: commands,
+		_events: []
 	}
 	return progOptions
 }
@@ -352,7 +352,7 @@ describe('getTemplateData', function(){
 	it('should give templateData', function(done){
 		var fileConfig = {
 			src_files: [
-				"web/*.js",
+				"web/*.js"
 			]
 		}
 		var progOptions = mockTopLevelProgOptions()

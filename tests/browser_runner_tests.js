@@ -11,8 +11,8 @@ describe('BrowserRunner', function(){
   beforeEach(function(){
     socket = new EventEmitter
     runner = new BrowserRunner({
-      name: 'Chrome 19.0'
-      , socket: socket
+      name: 'Chrome 19.0',
+      socket: socket
     })
   })
   afterEach(function(){
@@ -31,8 +31,8 @@ describe('BrowserRunner', function(){
     it('resets results', function(){
       var results = runner.get('results')
       results.addResult({
-        failed: false
-        , passed: true
+        failed: false,
+        passed: true
       })
       results.reset()
       expect(results.get('total')).to.equal(0)

@@ -11,12 +11,12 @@ describe('ErrorMessagesPanel', function(){
   beforeEach(function(){
     screen.$setSize(12, 12)
     panel = new ErrorMessagesPanel({
-      line: 1
-      , col: 1
-      , width: 10
-      , height: 10
-      , text: 'blah'
-      , screen: screen
+      line: 1,
+      col: 1,
+      width: 10,
+      height: 10,
+      text: 'blah',
+      screen: screen
     })
   })
   it('initializes', function(){})
