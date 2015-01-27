@@ -2,7 +2,7 @@ var AppView = require('../../lib/dev/ui/appview')
 var Backbone = require('backbone')
 var Config = require('../../lib/config')
 var screen = require('./fake_screen')
-var assert = require('chai').assert
+var expect = require('chai').expect
 
 describe('AppView', function(){
 
@@ -17,14 +17,24 @@ describe('AppView', function(){
       app: app,
       screen: screen
     })
-    screen.$setSize(10, 10)
+    screen.$setSize(80, 10)
+    appview.set({cols: 80, lines: 10})
   })
 
   it('initializes', function(){
     appview.renderTop()
     appview.renderMiddle()
     appview.renderBottom()
-
   })
 
+  it('starts off showing p to pause', function(){
+    appview.renderBottom()
+    expect(appview.get('screen').buffer.join('')).to.contain('p to pause')
+  })
+
+  it('says its paused when paused', function(){
+    app.paused = true
+    appview.renderBottom()
+    expect(appview.get('screen').buffer.join('')).to.contain('p to unpause')
+  })
 })
