@@ -12,6 +12,9 @@ It also restarts the tests by refreshing the page when instructed by the server 
 function getBrowserName(userAgent){
   var regexs = [
     /MS(?:(IE) (1?[0-9]\.[0-9]))/,
+    [/Trident\/.* rv:(1?[0-9]\.[0-9])/, function(m) {
+      return ['IE', m[1]].join(' ')
+    }],
     [/(OPR)\/([0-9]+\.[0-9]+)/, function(m){
       return ['Opera', m[2]].join(' ')
     }],
