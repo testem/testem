@@ -463,6 +463,7 @@ Contributors
 ------------
 
 * [Toby Ho](https://github.com/airportyh)
+* [Johannes Würbach](https://github.com/johanneswuerbach)
 * [Raynos](https://github.com/Raynos)
 * [Derek Brans](https://github.com/dbrans)
 
