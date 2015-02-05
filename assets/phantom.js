@@ -1,5 +1,6 @@
+var system = require('system');
 var page = require('webpage').create();
-var url = phantom.args[0];
+var url = system.args[1];
 page.viewportSize = {
   width: 1024,
   height: 768
