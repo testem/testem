@@ -2,8 +2,10 @@ language: node_js
 node_js:
 - "0.11"
 - "0.10"
+- iojs
 matrix:
   fast_finish: true
   allow_failures:
     - node_js: "0.11"
+    - node_js: iojs
 sudo: false
