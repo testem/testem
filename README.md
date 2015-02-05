@@ -402,19 +402,18 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 {
   "proxies": {
     "/api": {
-      "port": 4200,
-      "host": "localhost"
+      "target": "http://localhost:4200"
     },
     "/xmlapi": {
-      "port": 8000,
-      "host": "localhost"
+      "target": "https://localhost:8000",
+      "secure": false
     }
   }
 }
 ```
 
 This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix.
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options 
 
 Example Projects
 ----------------
