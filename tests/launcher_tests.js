@@ -4,6 +4,7 @@ var Config = require('../lib/config')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var bd = require('bodydouble')
+var EOL = require('os').EOL
 var stub = bd.stub
 
 describe('Launcher', function(){
@@ -26,7 +27,7 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       launcher.process.on('close', function(){
-        expect(data).to.equal('hello\n')
+        expect(data).to.equal('hello' + EOL)
         done()
       })
     })
@@ -67,7 +68,7 @@ describe('Launcher', function(){
       launcher.start()
       launcher.on('processExit', function(code, stdout){
         assert.equal(code, 0)
-        assert.equal(stdout, 'hello\n')
+        assert.equal(stdout, 'hello' + EOL)
         done()
       })
     })
@@ -75,7 +76,7 @@ describe('Launcher', function(){
       settings.command = 'echo hello 1>&2'
       launcher.start()
       launcher.on('processExit', function(code, stdout, stderr){
-        assert.equal(stderr, 'hello\n')
+        assert.equal(stderr, 'hello' + EOL)
         done()
       })
     })
@@ -136,7 +137,7 @@ describe('Launcher', function(){
       launcher.start()
       launcher.on('processExit', function(code, stdout){
         assert.equal(code, 0)
-        assert.equal(stdout, 'hello\n')
+        assert.equal(stdout, 'hello' + EOL)
         done()
       })
     })
@@ -144,6 +145,6 @@ describe('Launcher', function(){
     it('returns commandLine', function(){
       assert.equal(launcher.commandLine(), '"echo hello"')
     })
-    
+
   })
 })
