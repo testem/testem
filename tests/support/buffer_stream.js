@@ -3,14 +3,13 @@ var Duplex = require('stream').Duplex;
 module.exports = bufferStream
 
 function bufferStream(){
-  var s = Duplex()
+  var s = new Duplex()
   s.string = ''
   s.lines = function(){
     return s.string.split('\n')
   }
   s._write = function (chunk, enc, next) {
     s.string += chunk
-    s.emit('data', chunk, enc)
     next()
   }
   s._read = function (){
