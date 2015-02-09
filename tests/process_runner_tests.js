@@ -2,7 +2,7 @@ var ProcessRunner = require('../lib/process_runner')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var child_process = require('child_process')
-var BufferStream = require('./support/buffer_stream')
+var PassThrough = require('stream').PassThrough
 var Launcher = require('../lib/launcher')
 var bd = require('bodydouble')
 var stub = bd.stub
@@ -41,19 +41,25 @@ describe('ProcessRunner', function(){
       runner.get('messages').push({})
       expect(runner.hasMessages()).to.be.ok
     })
-    it('reads stdout into messages', function(){
+    it('reads stdout into messages', function(done){
       process.stdout.write('foobar')
-      expect(runner.get('messages').length).to.equal(1)
-      var message = runner.get('messages').at(0)
-      expect(message.get('type')).to.equal('log')
-      expect(message.get('text')).to.equal('foobar')
+      setTimeout(function(){
+        expect(runner.get('messages').length).to.equal(1)
+        var message = runner.get('messages').at(0)
+        expect(message.get('type')).to.equal('log')
+        expect(message.get('text')).to.equal('foobar')
+        done()
+      }, 0)
     })
-    it('reads stderr into messages', function(){
+    it('reads stderr into messages', function(done){
       process.stderr.write('foobar')
-      expect(runner.get('messages').length).to.equal(1)
-      var message = runner.get('messages').at(0)
-      expect(message.get('type')).to.equal('error')
-      expect(message.get('text')).to.equal('foobar')
+      setTimeout(function(){
+        expect(runner.get('messages').length).to.equal(1)
+        var message = runner.get('messages').at(0)
+        expect(message.get('type')).to.equal('error')
+        expect(message.get('text')).to.equal('foobar')
+        done()
+      }, 0)
     })
     it('should have results object be undefined', function(){
       expect(runner.get('results')).to.equal(null)
@@ -132,7 +138,7 @@ describe('ProcessRunner', function(){
       ].join('\n')
       process.stdout.end(tap)
       setTimeout(function(){
-        
+
         var results = runner.get('results')
         var total = results.get('total')
         var pass = results.get('passed')
@@ -142,16 +148,16 @@ describe('ProcessRunner', function(){
         expect(fail).to.equal(1)
         var tests = results.get('tests')
         expect(tests.length).to.equal(2)
-        
+
         expect(tests.at(0).get('name')).to.equal('hello() should be "hello world"')
         expect(tests.at(1).get('name')).to.equal('hello(bob) should be "hello bob"')
         var failItems = tests.at(0).get('items')
-        
+
         expect(failItems[0].operator).to.equal('equal')
         expect(failItems[0].expected).to.equal('"hell world"')
         expect(failItems[0].actual).to.equal('"hello world"')
         expect(failItems[0].at).to.equal('Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)')
-        
+
         done()
       }, 0)
     })
@@ -240,7 +246,7 @@ describe('ProcessRunner', function(){
 
 function FakeProcess(){
   var p = bd.mock(child_process.exec(''))
-  p.stdout = BufferStream()
-  p.stderr = BufferStream()
+  p.stdout = new PassThrough()
+  p.stderr = new PassThrough()
   return p
 }
