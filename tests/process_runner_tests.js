@@ -2,7 +2,7 @@ var ProcessRunner = require('../lib/process_runner')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var child_process = require('child_process')
-var BufferStream = require('./support/buffer_stream')
+var PassThrough = require('stream').PassThrough
 var Launcher = require('../lib/launcher')
 var bd = require('bodydouble')
 var stub = bd.stub
@@ -246,7 +246,7 @@ describe('ProcessRunner', function(){
 
 function FakeProcess(){
   var p = bd.mock(child_process.exec(''))
-  p.stdout = BufferStream()
-  p.stderr = BufferStream()
+  p.stdout = new PassThrough()
+  p.stderr = new PassThrough()
   return p
 }
