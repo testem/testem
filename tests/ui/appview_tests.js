@@ -4,7 +4,9 @@ var Config = require('../../lib/config')
 var screen = require('./fake_screen')
 var expect = require('chai').expect
 
-describe('AppView', function(){
+var isWin = /^win/.test(process.platform)
+
+describe('AppView', !isWin ? function(){
 
   var appview, app, config
 
@@ -37,4 +39,6 @@ describe('AppView', function(){
     appview.renderBottom()
     expect(appview.get('screen').buffer.join('')).to.contain('p to unpause')
   })
+}: function() {
+  xit('TODO: Fix and re-enable for windows')
 })

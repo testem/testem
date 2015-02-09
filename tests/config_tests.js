@@ -6,6 +6,7 @@ var bd = require('bodydouble')
 var stub = bd.stub
 var browser_launcher = require('../lib/browser_launcher')
 var assert = require('chai').assert
+var path = require('path')
 
 describe('Config', function(){
 	var config, appMode, progOptions
@@ -20,7 +21,7 @@ describe('Config', function(){
 	afterEach(function(){
 		bd.restoreStubs()
 	})
-	
+
 	it('can create', function(){
 		expect(config.progOptions).to.equal(progOptions)
 	})
@@ -58,7 +59,7 @@ describe('Config', function(){
 		var config = new Config
 		assert.equal(config.get('url'), 'http://localhost:7357/')
 	})
-	
+
 	describe('read json config file', function(){
 		var config
 		beforeEach(function(done){
@@ -96,7 +97,7 @@ describe('Config', function(){
 			done()
 		})
 	})
-	
+
 	it('returns whether isCwdMode (read js files from current dir)', function(){
 		stub(config, 'get', function(key){
 			return null
@@ -119,7 +120,7 @@ describe('Config', function(){
 		assert.equal(config.get('host'), 'localhost')
 		assert.equal(config.get('port'), 7357)
 	})
-	
+
 	it('should getLaunchers should call getAvailable browsers', function(done){
 		stub(config, 'getWantedLaunchers', function(n){return n})
 		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
@@ -129,7 +130,7 @@ describe('Config', function(){
 				{name: 'Firefox'}
 			])
 		}
-		
+
 		config.getLaunchers(function(launchers){
 			expect(launchers.chrome.name).to.equal('Chrome')
 			expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
@@ -157,7 +158,7 @@ describe('Config', function(){
 			done()
 		})
 	})
-	
+
 	it('getWantedLaunchers uses getWantedLauncherNames', function(){
 		stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox'])
 		var results = config.getWantedLaunchers({
@@ -196,7 +197,7 @@ describe('Config', function(){
 	}
 
 	describe('getSrcFiles', function(){
-		
+
 		beforeEach(function(){
 			config.set('cwd', 'tests')
 		})
@@ -219,7 +220,7 @@ describe('Config', function(){
 			config.set('src_files_ignore', ['**/*.sh'])
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
-					fileEntry('integration/browser_tests.bat')])
+					fileEntry('integration' + path.sep + 'browser_tests.bat')])
 				done()
 			})
 		})
@@ -245,7 +246,7 @@ describe('Config', function(){
 			])
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
-					fileEntry('integration/browser_tests.bat')
+					fileEntry('integration' + path.sep + 'browser_tests.bat')
 				])
 				done()
 			})
@@ -267,8 +268,8 @@ describe('Config', function(){
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
 					fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-					fileEntry('integration/browser_tests.bat'),
-					fileEntry('integration/browser_tests.sh')
+					fileEntry('integration' + path.sep + 'browser_tests.bat'),
+					fileEntry('integration' + path.sep + 'browser_tests.sh')
 				])
 				done()
 			})
@@ -282,7 +283,7 @@ describe('Config', function(){
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
 					fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-					fileEntry('integration/browser_tests.bat')
+					fileEntry('integration' + path.sep + 'browser_tests.bat')
 				])
 				done()
 			})
@@ -293,8 +294,8 @@ describe('Config', function(){
 			])
 			config.getSrcFiles(function(err, files){
 				expect(files).to.deep.equal([
-					fileEntry('integration/browser_tests.bat'),
-					fileEntry('integration/browser_tests.sh'),
+					fileEntry('integration' + path.sep + 'browser_tests.bat'),
+					fileEntry('integration' + path.sep + 'browser_tests.sh'),
 					fileEntry('http://codeorigin.jquery.com/jquery-2.0.3.min.js')
 				])
 				done()

@@ -6,7 +6,9 @@ var bd = require('bodydouble')
 var EOL = require('os').EOL
 var stub = bd.stub
 
-describe('Launcher', function(){
+var isWin = /^win/.test(process.platform)
+
+describe('Launcher', !isWin ? function(){
   var settings, launcher, config
 
   describe('via command', function(){
@@ -173,4 +175,6 @@ describe('Launcher', function(){
     })
 
   })
+}: function() {
+  xit('TODO: Fix and re-enable for windows')
 })
