@@ -47,18 +47,13 @@ describe('Launcher', function(){
     it('substitutes variables', function(done){
       settings.command = 'echo <url> <port>'
       launcher.start()
-      var data = ''
-      launcher.process.stdout.on('data', function(chunk){
-        data += String(chunk)
-      })
-      setTimeout(function(){
-
-        expect(data).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/)
+      launcher.on('processExit', function(code, stdout) {
+        expect(stdout).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/)
         done()
-      }, 10)
+      })
     })
     it('executes setup', function(done){
-      settings.setup = function(_config, _done){
+      settings.setup = function(_config){
         assert.strictEqual(_config, config)
         done()
       }
@@ -73,10 +68,10 @@ describe('Launcher', function(){
       })
     })
     it('returns stderr on processExit', function(done){
-      settings.command = 'echo hello 1>&2'
+      settings.command = 'node -e "console.error(\'hello\')"'
       launcher.start()
       launcher.on('processExit', function(code, stdout, stderr){
-        assert.equal(stderr, 'hello' + EOL)
+        assert.equal(stderr, 'hello\n')
         done()
       })
     })
@@ -90,9 +85,9 @@ describe('Launcher', function(){
       settings.command = 'node -e "console.log(process.env.TESTEM_USER_CONFIG)"'
       config = new Config()
       launcher.start()
-      launcher.on('processExit', function(code, stdout, stderr){
+      launcher.on('processExit', function(code, stdout){
         assert.equal(code, 0)
-        assert.equal(stdout, 'copied' + EOL)
+        assert.equal(stdout, 'copied\n')
         process.env = originalEnv;
         done()
       })
@@ -170,7 +165,7 @@ describe('Launcher', function(){
       launcher.launch()
       launcher.on('processExit', function(code, stdout){
         assert.equal(code, 0)
-        assert.equal(stdout, 'copied' + EOL)
+        assert.equal(stdout, 'copied\n')
 
         process.env = originalEnv;
         done()
