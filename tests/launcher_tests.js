@@ -53,7 +53,8 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.match(/http:\/\/blah.com\/([0-9]+) 7357\n/)
+
+        expect(data).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/)
         done()
       }, 10)
     })
@@ -97,7 +98,7 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+\n/)
+        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
         launcher.kill('SIGKILL', function(){
           done()
         })
@@ -113,7 +114,7 @@ describe('Launcher', function(){
         data += String(chunk)
       })
       setTimeout(function(){
-        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+\n/)
+        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
         launcher.kill('SIGKILL', function(){
           done()
         })
