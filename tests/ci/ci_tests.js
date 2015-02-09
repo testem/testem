@@ -8,6 +8,7 @@ var stub = bd.stub
 var path = require('path')
 var assert = require('chai').assert
 var Process = require('did_it_work')
+var EOL = require('os').EOL
 
 describe('ci mode app', function(){
 
@@ -230,6 +231,41 @@ describe('runHook', function(){
     app.runHook('on_start', function(){
       assert(app.Process.called, 'call Process')
       assert.deepEqual(app.Process.lastCall.args, ['launch', ['nuclear-missile', '7357']])
+      done()
+    })
+  })
+
+  it('copies the user environment on exec', function(done){
+    var originalEnv = process.env;
+    process.env.TESTEM_USER_CONFIG = 'copied'
+
+    var config = new Config('ci', null, {
+      on_start: {
+        command: 'node -e "console.log(process.env.TESTEM_USER_CONFIG)"'
+      }
+    })
+    var app = new App(config)
+    app.runHook('on_start', function(err, stdout){
+      process.env = originalEnv;
+      assert.equal(stdout, 'copied' + EOL)
+      done()
+    })
+  })
+
+  it('copies the user environment on spawn', function(done){
+    var originalEnv = process.env;
+    process.env.TESTEM_USER_CONFIG = 'copied'
+
+    var config = new Config('ci', null, {
+      on_start: {
+        exe: 'node',
+        args: ['-e', 'console.log(process.env.TESTEM_USER_CONFIG)']
+      }
+    })
+    var app = new App(config)
+    app.runHook('on_start', function(err, stdout){
+      process.env = originalEnv;
+      assert.equal(stdout, 'copied' + EOL)
       done()
     })
   })

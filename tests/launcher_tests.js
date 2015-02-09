@@ -1,5 +1,4 @@
 var Launcher = require('../lib/launcher')
-var template = require('../lib/strutils').template
 var Config = require('../lib/config')
 var expect = require('chai').expect
 var assert = require('chai').assert
@@ -84,6 +83,20 @@ describe('Launcher', function(){
     it('returns commandLine', function(){
       assert.equal(launcher.commandLine(), '"echo hello"')
     })
+    it('copies the current environment', function(done) {
+      var originalEnv = process.env;
+      process.env.TESTEM_USER_CONFIG = 'copied'
+
+      settings.command = 'node -e "console.log(process.env.TESTEM_USER_CONFIG)"'
+      config = new Config()
+      launcher.start()
+      launcher.on('processExit', function(code, stdout, stderr){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'copied' + EOL)
+        process.env = originalEnv;
+        done()
+      })
+    })
   })
 
   describe('via exe', function(){
@@ -126,7 +139,7 @@ describe('Launcher', function(){
         assert.strictEqual(_config, config)
         return ['hello']
       }
-      config = new Config
+      config = new Config()
       launcher = new Launcher('say hello', settings, config)
       launcher.launch()
       setTimeout(function(){
@@ -145,6 +158,23 @@ describe('Launcher', function(){
 
     it('returns commandLine', function(){
       assert.equal(launcher.commandLine(), '"echo hello"')
+    })
+
+    it('copies the current environment', function(done) {
+      var originalEnv = process.env;
+      process.env.TESTEM_USER_CONFIG = 'copied'
+
+      settings = {exe: 'node', args: ['-e', 'console.log(process.env.TESTEM_USER_CONFIG)']}
+      config = new Config()
+      launcher = new Launcher('say hello', settings, config)
+      launcher.launch()
+      launcher.on('processExit', function(code, stdout){
+        assert.equal(code, 0)
+        assert.equal(stdout, 'copied' + EOL)
+
+        process.env = originalEnv;
+        done()
+      })
     })
 
   })
