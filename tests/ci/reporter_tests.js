@@ -4,8 +4,9 @@ var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter')
 var PassThrough = require('stream').PassThrough
 var concat = require('concat-stream')
 var assert = require('chai').assert
+var isWin = /^win/.test(process.platform)
 
-describe('test reporters', function(){
+describe('test reporters', !isWin ? function(){
 
   describe('tap reporter', function(){
     it('writes out TAP', function(){
@@ -113,4 +114,6 @@ describe('test reporters', function(){
     })
   })
 
+}: function() {
+  xit('TODO: Fix and re-enable for windows')
 })
