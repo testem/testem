@@ -5,34 +5,44 @@ var Backbone = require('backbone')
 var request = require('request')
 var cheerio = require('cheerio')
 var fs = require('fs')
-var path = require('path')
 var expect = require('chai').expect
+var http = require('http')
+var https = require('https')
 
 describe('Server', function(){
-  var server, runners, app, socketClient, config
-  var orgSetTimeout, baseUrl, port
+  var server, runners, socketClient, config
+  var baseUrl, port
   before(function(done){
-  port = 63571
-  config = new Config('dev', {
-    port: port,
-    src_files: [
-      'web/hello.js',
-      {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
-    ],
-    cwd: 'tests'
-  })
-  baseUrl = 'http://localhost:' + port + '/'
-  runners = new Backbone.Collection
+    port = 63571
+    config = new Config('dev', {
+      port: port,
+      src_files: [
+        'web/hello.js',
+        {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+      ],
+      cwd: 'tests',
+      proxies: {
+        '/api1': {
+          target: 'http://localhost:13372'
+        },
+        '/api2': {
+          target: 'https://localhost:13373',
+          secure: false
+        }
+      }
+    })
+    baseUrl = 'http://localhost:' + port + '/'
+    runners = new Backbone.Collection()
 
-  server = new Server(config)
-  server.start()
-  server.server.addListener('connection', function(stream){
-    stream.setTimeout(100) // don't tolerate idleness in tests
-  })
-  server.once('server-start', function(){
-    done()
-  })
-  socketClient = new EventEmitter
+    server = new Server(config)
+    server.start()
+    server.server.addListener('connection', function(stream){
+      stream.setTimeout(100) // don't tolerate idleness in tests
+    })
+    server.once('server-start', function(){
+      done()
+    })
+    socketClient = new EventEmitter()
   })
   after(function(done){
     server.stop(function(){
@@ -41,7 +51,7 @@ describe('Server', function(){
   })
 
   it('gets the home page', function(done){
-    request(baseUrl, function(err, req, text){
+    request(baseUrl, function(){
       done()
     })
   })
@@ -62,7 +72,7 @@ describe('Server', function(){
   })
 
   it('gets testem.js', function(done){
-    request(baseUrl + '/testem.js', function(err, req, text){
+    request(baseUrl + '/testem.js', function(){
       done()
     })
   })
@@ -116,6 +126,61 @@ describe('Server', function(){
           expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/)
           done()
       })
+  })
+
+
+  describe('proxies', function() {
+    var api1, api2
+
+    beforeEach(function(done) {
+      api1 = http.createServer(function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('API');
+      })
+      var options = {
+        key: fs.readFileSync('tests/fixtures/certs/localhost.key'),
+        cert: fs.readFileSync('tests/fixtures/certs/localhost.cert')
+      };
+      api2 = https.createServer(options, function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('API - 2');
+      })
+
+      api1.listen(13372, function() {
+        api2.listen(13373, function() {
+          done()
+        })
+      })
+    })
+
+    afterEach(function(done) {
+      api1.close(function() {
+        api2.close(function() {
+          done()
+        })
+      })
+    })
+
+    it('proxies get request to api1', function(done) {
+      request.get(baseUrl + 'api1/hello', function(err, req, text) {
+        expect(text).to.equal('API')
+        done()
+      })
+    })
+
+    it('proxies get request to api2', function(done) {
+      request.get(baseUrl + 'api2/hello', function(err, req, text) {
+        expect(text).to.equal('API - 2')
+        done()
+      })
+    })
+
+    it('proxies post request to api1', function(done) {
+      request.post(baseUrl + 'api1/hello', function(err, req, text) {
+        expect(text).to.equal('API')
+        done()
+      })
+    })
   })
 
   //describe('routes', function(){
