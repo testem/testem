@@ -62,7 +62,7 @@
     "cheerio": "^0.18.0",
     "concat-stream": "^1.4.7",
     "ispy": "^0.1.2",
-    "mocha": "^2.1.0",
+    "mocha": "mochajs/mocha#4dbf640",
     "request": "^2.51.0",
     "sinon": "^1.12.2"
   },
