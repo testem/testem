@@ -2,11 +2,9 @@ var TapReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var DotReporter = require('../../lib/ci/test_reporters/dot_reporter')
 var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter')
 var PassThrough = require('stream').PassThrough
-var concat = require('concat-stream')
 var assert = require('chai').assert
-var isWin = /^win/.test(process.platform)
 
-describe('test reporters', !isWin ? function(){
+describe('test reporters', function(){
 
   describe('tap reporter', function(){
     it('writes out TAP', function(){
@@ -114,6 +112,4 @@ describe('test reporters', !isWin ? function(){
     })
   })
 
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })

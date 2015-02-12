@@ -4,13 +4,16 @@ var Config = require('../lib/config')
 var DevApp = require('../lib/dev')
 var sinon = require('sinon')
 
-describe('Dev', function(){
-  var app, config, spy
+var isWin = /^win/.test(process.platform)
+
+describe('Dev', !isWin ? function(){
+  var app, config, sandbox
 
   beforeEach(function(){
     config = new Config('dev')
-    sinon.stub(DevApp.prototype, "configureView")
-    sinon.stub(DevApp.prototype, "configure")
+    sandbox = sinon.sandbox.create()
+    sandbox.stub(DevApp.prototype, "configureView")
+    sandbox.stub(DevApp.prototype, "configure")
     app = new DevApp(config, function(){})
     app.view = {
       clearErrorPopupMessage: function(){}
@@ -18,8 +21,7 @@ describe('Dev', function(){
   })
 
   afterEach(function(){
-    DevApp.prototype.configureView.restore()
-    DevApp.prototype.configure.restore()
+    sandbox.restore()
   })
 
   it("starts off not paused", function(){
@@ -28,14 +30,16 @@ describe('Dev', function(){
 
   it("doesn't run tests when reset and paused", function() {
     app.paused = true
-    cb = sinon.spy()
+    var cb = sandbox.spy()
     app.startTests(cb)
     expect(cb.called).to.be.false
   })
 
   it("runs tests when reset and not paused", function() {
-    cb = sinon.spy()
+    var cb = sandbox.spy()
     app.startTests(cb)
     expect(cb.called).to.be.true
   })
+}: function() {
+  xit('TODO: Fix and re-enable for windows')
 })

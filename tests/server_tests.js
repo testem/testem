@@ -1,6 +1,6 @@
 var Server = require('../lib/server')
 var Config = require('../lib/config')
-var EventEmitter = require('events').EventEmitter
+var path = require('path')
 var Backbone = require('backbone')
 var request = require('request')
 var cheerio = require('cheerio')
@@ -9,9 +9,7 @@ var expect = require('chai').expect
 var http = require('http')
 var https = require('https')
 
-var isWin = /^win/.test(process.platform)
-
-describe('Server', !isWin ? function(){
+describe('Server', function(){
   var baseUrl, server, config
   var port = 63571
 
@@ -40,17 +38,12 @@ describe('Server', !isWin ? function(){
 
       server = new Server(config)
       server.start()
-      server.server.addListener('connection', function(stream){
-        stream.setTimeout(100) // don't tolerate idleness in tests
-      })
       server.once('server-start', function(){
         done()
       })
     })
     after(function(done){
-      server.stop(function(){
-        done()
-      })
+      server.stop(done)
     })
 
     it('gets the home page', function(done){
@@ -65,8 +58,8 @@ describe('Server', !isWin ? function(){
           '/testem/jasmine.js',
           '/testem.js',
           '/testem/jasmine-html.js',
-          'web/hello.js',
-          'web/hello_tst.js'
+          'web' + path.sep + 'hello.js',
+          'web' + path.sep + 'hello_tst.js'
         ])
         done()
       })
@@ -214,6 +207,4 @@ describe('Server', !isWin ? function(){
     })
   })
 
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })

@@ -4,13 +4,15 @@ var Config = require('../lib/config')
 var expect = require('chai').expect
 
 describe('Api', function(){
+  var sandbox
 
   beforeEach(function(){
-    sinon.stub(Config.prototype, 'read')
+    sandbox = sinon.sandbox.create()
+    sandbox.stub(Config.prototype, 'read')
   })
 
-  afterEach(function(){
-    Config.prototype.read.restore()
+  afterEach(function() {
+    sandbox.restore()
   })
 
   it('forwards config', function(){

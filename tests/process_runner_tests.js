@@ -5,9 +5,7 @@ var PassThrough = require('stream').PassThrough
 var Launcher = require('../lib/launcher')
 var bd = require('bodydouble')
 
-var isWin = /^win/.test(process.platform)
-
-describe('ProcessRunner', !isWin ? function(){
+describe('ProcessRunner', function(){
   var runner
   var launcher
   var settings
@@ -242,8 +240,6 @@ describe('ProcessRunner', !isWin ? function(){
 
   })
 
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })
 
 function FakeProcess(){

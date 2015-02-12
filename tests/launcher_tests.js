@@ -6,9 +6,7 @@ var bd = require('bodydouble')
 var EOL = require('os').EOL
 var stub = bd.stub
 
-var isWin = /^win/.test(process.platform)
-
-describe('Launcher', !isWin ? function(){
+describe('Launcher', function(){
   var settings, launcher, config
 
   describe('via command', function(){
@@ -98,63 +96,68 @@ describe('Launcher', !isWin ? function(){
 
   describe('via exe', function(){
 
+    var echoArgs = 'console.log(process.argv.slice(1).join(\' \'))'
+
     it('should launch and also kill it', function(done){
-      settings = {exe: 'echo', args: ['hello']}
+      settings = {exe: 'node', args: ['-e', echoArgs, 'hello']}
       config = new Config(null, {port: '7357', url: 'http://blah.com/'})
       launcher = new Launcher('say hello', settings, config)
       launcher.launch()
       var data = ''
+      launcher.process.on('exit', function(){
+        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
+        done()
+      })
       launcher.process.stdout.on('data', function(chunk){
         data += String(chunk)
       })
-      setTimeout(function(){
-        expect(data).to.match(/hello http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
-        launcher.kill('SIGKILL', function(){
-          done()
-        })
-      }, 10)
     })
     it('should substitute variables for args', function(done){
-      settings = {exe: 'echo', args: ['<port>', '<url>']}
+      settings = {exe: 'node', args: ['-e', echoArgs, '<port>', '<url>']}
       config = new Config(null, {port: '7357', url: 'http://blah.com/'})
       launcher = new Launcher('say url', settings, config)
       launcher.launch()
       var data = ''
+
+      launcher.process.on('exit', function(){
+        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
+        done()
+      })
       launcher.process.stdout.on('data', function(chunk){
         data += String(chunk)
       })
-      setTimeout(function(){
-        expect(data).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+(\r\n|\n)/)
-        launcher.kill('SIGKILL', function(){
-          done()
-        })
-      }, 10)
     })
     it('calls args as function with config', function(done){
-      settings = {exe: 'echo'}
+      settings = {exe: 'node'}
       settings.args = function(_config){
         assert.strictEqual(_config, config)
-        return ['hello']
+        return ['-e', echoArgs, 'hello']
       }
       config = new Config()
       launcher = new Launcher('say hello', settings, config)
       launcher.launch()
-      setTimeout(function(){
+
+      var data = ''
+      launcher.process.on('exit', function(){
+        expect(data).to.eq('hello\n')
         done()
-      }, 10)
+      })
+      launcher.process.stdout.on('data', function(chunk){
+        data += String(chunk)
+      })
     })
 
     it('returns exit code and stdout on processExit', function(done){
-      launcher.start()
+      launcher.launch()
       launcher.on('processExit', function(code, stdout){
         assert.equal(code, 0)
-        assert.equal(stdout, 'hello' + EOL)
+        assert.equal(stdout, 'hello\n')
         done()
       })
     })
 
     it('returns commandLine', function(){
-      assert.equal(launcher.commandLine(), '"echo hello"')
+      assert.equal(launcher.commandLine(), '"node -e console.log(process.argv.slice(1).join(\' \')) hello"')
     })
 
     it('copies the current environment', function(done) {
@@ -175,6 +178,4 @@ describe('Launcher', !isWin ? function(){
     })
 
   })
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })

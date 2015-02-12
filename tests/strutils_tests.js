@@ -1,5 +1,4 @@
-var test = require('./testutils.js')
-var expect = test.expect
+var expect = require('chai').expect
 var StyledString = require('styled_string')
 var strutils = require('../lib/strutils')
 var splitLines = strutils.splitLines

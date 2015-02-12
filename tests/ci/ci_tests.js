@@ -5,13 +5,24 @@ var Config = require('../../lib/config')
 var bd = require('bodydouble')
 var mock = bd.mock
 var stub = bd.stub
-var path = require('path')
 var assert = require('chai').assert
+var expect = require('chai').expect
 var Process = require('did_it_work')
-var EOL = require('os').EOL
-var isWin = /^win/.test(process.platform)
+var exec = require('child_process').exec
+var rimraf = require('rimraf')
+var path = require('path')
 
-describe('ci mode app', !isWin ? function(){
+describe('ci mode app', function(){
+  this.timeout(90000)
+
+  before(function(done){
+    rimraf('tests/fixtures/tape/node_modules', function(err){
+      if (err) {
+        return done(err)
+      }
+      exec('npm install', { cwd: path.join('tests/fixtures/tape/') }, done)
+    })
+  })
 
   beforeEach(function(done){
     fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
@@ -20,11 +31,11 @@ describe('ci mode app', !isWin ? function(){
   })
 
   it('runs them tests on node, nodetap, and browser', function(done){
-    this.timeout(10000)
+
     var config = new Config('ci', {
       file: 'tests/fixtures/tape/testem.json',
-      port: 7358,
-      cwd: 'tests/fixtures/tape/',
+      port: 0,
+      cwd: path.join('tests/fixtures/tape/'),
       launch_in_ci: ['node', 'nodeplain', 'phantomjs']
     })
     config.read(function(){
@@ -50,6 +61,7 @@ describe('ci mode app', !isWin ? function(){
           return !r.result.passed
         }), 'hello bob should fail')
 
+        expect(nodePlain[0]).to.exist
         assert(!nodePlain[0].result.passed, 'node plain should fail')
 
         var launchers = reporter.results.map(function(r){
@@ -82,6 +94,7 @@ describe('ci mode app', !isWin ? function(){
     var app = new App(new Config('ci'))
     var reporter = new TestReporter(true)
     stub(app, 'reporter', reporter)
+    stub(app, 'exit')
     app.wrapUp(new Error('blarg'))
     assert.equal(reporter.total, 1)
     assert.equal(reporter.pass, 0)
@@ -124,11 +137,9 @@ describe('ci mode app', !isWin ? function(){
 
   })
 
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })
 
-describe('runHook', !isWin ? function(){
+describe('runHook', function(){
 
   var fakeP
 
@@ -250,7 +261,7 @@ describe('runHook', !isWin ? function(){
     var app = new App(config)
     app.runHook('on_start', function(err, stdout){
       process.env = originalEnv;
-      assert.equal(stdout, 'copied' + EOL)
+      assert.equal(stdout, 'copied\n')
       done()
     })
   })
@@ -268,7 +279,7 @@ describe('runHook', !isWin ? function(){
     var app = new App(config)
     app.runHook('on_start', function(err, stdout){
       process.env = originalEnv;
-      assert.equal(stdout, 'copied' + EOL)
+      assert.equal(stdout, 'copied\n')
       done()
     })
   })
@@ -287,7 +298,7 @@ describe('runHook', !isWin ? function(){
     this.timeout(10000)
     var config = new Config('ci', {
       file: 'tests/fixtures/tape/testem.json',
-      port: 7358,
+      port: 0,
       cwd: 'tests/fixtures/tape/',
       launch_in_ci: ['node']
     })
@@ -307,6 +318,4 @@ describe('runHook', !isWin ? function(){
     })
   })
 
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
 })
