@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "description": "Example tests using tape",
   "devDependencies": {
-    "tape": "~0.1.1"
+    "tape": "^3.5.0",
+    "browserify": "^2.22.0"
   },
   "scripts": {
-    "test": "node tests.js"
+    "test": "node tests.js",
+    "browserify": "browserify tests.js -o public/bundle.js"
   }
 }
