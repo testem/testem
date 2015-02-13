@@ -26,7 +26,7 @@
     "charm": "^1.0.0",
     "colors": "^1.0.3",
     "commander": "^2.6.0",
-    "consolidate": "^0.10.0",
+    "consolidate": "^0.11.0",
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
     "fileset": "^0.1.5",
@@ -40,7 +40,7 @@
     "rimraf": "^2.2.8",
     "socket.io": "~1.3.2",
     "styled_string": "0.0.1",
-    "tap": "^0.5.0",
+    "tap": "^0.6.0",
     "xml-escape": "^1.0.0"
   },
   "files": [
@@ -58,11 +58,11 @@
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",
-    "chai": "^1.10.0",
+    "chai": "^2.0.0",
     "cheerio": "^0.18.0",
     "concat-stream": "^1.4.7",
     "ispy": "^0.1.2",
-    "mocha": "mochajs/mocha#4dbf640",
+    "mocha": "^2.1.0",
     "request": "^2.51.0",
     "sinon": "^1.12.2"
   },
