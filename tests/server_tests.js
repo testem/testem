@@ -30,7 +30,11 @@ describe('Server', function(){
           '/api2': {
             target: 'https://localhost:13373',
             secure: false
-          }
+          },
+          '/api3': {
+            target: 'http://localhost:13374',
+            onlyContentTypes: ['json']
+          },
         }
       })
       baseUrl = 'http://localhost:' + port + '/'
@@ -122,7 +126,7 @@ describe('Server', function(){
 
 
     describe('proxies', function() {
-      var api1, api2
+      var api1, api2, api3
 
       beforeEach(function(done) {
         api1 = http.createServer(function (req, res) {
@@ -137,10 +141,16 @@ describe('Server', function(){
           res.writeHead(200, {'Content-Type': 'text/plain'});
           res.end('API - 2');
         })
+        api3 = http.createServer(function (req, res) {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end(JSON.stringify({API: 3}));
+        })
 
         api1.listen(13372, function() {
           api2.listen(13373, function() {
-            done()
+            api3.listen(13374, function() {
+              done()
+            })
           })
         })
       })
@@ -148,7 +158,9 @@ describe('Server', function(){
       afterEach(function(done) {
         api1.close(function() {
           api2.close(function() {
-            done()
+            api3.close(function() {
+              done()
+            })
           })
         })
       })
@@ -161,18 +173,70 @@ describe('Server', function(){
       })
 
       it('proxies get request to api2', function(done) {
-        request.get(baseUrl + 'api2/hello', function(err, req, text) {
+        var options = {
+          url: baseUrl + 'api2/hello',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        request.get(options, function(err, req, text) {
           expect(text).to.equal('API - 2')
           done()
         })
       })
 
       it('proxies post request to api1', function(done) {
-        request.post(baseUrl + 'api1/hello', function(err, req, text) {
+        var options = {
+          url: baseUrl + 'api1/hello',
+          headers: {
+            'Accept': 'application/json'
+          }
+        }
+        request.post(options, function(err, req, text) {
           expect(text).to.equal('API')
           done()
         })
       })
+
+      it('proxies get request to api3', function(done) {
+        var options = {
+          url: baseUrl + 'api3/test',
+          headers: {
+            'Accept': 'application/json'
+          }
+        }
+        request.get(options, function(err, req, text) {
+          expect(text).to.equal('{"API":3}')
+          done()
+        })
+      })
+
+      it('proxies post request to api3', function(done) {
+        var options = {
+          url: baseUrl + 'api3/test',
+          headers: {
+            'Accept': 'application/json'
+          }
+        }
+        request.post(options, function(err, req, text) {
+          expect(text).to.equal('{"API":3}')
+          done()
+        })
+      })
+
+      it('proxies get html request to api3', function(done) {
+        var options = {
+          url: baseUrl + 'api3/test',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+          }
+        }
+        request.get(options, function(err, req, text) {
+          expect(text).to.equal('Not found: /api3/test')
+          done()
+        })
+      })
+
     })
   })
 
