@@ -1,8 +1,16 @@
 language: node_js
 node_js:
-- "0.12"
-- "0.10"
+- '0.12'
+- '0.10'
 - iojs
 matrix:
   fast_finish: true
 sudo: false
+deploy:
+  provider: npm
+  email: johannes.wuerbach@googlemail.com
+  api_key:
+    secure: GpFEM1tptEqlRo/y2UgrLCoZy7am8Zf/1Ve/hAsDuejdLkV7iH394QT+3Uv5MFPS765wg3PpaSJ7111QEMX3DOhDdBiFvBKC/+BgzEb3OrwcdfrbbKwru+a+OyJvQLqFElChy+bGlsR1jUo5w9DlMTECv7I0Rgz0hQXClzi3PeA=
+  on:
+    tags: true
+    repo: airportyh/testem
