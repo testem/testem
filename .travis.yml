@@ -14,3 +14,4 @@ deploy:
   on:
     tags: true
     repo: airportyh/testem
+    node: '0.12'
