@@ -402,7 +402,8 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 {
   "proxies": {
     "/api": {
-      "target": "http://localhost:4200"
+      "target": "http://localhost:4200",
+      "onlyContentTypes": ["xml", "json"]
     },
     "/xmlapi": {
       "target": "https://localhost:8000",
@@ -414,6 +415,8 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 
 This functionality is implemented as a *transparent proxy* hence a request to
 `http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options 
+
+To limit the functionality to only certain content types, use "onlyContentTypes".
 
 Example Projects
 ----------------
