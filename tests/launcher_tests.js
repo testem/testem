@@ -4,6 +4,7 @@ var expect = require('chai').expect
 var assert = require('chai').assert
 var bd = require('bodydouble')
 var EOL = require('os').EOL
+var path = require('path')
 var stub = bd.stub
 
 describe('Launcher', function(){
@@ -91,6 +92,15 @@ describe('Launcher', function(){
         process.env = originalEnv;
         done()
       })
+    })
+    it('sends SIGKILL when SIGTERM is ignored', function(done) {
+      settings.command = 'node ' + path.join(__dirname, 'fixtures/ignore_sigterm')
+      launcher.start()
+      launcher.killTimeout = 200
+      launcher.on('processExit', function(){
+        done()
+      })
+      launcher.kill()
     })
   })
 
