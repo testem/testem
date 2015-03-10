@@ -108,7 +108,21 @@ describe('test reporters', function(){
       var output = stream.read().toString()
       assert.match(output, /it didnt work"><failure/)
       assert.match(output, /it crapped out/)
-
+    })
+    it('XML escapes errors', function(){
+      var stream = new PassThrough()
+      var reporter = new XUnitReporter(false, stream)
+      reporter.report('phantomjs', {
+        name: 'it failed with quotes',
+        passed: 1,
+        total: 1,
+        failed: 0,
+        error: new Error('<it> \"crapped\" out')
+      })
+      reporter.finish()
+      var output = stream.read().toString()
+      assert.match(output, /it failed with quotes"><failure/)
+      assert.match(output, /&lt;it&gt; &quot;crapped&quot; out/)
     })
   })
 
