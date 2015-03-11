@@ -7,3 +7,5 @@ node_modules
 .idea
 .coverage_data
 cover_html
+test-results.xml
+reports
