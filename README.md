@@ -9,7 +9,7 @@ Features
 --------
 
 * Test-framework agnostic. Support for
-    - [Jasmine](http://pivotal.github.com/jasmine/)
+    - [Jasmine](http://jasmine.github.io/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://mochajs.org/)
     - [Buster.js](http://docs.busterjs.org/)
