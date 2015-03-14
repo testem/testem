@@ -296,7 +296,7 @@ If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_
 ```javascript
 "launchers": {
   "Mocha": {
-    "command": "mocha tests/*_tests.js -R tap"
+    "command": "mocha tests/*_tests.js -R tap",
     "protocol": "tap"
   }
 }
