@@ -20,7 +20,7 @@ install:
   - npm install
   # Install PhantomJS
   - IF %PHANTOM_SRC%==npm npm install -g phantomjs
-  - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -Version 1.9.8 -y && set path=%path%;C:\tools\PhantomJS\
+  - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
   - phantomjs -v
 
 # Post-install test scripts.
