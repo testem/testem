@@ -170,7 +170,7 @@ Testem has other test reporters than TAP: `dot` and `xunit`. You can use the `-R
 ### Example xunit reporter output
 
 Note that the real output is not pretty printed.
-'''
+'''xml
 <testsuite name="Testem Tests" tests="4" failures="1" timestamp="Wed Apr 01 2015 11:56:20 GMT+0100 (GMT Daylight Time)" time="9">
   <testcase classname="PhantomJS 1.9" name="myFunc returns true when input is valid" time="0"/>
   <testcase classname="PhantomJS 1.9" name="myFunc returns false when user tickles it" time="0"/>
