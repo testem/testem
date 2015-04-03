@@ -38,7 +38,7 @@ Screencasts
 
 Installation
 ------------
-You need [Node](http://nodejs.org/) version 0.6.2 or later installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
+You need [Node](http://nodejs.org/) version 0.10+ or iojs installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
 
 Once you have Node installed:
 
