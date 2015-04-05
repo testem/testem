@@ -89,9 +89,7 @@ function init(){
     connectStatus = 'disconnected'
     syncConnectStatus()
   })
-  socket.on('reconnect', startTests)
   socket.on('start-tests', startTests)
-
   addListener(window, 'load', initUI)
 
   while (parent.Testem.emitConnectionQueue.length > 0) {
