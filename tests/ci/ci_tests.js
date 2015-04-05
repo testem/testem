@@ -103,6 +103,25 @@ describe('ci mode app', function(){
     assert.equal(result.error.message, 'blarg')
   })
 
+  it('does not try to stop server if Testem Server Error occurs', function(){
+    var app = new App(new Config('ci'))
+    stub(app, 'stopServer')
+    stub(app, 'exit')
+
+    app.wrapUp(new Error('Testem Server Error: foo'))
+    assert(!app.stopServer.called, 'stop server should not be called')
+    assert(app.exit.called, 'exit should be called')
+  })
+
+  it('stops server if non- Testem Server Error occurs', function(){
+    var app = new App(new Config('ci'))
+    stub(app, 'stopServer')
+    stub(app, 'exit')
+
+    app.wrapUp(new Error('Not Testem Server Error: foo'))
+    assert(app.stopServer.called, 'stop server should be called')
+  })
+
   describe('getExitCode', function(){
 
     it('returns 0 if all passed', function(){
