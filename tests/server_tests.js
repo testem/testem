@@ -33,7 +33,7 @@ describe('Server', function(){
           },
           '/api3': {
             target: 'http://localhost:13374',
-            onlyContentTypes: ['json']
+            onlyContentTypes: ['json', 'xml']
           },
         }
       })
