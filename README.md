@@ -497,7 +497,7 @@ Credits
 
 Testem depends on these great software
 
-* [Jasmine](http://pivotal.github.com/jasmine/)
+* [Jasmine](http://jasmine.github.io/)
 * [QUnit](http://code.google.com/p/jqunit/)
 * [Mocha](http://mochajs.org/)
 * [Node](http://nodejs.org/)
