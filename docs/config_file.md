@@ -55,12 +55,13 @@ Common Configuration Options
     framework:              [String]  test framework to use
     url:                    [String]  url server runs at (http://{host}:{port}/)
     src_files:              [Array]   list of files or file patterns to use
+    src_files_ignore:       [Array]   list of files or file patterns to exclude from usage
     serve_files:            [Array]   list of files or file patterns to inject into test playground (defaults t  o src_files)
     watch_files:            [Array]   list of files or file patterns to watch changes of (defaults to src_files  )
     css_files:              [Array]   additionals stylesheets to include
     cwd:                    [Path]    directory to use as root
     parallel:               [Number]  max number of parallel runners (1)
-    routes:                 [Hash]    overrides for assets paths
+    routes:                 [Object]  overrides for assets paths
     fail_on_zero_tests:     [Boolean] whether process should exit with error status when no tests found  
     unsafe_file_serving:    [Boolean] allow serving directories that are not in your CWD (false)
     reporter:               [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
