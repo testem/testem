@@ -36,10 +36,10 @@ Common Configuration Options
 
 ### CLI-level options:
 
-    file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.ym   l)
+    file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.yml)
     host:                    [String]  server host to use (localhost)
     port:                    [Number]  server port to use (7357)
-    launch:                  [Array]   list of launchers to use for current runs (defaults to current mo   de)
+    launch:                  [Array]   list of launchers to use for current runs (defaults to current mode)
     skip:                    [Array]   list of launchers to skip
     debug:                   [Boolean] debug mode (false)
     test_page:               [String]  path to the page to use to run tests
@@ -56,8 +56,9 @@ Common Configuration Options
     url:                    [String]  url server runs at (http://{host}:{port}/)
     src_files:              [Array]   list of files or file patterns to use
     src_files_ignore:       [Array]   list of files or file patterns to exclude from usage
-    serve_files:            [Array]   list of files or file patterns to inject into test playground (defaults t  o src_files)
-    watch_files:            [Array]   list of files or file patterns to watch changes of (defaults to src_files  )
+    serve_files:            [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
+    serve_files_ignore:     [Array]   list of files or file patterns to exclude from test playground (defaults to src_files_ignore)
+    watch_files:            [Array]   list of files or file patterns to watch changes of (defaults to src_files)
     css_files:              [Array]   additionals stylesheets to include
     cwd:                    [Path]    directory to use as root
     parallel:               [Number]  max number of parallel runners (1)
