@@ -163,7 +163,7 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 
 ## Other Test Reporters
 
-Testem has other test reporters than TAP: `dot` and `xunit`. You can use the `-R` to specify them
+Testem has other test reporters than TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
 
     testem ci -R dot
 
@@ -184,6 +184,19 @@ Note that the real output is not pretty printed.
   </testcase>
 </testsuite>
 ```
+
+### Example teamcity reporter output
+
+    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello']
+    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello']
+    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello to person']
+    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello to person']
+    ##teamcity[testStarted name='PhantomJS 1.9 - goodbye should say goodbye']
+    ##teamcity[testFailed name='PhantomJS 1.9 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
+    ##teamcity[testFinished name='PhantomJS 1.9 - goodbye should say goodbye']
+
+    ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+
 
 ### Command line options
 
@@ -243,7 +256,7 @@ You can also use a custom page for testing. To do this, first you need to specif
 {
   "test_page": "tests.html"
 }
-```  
+```
 
 Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
@@ -432,7 +445,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options 
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
