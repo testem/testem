@@ -5,6 +5,7 @@ var Config = require('../../lib/config')
 var bd = require('bodydouble')
 var mock = bd.mock
 var stub = bd.stub
+var spy = require('ispy')
 var assert = require('chai').assert
 var expect = require('chai').expect
 var Process = require('did_it_work')
@@ -107,6 +108,11 @@ describe('ci mode app', function(){
     var app = new App(new Config('ci'))
     stub(app, 'stopServer')
     stub(app, 'exit')
+    mock(app, {
+      overrides: {
+        cleanUpLaunchers: function(cb) { cb() }
+      }
+    })
 
     app.wrapUp(new Error('Testem Server Error: foo'))
     assert(!app.stopServer.called, 'stop server should not be called')
@@ -117,9 +123,69 @@ describe('ci mode app', function(){
     var app = new App(new Config('ci'))
     stub(app, 'stopServer')
     stub(app, 'exit')
+    mock(app, {
+      overrides: {
+        cleanUpLaunchers: function(cb) { cb() }
+      }
+    })
 
     app.wrapUp(new Error('Not Testem Server Error: foo'))
     assert(app.stopServer.called, 'stop server should be called')
+  })
+
+  it('kills launchers on wrapUp', function() {
+    var app = new App(new Config('ci'))
+    stub(app, 'stopServer')
+    stub(app, 'exit')
+    stub(app, 'cleanUpLaunchers')
+
+    app.wrapUp()
+    assert(app.cleanUpLaunchers.called, 'clean up launchers should be called')
+  })
+
+  it('cleans up idling launchers', function() {
+    var app = new App(new Config('ci'))
+    app.runners = [
+      {
+        launcher: {
+          process: true,
+          kill: spy()
+        }
+      },
+      {
+        launcher: {}
+      },
+      {}
+    ]
+
+    app.runners[0].launcher.kill.once('call', function(sig, cb) { cb() })
+
+    var cb = spy()
+    app.cleanUpLaunchers(cb)
+    assert(cb.called, 'cleanUpLaunchers calls its given callback')
+    assert(app.runners[0].launcher.kill.called, 'launcher with process and kill should be called')
+  })
+
+  it('timeout does not wait for idling launchers', function(done){
+
+    var config = new Config('ci', {
+      port: 0,
+      cwd: path.join('tests/fixtures/fail_later'),
+      timeout: 5,
+      launch_in_ci: ['phantomjs']
+    })
+    config.read(function(){
+      var app = new App(config)
+      stub(app, 'cleanExit')
+      var reporter = stub(app, 'reporter', new TestReporter(true))
+      app.start()
+      var start = Date.now()
+      app.cleanExit.once('call', function(){
+        assert.lengthOf(app.runners, 1, 'There must be one runner')
+        assert(Date.now() - start < 30000, 'Timeout does not wait for test to finish if it takes too long')
+        done()
+      })
+    })
   })
 
   describe('getExitCode', function(){
