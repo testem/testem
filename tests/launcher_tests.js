@@ -176,6 +176,17 @@ describe('Launcher', function(){
       assert.equal(launcher.commandLine(), '"node -e console.log(process.argv.slice(1).join(\' \')) hello"')
     })
 
+    it('returns commandLine with a single exe', function(done){
+      settings = {exe: ['node', 'npm'], args: function(){ return ['-e', 'console.log(1)'] }}
+      config = new Config()
+      launcher = new Launcher('single exe', settings, config)
+      launcher.launch()
+      launcher.on('processExit', function(){
+        assert.equal(launcher.commandLine(), '"node -e console.log(1)"')
+        done()
+      })
+    })
+
     it('copies the current environment', function(done) {
       var originalEnv = process.env;
       process.env.TESTEM_USER_CONFIG = 'copied'
