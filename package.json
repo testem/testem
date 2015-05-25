@@ -21,13 +21,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "async": "^0.9.0",
+    "async": "^1.0.0",
     "backbone": "^1.1.2",
     "charm": "^1.0.0",
     "colors": "^1.0.3",
     "commander": "^2.6.0",
     "consolidate": "^0.12.1",
-    "cross-spawn": "^0.2.6",
+    "cross-spawn": "^0.4.0",
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
     "fileset": "^0.1.5",
@@ -42,7 +42,7 @@
     "rimraf": "^2.2.8",
     "socket.io": "^1.3.4",
     "styled_string": "0.0.1",
-    "tap": "^0.7.1",
+    "tap-parser": "^1.1.3",
     "xmldom": "^0.1.19"
   },
   "files": [
@@ -67,7 +67,7 @@
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "sinon": "^1.12.2",
-    "tmp": "0.0.25"
+    "tmp": "0.0.26"
   },
   "bin": {
     "testem": "./testem.js"
