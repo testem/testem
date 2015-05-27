@@ -7,6 +7,8 @@ var EOL = require('os').EOL
 var path = require('path')
 var stub = bd.stub
 
+var isWin = /^win/.test(process.platform);
+
 describe('Launcher', function(){
   describe('via command', function(){
     var settings, config, launcher;
@@ -176,15 +178,19 @@ describe('Launcher', function(){
       assert.equal(launcher.commandLine(), '"node -e console.log(process.argv.slice(1).join(\' \')) hello"')
     })
 
-    it('returns commandLine with a single exe', function(done){
-      settings = {exe: ['node', 'npm'], args: function(){ return ['-e', 'console.log(1)'] }}
-      config = new Config()
-      launcher = new Launcher('single exe', settings, config)
-      launcher.launch()
-      launcher.on('processExit', function(){
+    it('returns commandLine with a single exe', !isWin ? function(done){
+      settings.exe = ['node', 'npm']
+      settings.args = function() {
+        return ['-e', 'console.log(1)']
+      }
+      launcher.start()
+      launcher.on('processExit', function(code, stdout) {
+        assert.equal(stdout, '1\n');
         assert.equal(launcher.commandLine(), '"node -e console.log(1)"')
         done()
       })
+    }: function() {
+      xit('TODO: Fix and re-enable for windows')
     })
 
     it('copies the current environment', function(done) {
