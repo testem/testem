@@ -2,6 +2,7 @@ var fs = require('fs')
 var App = require('../../lib/ci')
 var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var Config = require('../../lib/config')
+var sinon = require('sinon')
 var bd = require('bodydouble')
 var mock = bd.mock
 var stub = bd.stub
@@ -15,6 +16,18 @@ var path = require('path')
 
 describe('ci mode app', function(){
   this.timeout(90000)
+  var sandbox;
+
+  beforeEach(function(done){
+    sandbox = sinon.sandbox.create();
+    fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
+      done()
+    })
+  })
+
+  afterEach(function() {
+    sandbox.restore();
+  })
 
  describe('multiple launchers', function() {
    before(function(done){
@@ -123,10 +136,15 @@ describe('ci mode app', function(){
     assert.equal(result.error.message, 'blarg')
   })
 
-  it('does not try to stop server if Testem Server Error occurs', function(){
-    var app = new App(new Config('ci'))
-    stub(app, 'stopServer')
-    stub(app, 'exit')
+  it('does not try to stop server if Testem Server Error occurs', function(done) {
+    var app = new App(new Config('ci'), function() {
+      assert(!app.stopServer.called, 'stop server should not be called');
+      done();
+    })
+    sandbox.stub(app, 'startServer', function (cb) {
+      cb();
+    });
+    sandbox.spy(app, 'stopServer')
     mock(app, {
       overrides: {
         cleanUpLaunchers: function(cb) { cb() }
@@ -134,14 +152,14 @@ describe('ci mode app', function(){
     })
 
     app.wrapUp(new Error('Testem Server Error: foo'))
-    assert(!app.stopServer.called, 'stop server should not be called')
-    assert(app.exit.called, 'exit should be called')
   })
 
-  it('stops server if non- Testem Server Error occurs', function(){
-    var app = new App(new Config('ci'))
-    stub(app, 'stopServer')
-    stub(app, 'exit')
+  it('stops server if non- Testem Server Error occurs', function(done) {
+    var app = new App(new Config('ci'), function() {
+      assert(app.stopServer.called, 'stop server should be called');
+      done();
+    })
+    sandbox.spy(app, 'stopServer')
     mock(app, {
       overrides: {
         cleanUpLaunchers: function(cb) { cb() }
@@ -149,7 +167,6 @@ describe('ci mode app', function(){
     })
 
     app.wrapUp(new Error('Not Testem Server Error: foo'))
-    assert(app.stopServer.called, 'stop server should be called')
   })
 
   it('kills launchers on wrapUp', function() {
