@@ -318,6 +318,20 @@ describe('Config', function(){
 			})
 		})
 	})
+
+	describe('getCSSFiles', function(){
+		it('loads css_files correctly', function(done){
+			config.set('cwd', 'tests')
+			config.set('src_files', 'fixtures/styles/*.css')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'print.css'),
+					fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'screen.css')
+				])
+				done()
+			})
+		})
+	})
 })
 
 
@@ -362,6 +376,9 @@ describe('getTemplateData', function(){
 				timeout: 2,
 				port: 8081,
 				src_files: ['web/*.js'],
+				css_files: [
+					{src:'', attrs: []}
+				],
 				serve_files: [
 					{src:'web/hello.js', attrs: []},
 					{src:'web/hello_tst.js', attrs: []}
