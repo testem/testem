@@ -372,18 +372,13 @@ describe('getTemplateData', function(){
 		var progOptions = mockTopLevelProgOptions()
 		var config = new Config('dev', progOptions, fileConfig)
 		config.getTemplateData(function(err, data){
-			expect(data).to.deep.equal({
-				timeout: 2,
-				port: 8081,
-				src_files: ['web/*.js'],
-				css_files: [
-					{src:'', attrs: []}
-				],
-				serve_files: [
-					{src:'web/hello.js', attrs: []},
-					{src:'web/hello_tst.js', attrs: []}
-				]
-			})
+			expect(data.serve_files).to.deep.have.members([
+				{ src: 'web/hello.js', attrs: [] },
+				{ src: 'web/hello_tst.js', attrs: [] }
+			]);
+			expect(data.css_files).to.deep.have.members([
+				{ src: '', attrs: [] }
+			]);
 			done()
 		})
 	})
