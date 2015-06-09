@@ -275,13 +275,17 @@ Or if you are using require.js or another loader, just make sure you load `/test
 To enable dynamically substituting in the Javascript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path
+2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
     {{#serve_files}}
     <script src="{{src}}"></script>
     {{/serve_files}}
+
+    {{#css_files}}
+    <link rel="stylesheet" href="{{src}}">
+    {{/css_files}}
 
 Launchers
 ---------
