@@ -22,6 +22,10 @@ describe('Server', function(){
           'web/hello.js',
           {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
         ],
+        routes: {
+          '/direct-test': 'web/direct',
+          '/fallback-test': ['web/direct', 'web/fallback']
+        },
         cwd: 'tests',
         proxies: {
           '/api1': {
@@ -124,6 +128,20 @@ describe('Server', function(){
         })
     })
 
+    describe('route', function(done) {
+      it('routes server paths to local paths', function(done) {
+        assertUrlReturnsFileContents(baseUrl + 'direct-test/test.js', 'tests/web/direct/test.js', done)
+      })
+
+      it('allows fallback paths', function(done) {
+        var expectedCallbacks = 2
+        var cb = function() {
+          if (--expectedCallbacks === 0) done()
+        }
+        assertUrlReturnsFileContents(baseUrl + 'fallback-test/test.js', 'tests/web/direct/test.js', cb)
+        assertUrlReturnsFileContents(baseUrl + 'fallback-test/test2.js', 'tests/web/fallback/test2.js', cb)
+      })
+    })
 
     describe('proxies', function() {
       var api1, api2, api3
