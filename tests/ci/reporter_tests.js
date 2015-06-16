@@ -29,7 +29,7 @@ describe('test reporters', function(){
         '    ---',
         '        message: >',
         '            it crapped out',
-        '        Log: >',
+        '        Log: |',
         '            I am a log',
         '            Useful information',
         '    ...',
