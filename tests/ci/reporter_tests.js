@@ -44,7 +44,7 @@ describe('test reporters', function(){
   })
 
   describe('dot reporter', function(){
-    it('writes out result', function(){
+    it('writes out summary', function(){
       var stream = new PassThrough()
       var reporter = new DotReporter(false, stream)
       reporter.report('phantomjs', {
@@ -58,20 +58,67 @@ describe('test reporters', function(){
       assert.match(output, /1 tests complete \([0-9]+ ms\)/)
     })
 
-    it('writes out errors', function(){
+    it('writes out message and actual/expected', function(){
       var stream = new PassThrough()
       var reporter = new DotReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it fails',
         passed: false,
         error: {
-          message: (new Error('it crapped out')).stack
+          actual: 'Seven',
+          expected: 7,
+          message: 'This should be a number'
         }
       })
       reporter.finish()
       var output = stream.read().toString()
-      assert.match(output, /it fails/)
-      assert.match(output, /it crapped out/)
+      assert.match(output, /  F/)
+      assert.match(output, /1 tests complete \([0-9]+ ms\)/)
+      assert.match(output, /message: >\s+This should be a number/)
+      assert.match(output, /actual: >\s+Seven/)
+      assert.match(output, /expected: >\s+7/)
+    })
+
+    it('mutes message if there is none', function(){
+      var stream = new PassThrough()
+      var reporter = new DotReporter(false, stream)
+      reporter.report('phantomjs', {
+        name: 'it fails',
+        passed: false,
+        error: {
+          actual: 'Seven',
+          expected: 7
+        }
+      })
+      reporter.finish()
+      var output = stream.read().toString()
+      assert.notMatch(output, /message: >/)
+
+      assert.match(output, /  F/)
+      assert.match(output, /1 tests complete \([0-9]+ ms\)/)
+      assert.match(output, /actual: >\s+Seven/)
+      assert.match(output, /expected: >\s+7/)
+    })
+
+    it('mutes actual/expected if there is none', function(){
+      var stream = new PassThrough()
+      var reporter = new DotReporter(false, stream)
+      var stacktrace = (new Error('test blew up')).stack
+      reporter.report('phantomjs', {
+        name: 'it fails',
+        passed: false,
+        error: {
+          actual: null,
+          message: stacktrace
+        }
+      })
+      reporter.finish()
+      var output = stream.read().toString()
+      assert.match(output, /  F/)
+      assert.match(output, /1 tests complete \([0-9]+ ms\)/)
+      assert.match(output, /message: >\s+Error: test blew up/)
+      assert.notMatch(output, /actual: >/)
+      assert.notMatch(output, /expected: >/)
     })
   })
 
