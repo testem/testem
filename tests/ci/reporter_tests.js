@@ -13,16 +13,12 @@ describe('test reporters', function(){
       var reporter = new TapReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it does stuff',
-        passed: 1,
-        total: 1,
-        failed: 0,
+        passed: true,
         logs: []
       })
       reporter.report('phantomjs', {
         name: 'it fails',
-        passed: 0,
-        total: 1,
-        failed: 1,
+        passed: false,
         error: { message: 'it crapped out' },
         logs: ["I am a log", "Useful information"]
       })
@@ -53,9 +49,8 @@ describe('test reporters', function(){
       var reporter = new DotReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it does stuff',
-        passed: 1,
-        total: 1,
-        failed: 0
+        passed: true,
+        logs: []
       })
       reporter.finish()
       var output = stream.read().toString()
@@ -68,10 +63,10 @@ describe('test reporters', function(){
       var reporter = new DotReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it fails',
-        passed: 0,
-        total: 1,
-        failed: 1,
-        error: new Error('it crapped out')
+        passed: false,
+        error: {
+          message: (new Error('it crapped out')).stack
+        }
       })
       reporter.finish()
       var output = stream.read().toString()
@@ -86,9 +81,7 @@ describe('test reporters', function(){
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it does <cool> \"cool\" \'cool\' stuff',
-        passed: 1,
-        total: 1,
-        failed: 0
+        passed: true
       })
       reporter.finish()
       var output = stream.read().toString()
@@ -97,15 +90,16 @@ describe('test reporters', function(){
 
       assertXmlIsValid(output)
     })
+
     it('outputs errors', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it didnt work',
-        passed: 0,
-        total: 1,
-        failed: 1,
-        error: new Error('it crapped out')
+        passed: false,
+        error: {
+          message: (new Error('it crapped out')).stack
+        }
       })
       reporter.finish()
       var output = stream.read().toString()
@@ -114,15 +108,16 @@ describe('test reporters', function(){
 
       assertXmlIsValid(output)
     })
+
     it('XML escapes errors', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it failed with quotes',
-        passed: 0,
-        total: 1,
-        failed: 1,
-        error: new Error('<it> \"crapped\" out')
+        passed: false,
+        error: {
+          message: (new Error('<it> \"crapped\" out')).stack
+        }
       })
       reporter.finish()
       var output = stream.read().toString()
@@ -131,14 +126,13 @@ describe('test reporters', function(){
 
       assertXmlIsValid(output)
     })
+
     it('XML escapes messages', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'it failed with ampersands',
-        passed: 0,
-        total: 1,
-        failed: 1,
+        passed: false,
         error: { message: "&&" }
       })
       reporter.finish()
@@ -148,14 +142,13 @@ describe('test reporters', function(){
 
       assertXmlIsValid(output)
     })
+
     it('presents valid XML with null messages', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
       reporter.report('phantomjs', {
         name: 'null',
-        passed: 0,
-        total: 1,
-        failed: 1,
+        passed: false,
         error: { message: null }
       })
       reporter.finish()
