@@ -61,8 +61,6 @@ describe('test reporters', function(){
       var output = stream.read().toString()
       assert.match(output, /  \./)
       assert.match(output, /1 tests complete \([0-9]+ ms\)/)
-
-      assertXmlIsValid(output)
     })
 
     it('writes out errors', function(){
