@@ -449,7 +449,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to false as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over http. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
