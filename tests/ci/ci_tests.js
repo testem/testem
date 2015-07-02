@@ -2,6 +2,7 @@ var fs = require('fs')
 var App = require('../../lib/ci')
 var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var Config = require('../../lib/config')
+var sinon = require('sinon')
 var bd = require('bodydouble')
 var mock = bd.mock
 var stub = bd.stub
@@ -15,70 +16,101 @@ var path = require('path')
 
 describe('ci mode app', function(){
   this.timeout(90000)
-
-  before(function(done){
-    rimraf('tests/fixtures/tape/node_modules', function(err){
-      if (err) {
-        return done(err)
-      }
-      exec('npm install', { cwd: path.join('tests/fixtures/tape/') }, done)
-    })
-  })
+  var sandbox;
 
   beforeEach(function(done){
+    sandbox = sinon.sandbox.create();
     fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
       done()
     })
   })
 
-  it('runs them tests on node, nodetap, and browser', function(done){
+  afterEach(function() {
+    sandbox.restore();
+  })
 
+ describe('multiple launchers', function() {
+   before(function(done){
+     rimraf('tests/fixtures/tape/node_modules', function(err){
+       if (err) {
+         return done(err)
+       }
+       exec('npm install', { cwd: path.join('tests/fixtures/tape/') }, done)
+     })
+   })
+
+   beforeEach(function(done){
+     fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
+       done()
+     })
+   })
+
+   it('runs them tests on node, nodetap, and browser', function(done){
+      var config = new Config('ci', {
+        file: 'tests/fixtures/tape/testem.json',
+        port: 0,
+        cwd: path.join('tests/fixtures/tape/'),
+        launch_in_ci: ['node', 'nodeplain', 'phantomjs']
+      })
+      config.read(function(){
+        var app = new App(config)
+        stub(app, 'cleanExit')
+        var reporter = stub(app, 'reporter', new TestReporter(true))
+        app.start()
+        app.cleanExit.once('call', function(){
+          var helloWorld = reporter.results.filter(function(r){
+            return r.result.name.match(/hello world/)
+          })
+          var helloBob = reporter.results.filter(function(r){
+            return r.result.name.match(/hello bob/)
+          })
+          var nodePlain = reporter.results.filter(function(r){
+            return r.launcher === 'NodePlain'
+          })
+          assert(helloWorld.every(function(r){
+            return r.result.passed
+          }), 'hello world should pass')
+
+          assert(helloBob.every(function(r){
+            return !r.result.passed
+          }), 'hello bob should fail')
+
+          expect(nodePlain[0]).to.exist
+          assert(!nodePlain[0].result.passed, 'node plain should fail')
+
+          var launchers = reporter.results.map(function(r){
+            return r.launcher
+          })
+
+          assert.include(launchers, 'Node')
+          assert.include(launchers, 'NodePlain')
+          assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS')
+
+          assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
+          assert(app.cleanExit.called, 'called process.exit()')
+          assert(app.cleanExit.lastCall.args[0], 0)
+          done()
+        })
+      })
+    })
+  })
+
+  it('fails with explicitly defined missing launchers', function(done){
     var config = new Config('ci', {
-      file: 'tests/fixtures/tape/testem.json',
+      file: 'tests/fixtures/basic_test/testem.json',
       port: 0,
-      cwd: path.join('tests/fixtures/tape/'),
-      launch_in_ci: ['node', 'nodeplain', 'phantomjs']
+      cwd: path.join('tests/fixtures/basic_test/'),
+      launch_in_ci: ['opera']
     })
     config.read(function(){
       var app = new App(config)
       stub(app, 'cleanExit')
       var reporter = stub(app, 'reporter', new TestReporter(true))
       app.start()
-      app.cleanExit.once('call', function(){
-        var helloWorld = reporter.results.filter(function(r){
-          return r.result.name.match(/hello world/)
-        })
-        var helloBob = reporter.results.filter(function(r){
-          return r.result.name.match(/hello bob/)
-        })
-        var nodePlain = reporter.results.filter(function(r){
-          return r.launcher === 'NodePlain'
-        })
-        assert(helloWorld.every(function(r){
-          return r.result.passed
-        }), 'hello world should pass')
-
-        assert(helloBob.every(function(r){
-          return !r.result.passed
-        }), 'hello bob should fail')
-
-        expect(nodePlain[0]).to.exist
-        assert(!nodePlain[0].result.passed, 'node plain should fail')
-
-        var launchers = reporter.results.map(function(r){
-          return r.launcher
-        })
-
-        assert.include(launchers, 'Node')
-        assert.include(launchers, 'NodePlain')
-        assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS')
-
-        assert(reporter.results.length >= 1, 'should have a few launchers') // ball park?
-        assert(app.cleanExit.called, 'called process.exit()')
-        assert(app.cleanExit.lastCall.args[0], 0)
+      app.cleanExit.once('call', function(exitCode) {
+        expect(exitCode).to.eq(1);
         done()
       })
-
     })
   })
 
@@ -104,10 +136,15 @@ describe('ci mode app', function(){
     assert.equal(result.error.message, 'blarg')
   })
 
-  it('does not try to stop server if Testem Server Error occurs', function(){
-    var app = new App(new Config('ci'))
-    stub(app, 'stopServer')
-    stub(app, 'exit')
+  it('does not try to stop server if Testem Server Error occurs', function(done) {
+    var app = new App(new Config('ci'), function() {
+      assert(!app.stopServer.called, 'stop server should not be called');
+      done();
+    })
+    sandbox.stub(app, 'startServer', function (cb) {
+      cb();
+    });
+    sandbox.spy(app, 'stopServer')
     mock(app, {
       overrides: {
         cleanUpLaunchers: function(cb) { cb() }
@@ -115,14 +152,14 @@ describe('ci mode app', function(){
     })
 
     app.wrapUp(new Error('Testem Server Error: foo'))
-    assert(!app.stopServer.called, 'stop server should not be called')
-    assert(app.exit.called, 'exit should be called')
   })
 
-  it('stops server if non- Testem Server Error occurs', function(){
-    var app = new App(new Config('ci'))
-    stub(app, 'stopServer')
-    stub(app, 'exit')
+  it('stops server if non- Testem Server Error occurs', function(done) {
+    var app = new App(new Config('ci'), function() {
+      assert(app.stopServer.called, 'stop server should be called');
+      done();
+    })
+    sandbox.spy(app, 'stopServer')
     mock(app, {
       overrides: {
         cleanUpLaunchers: function(cb) { cb() }
@@ -130,7 +167,6 @@ describe('ci mode app', function(){
     })
 
     app.wrapUp(new Error('Not Testem Server Error: foo'))
-    assert(app.stopServer.called, 'stop server should be called')
   })
 
   it('kills launchers on wrapUp', function() {
@@ -171,7 +207,7 @@ describe('ci mode app', function(){
     var config = new Config('ci', {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),
-      timeout: 5,
+      timeout: 2,
       launch_in_ci: ['phantomjs']
     })
     config.read(function(){

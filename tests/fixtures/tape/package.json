@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Example tests using tape",
   "devDependencies": {
-    "tape": "^3.5.0",
+    "tape": "^4.0.0",
     "browserify": "^2.22.0"
   },
   "scripts": {

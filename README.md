@@ -275,13 +275,17 @@ Or if you are using require.js or another loader, just make sure you load `/test
 To enable dynamically substituting in the Javascript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path
+2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
     {{#serve_files}}
     <script src="{{src}}"></script>
     {{/serve_files}}
+
+    {{#css_files}}
+    <link rel="stylesheet" href="{{src}}">
+    {{/css_files}}
 
 Launchers
 ---------
@@ -445,7 +449,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to false as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over http. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
