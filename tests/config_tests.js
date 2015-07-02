@@ -1,9 +1,8 @@
 var Config = require('../lib/config.js')
-var EventEmitter = require('events').EventEmitter
 var expect = require('chai').expect
 var bd = require('bodydouble')
 var stub = bd.stub
-var browser_launcher = require('../lib/browser_launcher')
+var browserLauncher = require('../lib/browser_launcher')
 var assert = require('chai').assert
 var path = require('path')
 
@@ -121,26 +120,26 @@ describe('Config', function(){
 	})
 
 	it('should getLaunchers should call getAvailable browsers', function(done){
-		stub(config, 'getWantedLaunchers', function(n){return n})
-		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
-		browser_launcher.getAvailableBrowsers = function(cb){
+		stub(config, 'getWantedLaunchers', function(n, cb){return cb(null, n)})
+		var getAvailableBrowsers = browserLauncher.getAvailableBrowsers
+		browserLauncher.getAvailableBrowsers = function(cb){
 			cb([
 				{name: 'Chrome', exe: 'chrome.exe'},
 				{name: 'Firefox'}
 			])
 		}
 
-		config.getLaunchers(function(launchers){
+		config.getLaunchers(function(err, launchers){
 			expect(launchers.chrome.name).to.equal('Chrome')
 			expect(launchers.chrome.settings.exe).to.equal('chrome.exe')
 			expect(launchers.firefox.name).to.equal('Firefox')
-			browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+			browserLauncher.getAvailableBrowsers = getAvailableBrowsers
 			done()
 		})
 	})
 
 	it('should install custom launchers', function(done){
-		stub(config, 'getWantedLaunchers', function(n){return n})
+		stub(config, 'getWantedLaunchers', function(n, cb){return cb(null, n)})
 		config.config = {
 			launchers: {
 				Node: {
@@ -148,24 +147,25 @@ describe('Config', function(){
 				}
 			}
 		}
-		var getAvailableBrowsers = browser_launcher.getAvailableBrowsers
-		browser_launcher.getAvailableBrowsers = function(cb){cb([])}
-		config.getLaunchers(function(launchers){
+		var getAvailableBrowsers = browserLauncher.getAvailableBrowsers
+		browserLauncher.getAvailableBrowsers = function(cb){cb([])}
+		config.getLaunchers(function(err, launchers){
 			expect(launchers.node.name).to.equal('Node')
 			expect(launchers.node.settings.command).to.equal('node tests.js')
-			browser_launcher.getAvailableBrowsers = getAvailableBrowsers
+			browserLauncher.getAvailableBrowsers = getAvailableBrowsers
 			done()
 		})
 	})
 
-	it('getWantedLaunchers uses getWantedLauncherNames', function(){
+	it('getWantedLaunchers uses getWantedLauncherNames', function(done){
 		stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox'])
-		var results = config.getWantedLaunchers({
+		config.getWantedLaunchers({
 			chrome: { name: 'Chrome' },
 			firefox: { name: 'Firefox' }
+		}, function(err, results) {
+			expect(results).to.deep.equal([{ name: 'Chrome' }, { name: 'Firefox' }])
+			done()
 		})
-		expect(results).to.deep.equal([{ name: 'Chrome' }, { name: 'Firefox' }])
-
 	})
 
 	describe('getWantedLauncherNames', function(){
@@ -318,6 +318,20 @@ describe('Config', function(){
 			})
 		})
 	})
+
+	describe('getCSSFiles', function(){
+		it('loads css_files correctly', function(done){
+			config.set('cwd', 'tests')
+			config.set('src_files', 'fixtures/styles/*.css')
+			config.getSrcFiles(function(err, files){
+				expect(files).to.deep.equal([
+					fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'print.css'),
+					fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'screen.css')
+				])
+				done()
+			})
+		})
+	})
 })
 
 
@@ -358,15 +372,13 @@ describe('getTemplateData', function(){
 		var progOptions = mockTopLevelProgOptions()
 		var config = new Config('dev', progOptions, fileConfig)
 		config.getTemplateData(function(err, data){
-			expect(data).to.deep.equal({
-				timeout: 2,
-				port: 8081,
-				src_files: ['web/*.js'],
-				serve_files: [
-					{src:'web/hello.js', attrs: []},
-					{src:'web/hello_tst.js', attrs: []}
-				]
-			})
+			expect(data.serve_files).to.deep.have.members([
+				{ src: 'web/hello.js', attrs: [] },
+				{ src: 'web/hello_tst.js', attrs: [] }
+			]);
+			expect(data.css_files).to.deep.have.members([
+				{ src: '', attrs: [] }
+			]);
 			done()
 		})
 	})
