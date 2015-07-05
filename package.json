@@ -30,7 +30,7 @@
     "cross-spawn-async": "^1.0.1",
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
-    "fileset": "^0.1.5",
+    "fileset": "^0.2.1",
     "fireworm": "^0.6.6",
     "glob": "^5.0.5",
     "growl": "^1.8.1",
