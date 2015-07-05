@@ -30,7 +30,7 @@ describe('Config', function(){
 	describe('accepts empty config file', function(){
 		var config
 		beforeEach(function(done){
-			var progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js'}
+			var progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty'}
 			config = new Config('dev', progOptions)
 			config.read(done)
 		})
@@ -56,6 +56,18 @@ describe('Config', function(){
 	it('calculates url for you', function(){
 		var config = new Config
 		assert.equal(config.get('url'), 'http://localhost:7357/')
+	})
+
+	it('allows to overwrite config values', function(){
+		var config = new Config('dev', { port: 8000 })
+		assert.equal(config.get('port'), 8000)
+		config.set('port', 8080)
+		assert.equal(config.get('port'), 8080)
+	})
+
+	it('returns undefined for undefined keys', function(){
+		var config = new Config()
+		expect(config.get('undefined')).to.be.undefined
 	})
 
 	describe('read json config file', function(){

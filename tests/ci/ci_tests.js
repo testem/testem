@@ -192,7 +192,6 @@ describe('ci mode app', function(){
   })
 
   it('timeout does not wait for idling launchers', function(done){
-
     var config = new Config('ci', {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),
