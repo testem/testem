@@ -10,8 +10,6 @@ var spy = require('ispy')
 var assert = require('chai').assert
 var expect = require('chai').expect
 var Process = require('did_it_work')
-var exec = require('child_process').exec
-var rimraf = require('rimraf')
 var path = require('path')
 
 describe('ci mode app', function(){
@@ -30,15 +28,6 @@ describe('ci mode app', function(){
   })
 
  describe('multiple launchers', function() {
-   before(function(done){
-     rimraf('tests/fixtures/tape/node_modules', function(err){
-       if (err) {
-         return done(err)
-       }
-       exec('npm install', { cwd: path.join('tests/fixtures/tape/') }, done)
-     })
-   })
-
    beforeEach(function(done){
      fs.unlink('tests/fixtures/tape/public/bundle.js', function(){
        done()
@@ -56,7 +45,6 @@ describe('ci mode app', function(){
         var app = new App(config)
         stub(app, 'cleanExit')
         var reporter = stub(app, 'reporter', new TestReporter(true))
-        app.start()
         app.cleanExit.once('call', function(){
           var helloWorld = reporter.results.filter(function(r){
             return r.result.name.match(/hello world/)
@@ -91,6 +79,7 @@ describe('ci mode app', function(){
           assert(app.cleanExit.lastCall.args[0], 0)
           done()
         })
+        app.start()
       })
     })
   })
@@ -203,7 +192,6 @@ describe('ci mode app', function(){
   })
 
   it('timeout does not wait for idling launchers', function(done){
-
     var config = new Config('ci', {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),

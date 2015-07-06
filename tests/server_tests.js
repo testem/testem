@@ -289,4 +289,27 @@ describe('Server', function(){
     })
   })
 
+  describe('auto port assignment', function() {
+    before(function(done){
+      config = new Config('dev', {
+        port: 0,
+        cwd: 'tests'
+      })
+      server = new Server(config)
+      server.once('server-start', function(){
+        done()
+      })
+      server.start()
+    })
+    after(function(done){
+      server.stop(function(){
+        done()
+      })
+    })
+
+    it('updates the config with the actual port', function(){
+      expect(config.get('port')).not.to.eq(0)
+      expect(config.get('port')).to.eq(server.server.address().port)
+    })
+  })
 })
