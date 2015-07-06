@@ -103,6 +103,26 @@ describe('ci mode app', function(){
     })
   })
 
+  it('passes when missing launchers are ignored', function(done){
+    var config = new Config('ci', {
+      file: 'tests/fixtures/basic_test/testem.json',
+      port: 0,
+      cwd: path.join('tests/fixtures/basic_test/'),
+      launch_in_ci: ['opera'],
+      ignore_missing_launchers: true
+    })
+    config.read(function(){
+      var app = new App(config)
+      stub(app, 'cleanExit')
+      var reporter = stub(app, 'reporter', new TestReporter(true))
+      app.start()
+      app.cleanExit.once('call', function(exitCode) {
+        expect(exitCode).to.eq(0);
+        done()
+      })
+    })
+  })
+
   it('allows passing in reporter from config', function(){
     var fakeReporter = {}
     var config = new Config('ci', {
