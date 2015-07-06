@@ -11,6 +11,7 @@ var assert = require('chai').assert
 var expect = require('chai').expect
 var Process = require('did_it_work')
 var path = require('path')
+var http = require('http')
 
 describe('ci mode app', function(){
   this.timeout(90000)
@@ -145,25 +146,31 @@ describe('ci mode app', function(){
     assert.equal(result.error.message, 'blarg')
   })
 
-  it('does not try to stop server if Testem Server Error occurs', function(done) {
-    var app = new App(new Config('ci'), function() {
-      assert(!app.stopServer.called, 'stop server should not be called');
-      done();
-    })
-    sandbox.stub(app, 'startServer', function (cb) {
-      cb();
-    });
-    sandbox.spy(app, 'stopServer')
-    mock(app, {
-      overrides: {
-        cleanUpLaunchers: function(cb) { cb() }
+  it('does not shadow EADDRINUSE errors', function(done) {
+    http.createServer().listen(7357, function(err) {
+      if (err) {
+        throw err;
       }
+      var config = new Config('ci', {
+        cwd: path.join('tests/fixtures/basic_test'),
+        launch_in_ci: ['phantomjs']
+      })
+      config.read(function(){
+        var app = new App(config)
+        stub(app, 'cleanExit')
+        var reporter = stub(app, 'reporter', new TestReporter(true))
+        app.start()
+        var start = Date.now()
+        app.cleanExit.once('call', function(exitCode){
+          expect(exitCode).to.eq(1);
+          expect(reporter.results[0].result.error.message).to.contain('EADDRINUSE');
+          done()
+        })
+      })
     })
-
-    app.wrapUp(new Error('Testem Server Error: foo'))
   })
 
-  it('stops server if non- Testem Server Error occurs', function(done) {
+  it('stops the server if an error occurs', function(done) {
     var app = new App(new Config('ci'), function() {
       assert(app.stopServer.called, 'stop server should be called');
       done();
@@ -175,7 +182,7 @@ describe('ci mode app', function(){
       }
     })
 
-    app.wrapUp(new Error('Not Testem Server Error: foo'))
+    app.wrapUp(new Error('Error: foo'))
   })
 
   it('kills launchers on wrapUp', function() {
