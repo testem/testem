@@ -167,6 +167,8 @@ Testem has other test reporters than TAP: `dot`, `xunit` and `teamcity`. You can
 
     testem ci -R dot
 
+You can also [add your own reporter](docs/custom_reporter.md).
+
 ### Example xunit reporter output
 
 Note that the real output is not pretty printed.
@@ -196,7 +198,6 @@ Note that the real output is not pretty printed.
     ##teamcity[testFinished name='PhantomJS 1.9 - goodbye should say goodbye']
 
     ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
-
 
 ### Command line options
 

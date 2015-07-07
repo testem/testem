@@ -7,6 +7,7 @@ This document will go into more detail about the Testem configuration file and l
 * `.testem.json`
 * `testem.yml`
 * `.testem.yml`
+* `testem.js`
 
 The file is looked for in the user's current directory.
 
@@ -22,6 +23,19 @@ Here's an example `testem.json` file
             "tests/*_tests.js"
         ]
     }
+
+Here's an example `testem.js` file that defines a [custom reporter](custom_reporter.md):
+
+    var CustomReporter = require('./my-custom-reporter');
+    module.exports = {
+        "framework": "mocha",
+        "src_files": [
+            "src/*.js",
+            "tests/*_tests.js"
+        ]
+        "reporter": new CustomReporter()
+    };
+
 
 Common Configuration Options
 ----------------------------
