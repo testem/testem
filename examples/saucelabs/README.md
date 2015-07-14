@@ -7,7 +7,7 @@ Instructions
 ------------
 
 1. Get a [SauceLabs](https://saucelabs.com/) account.
-2. Install [saucie](https://github.com/igorlima/sauce-js-tests-integration) via `SAUCE_CONNECT_DOWNLOAD_ON_INSTALL=true sudo -E npm install saucie@0.1.0 -g`. If the SAUCE_CONNECT_DOWNLOAD_ON_INSTALL environment variable is not set then [sauce-connect-launcher will attempt to download it](https://github.com/bermi/sauce-connect-launcher#installation) on the first run which might prevent saucie from working if elevated privileges are not used.
+2. Install [saucie](https://github.com/igorlima/sauce-js-tests-integration) via `SAUCE_CONNECT_DOWNLOAD_ON_INSTALL=true sudo -E npm install saucie -g`. If the SAUCE_CONNECT_DOWNLOAD_ON_INSTALL environment variable is not set then [sauce-connect-launcher will attempt to download it](https://github.com/bermi/sauce-connect-launcher#installation) on the first run which might prevent saucie from working if elevated privileges are not used.
 3. Make sure Sauce credentials are set in env:
     * **SAUCE_USERNAME** - your SauceLabs username
     * **SAUCE_ACCESS_KEY** - your SauceLabs API/Access key.
