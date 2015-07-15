@@ -9,7 +9,7 @@ Features
 --------
 
 * Test-framework agnostic. Support for
-    - [Jasmine](http://pivotal.github.com/jasmine/)
+    - [Jasmine](http://jasmine.github.io/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://mochajs.org/)
     - [Buster.js](http://docs.busterjs.org/)
@@ -38,7 +38,7 @@ Screencasts
 
 Installation
 ------------
-You need [Node](http://nodejs.org/) version 0.6.2 or later installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
+You need [Node](http://nodejs.org/) version 0.10+ or iojs installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
 
 Once you have Node installed:
 
@@ -163,9 +163,41 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 
 ## Other Test Reporters
 
-Testem has other test reporters than TAP: `dot` and `xunit`. You can use the `-R` to specify them
+Testem has other test reporters than TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
 
     testem ci -R dot
+
+You can also [add your own reporter](docs/custom_reporter.md).
+
+### Example xunit reporter output
+
+Note that the real output is not pretty printed.
+```xml
+<testsuite name="Testem Tests" tests="4" failures="1" timestamp="Wed Apr 01 2015 11:56:20 GMT+0100 (GMT Daylight Time)" time="9">
+  <testcase classname="PhantomJS 1.9" name="myFunc returns true when input is valid" time="0"/>
+  <testcase classname="PhantomJS 1.9" name="myFunc returns false when user tickles it" time="0"/>
+  <testcase classname="Chrome" name="myFunc returns true when input is valid" time="0"/>
+  <testcase classname="Chrome" name="myFunc returns false when user tickles it" time="0">
+    <failure name="myFunc returns false when user tickles it" message="function is not ticklish">
+      <![CDATA[
+      Callstack...
+      ]]>
+    </failure>
+  </testcase>
+</testsuite>
+```
+
+### Example teamcity reporter output
+
+    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello']
+    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello']
+    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello to person']
+    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello to person']
+    ##teamcity[testStarted name='PhantomJS 1.9 - goodbye should say goodbye']
+    ##teamcity[testFailed name='PhantomJS 1.9 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
+    ##teamcity[testFinished name='PhantomJS 1.9 - goodbye should say goodbye']
+
+    ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
 
 ### Command line options
 
@@ -225,7 +257,7 @@ You can also use a custom page for testing. To do this, first you need to specif
 {
   "test_page": "tests.html"
 }
-```  
+```
 
 Next, the test page you use needs to have the adapter code installed on them, as specified in the next section.
 
@@ -244,13 +276,17 @@ Or if you are using require.js or another loader, just make sure you load `/test
 To enable dynamically substituting in the Javascript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path
+2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
     {{#serve_files}}
     <script src="{{src}}"></script>
     {{/serve_files}}
+
+    {{#css_files}}
+    <link rel="stylesheet" href="{{src}}">
+    {{/css_files}}
 
 Launchers
 ---------
@@ -296,7 +332,7 @@ If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_
 ```javascript
 "launchers": {
   "Mocha": {
-    "command": "mocha tests/*_tests.js -R tap"
+    "command": "mocha tests/*_tests.js -R tap",
     "protocol": "tap"
   }
 }
@@ -414,7 +450,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options 
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to false as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over http. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
@@ -479,7 +515,7 @@ Credits
 
 Testem depends on these great software
 
-* [Jasmine](http://pivotal.github.com/jasmine/)
+* [Jasmine](http://jasmine.github.io/)
 * [QUnit](http://code.google.com/p/jqunit/)
 * [Mocha](http://mochajs.org/)
 * [Node](http://nodejs.org/)

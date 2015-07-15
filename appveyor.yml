@@ -1,26 +1,20 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
-# Test against these versions of Node.js.
 environment:
   matrix:
-    - nodejs_version: "0.12"
+  - PHANTOM_SRC: "npm"
+  - PHANTOM_SRC: "chocolatey"
 
 # Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node 0.STABLE.latest
-  - ps: Install-Product node $env:nodejs_version
-  # Install PhantomJS
-  - cinst PhantomJS -Version 1.9.8
-  - set path=%path%;C:\tools\PhantomJS\
-  - dir C:\tools\PhantomJS
-  # Typical npm stuff.
-  - md C:\nc
-  - npm install -g npm@^2
-  # Workaround https://github.com/npm/npm/wiki/Troubleshooting#upgrading-on-windows
-  - set PATH=%APPDATA%\npm;%PATH%
-  - npm config set cache C:\nc
+  # Get the latest stable version of io.js
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild 2)
   - npm version
   - npm install
+  # Install PhantomJS
+  - IF %PHANTOM_SRC%==npm npm install -g phantomjs
+  - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
+  - phantomjs -v
 
 # Post-install test scripts.
 test_script:
