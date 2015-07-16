@@ -132,7 +132,7 @@ describe('test reporters', function(){
       })
       reporter.finish()
       var output = stream.read().toString()
-      assert.match(output, /<testsuite name="Testem Tests" tests="1" failures="0" timestamp="(.+)" time="([0-9]+)">/)
+      assert.match(output, /<testsuite name="Testem Tests" tests="1" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/)
       assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; \'cool\' stuff"/)
 
       assertXmlIsValid(output)
