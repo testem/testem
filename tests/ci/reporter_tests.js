@@ -156,6 +156,21 @@ describe('test reporters', function(){
       assertXmlIsValid(output)
     })
 
+    it('outputs skipped tests', function(){
+      var stream = new PassThrough()
+      var reporter = new XUnitReporter(false, stream)
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        skipped: true
+      })
+      reporter.finish()
+      var output = stream.read().toString()
+      assert.match(output, /<skipped\/>/)
+
+      assertXmlIsValid(output)
+    })
+
     it('XML escapes errors', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
