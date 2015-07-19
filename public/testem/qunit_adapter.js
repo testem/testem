@@ -89,17 +89,17 @@ function qunitAdapter(socket){
         currentTest.runDuration = params.runtime
         
         results.total++
-        if (currentTest.failed > 0)
-        {    
-            results.failed++
-        }
-        if (currentTest.passed > 0)
-        {
-            results.passed++
-        }
-        if (currentTest.skipped)
-        {
+        
+        if (currentTest.skipped) {
             results.skipped++
+        } 
+        else {
+            if (currentTest.failed > 0) {    
+                results.failed++
+            }
+            else if (currentTest.passed > 0) {
+                results.passed++
+            }            
         }
 
         results.tests.push(currentTest)
