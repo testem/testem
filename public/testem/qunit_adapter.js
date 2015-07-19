@@ -19,6 +19,7 @@ function qunitAdapter(socket){
     var results = {
         failed: 0,
         passed: 0,
+        skipped: 0,
         total: 0,
         tests: []}
       , currentTest
@@ -83,14 +84,23 @@ function qunitAdapter(socket){
     QUnit.testDone( function(params){
         currentTest.failed = params.failed
         currentTest.passed = params.passed
+        currentTest.skipped = params.skipped
         currentTest.total = params.total
         currentTest.runDuration = params.runtime
         
         results.total++
         if (currentTest.failed > 0)
+        {    
             results.failed++
-        else
+        }
+        if (currentTest.passed > 0)
+        {
             results.passed++
+        }
+        if (currentTest.skipped)
+        {
+            results.skipped++
+        }
 
         results.tests.push(currentTest)
 
