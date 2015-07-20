@@ -32,6 +32,10 @@ describe('Config', function(){
 		expect(config.get('file')).to.equal(progOptions.file)
 	})
 
+	it('ignores undefined progOptions', function(){
+		expect(config.get('port')).not.to.be.undefined()
+	})
+
 	describe('accepts empty config file', function(){
 		var config
 		beforeEach(function(done){
