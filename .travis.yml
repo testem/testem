@@ -10,8 +10,8 @@ deploy:
   provider: npm
   email: johannes.wuerbach@googlemail.com
   api_key:
-    secure: GpFEM1tptEqlRo/y2UgrLCoZy7am8Zf/1Ve/hAsDuejdLkV7iH394QT+3Uv5MFPS765wg3PpaSJ7111QEMX3DOhDdBiFvBKC/+BgzEb3OrwcdfrbbKwru+a+OyJvQLqFElChy+bGlsR1jUo5w9DlMTECv7I0Rgz0hQXClzi3PeA=
+    secure: bmOEDf2yE8tmjuFQaDOHNnHkANi0nKaaOVbvnHNNUUMHOVttGSCQCD/lg/AZOQoedigwtUPzbL06xEvjr9SIKjETkpzu2nEms8qACqps14q55K61Luz6Gjyy22u6sXVG5H7JMihzM5H4ZFYqP1gbN6h7BequtCT7B96xFzEpDF4=
   on:
     tags: true
     repo: airportyh/testem
-    node: 'iojs'
+    node: iojs
