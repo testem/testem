@@ -3,7 +3,7 @@
   "asi": true,
   "proto": true,
   "indent": 2,
-  "camelcase": true,
+  "camelcase": false,
   "node": true,
   "browser": false,
   "boss": true,
