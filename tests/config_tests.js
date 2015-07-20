@@ -1,10 +1,13 @@
 var Config = require('../lib/config.js')
-var expect = require('chai').expect
+var chai = require('chai')
+var assert = chai.assert
+var expect = chai.expect
 var bd = require('bodydouble')
 var stub = bd.stub
 var browserLauncher = require('../lib/browser_launcher')
-var assert = require('chai').assert
 var path = require('path')
+
+chai.use(require('dirty-chai'))
 
 describe('Config', function(){
 	var config, appMode, progOptions
@@ -12,7 +15,8 @@ describe('Config', function(){
 		appMode = 'dev'
 		progOptions = {
 			file: __dirname + '/testem.yml',
-			timeout: null
+			timeout: null,
+			port: undefined
 		}
 		config = new Config(appMode, progOptions)
 	})
@@ -23,6 +27,7 @@ describe('Config', function(){
 	it('can create', function(){
 		expect(config.progOptions).to.equal(progOptions)
 	})
+
 	it('gives progOptions properties when got', function(){
 		expect(config.get('file')).to.equal(progOptions.file)
 	})
@@ -54,7 +59,7 @@ describe('Config', function(){
 	})
 
 	it('calculates url for you', function(){
-		var config = new Config
+		var config = new Config()
 		assert.equal(config.get('url'), 'http://localhost:7357/')
 	})
 
@@ -67,7 +72,7 @@ describe('Config', function(){
 
 	it('returns undefined for undefined keys', function(){
 		var config = new Config()
-		expect(config.get('undefined')).to.be.undefined
+		expect(config.get('undefined')).to.be.undefined()
 	})
 
 	describe('read json config file', function(){
@@ -109,20 +114,24 @@ describe('Config', function(){
 	})
 
 	it('returns whether isCwdMode (read js files from current dir)', function(){
-		stub(config, 'get', function(key){
+		stub(config, 'get', function() {
 			return null
 		})
-		expect(config.isCwdMode()).to.be.ok
+		expect(config.isCwdMode()).to.be.ok()
 		stub(config, 'get', function(key){
-			if (key === 'src_files') return ['implementation.js']
+			if (key === 'src_files') {
+				return ['implementation.js']
+			}
 			return null
 		})
-		expect(config.isCwdMode()).to.not.be.ok
+		expect(config.isCwdMode()).to.not.be.ok()
 		stub(config, 'get', function(key){
-			if (key === 'test_page') return 'tests.html'
+			if (key === 'test_page') {
+				return 'tests.html'
+			}
 			return null
 		})
-		expect(config.isCwdMode()).to.not.be.ok
+		expect(config.isCwdMode()).to.not.be.ok()
 	})
 
 	it('has fallbacks for host and port', function(){
@@ -378,7 +387,7 @@ describe('getTemplateData', function(){
 	it('should give templateData', function(done){
 		var fileConfig = {
 			src_files: [
-				"web/*.js"
+				'web/*.js'
 			]
 		}
 		var progOptions = mockTopLevelProgOptions()
