@@ -1,8 +1,8 @@
 framework: jasmine
 
-on_start: 
-  command: browserstack tunnel localhost:<port>
-  wait_for_text: Tunnel is running
+on_start:
+  command: ~/.browserstack/BrowserStackLocal your_access_key
+  wait_for_text: Press Ctrl-C to exit
 
 launchers:
 
