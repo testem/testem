@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",
-    "browserify": "^10.2.4",
+    "browserify": "^11.0.0",
     "chai": "^3.0.0",
     "cheerio": "^0.19.0",
     "concat-stream": "^1.4.7",
