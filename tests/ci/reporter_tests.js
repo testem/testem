@@ -138,6 +138,17 @@ describe('test reporters', function(){
       assertXmlIsValid(output)
     })
 
+    it('uses stdout to print intermediate test results when output stream is not stdout', function() {
+      var stream = new PassThrough()
+      var reporter = new XUnitReporter(false, stream)
+      assert.deepEqual(reporter.intermediateOut, process.stdout)
+    })
+
+    it('does not print intermediate test results when output stream is stdout', function() {
+      var reporter = new XUnitReporter(false, process.stdout)
+      assert.deepEqual(reporter.intermediateOut, null)
+    })
+
     it('outputs errors', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
