@@ -77,12 +77,11 @@ Common Configuration Options
     cwd:                      [Path]    directory to use as root
     parallel:                 [Number]  max number of parallel runners (1)
     routes:                   [Object]  overrides for assets paths
-    fail_on_zero_tests:       [Boolean] whether process should exit with error status when no tests found
+    fail_on_zero_tests:       [Boolean] whether process should exit with error status when no tests found  
     unsafe_file_serving:      [Boolean] allow serving directories that are not in your CWD (false)
     reporter:                 [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
     disable_watching:         [Boolean] disable any file watching
     ignore_missing_launchers: [Boolean] ignore missing launchers in ci mode
-    report_file:              [String]  file to write test results to (stdout)
 
 
 ### Available hooks:
