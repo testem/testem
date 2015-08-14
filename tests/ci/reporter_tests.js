@@ -138,6 +138,42 @@ describe('test reporters', function(){
       assertXmlIsValid(output)
     })
 
+    it('uses stdout to print intermediate test results when intermediate output is enabled', function() {
+      var stream = new PassThrough()
+      var reporter = new XUnitReporter(false, stream, true)
+      var displayed = false
+      var write = process.stdout.write
+      process.stdout.write = function(string, encoding, fd) {
+        write.apply(process.stdout, [string, encoding, fd])
+        displayed = true
+      }
+      reporter.report('phantomjs', {
+        name: 'it does stuff',
+        passed: true,
+        logs: []
+      })
+      assert(displayed)
+      process.stdout.write = write
+    })
+
+    it('does not print intermediate test results when intermediate output is disabled', function() {
+      var stream = new PassThrough()
+      var reporter = new XUnitReporter(false, stream, false)
+      var displayed = false
+      var write = process.stdout.write
+      process.stdout.write = function(string, encoding, fd) {
+        write.apply(process.stdout, [string, encoding, fd])
+        displayed = true
+      }
+      reporter.report('phantomjs', {
+        name: 'it does stuff',
+        passed: true,
+        logs: []
+      })
+      assert(!displayed)
+      process.stdout.write = write
+    })
+
     it('outputs errors', function(){
       var stream = new PassThrough()
       var reporter = new XUnitReporter(false, stream)
