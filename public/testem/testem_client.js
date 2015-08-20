@@ -130,6 +130,7 @@ function takeOverConsole() {
     console[method] = function() {
       var doDefault, message;
       var args = Array.prototype.slice.apply(arguments);
+      emit('console', {method: method, args: arguments});
       if (Testem.handleConsoleMessage) {
         message = decycle(args).join(' ');
         doDefault = Testem.handleConsoleMessage(message);
