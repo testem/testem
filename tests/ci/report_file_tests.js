@@ -1,22 +1,17 @@
 var fs = require('fs')
 var App = require('../../lib/ci')
-var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
 var Config = require('../../lib/config')
-var bd = require('bodydouble')
-var mock = bd.mock
-var stub = bd.stub
 var assert = require('chai').assert
 var expect = require('chai').expect
-var Process = require('did_it_work')
-var exec = require('child_process').exec
 var rimraf = require('rimraf')
 var path = require('path')
 var PassThrough = require('stream').PassThrough
 var ReportFile = require('../../lib/ci/report_file')
-var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter')
 var tmp = require('tmp')
 
 describe('report file output', function() {
+  this.timeout(10000)
+
   var mainReportDir, reportDir, filename;
   before(function(done) {
     tmp.dir(function(err, path) {
@@ -32,7 +27,9 @@ describe('report file output', function() {
 
   beforeEach(function(done) {
     tmp.dir({template: path.join(mainReportDir, '/reports-XXXXXX')}, function(err, dirPath){
-      if(err) throw err
+      if(err) {
+        throw err
+      }
       reportDir = dirPath
 
       tmp.file({dir: dirPath, name: 'test-reports.xml'}, function(err, filePath) {
@@ -52,16 +49,21 @@ describe('report file output', function() {
     assert.strictEqual(app.reportFileName, filename)
   })
 
-  it("doesn't create a file if the report_file parameter is not passed in", function(done){
-    var filename = tmp.tmpNameSync()
-    var fakeReporter = {}
-    var config = new Config('ci', {
-      reporter: fakeReporter,
-    })
-    var app = new App(config)
-    fs.readFile(filename, function(error, data) {
-      expect(error).not.to.be.null
-      done()
+  it('doesn\'t create a file if the report_file parameter is not passed in', function(done){
+    tmp.tmpName(function (err, filename) {
+      if (err) {
+        throw err
+      }
+
+      var fakeReporter = {}
+      var config = new Config('ci', {
+        reporter: fakeReporter,
+      })
+      new App(config)
+      fs.readFile(filename, function(error) {
+        expect(error).not.to.be.null()
+        done()
+      })
     })
   })
 
@@ -88,16 +90,21 @@ describe('report file output', function() {
     reportStream.end()
   })
 
-  it("creates folders in the path if they don't exist", function(done) {
-    var nestedFilename = tmp.tmpNameSync({dir: reportDir, name: 'nested/test/folders/test-reports.xml'})
+  it('creates folders in the path if they don\'t exist', function(done) {
+    var name = 'nested/test/folders/test-reports.xml'
 
-    var fakeStdout = new PassThrough()
-    var reportFile = new ReportFile(nestedFilename, fakeStdout)
+    tmp.tmpName({dir: reportDir, name: name}, function (err, nestedFilename) {
+      if (err) {
+        throw err
+      }
 
-    fs.open(nestedFilename, 'r', function(error, fd) {
-      expect(error).to.be.null
-      done()
+      var fakeStdout = new PassThrough()
+      new ReportFile(nestedFilename, fakeStdout)
+
+      fs.open(nestedFilename, 'r', function(error) {
+        expect(error).to.be.null()
+        done()
+      })
     })
   })
 })
-
