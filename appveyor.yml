@@ -7,8 +7,8 @@ environment:
 
 # Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of io.js
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild 2)
+  # Get the latest stable version of nodejs
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild 4)
   - npm version
   - npm install
   # Install PhantomJS
