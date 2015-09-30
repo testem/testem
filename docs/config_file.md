@@ -75,6 +75,7 @@ Common Configuration Options
     watch_files:              [Array]   list of files or file patterns to watch changes of (defaults to src_files)
     css_files:                [Array]   additionals stylesheets to include
     cwd:                      [Path]    directory to use as root
+    config_dir:               [Path]    directory to use as root for resolving configs, if different than cwd
     parallel:                 [Number]  max number of parallel runners (1)
     routes:                   [Object]  overrides for assets paths
     fail_on_zero_tests:       [Boolean] whether process should exit with error status when no tests found

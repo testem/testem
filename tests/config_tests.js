@@ -109,6 +109,21 @@ describe('Config', function(){
 		})
 	})
 
+	describe('read js config file from custom path', function(){
+		var config
+		beforeEach(function(done){
+			var progOptions = {
+				config_dir: __dirname + '/custom_configs'
+			}
+			config = new Config('dev', progOptions)
+			config.read(done)
+		})
+		it('gets properties from config file', function(){
+			expect(config.get('framework')).to.equal('mocha')
+			expect(String(config.get('src_files'))).to.equal('impl.js,tests.js')
+		})
+	})
+
 	it('give precendence to json config file', function(done){
 		var config = new Config('dev', {cwd: 'tests'})
 		config.read(function(){
