@@ -124,6 +124,67 @@ describe('Config', function(){
 		})
 	})
 
+	describe('getters system', function() {
+		it('gives precendence to getters', function(done){
+			var config = new Config('dev', {cwd: 'tests'})
+			config.getters.cwd = 'cwdGetter'
+			config.cwdGetter = function() { return 'setByGetter'; }
+			config.read(function(){
+				expect(config.get('cwd')).to.equal('setByGetter')
+				done()
+			})
+		})
+	});
+
+	describe('get test_page', function() {
+		it('defaults to config test_page', function(done){
+			var config = new Config('dev', {test_page: 'default' })
+			config.read(function(){
+				expect(config.get('test_page')).to.equal('default')
+				done()
+			})
+		})
+
+		it('adds query params if present', function(done){
+			var config = new Config('dev', {
+				test_page: 'http://my-url/path/',
+				query_params: {
+					library: 'testem',
+					language: 'javascript'
+				}
+			})
+			config.read(function(){
+				expect(config.get('test_page')).to.equal('http://my-url/path/?library=testem&language=javascript')
+				done()
+			})
+		})
+
+		it('will merge with existing params, with config params taking precedence', function(done){
+			var config = new Config('dev', {
+				test_page: 'http://my-url/path/?language=python&os=mac',
+				query_params: {
+					library: 'british',
+					language: 'english'
+				}
+			})
+			config.read(function(){
+				expect(config.get('test_page')).to.equal('http://my-url/path/?language=english&os=mac&library=british')
+				done()
+			})
+		})
+
+		it('handles string query param argument', function(done){
+			var config = new Config('dev', {
+				test_page: 'http://my-url/path/?language=python&os=mac',
+				query_params: '?language=english&library=british'
+			})
+			config.read(function(){
+				expect(config.get('test_page')).to.equal('http://my-url/path/?language=english&os=mac&library=british')
+				done()
+			})
+		})
+	});
+
 	it('give precendence to json config file', function(done){
 		var config = new Config('dev', {cwd: 'tests'})
 		config.read(function(){
