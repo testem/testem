@@ -75,8 +75,8 @@ describe('test reporters', function(){
       assert.match(output, /  F/)
       assert.match(output, /1 tests complete \([0-9]+ ms\)/)
       assert.match(output, /message: >\s+This should be a number/)
-      assert.match(output, /actual: >\s+Seven/)
-      assert.match(output, /expected: >\s+7/)
+      assert.match(output, /actual: 'Seven'/)
+      assert.match(output, /expected: 7/)
     })
 
     it('mutes message if there is none', function(){
@@ -96,8 +96,8 @@ describe('test reporters', function(){
 
       assert.match(output, /  F/)
       assert.match(output, /1 tests complete \([0-9]+ ms\)/)
-      assert.match(output, /actual: >\s+Seven/)
-      assert.match(output, /expected: >\s+7/)
+      assert.match(output, /actual: 'Seven'/)
+      assert.match(output, /expected: 7/)
     })
 
     it('mutes actual/expected if there is none', function(){
@@ -117,8 +117,8 @@ describe('test reporters', function(){
       assert.match(output, /  F/)
       assert.match(output, /1 tests complete \([0-9]+ ms\)/)
       assert.match(output, /message: >\s+Error: test blew up/)
-      assert.notMatch(output, /actual: >/)
-      assert.notMatch(output, /expected: >/)
+      assert.notMatch(output, /actual: /)
+      assert.notMatch(output, /expected: /)
     })
   })
 
