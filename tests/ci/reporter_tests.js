@@ -70,7 +70,8 @@ describe('test reporters', function(){
           error: {
             actual: 'Seven',
             expected: 7,
-            message: 'This should be a number'
+            message: 'This should be a number',
+            stack: 'trace'
           }
         })
         reporter.finish()
@@ -87,6 +88,7 @@ describe('test reporters', function(){
         assert.match(output.shift(), /     expected: 7/)
         assert.match(output.shift(), /       actual: 'Seven'/)
         output.shift()
+        assert.match(output.shift(), /     trace/)
         assert.equal(output, '')
       })
     })
