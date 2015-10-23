@@ -24,7 +24,6 @@
     "async": "^1.0.0",
     "backbone": "^1.1.2",
     "charm": "^1.0.0",
-    "colors": "^1.0.3",
     "commander": "^2.6.0",
     "consolidate": "^0.13.1",
     "cross-spawn-async": "^2.0.0",
@@ -32,7 +31,6 @@
     "express": "^4.10.7",
     "fileset": "^0.2.1",
     "fireworm": "^0.6.6",
-    "glob": "^5.0.5",
     "growl": "^1.8.1",
     "http-proxy": "^1.8.1",
     "js-yaml": "^3.2.5",
@@ -64,14 +62,13 @@
     "browserify": "^11.0.0",
     "chai": "^3.0.0",
     "cheerio": "^0.19.0",
-    "concat-stream": "^1.4.7",
     "dirty-chai": "^1.2.2",
     "ispy": "^0.1.2",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "sinon": "^1.12.2",
     "tape": "^4.0.0",
-    "tmp": "0.0.27"
+    "tmp": "0.0.28"
   },
   "bin": {
     "testem": "./testem.js"
