@@ -64,7 +64,7 @@ describe('ci mode app', function(){
             return !r.result.passed
           }), 'hello bob should fail')
 
-          expect(nodePlain[0]).to.exist
+          expect(nodePlain[0]).to.exist()
           assert(!nodePlain[0].result.passed, 'node plain should fail')
 
           var launchers = reporter.results.map(function(r){
@@ -95,7 +95,7 @@ describe('ci mode app', function(){
     config.read(function(){
       var app = new App(config)
       stub(app, 'cleanExit')
-      var reporter = stub(app, 'reporter', new TestReporter(true))
+      stub(app, 'reporter', new TestReporter(true))
       app.start()
       app.cleanExit.once('call', function(exitCode) {
         expect(exitCode).to.eq(1);
@@ -115,7 +115,7 @@ describe('ci mode app', function(){
     config.read(function(){
       var app = new App(config)
       stub(app, 'cleanExit')
-      var reporter = stub(app, 'reporter', new TestReporter(true))
+      stub(app, 'reporter', new TestReporter(true))
       app.start()
       app.cleanExit.once('call', function(exitCode) {
         expect(exitCode).to.eq(0);
@@ -160,7 +160,6 @@ describe('ci mode app', function(){
         stub(app, 'cleanExit')
         var reporter = stub(app, 'reporter', new TestReporter(true))
         app.start()
-        var start = Date.now()
         app.cleanExit.once('call', function(exitCode){
           expect(exitCode).to.eq(1);
           expect(reporter.results[0].result.error.message).to.contain('EADDRINUSE');
@@ -228,7 +227,7 @@ describe('ci mode app', function(){
     config.read(function(){
       var app = new App(config)
       stub(app, 'cleanExit')
-      var reporter = stub(app, 'reporter', new TestReporter(true))
+      stub(app, 'reporter', new TestReporter(true))
       app.start()
       var start = Date.now()
       app.cleanExit.once('call', function(){
@@ -280,7 +279,7 @@ describe('runHook', function(){
   var fakeP
 
   beforeEach(function(){
-    fakeP = mock(Process(''), {
+    fakeP = mock(new Process(''), {
       fluent: true,
       override: {
         complete: function(callback){
@@ -443,7 +442,7 @@ describe('runHook', function(){
       config.set('before_tests', null)
       var app = new App(config)
       stub(app, 'Process').returns(fakeP)
-      var reporter = stub(app, 'reporter', new TestReporter(true))
+      stub(app, 'reporter', new TestReporter(true))
       stub(app, 'cleanExit')
       app.start()
       app.cleanExit.once('call', function(){
