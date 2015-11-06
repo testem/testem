@@ -41,7 +41,7 @@
     "npmlog": "^1.0.0",
     "printf": "^0.2.3",
     "rimraf": "^2.2.8",
-    "socket.io": "^1.3.7",
+    "socket.io": "patocallaghan/socket.io#1.3.7-pure",
     "styled_string": "0.0.1",
     "tap-parser": "^1.1.3",
     "xmldom": "^0.1.19"
