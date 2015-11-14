@@ -9,13 +9,16 @@ node_js:
 - '5'
 matrix:
   fast_finish: true
+  include:
+    - node_js: 5
+      env: BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
 sudo: false
 deploy:
   provider: npm
   email: johannes.wuerbach@googlemail.com
   api_key:
-    secure: bmOEDf2yE8tmjuFQaDOHNnHkANi0nKaaOVbvnHNNUUMHOVttGSCQCD/lg/AZOQoedigwtUPzbL06xEvjr9SIKjETkpzu2nEms8qACqps14q55K61Luz6Gjyy22u6sXVG5H7JMihzM5H4ZFYqP1gbN6h7BequtCT7B96xFzEpDF4=
+    secure: Np9Z9Rb/BqQakf+D5sNOwFt7n4ibGGM6g0BjybTzkOO2FpRIFcwgc6pIQ75RY/uRygZlhR8MVaiY6Dcc5QVzVwi8HEQ7jDl8HqJa3vKm9Njo/JQEuB9LMtR38jLEuHfjlV/qg5mYRszgnKiNiVZNfETKx/aW6iT5Cgq2fl30Anw=
   on:
     tags: true
     repo: airportyh/testem
-    node: 5
+    node: 4
