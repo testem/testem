@@ -18,7 +18,7 @@ install:
 
 # Post-install test scripts.
 test_script:
-  - cmd: npm test
+  - cmd: npm run testem-tests
 
 # Don't actually build.
 build: off

@@ -54,8 +54,10 @@
     "views"
   ],
   "scripts": {
-    "test": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
-    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html"
+    "test": "./bin/run-tests.js",
+    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html",
+    "testem-tests": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
+    "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d"
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",
@@ -66,6 +68,7 @@
     "ispy": "^0.1.2",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
+    "saucie": "^1.2.0",
     "sinon": "^1.12.2",
     "tape": "^4.0.0",
     "tmp": "0.0.28"
