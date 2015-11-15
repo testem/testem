@@ -15,6 +15,7 @@ The `report` method gets called for each test with `prefix` and `data` arguments
     * `passed` - whether test passed
     * `name` - test name 
     * `error.message` - error stack
+    * `runDuration` - time taken in ms
     * `logs` - test output
 
 The `finish` method gets called when tests are complete, and can output summary information.
