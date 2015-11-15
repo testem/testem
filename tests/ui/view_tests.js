@@ -9,7 +9,7 @@ describe('view', !isWin ? function(){
   var MyView
   var model
   before(function(){
-    model = new Backbone.Model
+    model = new Backbone.Model()
     MyView = View.extend({
       render: function(){}
     })
@@ -33,8 +33,8 @@ describe('view', !isWin ? function(){
     var onNameChange = spy()
     var onAgeChange = spy()
     view.observe(model, {
-      'change:name': onNameChange
-      , 'change:age': onAgeChange
+      'change:name': onNameChange,
+      'change:age': onAgeChange
     })
     model.set({name: 'Bob', age: 10})
     expect(onNameChange.called && onAgeChange.called).to.be.ok

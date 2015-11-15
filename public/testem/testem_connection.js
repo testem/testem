@@ -1,9 +1,13 @@
+/* globals document, parent, window, io, navigator, decycle */
+/* globals TestemConnection */
 
 var socket, connectStatus = 'disconnected'
 
 function syncConnectStatus(){
   var elm = document.getElementById('__testem_ui__')
-  if (elm) elm.className = connectStatus
+  if (elm) {
+    elm.className = connectStatus
+  }
 }
 
 function startTests(){

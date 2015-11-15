@@ -7,7 +7,7 @@ var isWin = /^win/.test(process.platform)
 
 describe('ErrorMessagesPanel', !isWin ? function(){
   var panel
-  var tab, runner, appview, results, ___ = []
+  var ___ = []
   ___.length = 11
   ___ = ___.join(Chars.horizontal)
   beforeEach(function(){

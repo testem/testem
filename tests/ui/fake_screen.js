@@ -12,7 +12,7 @@ function initialize(){
   buffer = []
   for (var l = height; l--;){
     for (var c = width; c--;){
-      buffer[l] = Array(width + 1).join(' ')
+      buffer[l] = new Array(width + 1).join(' ')
     }
   }
 }
@@ -48,7 +48,7 @@ var FakeScreen = {
   write: function(str){
     // get rid of all display codes
     str = str.replace(/\u001b\[[0-9]+m/g, '')
-        
+
     var original = buffer[line]
     if (!original){
       //throw new Error('Attempt to draw out of bounds: ' + str)
@@ -66,9 +66,11 @@ var FakeScreen = {
   },
   erase: function(){
     var original = buffer[line]
-    if (!original) return this
+    if (!original) {
+      return this
+    }
     if (width - col + 1 > 0){
-      buffer[line] = original.substring(0, col) + Array(width - col + 1).join(' ')
+      buffer[line] = original.substring(0, col) + new Array(width - col + 1).join(' ')
     }
     return this
   },

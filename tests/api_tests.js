@@ -17,7 +17,7 @@ describe('Api', function(){
 
   it('forwards config', function(){
     var api = new Api()
-    api.startDev({parallel: 5, on_exit: "test"})
+    api.startDev({parallel: 5, on_exit: 'test'})
     expect(api.config.read.callCount).to.equal(1)
     expect(api.config.get('on_exit')).to.equal('test')
     expect(api.config.get('parallel')).to.equal(5)

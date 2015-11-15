@@ -57,7 +57,8 @@
     "test": "./bin/run-tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html",
     "testem-tests": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
-    "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d"
+    "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
+    "lint": "jshint lib tests public/testem/*_adapter.js public/testem/testem_*.js"
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",

@@ -13,8 +13,8 @@ describe('SplitLogPanel', !isWin ? function(){
 
   beforeEach(function(){
     screen.$setSize(10, 20)
-    results = new Backbone.Model
-    messages = new Backbone.Collection
+    results = new Backbone.Model()
+    messages = new Backbone.Collection()
     runner = new Backbone.Model({
       results: results,
       messages: messages
@@ -40,12 +40,12 @@ describe('SplitLogPanel', !isWin ? function(){
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Top Level:\n    Shit happened.\n\n')
     })
     it('says "Please be patient" if not all results are in', function(){
-      var tests = new Backbone.Collection
+      var tests = new Backbone.Collection()
       results.set('tests', tests)
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)')
     })
     it('says "No tests were run :(" when no tests but all is true', function(){
-      var tests = new Backbone.Collection
+      var tests = new Backbone.Collection()
       results.set('tests', tests)
       results.set('all', true)
       expect(panel.getResultsDisplayText().unstyled()).to.equal('No tests were run :(')
@@ -150,7 +150,7 @@ describe('SplitLogPanel', !isWin ? function(){
     })
 
     it('returns "" with empty collection', function(){
-      var messages = new Backbone.Collection
+      var messages = new Backbone.Collection()
       runner.set('messages', messages)
       expect(panel.getMessagesText().unstyled()).to.equal('')
     })

@@ -20,8 +20,8 @@ describe('Dev', !isWin ? function(){
   describe('pause running', function() {
     beforeEach(function() {
       config = new Config('dev')
-      sandbox.stub(DevApp.prototype, "configureView")
-      sandbox.stub(DevApp.prototype, "configure")
+      sandbox.stub(DevApp.prototype, 'configureView')
+      sandbox.stub(DevApp.prototype, 'configure')
       app = new DevApp(config, function(){})
       app.view = {
         clearErrorPopupMessage: function(){}

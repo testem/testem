@@ -11,10 +11,10 @@ describe('AppView', !isWin ? function(){
   var appview, app, config
 
   beforeEach(function(){
-    app = new Backbone.Model
+    app = new Backbone.Model()
     app.url = 'http://localhost:1234'
     config = app.config = new Config({}, {port: 1234})
-    app.runners = new Backbone.Collection
+    app.runners = new Backbone.Collection()
     appview = new AppView({
       app: app,
       screen: screen

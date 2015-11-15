@@ -1,9 +1,8 @@
 var expect = require('chai').expect
-var StyledString = require('styled_string')
+var styledString = require('styled_string')
 var strutils = require('../lib/strutils')
 var splitLines = strutils.splitLines
 var indent = strutils.indent
-var pad = strutils.pad
 var template = strutils.template
 var assert = require('chai').assert
 
@@ -25,14 +24,14 @@ describe('splitLines', function(){
 
   describe('it also works on styled strings', !isWin ? function(){
     it('splits on newline', function(){
-      var s = StyledString('abc\ndef', {foreground: 'red'})
+      var s = styledString('abc\ndef', {foreground: 'red'})
       var ss = splitLines(s, 10)
       expect(ss.length).to.equal(2)
       expect(ss[0].toString()).to.equal('\u001b[31mabc\u001b[0m')
       expect(ss[1].toString()).to.equal('\u001b[31mdef\u001b[0m')
     })
     it('splits and then breaks', function(){
-      var s = StyledString('abcd\nefghijkl', {foreground: 'red'})
+      var s = styledString('abcd\nefghijkl', {foreground: 'red'})
       var ss = splitLines(s, 5)
       expect(ss.length).to.equal(3)
       expect(ss[0].toString()).to.equal('\u001b[31mabcd\u001b[0m')
@@ -41,7 +40,7 @@ describe('splitLines', function(){
     })
 
     it('handles empty lines', function(){
-      var s = StyledString('abc\n\ndef')
+      var s = styledString('abc\n\ndef')
       var lines = splitLines(s, 5)
       assert.equal(lines.length, 3)
       assert.equal(lines[0].toString(), 'abc')

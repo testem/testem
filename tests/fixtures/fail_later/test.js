@@ -1,3 +1,4 @@
+/* globals waitsFor, runs */
 describe('I fail', function(){
   it('later', function(){
     waitsFor(function() {

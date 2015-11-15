@@ -1,10 +1,8 @@
 var BrowserRunner = require('../lib/browser_runner')
 var EventEmitter = require('events').EventEmitter
 var expect = require('chai').expect
-var assert = require('chai').assert
 var bd = require('bodydouble')
 var stub = bd.stub
-var mock = bd.mock
 var Config = require('../lib/config')
 var Launcher = require('../lib/launcher.js')
 var BrowserTestRunner = require('../lib/ci/browser_test_runner')
@@ -12,7 +10,7 @@ var BrowserTestRunner = require('../lib/ci/browser_test_runner')
 describe('BrowserRunner', function(){
   var socket, runner
   beforeEach(function(){
-    socket = new EventEmitter
+    socket = new EventEmitter()
     runner = new BrowserRunner({
       name: 'Chrome 19.0',
       socket: socket
@@ -27,19 +25,20 @@ describe('BrowserRunner', function(){
   describe('parallel runners', function(){
     var ff = {
       name: 'Firefox 21.0',
-      socket: new EventEmitter
+      socket: new EventEmitter()
     }
     var chrome = {
       name: 'Chrome 19.0',
-      socket: new EventEmitter
+      socket: new EventEmitter()
     }
-    var reporter = new (function() {
+    var Reporter = function() {
       this.logsByRunner = {}
       this.report = function(browser, msg) {
         this.logsByRunner[browser] = this.logsByRunner[browser] || [];
         this.logsByRunner[browser].push(msg)
       }
-    });
+    }
+    var reporter = new Reporter();
     var config = new Config('ci', {
       parallel: 2,
       reporter: reporter
@@ -51,8 +50,8 @@ describe('BrowserRunner', function(){
       runner.tryAttach(ff.name, launcher.id, ff.socket)
       runner.tryAttach(chrome.name, launcher.id, chrome.socket)
 
-      ff.socket.emit('test-result', {failed: 1, name: "Test1"})
-      chrome.socket.emit('test-result', {passed: true, name: "Test2"})
+      ff.socket.emit('test-result', {failed: 1, name: 'Test1'})
+      chrome.socket.emit('test-result', {passed: true, name: 'Test2'})
 
       ff.socket.emit('all-test-results')
       chrome.socket.emit('all-test-results')
@@ -62,11 +61,11 @@ describe('BrowserRunner', function(){
       expect(reporter.logsByRunner[ff.name]).to.have.length(1)
       expect(reporter.logsByRunner[chrome.name]).to.have.length(1)
 
-      expect(reporter.logsByRunner[ff.name][0].name).to.equal("Test1")
-      expect(reporter.logsByRunner[ff.name][0].passed).to.be.false
+      expect(reporter.logsByRunner[ff.name][0].name).to.equal('Test1')
+      expect(reporter.logsByRunner[ff.name][0].passed).to.equal(false)
 
-      expect(reporter.logsByRunner[chrome.name][0].name).to.equal("Test2")
-      expect(reporter.logsByRunner[chrome.name][0].passed).to.be.true
+      expect(reporter.logsByRunner[chrome.name][0].name).to.equal('Test2')
+      expect(reporter.logsByRunner[chrome.name][0].passed).to.equal(true)
     })
   })
   describe('reset Test Results', function(){

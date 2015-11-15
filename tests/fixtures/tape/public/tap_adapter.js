@@ -1,13 +1,13 @@
 
-
+/* globals Testem */
 Testem.useCustomAdapter(tapAdapter)
 function tapAdapter(socket){
 
     var results = {
-        failed: 0
-        , passed: 0
-        , total: 0
-        , tests: []
+      failed: 0,
+      passed: 0,
+      total: 0,
+      tests: []
     }
 
     socket.emit('tests-start')
@@ -26,8 +26,11 @@ function tapAdapter(socket){
                 items: []
             }
 
-            if (passed) results.passed++
-            else results.failed++
+            if (passed) {
+              results.passed++
+            } else {
+              results.failed++
+            }
             results.total++
 
             socket.emit('test-result', test)
@@ -35,7 +38,7 @@ function tapAdapter(socket){
         }else if (msg === '# ok' || msg.match(/^# tests \d+/)){
             socket.emit('all-test-results', results)
         }
-        
+
     }
 
 }
