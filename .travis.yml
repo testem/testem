@@ -20,5 +20,5 @@ deploy:
     secure: Np9Z9Rb/BqQakf+D5sNOwFt7n4ibGGM6g0BjybTzkOO2FpRIFcwgc6pIQ75RY/uRygZlhR8MVaiY6Dcc5QVzVwi8HEQ7jDl8HqJa3vKm9Njo/JQEuB9LMtR38jLEuHfjlV/qg5mYRszgnKiNiVZNfETKx/aW6iT5Cgq2fl30Anw=
   on:
     tags: true
-    repo: airportyh/testem
+    repo: testem/testem
     node: 4
