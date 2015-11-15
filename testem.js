@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var log = require('npmlog')
 var program = require('commander')
 var progOptions = program
 var Config = require('./lib/config')
@@ -24,10 +23,10 @@ program
   .command('launchers')
   .description('Print the list of available launchers (browsers & process launchers)')
   .action(act(function(env){
-    env.__proto__ = program
+    env.__proto__ = program;
     progOptions = env
     appMode = 'launchers'
-  }))
+  }));
 
 program
   .command('ci')
