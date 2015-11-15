@@ -497,13 +497,10 @@ Roadmap
 1. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
 2. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
 
-Contributors
-------------
+Core Maintainer(s)
+------------------
 
-* [Toby Ho](https://github.com/airportyh)
 * [Johannes Würbach](https://github.com/johanneswuerbach)
-* [Raynos](https://github.com/Raynos)
-* [Derek Brans](https://github.com/dbrans)
 
 Community
 ---------
