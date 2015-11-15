@@ -14,7 +14,7 @@ describe('Server', function(){
   var port = 63571
 
   describe('http', function() {
-    var runners, socketClient
+    var runners
     before(function(done){
       config = new Config('dev', {
         port: port,
@@ -128,7 +128,7 @@ describe('Server', function(){
         })
     })
 
-    describe('route', function(done) {
+    describe('route', function() {
       it('routes server paths to local paths', function(done) {
         assertUrlReturnsFileContents(baseUrl + 'direct-test/test.js', 'tests/web/direct/test.js', done)
       })
@@ -136,7 +136,9 @@ describe('Server', function(){
       it('allows fallback paths', function(done) {
         var expectedCallbacks = 2
         var cb = function() {
-          if (--expectedCallbacks === 0) done()
+          if (--expectedCallbacks === 0) {
+            done()
+          }
         }
         assertUrlReturnsFileContents(baseUrl + 'fallback-test/test.js', 'tests/web/direct/test.js', cb)
         assertUrlReturnsFileContents(baseUrl + 'fallback-test/test2.js', 'tests/web/fallback/test2.js', cb)

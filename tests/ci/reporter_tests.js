@@ -20,7 +20,7 @@ describe('test reporters', function(){
         name: 'it fails',
         passed: false,
         error: { message: 'it crapped out' },
-        logs: ["I am a log", "Useful information"]
+        logs: ['I am a log', 'Useful information']
       })
       reporter.finish()
       assert.deepEqual(stream.read().toString().split('\n'), [
@@ -188,7 +188,7 @@ describe('test reporters', function(){
       reporter.report('phantomjs', {
         name: 'it failed with ampersands',
         passed: false,
-        error: { message: "&&" }
+        error: { message: '&&' }
       })
       reporter.finish()
       var output = stream.read().toString()

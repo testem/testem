@@ -19,11 +19,11 @@ describe('RunnerTab', !isWin ? function(){
       screen.$setSize(20, 8)
       runner = new Backbone.Model({
         name: 'Bob',
-        messages: new Backbone.Collection
+        messages: new Backbone.Collection()
       })
       runner.hasMessages = function(){ return false }
       appview = new Backbone.Model({currentTab: 0})
-      appview.app = {config: new Config}
+      appview.app = {config: new Config()}
       appview.isPopupVisible = function(){ return false }
       tab = new RunnerTab({
         runner: runner,
@@ -81,7 +81,7 @@ describe('RunnerTab', !isWin ? function(){
           results = new Backbone.Model()
           runner = new Backbone.Model({
             name: 'Bob',
-            messages: new Backbone.Collection,
+            messages: new Backbone.Collection(),
             results: results
           })
           runner.hasMessages = function(){ return false }
@@ -126,12 +126,12 @@ describe('RunnerTab', !isWin ? function(){
       results = new Backbone.Model()
       runner = new Backbone.Model({
         name: 'Bob',
-        messages: new Backbone.Collection,
+        messages: new Backbone.Collection(),
         results: results
       })
       runner.hasMessages = function(){ return false }
       appview = new Backbone.Model({currentTab: 0})
-      appview.app = {config: new Config}
+      appview.app = {config: new Config()}
       appview.isPopupVisible = function(){ return false }
       tab = new RunnerTab({
         runner: runner,
@@ -210,20 +210,20 @@ describe('RunnerTabs', !isWin ? function(){
   it('initializes', function(){
     screen.$setSize(20, 8)
     var runner = new Backbone.Model({
-      name: 'Bob'
-      , messages: new Backbone.Collection
+      name: 'Bob',
+      messages: new Backbone.Collection()
     })
     runner.hasMessages = function(){ return false }
     var appview = new Backbone.Model({currentTab: 0, cols: 20})
-    appview.app = {config: new Config}
+    appview.app = {config: new Config()}
     appview.isPopupVisible = function(){ return false }
-    appview.runners = function(){ return new Backbone.Collection }
+    appview.runners = function(){ return new Backbone.Collection() }
     var tab = new RunnerTab({
-      runner: runner
-      , appview: appview
-      , selected: true
-      , index: 0
-      , screen: screen
+      runner: runner,
+      appview: appview,
+      selected: true,
+      index: 0,
+      screen: screen
     })
     appview.isPopupVisible = function(){ return false }
     var tabs = new RunnerTabs([tab], {
