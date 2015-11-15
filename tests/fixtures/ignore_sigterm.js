@@ -1,6 +1,6 @@
 process.on('SIGTERM', function() {
   // Ignore
-  console.log('SIGTERM ignored')
+  console.log('SIGTERM ignored');
 });
 
-process.stdin.resume()
+process.stdin.resume();
