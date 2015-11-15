@@ -7,19 +7,21 @@ Testem`s adapter for Mocha. It works by monkey-patching `Runner.prototype.emit`.
 
 */
 
-function mochaAdapter(socket){
-	var results = 
-		{ failed: 0
-	    , passed: 0
-	    , total: 0
-	    , pending: 0
-	    , tests: []
-		}
+/* globals mocha, emit, Mocha */
+/* exported mochaAdapter */
+function mochaAdapter(){
+	var results = {
+    failed: 0,
+    passed: 0,
+    total: 0,
+    pending: 0,
+    tests: []
+	}
 	var id = 1
 	var Runner
 	var ended = false
 	var waiting = 0
-	
+
 	try{
 		Runner = mocha.Runner || Mocha.Runner
 	}catch(e){
@@ -70,16 +72,16 @@ function mochaAdapter(socket){
 
 		oEmit.apply(this, arguments)
 
-		function testPass(test){
-			var tst = 
-				{ passed: 1
-				, failed: 0
-				, total: 1
-				, pending: 0
-				, id: id++
-				, name: name
-				, items: []
-				}
+		function testPass(){
+			var tst = {
+        passed: 1,
+				failed: 0,
+				total: 1,
+				pending: 0,
+				id: id++,
+				name: name,
+				items: []
+			}
 			results.passed++
 			results.total++
 			results.tests.push(tst)
@@ -88,21 +90,20 @@ function mochaAdapter(socket){
 
 		function makeFailingTest(test, err){
 			err = err || test.err
-			var items = [
-				{ passed: false
-				, message: err.message
-				, stack: (err && err.stack) ? err.stack : undefined
-				}
-			]
-			var tst = 
-				{ passed: 0
-				, failed: 1
-				, total: 1
-				, pending: 0
-				, id: id++
-				, name: name
-				, items: items
-				}
+			var items = [{
+        passed: false,
+				message: err.message,
+				stack: (err && err.stack) ? err.stack : undefined
+			}]
+			var tst = {
+        passed: 0,
+				failed: 1,
+				total: 1,
+				pending: 0,
+				id: id++,
+				name: name,
+				items: items
+			}
 			return tst
 		}
 
@@ -115,15 +116,15 @@ function mochaAdapter(socket){
 
 		}
 
-		function testPending(test){
-			var tst =
-			{ passed: 0
-			, failed: 0
-			, total: 1
-			, pending: 1
-			, id: id++
-			, name: name
-			, items: []
+		function testPending(){
+			var tst = {
+        passed: 0,
+        failed: 0,
+        total: 1,
+        pending: 1,
+        id: id++,
+        name: name,
+        items: []
 			}
 			results.total++
 			results.tests.push(tst)

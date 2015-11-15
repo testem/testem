@@ -7,7 +7,11 @@ The client-side script that reports results back to the Testem server via Socket
 It also restarts the tests by refreshing the page when instructed by the server to do so.
 
 */
-
+/* globals document, window */
+/* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
+/* globals qunitAdapter, busterAdapter, decycle */
+/* globals Testem */
+/* exported Testem */
 (function appendTestemIframeOnLoad() {
   var iframeAppended = false;
 
@@ -34,12 +38,12 @@ It also restarts the tests by refreshing the page when instructed by the server 
     else {
       document.detachEvent('onreadystatechange', DOMContentLoaded);
     }
-    DOMReady();
+    domReady();
   };
 
-  var DOMReady = function() {
+  var domReady = function() {
     if ( !document.body ) {
-      return setTimeout( DOMReady, 1 );
+      return setTimeout( domReady, 1 );
     }
     appendIframe();
   };
@@ -53,7 +57,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
   }
 
   if (document.readyState !== 'loading') {
-    DOMReady();
+    domReady();
   }
 })();
 
@@ -84,12 +88,16 @@ function setupTestStats(){
   var passed = 0
   Testem.on('test-result', function(test){
     total++
-    if (test.failed === 0) passed++
+    if (test.failed === 0) {
+      passed++
+    }
     updateTitle()
   })
 
   function updateTitle(){
-    if (!total) return
+    if (!total) {
+      return
+    }
     document.title = originalTitle + ' (' + passed + '/' + total + ')'
   }
 }

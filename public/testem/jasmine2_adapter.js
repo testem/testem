@@ -7,6 +7,8 @@
 
  */
 
+/* globals emit, jasmine */
+/* exported jasmine2Adapter */
 function jasmine2Adapter() {
 
 	var results = {
@@ -71,5 +73,5 @@ function jasmine2Adapter() {
 
 	}
 
-	jasmine.getEnv().addReporter(new Jasmine2AdapterReporter);
+	jasmine.getEnv().addReporter(new Jasmine2AdapterReporter());
 }
