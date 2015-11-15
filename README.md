@@ -1,7 +1,7 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://travis-ci.org/airportyh/testem.svg?branch=master)](https://travis-ci.org/airportyh/testem) [![Dependency Status](https://david-dm.org/airportyh/testem.svg)](https://david-dm.org/airportyh/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
+[![Build Status](https://travis-ci.org/testem/testem.svg?branch=master)](https://travis-ci.org/testem/testem) [![Dependency Status](https://david-dm.org/testem/testem.svg)](https://david-dm.org/testem/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
 
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
@@ -60,11 +60,11 @@ The simplest way to use Testem, in the TDD spirit, is to start in an empty direc
 
 You will see a terminal-based interface which looks like this
 
-![Initial interface](https://github.com/airportyh/testem/raw/master/images/initial.png)
+![Initial interface](https://github.com/testem/testem/raw/master/images/initial.png)
 
 Now open your browser and go to the specified URL. You should now see
 
-![Zero of zero](https://github.com/airportyh/testem/raw/master/images/zeros.png)
+![Zero of zero](https://github.com/testem/testem/raw/master/images/zeros.png)
 
 We see 0/0 for tests because at this point we haven't written any code. As we write them, Testem will pick up any `.js` files
 that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
@@ -78,7 +78,7 @@ describe('hello', function(){
 ```
 Save that file and now you should see
 
-![Red](https://github.com/airportyh/testem/raw/master/images/red.png)
+![Red](https://github.com/testem/testem/raw/master/images/red.png)
 
 Testem should automatically pick up the new files you've added and also any changes that you make to them and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
@@ -90,7 +90,7 @@ function hello(){
 
 So you should now see
 
-![Green](https://github.com/airportyh/testem/raw/master/images/green.png)
+![Green](https://github.com/testem/testem/raw/master/images/green.png)
 
 ### Using the Text User Interface
 
@@ -158,7 +158,7 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](http:
 
 TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
 
-* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
+* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 ## Other Test Reporters
@@ -410,7 +410,7 @@ Let's say you want to serve `tests.html` at the top level url `/tests.html`, all
 DIY: Use Any Test Framework
 ---------------------------
 
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
 Then, to use it, in your config file simply set
 
@@ -418,7 +418,7 @@ Then, to use it, in your config file simply set
 "framework": "custom"
 ```
 
-And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
+And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/testem/testem/tree/master/examples/custom_adapter).
 
 Growl or Growl-ish Notifications
 --------------------------------
@@ -457,25 +457,25 @@ To limit the functionality to only certain content types, use "onlyContentTypes"
 Example Projects
 ----------------
 
-I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
+I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
 
-* [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
-* [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
-* [Jasmine 2](https://github.com/airportyh/testem/tree/master/examples/jasmine2)
-* [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
-* [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
-* [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
-* [Mocha + Chai](https://github.com/airportyh/testem/tree/master/examples/mocha_chai_simple)
-* [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Buster.js Project](https://github.com/airportyh/testem/tree/master/examples/buster)
-* [Coffeescript Project](https://github.com/airportyh/testem/tree/master/examples/coffeescript)
-* [Browserify Project](https://github.com/airportyh/testem/tree/master/examples/browserify)
-* [JSHint Example](https://github.com/airportyh/testem/tree/master/examples/jshint)
-* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
-* [Tape Example](https://github.com/airportyh/testem/tree/master/examples/tape_example)
-* [BrowserStack Integration](https://github.com/airportyh/testem/tree/master/examples/browserstack) **bleeding edge**
-* [SauceLabs Integration](https://github.com/airportyh/testem/tree/master/examples/saucelabs) **bleeding edge**
-* [Code Coverage with Istanbul](https://github.com/airportyh/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
+* [Simple QUnit project](https://github.com/testem/testem/tree/master/examples/qunit_simple)
+* [Simple Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_simple)
+* [Jasmine 2](https://github.com/testem/testem/tree/master/examples/jasmine2)
+* [Custom Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_custom)
+* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
+* [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
+* [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
+* [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Buster.js Project](https://github.com/testem/testem/tree/master/examples/buster)
+* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
+* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
+* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
+* [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
+* [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
+* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack) **bleeding edge**
+* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs) **bleeding edge**
+* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
 
 Known Issues
 ------------
@@ -484,12 +484,12 @@ Known Issues
 
         npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
 
-2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/airportyh/testem/issues/130).
+2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/testem/testem/issues/130).
 
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
 
 Roadmap
 -------
