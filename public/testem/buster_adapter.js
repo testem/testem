@@ -9,10 +9,10 @@ Testem's adapter for Buster.js. It works by attaching event listeners to the tes
 
 /* globals emit, buster */
 /* exported busterAdapter */
-function busterAdapter(){
+function busterAdapter() {
 
-  var id = 1
-  var started = false
+  var id = 1;
+  var started = false;
 
   var results = {
     failed: 0,
@@ -20,22 +20,22 @@ function busterAdapter(){
     total: 0,
     pending: 0,
     tests: []
-  }
+  };
 
-  var runner = buster.testRunner
-  var currContext = null
+  var runner = buster.testRunner;
+  var currContext = null;
 
-  runner.on('context:start', function(context){
+  runner.on('context:start', function(context) {
     if (!started) {
-      emit('tests-start')
+      emit('tests-start');
     }
-    currContext = context
-  })
-  runner.on('context:end', function(){
-    currContext = null
-  })
+    currContext = context;
+  });
+  runner.on('context:end', function() {
+    currContext = null;
+  });
 
-  function onSuccess(test){
+  function onSuccess(test) {
     emit('test-result', {
       passed: 1,
       failed: 0,
@@ -43,12 +43,12 @@ function busterAdapter(){
       pending: 0,
       id: id++,
       name: currContext ? (currContext.name + ' ' + test.name) : test.name
-    })
-    results.passed++
-    results.total++
+    });
+    results.passed++;
+    results.total++;
   }
 
-  function onFailure(test){
+  function onFailure(test) {
     emit('test-result', {
       passed: 0,
       failed: 1,
@@ -61,12 +61,12 @@ function busterAdapter(){
         message: test.error.message,
         stack: test.error.stack ? test.error.stack : undefined
       }]
-    })
-    results.failed++
-    results.total++
+    });
+    results.failed++;
+    results.total++;
   }
 
-  function onDeferred(test){
+  function onDeferred(test) {
     emit('test-result', {
       passed: 0,
       failed: 0,
@@ -74,18 +74,18 @@ function busterAdapter(){
       pending: 1,
       id: id++,
       name: currContext ? (currContext.name + ' ' + test.name) : test.name
-    })
-    results.total++
+    });
+    results.total++;
   }
 
-  runner.on('test:success', onSuccess)
-  runner.on('test:failure', onFailure)
-  runner.on('test:error', onFailure)
-  runner.on('test:timeout', onFailure)
-  runner.on('test:deferred', onDeferred)
+  runner.on('test:success', onSuccess);
+  runner.on('test:failure', onFailure);
+  runner.on('test:error', onFailure);
+  runner.on('test:timeout', onFailure);
+  runner.on('test:deferred', onDeferred);
 
-  runner.on('suite:end', function(){
-    emit('all-test-results', results)
-  })
+  runner.on('suite:end', function() {
+    emit('all-test-results', results);
+  });
 
 }

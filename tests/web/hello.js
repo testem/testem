@@ -1,4 +1,4 @@
 /* exported hello */
-function hello(){
+function hello() {
     return 'hello world';
 }

@@ -22,7 +22,7 @@ function jasmine2Adapter() {
 	function Jasmine2AdapterReporter() {
 
 		this.jasmineStarted = function() {
-			emit('tests-start')
+			emit('tests-start');
 		};
 
 		this.specDone = function(spec) {
@@ -64,11 +64,11 @@ function jasmine2Adapter() {
 
 			results.total++;
 
-			emit('test-result', test)
+			emit('test-result', test);
 		};
 
 		this.jasmineDone = function() {
-			emit('all-test-results', results)
+			emit('all-test-results', results);
 		};
 
 	}

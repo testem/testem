@@ -4,4 +4,4 @@ module.exports = {
     "impl.js",
     "tests.js"
   ]
-}
+};

@@ -61,53 +61,53 @@ It also restarts the tests by refreshing the page when instructed by the server 
   }
 })();
 
-function initTestFrameworkHooks(socket){
-  if (typeof getJasmineRequireObj === 'function'){
-    jasmine2Adapter(socket)
-  }else if (typeof jasmine === 'object'){
-    jasmineAdapter(socket)
-  }else if ((typeof mocha).match(/function|object/)){
-    mochaAdapter(socket)
-  }else if (typeof QUnit === 'object'){
-    qunitAdapter(socket)
-  }else if (typeof buster !== 'undefined'){
-    busterAdapter(socket)
+function initTestFrameworkHooks(socket) {
+  if (typeof getJasmineRequireObj === 'function') {
+    jasmine2Adapter(socket);
+  } else if (typeof jasmine === 'object') {
+    jasmineAdapter(socket);
+  } else if ((typeof mocha).match(/function|object/)) {
+    mochaAdapter(socket);
+  } else if (typeof QUnit === 'object') {
+    qunitAdapter(socket);
+  } else if (typeof buster !== 'undefined') {
+    busterAdapter(socket);
   }
 }
 
-function init(){
-  takeOverConsole()
-  interceptWindowOnError()
-  initTestFrameworkHooks(Testem)
-  setupTestStats()
+function init() {
+  takeOverConsole();
+  interceptWindowOnError();
+  initTestFrameworkHooks(Testem);
+  setupTestStats();
 }
 
-function setupTestStats(){
-  var originalTitle = document.title
-  var total = 0
-  var passed = 0
-  Testem.on('test-result', function(test){
-    total++
+function setupTestStats() {
+  var originalTitle = document.title;
+  var total = 0;
+  var passed = 0;
+  Testem.on('test-result', function(test) {
+    total++;
     if (test.failed === 0) {
-      passed++
+      passed++;
     }
-    updateTitle()
-  })
+    updateTitle();
+  });
 
-  function updateTitle(){
+  function updateTitle() {
     if (!total) {
-      return
+      return;
     }
-    document.title = originalTitle + ' (' + passed + '/' + total + ')'
+    document.title = originalTitle + ' (' + passed + '/' + total + ')';
   }
 }
 
-function takeOverConsole(){
-  function intercept(method){
-    var original = console[method]
-    console[method] = function(){
-      var doDefault, message
-      var args = Array.prototype.slice.apply(arguments)
+function takeOverConsole() {
+  function intercept(method) {
+    var original = console[method];
+    console[method] = function() {
+      var doDefault, message;
+      var args = Array.prototype.slice.apply(arguments);
       if (Testem.handleConsoleMessage) {
         message = decycle(args).join(' ');
         doDefault = Testem.handleConsoleMessage(message);
@@ -117,39 +117,39 @@ function takeOverConsole(){
         emit.apply(console, args);
         if (original && original.apply) {
           // Do this for normal browsers
-          original.apply(console, arguments)
-        }else if (original) {
+          original.apply(console, arguments);
+        } else if (original) {
           // Do this for IE
           if (!message) {
             message = decycle(args).join(' ');
           }
-          original(message)
+          original(message);
         }
       }
-    }
+    };
   }
-  var methods = ['log', 'warn', 'error', 'info']
+  var methods = ['log', 'warn', 'error', 'info'];
   for (var i = 0; i < methods.length; i++) {
     if (window.console && console[methods[i]]) {
-      intercept(methods[i])
+      intercept(methods[i]);
     }
   }
 }
 
-function interceptWindowOnError(){
+function interceptWindowOnError() {
   var orginalOnError = window.onerror;
-  window.onerror = function(msg, url, line){
-    if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number'){
-      emit('top-level-error', msg, url, line)
+  window.onerror = function(msg, url, line) {
+    if (typeof msg === 'string' && typeof url === 'string' && typeof line === 'number') {
+      emit('top-level-error', msg, url, line);
     }
     if (orginalOnError) {
-      orginalOnError.apply(window, arguments)
+      orginalOnError.apply(window, arguments);
     }
   };
 }
 
-function emit(){
-  Testem.emit.apply(Testem, arguments)
+function emit() {
+  Testem.emit.apply(Testem, arguments);
 }
 
 window.Testem = {
@@ -173,16 +173,16 @@ window.Testem = {
     }
     Testem.emitConnection.apply(Testem, arguments);
   },
-  on: function(evt, callback){
-    if (!this.evtHandlers){
-      this.evtHandlers = {}
+  on: function(evt, callback) {
+    if (!this.evtHandlers) {
+      this.evtHandlers = {};
     }
-    if (!this.evtHandlers[evt]){
-      this.evtHandlers[evt] = []
+    if (!this.evtHandlers[evt]) {
+      this.evtHandlers[evt] = [];
     }
-    this.evtHandlers[evt].push(callback)
+    this.evtHandlers[evt].push(callback);
   },
   handleConsoleMessage: null
-}
+};
 
-init()
+init();
