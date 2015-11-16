@@ -58,7 +58,7 @@
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html",
     "testem-tests": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
-    "lint": "jshint lib tests public/testem/*_adapter.js public/testem/testem_*.js"
+    "lint": "jshint ."
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",
@@ -67,6 +67,7 @@
     "cheerio": "^0.19.0",
     "dirty-chai": "^1.2.2",
     "ispy": "^0.1.2",
+    "jshint": "^2.8.0",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "saucie": "^1.2.0",

@@ -1,6 +1,5 @@
 {
   "predef": [],
-  "asi": true,
   "proto": true,
   "indent": 2,
   "camelcase": false,

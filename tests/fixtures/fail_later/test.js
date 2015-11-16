@@ -1,11 +1,11 @@
 /* globals waitsFor, runs */
-describe('I fail', function(){
-  it('later', function(){
+describe('I fail', function() {
+  it('later', function() {
     waitsFor(function() {
-      return false
-    }, '', 30000)
+      return false;
+    }, '', 30000);
     runs(function() {
-      throw new Error('oops')
-    })
-  })
-})
+      throw new Error('oops');
+    });
+  });
+});

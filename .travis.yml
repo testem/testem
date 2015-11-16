@@ -13,6 +13,8 @@ matrix:
     - node_js: 5
       env: BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
 sudo: false
+before_script:
+  - npm run lint
 deploy:
   provider: npm
   email: johannes.wuerbach@googlemail.com
