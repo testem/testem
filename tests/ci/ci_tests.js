@@ -28,14 +28,14 @@ describe('ci mode app', function() {
     sandbox.restore();
   });
 
- describe('multiple launchers', function() {
-   beforeEach(function(done) {
+  describe('multiple launchers', function() {
+    beforeEach(function(done) {
      fs.unlink('tests/fixtures/tape/public/bundle.js', function() {
        done();
      });
    });
 
-   it('runs them tests on node, nodetap, and browser', function(done) {
+    it('runs them tests on node, nodetap, and browser', function(done) {
       var config = new Config('ci', {
         file: 'tests/fixtures/tape/testem.json',
         port: 0,
@@ -321,7 +321,7 @@ describe('runHook', function() {
   it('runs javascript hook', function(done) {
     var config = new Config('ci', null, {
       port: 777,
-      on_start: function (cfg, data, callback) {
+      on_start: function(cfg, data, callback) {
         assert.equal(cfg.get('port'), 777);
         assert.equal(data.viva, 'la revolucion');
         callback(1);

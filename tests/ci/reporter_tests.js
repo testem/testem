@@ -16,11 +16,11 @@ var assertXmlIsValid = function(xmlString) {
   });
 
   // this will throw into failure variable with invalid xml
-  parser.parseFromString(xmlString,'text/xml');
+  parser.parseFromString(xmlString, 'text/xml');
 
   if (failure)
   {
-    assert(false, failure+'\n---\n'+xmlString+'\n---\n');
+    assert(false, failure + '\n---\n' + xmlString + '\n---\n');
   }
 };
 
@@ -190,7 +190,7 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
-    it('outputs skipped tests', function(){
+    it('outputs skipped tests', function() {
       var stream = new PassThrough();
       var reporter = new XUnitReporter(false, stream);
       reporter.report('phantomjs', {

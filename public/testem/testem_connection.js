@@ -1,7 +1,8 @@
 /* globals document, parent, window, io, navigator, decycle */
 /* globals TestemConnection */
 
-var socket, connectStatus = 'disconnected';
+var socket;
+var connectStatus = 'disconnected';
 
 function syncConnectStatus() {
   var elm = document.getElementById('__testem_ui__');
@@ -75,7 +76,6 @@ function getId() {
   return m ? m[1] : null;
 }
 
-
 var addListener = window.addEventListener ?
   function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
   function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
@@ -106,6 +106,7 @@ function init() {
 window.TestemConnection = {
   emit: function() {
     var args = Array.prototype.slice.apply(arguments);
+
     // Workaround IE 8 max instructions
     setTimeout(function() {
       var decycled = decycle(args);

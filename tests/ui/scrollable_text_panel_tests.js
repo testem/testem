@@ -7,7 +7,6 @@ describe('ScrollableTextPanel', !isWin ? function() {
 
   var panel;
 
-
   context('10x2 screen', function() {
 
     beforeEach(function() {
@@ -33,7 +32,7 @@ describe('ScrollableTextPanel', !isWin ? function() {
     it('does not render if not visible', function() {
       panel.set('visible', false);
       panel.set('text', 'hello');
-      expect(screen.buffer).to.deep.equal([ '          ', '          ', '          ' ]);
+      expect(screen.buffer).to.deep.equal(['          ', '          ', '          ']);
     });
 
     context('with paragraph text', function() {
@@ -48,23 +47,23 @@ describe('ScrollableTextPanel', !isWin ? function() {
         expect(screen.buffer[0]).to.equal('Charm obje');
       });
       it('pages up and down', function() {
-        expect(screen.buffer).to.deep.equal([ 'Charm obje',
+        expect(screen.buffer).to.deep.equal(['Charm obje',
           'cts pass a',
           '          ']);
         panel.pageDown();
-        expect(screen.buffer).to.deep.equal([ 'long the d',
+        expect(screen.buffer).to.deep.equal(['long the d',
           'ata events',
           '          ']);
         panel.pageUp();
-        expect(screen.buffer).to.deep.equal([ 'Charm obje',
+        expect(screen.buffer).to.deep.equal(['Charm obje',
           'cts pass a',
           '          ']);
       });
       it('half pages up and down', function() {
         panel.halfPageDown();
-        expect(screen.buffer).to.deep.equal([ 'cts pass a', 'long the d', '          ' ]);
+        expect(screen.buffer).to.deep.equal(['cts pass a', 'long the d', '          ']);
         panel.halfPageUp();
-        expect(screen.buffer).to.deep.equal([ 'Charm obje', 'cts pass a', '          ']);
+        expect(screen.buffer).to.deep.equal(['Charm obje', 'cts pass a', '          ']);
       });
       it('properly erases existing text', function() {
         panel.set('text', 'hello');
@@ -72,10 +71,7 @@ describe('ScrollableTextPanel', !isWin ? function() {
       });
     });
 
-
-
   });
-
 
   context('6x6 with 2 char padding', function() {
     beforeEach(function() {
@@ -101,9 +97,9 @@ describe('ScrollableTextPanel', !isWin ? function() {
         '   the d  ',
         '  ata ev  ',
         '          ',
-        '          ' ]);
+        '          ']);
     });
   });
-}: function() {
+} : function() {
   xit('TODO: Fix and re-enable for windows');
 });

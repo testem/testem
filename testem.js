@@ -18,7 +18,6 @@ program
   .option('-t, --test_page [page]', 'the html page to drive the tests')
   .option('-g, --growl', 'turn on growl / native notifications');
 
-
 program
   .command('launchers')
   .description('Print the list of available launchers (browsers & process launchers)')
@@ -50,7 +49,6 @@ program
     appMode = 'server';
   }));
 
-
 program.on('--help', function() {
   console.log('  Keyboard Controls (in dev mode):\n');
   console.log('    ENTER                  run the tests');
@@ -66,7 +64,6 @@ program.on('--help', function() {
   console.log('    u                      half a page up in the target text panel');
   console.log();
 });
-
 
 main();
 function main() {

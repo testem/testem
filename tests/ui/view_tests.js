@@ -45,6 +45,6 @@ describe('view', !isWin ? function() {
     expect(onNameChange.called || onAgeChange.called).not.to.be.ok;
   });
 
-}: function() {
+} : function() {
   xit('TODO: Fix and re-enable for windows');
 });

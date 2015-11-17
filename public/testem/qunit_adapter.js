@@ -111,7 +111,7 @@ function qunitAdapter() {
   QUnit.moduleEnd = function() {
     currentModule = undefined;
   };
-  QUnit.done( function(params) {
+  QUnit.done(function(params) {
     results.runDuration = params.runtime;
     emit('all-test-results', results);
   });

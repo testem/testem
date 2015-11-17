@@ -229,6 +229,7 @@ describe('ProcessRunner', function() {
         expect(results.get('total')).to.equal(2);
         expect(results.get('passed')).to.equal(1);
         expect(results.get('failed')).to.equal(1);
+
         // var tests = results.get('tests')
         // var failingTest = tests.at(1)
         // var error = failingTest.get('items')[0]

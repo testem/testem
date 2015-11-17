@@ -189,7 +189,7 @@ describe('Launcher', function() {
         assert.equal(launcher.commandLine(), '"node -e console.log(1)"');
         done();
       });
-    }: function() {
+    } : function() {
       xit('TODO: Fix and re-enable for windows');
     });
 

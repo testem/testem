@@ -32,18 +32,18 @@ describe('Dev', !isWin ? function() {
       app.quit(0, null, done);
     });
 
-    it("starts off not paused", function() {
+    it('starts off not paused', function() {
       expect(app.paused).to.be.false;
     });
 
-    it("doesn't run tests when reset and paused", function() {
+    it('doesn\'t run tests when reset and paused', function() {
       app.paused = true;
       var cb = sandbox.spy();
       app.startTests(cb);
       expect(cb.called).to.be.false;
     });
 
-    it("runs tests when reset and not paused", function() {
+    it('runs tests when reset and not paused', function() {
       var cb = sandbox.spy();
       app.startTests(cb);
       expect(cb.called).to.be.true;
@@ -86,6 +86,6 @@ describe('Dev', !isWin ? function() {
     });
   });
 
-}: function() {
+} : function() {
   xit('TODO: Fix and re-enable for windows');
 });

@@ -9,7 +9,7 @@ describe('FakeScreen', !isWin ? function() {
   });
   it('has initially', function() {
     expect(screen.buffer).to.deep.equal(
-      [ '          ',
+      ['          ',
       '          ',
       '          ',
       '          ',
@@ -18,7 +18,7 @@ describe('FakeScreen', !isWin ? function() {
       '          ',
       '          ',
       '          ',
-      '          ' ]);
+      '          ']);
   });
   it('does stuff', function() {
     screen.position(0, 1);
@@ -64,6 +64,6 @@ describe('FakeScreen', !isWin ? function() {
       expect(screen.$lines(1, 3)).to.deep.equal(['there     ', 'world     ']);
     });
   });
-}: function() {
+} : function() {
   xit('TODO: Fix and re-enable for windows');
 });

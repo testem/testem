@@ -1,7 +1,7 @@
 module.exports = {
-  "framework": "mocha",
-  "src_files": [
-    "impl.js",
-    "tests.js"
+  framework: 'mocha',
+  src_files: [
+    'impl.js',
+    'tests.js'
   ]
 };
