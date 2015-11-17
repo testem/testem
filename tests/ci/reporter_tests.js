@@ -41,6 +41,11 @@ describe('test reporters', function() {
         error: { message: 'it crapped out' },
         logs: ['I am a log', 'Useful information']
       });
+      reporter.report('phantomjs', {
+        name: 'it is skipped',
+        skipped: true,
+        logs: []
+      });
       reporter.finish();
       assert.deepEqual(stream.read().toString().split('\n'), [
         'ok 1 phantomjs - it does stuff',
@@ -52,10 +57,12 @@ describe('test reporters', function() {
         '            I am a log',
         '            Useful information',
         '    ...',
+        'skip 3 phantomjs - it is skipped',
         '',
-        '1..2',
-        '# tests 2',
+        '1..3',
+        '# tests 3',
         '# pass  1',
+        '# skip  1',
         '# fail  1',
         ''
       ]);
@@ -123,7 +130,7 @@ describe('test reporters', function() {
       });
       reporter.finish();
       var output = stream.read().toString();
-      assert.match(output, /<testsuite name="Testem Tests" tests="1" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
+      assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
       assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; \'cool\' stuff"/);
 
       assertXmlIsValid(output);
@@ -179,6 +186,21 @@ describe('test reporters', function() {
       var output = stream.read().toString();
       assert.match(output, /it didnt work"/);
       assert.match(output, /it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs skipped tests', function(){
+      var stream = new PassThrough();
+      var reporter = new XUnitReporter(false, stream);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        skipped: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /<skipped\/>/);
 
       assertXmlIsValid(output);
     });
