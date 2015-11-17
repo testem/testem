@@ -21,6 +21,7 @@ function qunitAdapter() {
   var results = {
     failed: 0,
     passed: 0,
+    skipped: 0,
     total: 0,
     tests: []
   };
@@ -86,14 +87,18 @@ function qunitAdapter() {
   QUnit.testDone(function(params) {
     currentTest.failed = params.failed;
     currentTest.passed = params.passed;
+    currentTest.skipped = params.skipped
     currentTest.total = params.total;
     currentTest.runDuration = params.runtime;
 
     results.total++;
-    if (currentTest.failed > 0) {
-      results.failed++;
+
+    if (currentTest.skipped) {
+      results.skipped++
+    } else if (currentTest.failed > 0) {
+      results.failed++
     } else {
-      results.passed++;
+      results.passed++
     }
 
     results.tests.push(currentTest);
