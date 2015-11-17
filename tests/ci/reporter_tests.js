@@ -27,45 +27,78 @@ var assertXmlIsValid = function(xmlString) {
 describe('test reporters', function() {
 
   describe('tap reporter', function() {
-    it('writes out TAP', function() {
-      var stream = new PassThrough();
-      var reporter = new TapReporter(false, stream);
-      reporter.report('phantomjs', {
-        name: 'it does stuff',
-        passed: true,
-        logs: []
+    context('without errors', function() {
+      it('writes out TAP', function() {
+        var stream = new PassThrough();
+        var reporter = new TapReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it does stuff',
+          passed: true,
+          logs: []
+        });
+        reporter.report('phantomjs', {
+          name: 'it is skipped',
+          skipped: true,
+          logs: []
+        });
+        reporter.finish();
+        assert.deepEqual(stream.read().toString().split('\n'), [
+          'ok 1 phantomjs - it does stuff',
+          'skip 2 phantomjs - it is skipped',
+          '',
+          '1..2',
+          '# tests 2',
+          '# pass  1',
+          '# skip  1',
+          '# fail  0',
+          '',
+          '# ok',
+          ''
+        ]);
       });
-      reporter.report('phantomjs', {
-        name: 'it fails',
-        passed: false,
-        error: { message: 'it crapped out' },
-        logs: ['I am a log', 'Useful information']
+    });
+
+    context('with errors', function() {
+      it('writes out TAP with failure info', function() {
+        var stream = new PassThrough();
+        var reporter = new TapReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it does stuff',
+          passed: true,
+          logs: []
+        });
+        reporter.report('phantomjs', {
+          name: 'it fails',
+          passed: false,
+          error: { message: 'it crapped out' },
+          logs: ['I am a log', 'Useful information']
+        });
+        reporter.report('phantomjs', {
+          name: 'it is skipped',
+          skipped: true,
+          logs: []
+        });
+        reporter.finish();
+        assert.deepEqual(stream.read().toString().split('\n'), [
+          'ok 1 phantomjs - it does stuff',
+          'not ok 2 phantomjs - it fails',
+          '    ---',
+          '        message: >',
+          '            it crapped out',
+          '        Log: |',
+          '            I am a log',
+          '            Useful information',
+          '    ...',
+          'skip 3 phantomjs - it is skipped',
+          '',
+          '1..3',
+          '# tests 3',
+          '# pass  1',
+          '# skip  1',
+          '# fail  1',
+          ''
+        ]);
       });
-      reporter.report('phantomjs', {
-        name: 'it is skipped',
-        skipped: true,
-        logs: []
-      });
-      reporter.finish();
-      assert.deepEqual(stream.read().toString().split('\n'), [
-        'ok 1 phantomjs - it does stuff',
-        'not ok 2 phantomjs - it fails',
-        '    ---',
-        '        message: >',
-        '            it crapped out',
-        '        Log: |',
-        '            I am a log',
-        '            Useful information',
-        '    ...',
-        'skip 3 phantomjs - it is skipped',
-        '',
-        '1..3',
-        '# tests 3',
-        '# pass  1',
-        '# skip  1',
-        '# fail  1',
-        ''
-      ]);
     });
   });
 
