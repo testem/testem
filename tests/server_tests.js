@@ -122,10 +122,10 @@ describe('Server', function() {
     }
 
     it('lists directories', function(done) {
-        request(baseUrl + 'data', function(err, req, text) {
-            expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/);
-            done();
-        });
+      request(baseUrl + 'data', function(err, req, text) {
+        expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/);
+        done();
+      });
     });
 
     describe('route', function() {
@@ -149,7 +149,7 @@ describe('Server', function() {
       var api1, api2, api3;
 
       beforeEach(function(done) {
-        api1 = http.createServer(function (req, res) {
+        api1 = http.createServer(function(req, res) {
           res.writeHead(200, {'Content-Type': 'text/plain'});
           res.end('API');
         });
@@ -157,11 +157,11 @@ describe('Server', function() {
           key: fs.readFileSync('tests/fixtures/certs/localhost.key'),
           cert: fs.readFileSync('tests/fixtures/certs/localhost.cert')
         };
-        api2 = https.createServer(options, function (req, res) {
+        api2 = https.createServer(options, function(req, res) {
           res.writeHead(200, {'Content-Type': 'text/plain'});
           res.end('API - 2');
         });
-        api3 = http.createServer(function (req, res) {
+        api3 = http.createServer(function(req, res) {
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end(JSON.stringify({API: 3}));
         });
@@ -209,7 +209,7 @@ describe('Server', function() {
         var options = {
           url: baseUrl + 'api1/hello',
           headers: {
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         };
         request.post(options, function(err, req, text) {
@@ -222,7 +222,7 @@ describe('Server', function() {
         var options = {
           url: baseUrl + 'api3/test',
           headers: {
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         };
         request.get(options, function(err, req, text) {
@@ -235,7 +235,7 @@ describe('Server', function() {
         var options = {
           url: baseUrl + 'api3/test',
           headers: {
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         };
         request.post(options, function(err, req, text) {
@@ -248,7 +248,7 @@ describe('Server', function() {
         var options = {
           url: baseUrl + 'api3/test',
           headers: {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
           }
         };
         request.get(options, function(err, req, text) {

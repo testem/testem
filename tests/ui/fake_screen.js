@@ -57,9 +57,6 @@ var FakeScreen = {
     var before = original.substring(0, col);
     var after = original.substring(col + str.length);
     var result = (before + str + after);
-    if (result.length > width) {
-      //throw new Error('Attempt to draw out of bounds: ' + result)
-    }
     buffer[line] = result;
     col += str.length;
     return this;

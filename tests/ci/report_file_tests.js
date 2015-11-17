@@ -22,7 +22,7 @@ describe('report file output', function() {
     });
   });
   after(function(done) {
-    rimraf(mainReportDir, function () {
+    rimraf(mainReportDir, function() {
       // TODO Handle unlink failures
       done();
     });
@@ -52,7 +52,7 @@ describe('report file output', function() {
       stdout_stream: new PassThrough(),
       report_file: filename
     });
-    var app = new App(config, function () {
+    var app = new App(config, function() {
       expect(app.reportFileName).to.eq(filename);
       app.reportFile.fileStream.on('finish', done);
       app.reportFileStream.end();
@@ -61,7 +61,7 @@ describe('report file output', function() {
   });
 
   it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
-    tmp.tmpName(function (err, filename) {
+    tmp.tmpName(function(err, filename) {
       if (err) {
         return done(err);
       }
@@ -71,7 +71,7 @@ describe('report file output', function() {
         reporter: fakeReporter,
         stdout_stream: new PassThrough(),
       });
-      var app = new App(config, function () {
+      var app = new App(config, function() {
         fs.stat(filename, function(err) {
           expect(err).not.to.be.null();
           expect(err.code).to.eq('ENOENT');
@@ -116,7 +116,7 @@ describe('report file output', function() {
   it('creates folders in the path if they don\'t exist', function(done) {
     var name = 'nested/test/folders/test-reports.xml';
 
-    tmp.tmpName({dir: reportDir, name: name}, function (err, nestedFilename) {
+    tmp.tmpName({dir: reportDir, name: name}, function(err, nestedFilename) {
       if (err) {
         return done(err);
       }

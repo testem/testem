@@ -39,6 +39,6 @@ describe('AppView', !isWin ? function() {
     appview.renderBottom();
     expect(appview.get('screen').buffer.join('')).to.contain('p to unpause');
   });
-}: function() {
+} : function() {
   xit('TODO: Fix and re-enable for windows');
 });

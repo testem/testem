@@ -27,7 +27,7 @@ if (process.env.BROWSER_TESTS) {
   testArgs = ['run', 'testem-tests'];
 }
 
-run('npm', testArgs, function (err) {
+run('npm', testArgs, function(err) {
   if (err) {
     console.error(err);
     process.exit(1);

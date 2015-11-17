@@ -48,10 +48,9 @@ describe('splitLines', function() {
       assert.equal(lines[2].toString(), 'def');
     });
 
-  }: function() {
+  } : function() {
     xit('TODO: Fix and re-enable for windows');
   });
-
 
 });
 
@@ -64,7 +63,7 @@ describe('indent', function() {
 
 describe('template', function() {
   it('should replace parameters with their values', function() {
-    var str = "a<foo>c<bar>e<bar><baz>";
+    var str = 'a<foo>c<bar>e<bar><baz>';
     var params = {
       foo: 'b',
       bar: 'd'

@@ -32,8 +32,8 @@ It also restarts the tests by refreshing the page when instructed by the server 
   };
 
   var domReady = function() {
-    if ( !document.body ) {
-      return setTimeout( domReady, 1 );
+    if (!document.body) {
+      return setTimeout(domReady, 1);
     }
     appendIframe();
   };
@@ -41,8 +41,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
   var DOMContentLoaded = function() {
     if (document.addEventListener) {
       document.removeEventListener('DOMContentLoaded', DOMContentLoaded, false);
-    }
-    else {
+    } else {
       document.detachEvent('onreadystatechange', DOMContentLoaded);
     }
     domReady();
@@ -51,7 +50,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
   if (document.addEventListener) {
     document.addEventListener('DOMContentLoaded', DOMContentLoaded, false);
     window.addEventListener('load', DOMContentLoaded, false);
-  } else if ( document.attachEvent ) {
+  } else if (document.attachEvent) {
     document.attachEvent('onreadystatechange', DOMContentLoaded);
     window.attachEvent('onload', DOMContentLoaded);
   }

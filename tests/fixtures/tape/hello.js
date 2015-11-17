@@ -1,4 +1,4 @@
 module.exports = hello;
-function hello(){
+function hello() {
   return 'hello world';
 }
