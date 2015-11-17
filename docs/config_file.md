@@ -57,7 +57,7 @@ Common Configuration Options
     skip:                    [Array]   list of launchers to skip
     debug:                   [Boolean] debug mode (false)
     test_page:               [String]  path to the page to use to run tests
-    growl:                   [Boolean] enables growl (false)
+    growl:                   [Boolean] enables growl / native notifications (false)
     bail_on_uncaught_error:  [Boolean] whether process should exit with error status when there are top level uncaught errors (via `window.onerror`) - in CI mode only
 
 ### Config-level options:
