@@ -23,7 +23,7 @@
     retrocycle, stringify, test, toString, nodeType
 */
 
-function decycle(object) {
+function decycle(object) { //jshint ignore:line
     'use strict';
 
 // Make a deep copy of an object or array, assuring that there is at most
@@ -48,7 +48,7 @@ function decycle(object) {
     var maxDepth = 4;
     return (function derez(value, path, depth) {
         if(depth > maxDepth) {
-            return "Max depth.";
+            return 'Max depth.';
         }
 
 // The derez recurses through the object, producing the deep copy.

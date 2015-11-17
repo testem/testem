@@ -4,6 +4,25 @@ var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('xmldom');
 var assert = require('chai').assert;
+var assertXmlIsValid = function(xmlString) {
+  var failure = null;
+  var parser = new XmlDom.DOMParser({
+    errorHandler:{
+      locator:{},
+      warning: function(txt) { failure = txt; },
+      error: function(txt) { failure = txt; },
+      fatalError: function(txt) { failure = txt; }
+    }
+  });
+
+  // this will throw into failure variable with invalid xml
+  parser.parseFromString(xmlString,'text/xml');
+
+  if (failure)
+  {
+    assert(false, failure+'\n---\n'+xmlString+'\n---\n');
+  }
+};
 
 describe('test reporters', function() {
 
@@ -234,25 +253,4 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
   });
-
-var assertXmlIsValid = function(xmlString) {
-  var failure = null;
-  var parser = new XmlDom.DOMParser({
-    errorHandler:{
-      locator:{},
-      warning: function(txt) { failure = txt; },
-      error: function(txt) { failure = txt; },
-      fatalError: function(txt) { failure = txt; }
-    }
-  });
-
-  // this will throw into failure variable with invalid xml
-  parser.parseFromString(xmlString,'text/xml');
-
-  if (failure)
-  {
-    assert(false, failure+'\n---\n'+xmlString+'\n---\n');
-  }
-};
-
 });
