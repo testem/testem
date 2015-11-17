@@ -40,7 +40,7 @@ function jasmineAdapter() {
     for (var i = 0, len = items.length; i < len; i++) {
       var item = items[i];
       if (item.type === 'log') {
-        continue
+        continue;
       }
       var passed = item.passed();
       test.total++;
