@@ -32,6 +32,7 @@
     "fileset": "^0.2.1",
     "fireworm": "^0.6.6",
     "http-proxy": "^1.8.1",
+    "jasmine-core": "2.3.4",
     "js-yaml": "^3.2.5",
     "mkdirp": "^0.5.0",
     "mustache": "^2.0.0",
