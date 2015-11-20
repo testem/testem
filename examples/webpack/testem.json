@@ -1,0 +1,8 @@
+{
+    "framework": "qunit",
+    "on_start": {
+      "command": "webpack -w",
+      "wait_for_text": "built"
+    },
+    "src_files": ["test-bundle.js"]
+}
