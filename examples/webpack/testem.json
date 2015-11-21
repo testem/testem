@@ -1,0 +1,9 @@
+{
+    "framework": "tap",
+    "test_page": "examples/index.mustache",
+    "serve_files": [
+        "test-bundle.js"
+    ],
+    "before_tests": "webpack --config webpack.testem.config.js",
+    "launch_in_dev": ["PhantomJS", "Chrome"]
+}
