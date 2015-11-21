@@ -320,7 +320,8 @@ describe('Config', function() {
       config.set('src_files_ignore', ['**/*.sh']);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('integration' + path.sep + 'browser_tests.bat')]);
+          fileEntry(path.join('integration', 'browser_tests.bat'))
+        ]);
         done();
       });
     });
@@ -346,7 +347,7 @@ describe('Config', function() {
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('integration' + path.sep + 'browser_tests.bat')
+          fileEntry(path.join('integration', 'browser_tests.bat'))
         ]);
         done();
       });
@@ -355,7 +356,7 @@ describe('Config', function() {
       config.set('src_files', [{src:'config_tests.js', attrs: ['data-foo="true"', 'data-bar']}]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
         ]);
         done();
       });
@@ -367,9 +368,9 @@ describe('Config', function() {
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-        fileEntry('integration' + path.sep + 'browser_tests.bat'),
-        fileEntry('integration' + path.sep + 'browser_tests.sh')
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
+          fileEntry(path.join('integration', 'browser_tests.bat')),
+          fileEntry(path.join('integration', 'browser_tests.sh'))
         ]);
         done();
       });
@@ -382,8 +383,8 @@ describe('Config', function() {
       config.set('src_files_ignore', '**/*.sh');
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-        fileEntry('integration' + path.sep + 'browser_tests.bat')
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
+          fileEntry(path.join('integration', 'browser_tests.bat'))
         ]);
         done();
       });
@@ -394,9 +395,18 @@ describe('Config', function() {
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('integration' + path.sep + 'browser_tests.bat'),
-        fileEntry('integration' + path.sep + 'browser_tests.sh'),
-        fileEntry('http://codeorigin.jquery.com/jquery-2.0.3.min.js')
+          fileEntry(path.join('integration', 'browser_tests.bat')),
+          fileEntry(path.join('integration', 'browser_tests.sh')),
+          fileEntry('http://codeorigin.jquery.com/jquery-2.0.3.min.js')
+        ]);
+        done();
+      });
+    });
+    it('expands nested globs correctly', function(done) {
+      config.set('src_files', ['fixtures/nested_src_files/**/*.js']);
+      config.getSrcFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('fixtures', 'nested_src_files', 'with', 'nested', 'file.js'))
         ]);
         done();
       });
@@ -426,8 +436,8 @@ describe('Config', function() {
       config.set('src_files', 'fixtures/styles/*.css');
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-        fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'print.css'),
-        fileEntry('fixtures' + path.sep + 'styles' + path.sep + 'screen.css')
+          fileEntry(path.join('fixtures', 'styles', 'print.css')),
+          fileEntry(path.join('fixtures', 'styles', 'screen.css'))
         ]);
         done();
       });
