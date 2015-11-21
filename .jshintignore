@@ -5,8 +5,5 @@ public/testem/buster-test.js
 public/testem/chai.js
 public/testem/jasmine-html.js
 public/testem/jasmine.js
-public/testem/jasmine2-boot.js
-public/testem/jasmine2-html.js
-public/testem/jasmine2.js
 public/testem/mocha.js
 public/testem/qunit.js
