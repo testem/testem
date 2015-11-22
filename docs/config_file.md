@@ -85,6 +85,8 @@ Common Configuration Options
     ignore_missing_launchers: [Boolean] ignore missing launchers in ci mode
     report_file:              [String]  file to write test results to (stdout)
     xunit_intermediate_output [Boolean] print tap output for the xunit reporter (false)
+    phantomjs_debug_port:     [Number]  port used to attach phantomjs debugger
+    phantomjs_args:           [Array]   custom arguments for the phantomjs launcher
 
 
 ### Available hooks:
