@@ -1,0 +1,62 @@
+{
+  "framework": "jasmine",
+  "parallel": 5,
+  "on_start": {
+    "command": "kill -9 $(ps -A | grep BrowserStackLocal | grep -v grep | cut -d ' ' -f2); node start-BrowserStackLocal.js &",
+    "wait_for_text": "Tunnel started",
+    "wait_for_text_timeout": 300000
+  },
+  "on_exit": "node stop-BrowserStackLocal.js `cat browserStackLocal.pid`; rm browserStackLocal.pid",
+  "launchers": {
+    "bs_opera": {
+      "command": "node run_on_browserstack.js Windows 10 opera latest nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_firefox": {
+      "command": "node run_on_browserstack.js Windows 10 firefox latest nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_chrome": {
+      "command": "node run_on_browserstack.js 'OS X' 'El Capitan' chrome latest nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_safari_71": {
+      "command": "node run_on_browserstack.js 'OS X' Mavericks safari 7.1 nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_safari_51": {
+      "command": "node run_on_browserstack.js 'OS X' 'Snow Leopard' safari 5.1 nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_ie_11": {
+      "command": "node run_on_browserstack.js Windows 10 ie 11.0 nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_ie_9": {
+      "command": "node run_on_browserstack.js Windows 7 ie 9.0 nil <url>",
+      "protocol": "browser"
+    },
+
+    "bs_ie_8": {
+      "command": "node run_on_browserstack.js Windows 7 ie 8.0 nil <url>",
+      "protocol": "browser"
+    }
+  },
+  "launch_in_dev": [],
+  "launch_in_ci": [
+    "bs_opera",
+    "bs_chrome",
+    "bs_firefox",
+    "bs_safari_71",
+    "bs_safari_51",
+    "bs_ie_11",
+    "bs_ie_9",
+    "bs_ie_8"
+  ]
+}
