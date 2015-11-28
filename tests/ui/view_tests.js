@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var View = require('../../lib/dev/ui/view');
+var View = require('../../lib/reporters/dev/view');
 var Backbone = require('backbone');
 var spy = require('ispy');
 var isWin = /^win/.test(process.platform);

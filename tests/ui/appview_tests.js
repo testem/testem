@@ -1,4 +1,4 @@
-var AppView = require('../../lib/dev/ui/appview');
+var AppView = require('../../lib/reporters/dev');
 var Backbone = require('backbone');
 var Config = require('../../lib/config');
 var screen = require('./fake_screen');
@@ -15,10 +15,9 @@ describe('AppView', !isWin ? function() {
     app.url = 'http://localhost:1234';
     config = app.config = new Config({}, {port: 1234});
     app.runners = new Backbone.Collection();
-    appview = new AppView({
-      app: app,
-      screen: screen
-    });
+    appview = new AppView(
+      false, process.stdout, config, app, screen
+    );
     screen.$setSize(80, 10);
     appview.set({cols: 80, lines: 10});
   });

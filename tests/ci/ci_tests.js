@@ -1,6 +1,6 @@
 var fs = require('fs');
-var App = require('../../lib/ci');
-var TestReporter = require('../../lib/ci/test_reporters/tap_reporter');
+var App = require('../../lib/app');
+var TestReporter = require('../../lib/reporters/tap_reporter');
 var Config = require('../../lib/config');
 var sinon = require('sinon');
 var bd = require('bodydouble');
@@ -12,6 +12,8 @@ var expect = require('chai').expect;
 var Process = require('did_it_work');
 var path = require('path');
 var http = require('http');
+
+var FakeReporter = require('../support/fake_reporter');
 
 describe('ci mode app', function() {
   this.timeout(90000);
@@ -90,17 +92,16 @@ describe('ci mode app', function() {
       file: 'tests/fixtures/basic_test/testem.json',
       port: 0,
       cwd: path.join('tests/fixtures/basic_test/'),
-      launch_in_ci: ['opera']
+      launch_in_ci: ['opera'],
+      reporter: new FakeReporter()
     });
     config.read(function() {
-      var app = new App(config);
-      stub(app, 'cleanExit');
-      stub(app, 'reporter', new TestReporter(true));
-      app.start();
-      app.cleanExit.once('call', function(exitCode) {
+      var app = new App(config, function(exitCode, err) {
         expect(exitCode).to.eq(1);
+        expect(err.message).to.eq('Launcher opera not found. Not installed?');
         done();
       });
+      app.start();
     });
   });
 
@@ -110,22 +111,20 @@ describe('ci mode app', function() {
       port: 0,
       cwd: path.join('tests/fixtures/basic_test/'),
       launch_in_ci: ['opera'],
-      ignore_missing_launchers: true
+      ignore_missing_launchers: true,
+      reporter: new FakeReporter()
     });
     config.read(function() {
-      var app = new App(config);
-      stub(app, 'cleanExit');
-      stub(app, 'reporter', new TestReporter(true));
-      app.start();
-      app.cleanExit.once('call', function(exitCode) {
+      var app = new App(config, function(exitCode) {
         expect(exitCode).to.eq(0);
         done();
       });
+      app.start();
     });
   });
 
   it('allows passing in reporter from config', function() {
-    var fakeReporter = {};
+    var fakeReporter = new FakeReporter();
     var config = new Config('ci', {
       reporter: fakeReporter
     });
@@ -133,74 +132,90 @@ describe('ci mode app', function() {
     assert.strictEqual(app.reporter, fakeReporter);
   });
 
-  it('wrapUp reports error to reporter', function() {
-    var app = new App(new Config('ci'));
-    var reporter = new TestReporter(true);
-    stub(app, 'reporter', reporter);
-    stub(app, 'exit');
+  it('wrapUp reports error to reporter', function(done) {
+    var reporter = new FakeReporter();
+    var app = new App(new Config('ci', {
+      reporter: reporter
+    }), function() {
+      assert.equal(reporter.total, 1);
+      assert.equal(reporter.pass, 0);
+      var result = reporter.results[0].result;
+      assert.equal(result.name, 'Error');
+      assert.equal(result.error.message, 'blarg');
+      done();
+    });
+
     app.wrapUp(new Error('blarg'));
-    assert.equal(reporter.total, 1);
-    assert.equal(reporter.pass, 0);
-    var result = reporter.results[0].result;
-    assert.equal(result.name, 'Error');
-    assert.equal(result.error.message, 'blarg');
   });
 
   it('does not shadow EADDRINUSE errors', function(done) {
-    http.createServer().listen(7357, function(err) {
+    var server = http.createServer().listen(7357, function(err) {
       if (err) {
-        throw err;
+        return done(err);
       }
+      var reporter = new FakeReporter();
       var config = new Config('ci', {
         cwd: path.join('tests/fixtures/basic_test'),
-        launch_in_ci: ['phantomjs']
+        launch_in_ci: ['phantomjs'],
+        reporter: reporter
       });
       config.read(function() {
-        var app = new App(config);
-        stub(app, 'cleanExit');
-        var reporter = stub(app, 'reporter', new TestReporter(true));
-        app.start();
-        app.cleanExit.once('call', function(exitCode) {
+        var app = new App(config, function(exitCode, err) {
           expect(exitCode).to.eq(1);
+          expect(err).to.match(/EADDRINUSE/);
           expect(reporter.results[0].result.error.message).to.contain('EADDRINUSE');
-          done();
+          server.close(done);
         });
+        app.start();
       });
     });
   });
 
   it('stops the server if an error occurs', function(done) {
-    var app = new App(new Config('ci'), function() {
+    var error = new Error('Error: foo');
+    var app = new App(new Config('ci', {
+      reporter: new FakeReporter()
+    }), function(exitCode, err) {
+      expect(exitCode).to.eq(1);
+      expect(err).to.eq(error);
       assert(app.stopServer.called, 'stop server should be called');
       done();
     });
     sandbox.spy(app, 'stopServer');
-    mock(app, {
-      overrides: {
-        cleanUpLaunchers: function(cb) { cb(); }
+
+    app.wrapUp(error);
+  });
+
+  it('kills launchers on wrapUp', function(done) {
+    var app = new App(new Config('ci', {
+      launch_in_ci: []
+    }), function(err) {
+      if (err) {
+        return done(err);
       }
+      assert(app.cleanUpLaunchers.called, 'clean up launchers should be called');
+      done();
     });
 
-    app.wrapUp(new Error('Error: foo'));
+    sandbox.spy(app, 'cleanUpLaunchers');
+    app.start(function() {
+      app.exit();
+    });
   });
 
-  it('kills launchers on wrapUp', function() {
-    var app = new App(new Config('ci'));
-    stub(app, 'stopServer');
-    stub(app, 'exit');
-    stub(app, 'cleanUpLaunchers');
-
-    app.wrapUp();
-    assert(app.cleanUpLaunchers.called, 'clean up launchers should be called');
-  });
-
-  it('cleans up idling launchers', function() {
-    var app = new App(new Config('ci'));
+  it('cleans up idling launchers', function(done) {
+    var app = new App(new Config('ci'), function(exitCode, err) {
+      if (err) {
+        return done(err);
+      }
+      assert(app.runners[0].launcher.kill.called, 'launcher with process and kill should be called');
+      done();
+    });
     app.runners = [
       {
         launcher: {
           process: true,
-          kill: spy()
+          kill: sandbox.stub().callsArg(1)
         }
       },
       {
@@ -209,12 +224,11 @@ describe('ci mode app', function() {
       {}
     ];
 
-    app.runners[0].launcher.kill.once('call', function(sig, cb) { cb(); });
-
     var cb = spy();
     app.cleanUpLaunchers(cb);
     assert(cb.called, 'cleanUpLaunchers calls its given callback');
     assert(app.runners[0].launcher.kill.called, 'launcher with process and kill should be called');
+    app.exit();
   });
 
   it('timeout does not wait for idling launchers', function(done) {
@@ -244,21 +258,21 @@ describe('ci mode app', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 1 };
       stub(app, 'reporter', reporter);
-      assert.equal(app.getExitCode(), 0);
+      assert.equal(app.getExitCode(), null);
     });
 
     it('returns 1 if fails', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 0 };
       stub(app, 'reporter', reporter);
-      assert.equal(app.getExitCode(), 1);
+      assert.match(app.getExitCode(), /Not all tests passed/);
     });
 
     it('returns 0 if no tests ran', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 0, pass: 0 };
       stub(app, 'reporter', reporter);
-      assert.equal(app.getExitCode(), 0);
+      assert.equal(app.getExitCode(), null);
     });
 
     it('returns 1 if no tests and fail_on_zero_tests config is on', function() {
@@ -267,7 +281,7 @@ describe('ci mode app', function() {
       }));
       var reporter = { total: 0, pass: 0 };
       stub(app, 'reporter', reporter);
-      assert.equal(app.getExitCode(), 1);
+      assert.match(app.getExitCode(), /No tests found\./);
     });
 
   });

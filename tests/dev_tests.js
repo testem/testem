@@ -1,8 +1,11 @@
 var expect = require('chai').expect;
-var Config = require('../lib/config');
-var DevApp = require('../lib/dev');
 var sinon = require('sinon');
 var fireworm = require('fireworm');
+
+var Config = require('../lib/config');
+var App = require('../lib/app');
+
+var FakeReporter = require('./support/fake_reporter');
 
 var isWin = /^win/.test(process.platform);
 
@@ -17,42 +20,39 @@ describe('Dev', !isWin ? function() {
     sandbox.restore();
   });
 
-  describe('pause running', function() {
+  describe('pause running', function(done) {
     beforeEach(function() {
-      config = new Config('dev');
-      sandbox.stub(DevApp.prototype, 'configureView');
-      sandbox.stub(DevApp.prototype, 'configure');
-      app = new DevApp(config, function() {});
-      app.view = {
-        clearErrorPopupMessage: function() {}
-      };
+      config = new Config('dev', {}, {
+        reporter: new FakeReporter()
+      });
+      app = new App(config, function() {});
+      app.start(done);
     });
 
     afterEach(function(done) {
-      app.quit(0, null, done);
+      app.exit(null, done);
     });
 
     it('starts off not paused', function() {
-      expect(app.paused).to.be.false;
+      expect(app.paused).to.be.false();
     });
 
-    it('doesn\'t run tests when reset and paused', function() {
+    it('doesn\'t run tests when reset and paused', function(done) {
       app.paused = true;
-      var cb = sandbox.spy();
-      app.startTests(cb);
-      expect(cb.called).to.be.false;
+      var runHook = sandbox.spy(app, 'runHook');
+      app.runTests(null, done);
+      expect(runHook.called).to.be.false();
     });
 
-    it('runs tests when reset and not paused', function() {
-      var cb = sandbox.spy();
-      app.startTests(cb);
-      expect(cb.called).to.be.true;
+    it('runs tests when reset and not paused', function(done) {
+      var runHook = sandbox.spy(app, 'runHook');
+      app.runTests(null, done);
+      expect(runHook.called).to.be.true();
     });
   });
 
   describe('file watching', function() {
     beforeEach(function() {
-      sandbox.stub(DevApp.prototype, 'configureView');
       sandbox.stub(Config.prototype, 'readConfigFile', function(file, cb) {
         cb();
       });
@@ -61,31 +61,30 @@ describe('Dev', !isWin ? function() {
     it('adds a watch', function(done) {
       var add = sandbox.spy(fireworm.prototype, 'add');
       var srcFiles = ['test.js'];
-      config = new Config('dev', {}, { src_files: srcFiles });
-      app = new DevApp(config, done, function() {
-        expect(add.getCall(0).args[0]).to.eq(srcFiles);
-        app.quit();
+      config = new Config('dev', {}, {
+        src_files: srcFiles,
+        reporter: new FakeReporter()
       });
-      app.view = {
-        clearErrorPopupMessage: function() {}
-      };
+      app = new App(config, done);
+      app.start(function() {
+        expect(add.getCall(0).args[0]).to.eq(srcFiles);
+        app.exit();
+      });
     });
 
     it('creates no watcher', function(done) {
       config = new Config('dev', {}, {
         src_files: ['test.js'],
-        disable_watching: true
+        disable_watching: true,
+        reporter: new FakeReporter()
       });
-      app = new DevApp(config, done, function() {
+      app = new App(config, done);
+      app.start(function() {
         expect(app.fileWatcher).to.eq(undefined);
-        app.quit();
+        app.exit();
       });
-      app.view = {
-        clearErrorPopupMessage: function() {}
-      };
     });
   });
-
 } : function() {
   xit('TODO: Fix and re-enable for windows');
 });

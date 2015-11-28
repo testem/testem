@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var screen = require('./fake_screen');
-var ScrollableTextPanel = require('../../lib/dev/ui/scrollable_text_panel');
+var ScrollableTextPanel = require('../../lib/reporters/dev/scrollable_text_panel');
 var isWin = /^win/.test(process.platform);
 
 describe('ScrollableTextPanel', !isWin ? function() {

@@ -5,4 +5,3 @@ QUnit.test('says hello world', function(assert){
 QUnit.test('says hello to person', function(assert){
     assert.equal(hello('Bob'), 'hello Bob', 'should equal hello Bob');
 });
-

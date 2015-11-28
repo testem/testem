@@ -33,6 +33,7 @@
     "fireworm": "^0.6.6",
     "http-proxy": "^1.8.1",
     "js-yaml": "^3.2.5",
+    "lodash": "^3.10.1",
     "mkdirp": "^0.5.0",
     "mustache": "^2.0.0",
     "node-notifier": "^4.3.1",
@@ -55,8 +56,8 @@
   ],
   "scripts": {
     "test": "./bin/run-tests.js",
-    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html",
-    "testem-tests": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
+    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
+    "testem-tests": "mocha --timeout 3000 tests/*_tests.js tests/**/*_tests.js -R spec",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "jshint . && jscs ."
   },
