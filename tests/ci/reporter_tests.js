@@ -1,6 +1,7 @@
-var TapReporter = require('../../lib/ci/test_reporters/tap_reporter');
-var DotReporter = require('../../lib/ci/test_reporters/dot_reporter');
-var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter');
+var TapReporter = require('../../lib/reporters/tap_reporter');
+var DotReporter = require('../../lib/reporters/dot_reporter');
+var XUnitReporter = require('../../lib/reporters/xunit_reporter');
+var Config = require('../../lib/config');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('xmldom');
 var assert = require('chai').assert;
@@ -86,8 +87,8 @@ describe('test reporters', function() {
           '        message: >',
           '            it crapped out',
           '        Log: |',
-          '            I am a log',
-          '            Useful information',
+          '            \'I am a log\'',
+          '            \'Useful information\'',
           '    ...',
           'skip 3 phantomjs - it is skipped',
           '',
@@ -154,9 +155,17 @@ describe('test reporters', function() {
   });
 
   describe('xunit reporter', function() {
+    var config, stream;
+
+    beforeEach(function() {
+      config = new Config('ci', {
+        xunit_intermediate_output: false,
+      });
+      stream = new PassThrough();
+    });
+
     it('writes out and XML escapes results', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it does <cool> \"cool\" \'cool\' stuff',
         passed: true
@@ -170,8 +179,8 @@ describe('test reporters', function() {
     });
 
     it('uses stdout to print intermediate test results when intermediate output is enabled', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream, true);
+      config.set('xunit_intermediate_output', true);
+      var reporter = new XUnitReporter(false, stream, config);
       var displayed = false;
       var write = process.stdout.write;
       process.stdout.write = function(string, encoding, fd) {
@@ -188,8 +197,7 @@ describe('test reporters', function() {
     });
 
     it('does not print intermediate test results when intermediate output is disabled', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream, false);
+      var reporter = new XUnitReporter(false, stream, config);
       var displayed = false;
       var write = process.stdout.write;
       process.stdout.write = function(string, encoding, fd) {
@@ -206,8 +214,7 @@ describe('test reporters', function() {
     });
 
     it('outputs errors', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it didnt work',
         passed: false,
@@ -224,8 +231,7 @@ describe('test reporters', function() {
     });
 
     it('outputs skipped tests', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it didnt work',
         passed: false,
@@ -239,8 +245,7 @@ describe('test reporters', function() {
     });
 
     it('XML escapes errors', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it failed with quotes',
         passed: false,
@@ -257,8 +262,7 @@ describe('test reporters', function() {
     });
 
     it('XML escapes messages', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it failed with ampersands',
         passed: false,
@@ -273,8 +277,7 @@ describe('test reporters', function() {
     });
 
     it('presents valid XML with null messages', function() {
-      var stream = new PassThrough();
-      var reporter = new XUnitReporter(false, stream);
+      var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'null',
         passed: false,

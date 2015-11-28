@@ -1,12 +1,14 @@
 var fs = require('fs');
-var App = require('../../lib/ci');
+var App = require('../../lib/app');
 var Config = require('../../lib/config');
 var expect = require('chai').expect;
 var rimraf = require('rimraf');
 var path = require('path');
 var PassThrough = require('stream').PassThrough;
-var ReportFile = require('../../lib/ci/report_file');
+var ReportFile = require('../../lib/report_file');
 var tmp = require('tmp');
+
+var FakeReporter = require('../support/fake_reporter');
 
 describe('report file output', function() {
   this.timeout(30000);
@@ -46,9 +48,8 @@ describe('report file output', function() {
   });
 
   it('allows passing in report_file from config', function(done) {
-    var fakeReporter = {};
     var config = new Config('ci', {
-      reporter: fakeReporter,
+      reporter: new FakeReporter(),
       stdout_stream: new PassThrough(),
       report_file: filename
     });
@@ -66,9 +67,8 @@ describe('report file output', function() {
         return done(err);
       }
 
-      var fakeReporter = {};
       var config = new Config('ci', {
-        reporter: fakeReporter,
+        reporter: new FakeReporter(),
         stdout_stream: new PassThrough(),
       });
       var app = new App(config, function() {

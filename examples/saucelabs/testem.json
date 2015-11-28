@@ -6,50 +6,53 @@
   "on_start": "./saucie-connect.js",
   "on_exit": "./saucie-disconnect.js",
   "port": 7000,
+  "src_files": [
+    "hello.js", "hello_spec.js"
+  ],
   "launchers": {
     "SL_Chrome_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "chrome", "--no-ct", "-u"],
+      "args": ["-b", "chrome", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_Firefox_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "firefox", "-v", "42", "--no-ct", "-u"],
+      "args": ["-b", "firefox", "-v", "42", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_Safari_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "safari", "-v", "9", "--no-ct", "-u"],
+      "args": ["-b", "safari", "-v", "9", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_Safari_Last": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "safari", "-v", "8", "--no-ct", "-u"],
+      "args": ["-b", "safari", "-v", "8", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_MS_Edge": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "microsoftedge", "--no-ct", "-u"],
+      "args": ["-b", "microsoftedge", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_IE_11": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "11", "--no-ct", "-u"],
+      "args": ["-b", "internet explorer", "-v", "11", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_IE_10": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "10", "--no-ct", "-u"],
+      "args": ["-b", "internet explorer", "-v", "10", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_IE_9": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "9", "--no-ct", "-u"],
+      "args": ["-b", "internet explorer", "-v", "9", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_IE_8": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "8", "--no-ct", "-u"],
+      "args": ["-b", "internet explorer", "-v", "8", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     }
   },
