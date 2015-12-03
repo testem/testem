@@ -223,7 +223,7 @@ describe('Config', function() {
   it('should getLaunchers should call getAvailable browsers', function(done) {
     stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
     var getAvailableBrowsers = browserLauncher.getAvailableBrowsers;
-    browserLauncher.getAvailableBrowsers = function(cb) {
+    browserLauncher.getAvailableBrowsers = function(config, cb) {
       cb([
       {name: 'Chrome', exe: 'chrome.exe'},
       {name: 'Firefox'}
@@ -239,6 +239,20 @@ describe('Config', function() {
     });
   });
 
+  it('should customize user_data_dir when provided', function(done) {
+    var config = new Config();
+    stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+    config.set('user_data_dir', 'customDirectory');
+    config.getLaunchers(function(err, launchers) {
+      var correctFlag = config.cwd() + '/customDirectory/testem.firefox';
+      if (process.platform === 'win32') {
+        correctFlag = config.cwd() + '\\customDirectory\\testem.firefox';
+      }
+      expect(launchers.firefox.settings.args).to.include(correctFlag);
+      done();
+    });
+  });
+
   it('should install custom launchers', function(done) {
     stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
     config.config = {
@@ -249,7 +263,7 @@ describe('Config', function() {
       }
     };
     var getAvailableBrowsers = browserLauncher.getAvailableBrowsers;
-    browserLauncher.getAvailableBrowsers = function(cb) {cb([]);};
+    browserLauncher.getAvailableBrowsers = function(config, cb) {cb([]);};
     config.getLaunchers(function(err, launchers) {
       expect(launchers.node.name).to.equal('Node');
       expect(launchers.node.settings.command).to.equal('node tests.js');
