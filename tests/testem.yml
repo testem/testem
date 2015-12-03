@@ -3,3 +3,4 @@ src_files:
 - implementation.js
 - tests.js
 timeout: 2
+reporter: xunit

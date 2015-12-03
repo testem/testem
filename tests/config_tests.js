@@ -12,11 +12,12 @@ chai.use(require('dirty-chai'));
 describe('Config', function() {
   var config, appMode, progOptions;
   beforeEach(function() {
-    appMode = 'dev';
+    appMode = 'ci';
     progOptions = {
       file: __dirname + '/testem.yml',
-      timeout: null,
-      port: undefined
+      timeout: 2,
+      port: undefined,
+      reporter: 'tap'
     };
     config = new Config(appMode, progOptions);
   });
@@ -59,6 +60,9 @@ describe('Config', function() {
     });
     it('falls back to config file value when progOptions is null', function() {
       expect(config.get('timeout')).to.equal(2);
+    });
+    it('allows to overwrite a property from the config file', function() {
+      expect(config.get('reporter')).to.equal('tap');
     });
   });
 
@@ -277,11 +281,11 @@ describe('Config', function() {
       expect(config.getWantedLauncherNames()).to.deep.equal(['ie']);
     });
     it('adds "launch_in_dev" config', function() {
+      config.appMode = 'dev';
       config.config = {launch_in_dev: ['Chrome', 'Firefox']};
       expect(config.getWantedLauncherNames()).to.deep.equal(['Chrome', 'Firefox']);
     });
     it('adds "launch_in_ci" config', function() {
-      config.appMode = 'ci';
       config.config = {launch_in_ci: ['Chrome', 'Firefox']};
       expect(config.getWantedLauncherNames()).to.deep.equal(['Chrome', 'Firefox']);
     });
