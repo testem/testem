@@ -87,6 +87,7 @@ Common Configuration Options
     xunit_intermediate_output [Boolean] print tap output for the xunit reporter (false)
     phantomjs_debug_port:     [Number]  port used to attach phantomjs debugger
     phantomjs_args:           [Array]   custom arguments for the phantomjs launcher
+    user_data_dir:            [String]  directory to initialize the browser user data directories (default a temporary directory)
 
 
 ### Available hooks:
