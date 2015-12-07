@@ -1,0 +1,1 @@
+process.stderr.write('foobar');
