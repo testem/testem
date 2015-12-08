@@ -1,10 +1,10 @@
-var BrowserTestRunner = require('../lib/runners/browser_test_runner');
-var TapReporter = require('../lib/reporters/tap_reporter');
+var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
+var TapReporter = require('../../lib/reporters/tap_reporter');
 var expect = require('chai').expect;
 
 var EventEmitter = require('events').EventEmitter;
-var Config = require('../lib/config');
-var Launcher = require('../lib/launcher.js');
+var Config = require('../../lib/config');
+var Launcher = require('../../lib/launcher.js');
 
 describe('browser test runner', function() {
   describe('parallel runners', function() {

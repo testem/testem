@@ -11,9 +11,10 @@
         }
     },
     "src_files": [
-        "*.js"
+        "public/*.js"
     ],
+    "cwd": "tests/fixtures/tape/",
     "before_tests": "node before-tests.js",
     "test_page": "public/tests.html",
-    "launch_in_dev": ["Node", "PhantomJS"]
+    "launch_in_dev": ["Node", "PhantomJS", "NodePlain"]
 }
