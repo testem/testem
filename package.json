@@ -30,7 +30,7 @@
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
     "fileset": "^0.2.1",
-    "fireworm": "^0.6.6",
+    "fireworm": "^0.7.0",
     "http-proxy": "^1.8.1",
     "js-yaml": "^3.2.5",
     "lodash": "^3.10.1",
