@@ -6,6 +6,7 @@ var bd = require('bodydouble');
 var stub = bd.stub;
 var browserLauncher = require('../lib/browser_launcher');
 var path = require('path');
+var fs = require('fs');
 
 chai.use(require('dirty-chai'));
 
@@ -246,14 +247,19 @@ describe('Config', function() {
   it('should customize user_data_dir when provided', function(done) {
     var config = new Config();
     stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
-    config.set('user_data_dir', 'customDirectory');
+    config.set('user_data_dir', 'node_modules/customDirectory');
     config.getLaunchers(function(err, launchers) {
-      var correctFlag = config.cwd() + '/customDirectory/testem.firefox';
+      var correctFlag = config.cwd() + '/node_modules/customDirectory/testem.firefox';
       if (process.platform === 'win32') {
-        correctFlag = config.cwd() + '\\customDirectory\\testem.firefox';
+        correctFlag = config.cwd() + '\\node_modules\\customDirectory\\testem.firefox';
       }
       expect(launchers.firefox.settings.args).to.include(correctFlag);
-      done();
+      launchers.firefox.settings.setup(config, function() {
+        fs.stat(correctFlag, function(err, stats) {
+          expect(stats.isDirectory());
+          done();
+        });
+      });
     });
   });
 
