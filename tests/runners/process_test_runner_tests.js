@@ -22,39 +22,74 @@ describe('ProcessTestRunner', function() {
       exe: 'node',
       args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
     };
-    var launcher = new Launcher('launcher', settings, config);
+    var launcher = new Launcher('node-stdout', settings, config);
     var runner = new ProcessTestRunner(launcher, reporter);
 
     runner.start(function() {
-      var results = reporter.results;
-      expect(results.length).to.equal(1);
-
-      expect(results[0].result.passed).to.be.true();
-      expect(results[0].result.logs.length).to.equal(1);
-      var message = results[0].result.logs[0];
-      expect(message.type).to.equal('log');
-      expect(message.text).to.equal('foobar');
+      expect(reporter.results).to.deep.equal([{
+        result: {
+          launcherId: launcher.id,
+          logs: [{
+            text: 'foobar',
+            type: 'log'
+          }],
+          name: 'node-stdout',
+          passed: true
+        }
+      }]);
       done();
     });
   });
 
-  it('reads stderr into messages', function(done) {
+  it('handles failing processes', function(done) {
     var settings = {
       exe: 'node',
       args: [path.join(__dirname, '../fixtures/processes/stderr.js')]
     };
-    var launcher = new Launcher('launcher', settings, config);
+    var launcher = new Launcher('node-stderr', settings, config);
     var runner = new ProcessTestRunner(launcher, reporter);
 
     runner.start(function() {
-      var results = reporter.results;
-      expect(results.length).to.equal(1);
+      expect(reporter.results).to.deep.equal([{
+        result: {
+          launcherId: launcher.id,
+          logs: [{
+            text: 'foobar',
+            type: 'error'
+          }],
+          name: 'node-stderr',
+          passed: false,
+          error: {
+            message: 'Stderr: \n foobar\n'
+          }
+        }
+      }]);
+      done();
+    });
+  });
 
-      expect(results[0].result.passed).to.be.true();
-      expect(results[0].result.logs.length).to.equal(1);
-      var message = results[0].result.logs[0];
-      expect(message.type).to.equal('error');
-      expect(message.text).to.equal('foobar');
+  it('handles non existing processes', function(done) {
+    var settings = {
+      exe: 'nope-not-existing'
+    };
+    var launcher = new Launcher('nope-fail', settings, config);
+    var runner = new ProcessTestRunner(launcher, reporter);
+
+    runner.start(function() {
+      expect(reporter.results).to.deep.equal([{
+        result: {
+          launcherId: launcher.id,
+          logs: [{
+            text: 'Error: spawn nope-not-existing ENOENT',
+            type: 'error'
+          }],
+          name: 'nope-fail',
+          passed: false,
+          error: {
+            message: 'Error: \n Error: spawn nope-not-existing ENOENT\n'
+          }
+        }
+      }]);
       done();
     });
   });

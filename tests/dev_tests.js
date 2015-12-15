@@ -44,6 +44,13 @@ describe('Dev', !isWin ? function() {
       expect(runHook.called).to.be.false();
     });
 
+    it('doesn\'t run tests when running', function(done) {
+      var runHook = sandbox.spy(app, 'runHook');
+      app.runTests(null);
+      app.runTests(null, done);
+      expect(runHook.calledOnce).to.be.true();
+    });
+
     it('runs tests when reset and not paused', function(done) {
       var runHook = sandbox.spy(app, 'runHook');
       app.runTests(null, done);
