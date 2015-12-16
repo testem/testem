@@ -22,7 +22,7 @@ describe('tap process test runner', function() {
         args: [path.join(__dirname, '../fixtures/processes/echo.js')],
         protocol: 'tap'
       };
-      launcher = new Launcher('launcher', settings, config);
+      launcher = new Launcher('tap', settings, config);
       runner = new TapProcessTestRunner(launcher, reporter);
     });
 
@@ -41,15 +41,30 @@ describe('tap process test runner', function() {
         '# ok'
       ].join('\n');
       runner.start(function() {
-        var total = reporter.total;
-        var pass = reporter.pass;
-        expect(pass).to.equal(2);
-        expect(total).to.equal(2);
-
-        var results = reporter.results;
-        expect(results.length).to.equal(2);
-        expect(results[0].result.name).to.equal('hello() should be "hello world"');
-        expect(results[1].result.name).to.equal('hello(bob) should be "hello bob"');
+        expect(reporter.results).to.deep.equal([
+          {
+            result: {
+              failed: 0,
+              id: 1,
+              items: [],
+              launcherId: launcher.id,
+              name: 'hello() should be "hello world"',
+              passed: 1,
+              total: 1
+            }
+          },
+          {
+            result: {
+              failed: 0,
+              id: 2,
+              items: [],
+              launcherId: launcher.id,
+              name: 'hello(bob) should be "hello bob"',
+              passed: 1,
+              total: 1
+            }
+          }
+        ]);
         done();
       });
       launcher.process.stdin.end(tap);
@@ -75,22 +90,46 @@ describe('tap process test runner', function() {
         '# fail  1'
       ].join('\n');
       runner.start(function() {
-        var total = reporter.total;
-        var pass = reporter.pass;
-        expect(pass).to.equal(1);
-        expect(total).to.equal(2);
-
-        var results = reporter.results;
-        expect(results.length).to.equal(2);
-
-        expect(results[0].result.name).to.equal('hello() should be "hello world"');
-        expect(results[1].result.name).to.equal('hello(bob) should be "hello bob"');
-
-        var failItems = results[0].result.items;
-        expect(failItems[0].operator).to.equal('equal');
-        expect(failItems[0].expected).to.equal('hell world');
-        expect(failItems[0].actual).to.equal('hello world');
-        expect(failItems[0].at).to.equal('Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)');
+        expect(reporter.results).to.deep.equal([
+          {
+            result: {
+              failed: 1,
+              id: 1,
+              items: [{
+                actual: 'hello world',
+                at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
+                diag: {
+                  actual: 'hello world',
+                  at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
+                  expected: 'hell world',
+                  operator: 'equal'
+                },
+                expected: 'hell world',
+                id: 1,
+                name: 'hello() should be "hello world"',
+                ok: false,
+                operator: 'equal',
+                passed: false,
+                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n'
+              }],
+              launcherId: launcher.id,
+              name: 'hello() should be "hello world"',
+              passed: 0,
+              total: 1
+            }
+          },
+          {
+            result: {
+              failed: 0,
+              id: 2,
+              items: [],
+              launcherId: launcher.id,
+              name: 'hello(bob) should be "hello bob"',
+              passed: 1,
+              total: 1
+            }
+          }
+        ]);
 
         done();
       });
