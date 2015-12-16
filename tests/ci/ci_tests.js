@@ -217,11 +217,7 @@ describe('ci mode app', function() {
           process: true,
           kill: sandbox.stub().callsArg(1)
         }
-      },
-      {
-        launcher: {}
-      },
-      {}
+      }
     ];
 
     var cb = spy();
