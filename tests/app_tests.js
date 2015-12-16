@@ -7,9 +7,7 @@ var App = require('../lib/app');
 
 var FakeReporter = require('./support/fake_reporter');
 
-var isWin = /^win/.test(process.platform);
-
-describe('Dev', !isWin ? function() {
+describe('App', function() {
   var app, config, sandbox;
 
   beforeEach(function() {
@@ -20,8 +18,34 @@ describe('Dev', !isWin ? function() {
     sandbox.restore();
   });
 
-  describe('pause running', function(done) {
-    beforeEach(function() {
+  describe('triggerRun', function() {
+    beforeEach(function(done) {
+      config = new Config('dev', {}, {
+        reporter: new FakeReporter()
+      });
+      app = new App(config, function() {});
+      sandbox.spy(app, 'triggerRun');
+      app.start(done);
+    });
+
+    afterEach(function(done) {
+      app.exit(null, done);
+    });
+
+    it('triggers a run on start', function() {
+      expect(app.triggerRun.calledWith('Start')).to.be.true();
+    });
+
+    it('can only be executed once at the same time', function() {
+      sandbox.stub(app, 'cleanUpProcessLaunchers');
+      app.triggerRun('one');
+      app.triggerRun('two');
+      expect(app.cleanUpProcessLaunchers.callCount).to.eq(1);
+    });
+  });
+
+  describe('pause running', function() {
+    beforeEach(function(done) {
       config = new Config('dev', {}, {
         reporter: new FakeReporter()
       });
@@ -42,13 +66,6 @@ describe('Dev', !isWin ? function() {
       var runHook = sandbox.spy(app, 'runHook');
       app.runTests(null, done);
       expect(runHook.called).to.be.false();
-    });
-
-    it('doesn\'t run tests when running', function(done) {
-      var runHook = sandbox.spy(app, 'runHook');
-      app.runTests(null);
-      app.runTests(null, done);
-      expect(runHook.calledOnce).to.be.true();
     });
 
     it('runs tests when reset and not paused', function(done) {
@@ -79,6 +96,21 @@ describe('Dev', !isWin ? function() {
       });
     });
 
+    it('triggers a test run on change', function(done) {
+      var srcFiles = ['test.js'];
+      config = new Config('dev', {}, {
+        src_files: srcFiles,
+        reporter: new FakeReporter()
+      });
+      app = new App(config, done);
+      app.start(function() {
+        sandbox.spy(app, 'triggerRun');
+        app.fileWatcher.onFileChanged.call(app.fileWatcher, 'test.js');
+        expect(app.triggerRun.calledWith('File changed: test.js')).to.be.true();
+        app.exit();
+      });
+    });
+
     it('creates no watcher', function(done) {
       config = new Config('dev', {}, {
         src_files: ['test.js'],
@@ -92,6 +124,4 @@ describe('Dev', !isWin ? function() {
       });
     });
   });
-} : function() {
-  xit('TODO: Fix and re-enable for windows');
 });
