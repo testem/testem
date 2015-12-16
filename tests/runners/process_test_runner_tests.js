@@ -80,13 +80,13 @@ describe('ProcessTestRunner', function() {
         result: {
           launcherId: launcher.id,
           logs: [{
-            text: 'Error: spawn nope-not-existing ENOENT',
+            text: runner.lastErr.toString(),
             type: 'error'
           }],
           name: 'nope-fail',
           passed: false,
           error: {
-            message: 'Error: \n Error: spawn nope-not-existing ENOENT\n'
+            message: 'Error: \n ' + runner.lastErr + '\n'
           }
         }
       }]);
