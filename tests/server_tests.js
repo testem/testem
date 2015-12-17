@@ -63,9 +63,9 @@ describe('Server', function() {
         var $ = cheerio.load(text);
         var srcs = $('script').map(function() { return $(this).attr('src'); }).get();
         expect(srcs).to.deep.equal([
-          '/testem/jasmine.js',
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
           '/testem.js',
-          '/testem/jasmine-html.js',
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
           'web' + path.sep + 'hello.js',
           'web' + path.sep + 'hello_tst.js'
         ]);
@@ -82,7 +82,7 @@ describe('Server', function() {
     });
 
     it('gets bundled files', function(done) {
-      assertUrlReturnsFileContents(baseUrl + 'testem/jasmine.js', 'public/testem/jasmine.js', done);
+      assertUrlReturnsFileContents(baseUrl + 'testem/connection.html', 'public/testem/connection.html', done);
     });
 
     it('serves custom test page', function(done) {

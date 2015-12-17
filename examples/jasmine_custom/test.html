@@ -2,24 +2,17 @@
 <html>
 <head>
 <title>My Test Page</title>
-<link rel="stylesheet" href="jasmine.css">
-<script src="jasmine.js"></script>
+<link rel="stylesheet" href="node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+<script src="node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+<script src="node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+<script src="node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 <script src="/testem.js"></script>
-</script>
-<script src="jasmine-html.js"></script>
 <script src="hello.js"></script>
 <script src="hello_spec.js"></script>
 </head>
 <body>
-<h1>Test Page</h1>
-<script>
-var reporter = new jasmine.TrivialReporter
-  , env = jasmine.getEnv()
-env.specFilter = function(spec){
-	return reporter.specFilter(spec)
-}
-env.addReporter(reporter)
-env.execute()
-</script>
+  <body>
+    <div id="jasmine_content"></div>
+  </body>
 </body>
 </html>
