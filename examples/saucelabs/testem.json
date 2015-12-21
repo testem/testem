@@ -15,6 +15,10 @@
       "args": ["-b", "chrome", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
+    "SL_Chrome_Current_No_Details": {
+      "exe": "../../node_modules/.bin/saucie",
+      "args": ["-b", "chrome", "--no-ct", "-u"]
+    },
     "SL_Firefox_Current": {
       "exe": "../../node_modules/.bin/saucie",
       "args": ["-b", "firefox", "-v", "42", "--no-ct", "--at", "-u"],
@@ -60,6 +64,7 @@
   "launch_in_ci": [
     "PhantomJS",
     "SL_Chrome_Current",
+    "SL_Chrome_Current_No_Details",
     "SL_Firefox_Current",
     "SL_Safari_Current",
     "SL_Safari_Last",
