@@ -51,6 +51,15 @@ describe('Launcher', function() {
       settings.command = 'echo <url> <port>';
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
+        expect(stdout).to.match(/http:\/\/blah.com\/-1 7357(\r\n|\n)/);
+        done();
+      });
+    });
+    it('substitutes variables with a random id for browsers', function(done) {
+      stub(launcher, 'isProcess').returns(false);
+      settings.command = 'echo <url> <port>';
+      launcher.start();
+      launcher.on('processExit', function(code, stdout) {
         expect(stdout).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/);
         done();
       });
@@ -119,7 +128,7 @@ describe('Launcher', function() {
     it('should launch and also kill it', function(done) {
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/hello http:\/\/blah.com\/[0-9]+(\r\n|\n)/);
+        expect(stdout).to.match(/hello http:\/\/blah.com\/-1+(\r\n|\n)/);
         done();
       });
     });
@@ -127,7 +136,7 @@ describe('Launcher', function() {
       settings.args = ['-e', echoArgs, '<port>', '<url>'];
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/7357 http:\/\/blah.com\/[0-9]+ http:\/\/blah.com\/[0-9]+(\r\n|\n)/);
+        expect(stdout).to.match(/7357 http:\/\/blah.com\/-1 http:\/\/blah.com\/-1+(\r\n|\n)/);
         done();
       });
     });

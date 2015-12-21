@@ -72,7 +72,7 @@ function getBrowserName(userAgent) {
 }
 
 function getId() {
-  var m = parent.location.pathname.match(/^\/([0-9]+)/);
+  var m = parent.location.pathname.match(/^\/(-?[0-9]+)/);
   return m ? m[1] : null;
 }
 
@@ -81,8 +81,14 @@ var addListener = window.addEventListener ?
   function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
 
 function init() {
-  socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
   var id = getId();
+  if (id === '-1') { // No connection required
+    parent.Testem.emitConnection = function NOOP() {};
+    parent.Testem.emitConnectionQueue = [];
+    return;
+  }
+
+  socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
   socket.emit('browser-login',
     getBrowserName(navigator.userAgent),
     id);
