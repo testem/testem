@@ -80,6 +80,8 @@ function initTestFrameworkHooks(socket) {
     busterAdapter(socket);
     testFrameworkDidInit = true;
   }
+
+  return testFrameworkDidInit;
 }
 
 function init() {
@@ -87,7 +89,10 @@ function init() {
   takeOverConsole();
   setupTestStats();
   Testem.initTestFrameworkHooks = function() {
-    initTestFrameworkHooks(Testem);
+     if (!initTestFrameworkHooks(Testem)) {
+      throw new Error('Testem was unable to detect a test framework, please be sure to have one loaded before invoking Testem.initTestFrameowkrHooks');
+     }
+
   };
   initTestFrameworkHooks(Testem);
 }
