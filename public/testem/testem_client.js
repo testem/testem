@@ -75,10 +75,13 @@ function initTestFrameworkHooks(socket) {
 }
 
 function init() {
-  takeOverConsole();
   interceptWindowOnError();
-  initTestFrameworkHooks(Testem);
+  takeOverConsole();
   setupTestStats();
+  Testem.initTestFrameworkHooks = function() {
+    initTestFrameworkHooks(Testem);
+  };
+  initTestFrameworkHooks(Testem);
 }
 
 function setupTestStats() {
@@ -152,6 +155,8 @@ function emit() {
 }
 
 window.Testem = {
+  // set during init
+  initTestFrameworkHooks: undefined,
   emitConnectionQueue: [],
   useCustomAdapter: function(adapter) {
     adapter(this);
