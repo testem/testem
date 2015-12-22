@@ -60,25 +60,41 @@ It also restarts the tests by refreshing the page when instructed by the server 
   }
 })();
 
+var testFrameworkDidInit = false;
 function initTestFrameworkHooks(socket) {
+  if (testFrameworkDidInit) { return; }
+
   if (typeof getJasmineRequireObj === 'function') {
     jasmine2Adapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof jasmine === 'object') {
     jasmineAdapter(socket);
+    testFrameworkDidInit = true;
   } else if ((typeof mocha).match(/function|object/)) {
     mochaAdapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof QUnit === 'object') {
     qunitAdapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof buster !== 'undefined') {
     busterAdapter(socket);
+    testFrameworkDidInit = true;
   }
+
+  return testFrameworkDidInit;
 }
 
 function init() {
-  takeOverConsole();
   interceptWindowOnError();
-  initTestFrameworkHooks(Testem);
+  takeOverConsole();
   setupTestStats();
+  Testem.initTestFrameworkHooks = function() {
+     if (!initTestFrameworkHooks(Testem)) {
+      throw new Error('Testem was unable to detect a test framework, please be sure to have one loaded before invoking Testem.initTestFrameowkrHooks');
+     }
+
+  };
+  initTestFrameworkHooks(Testem);
 }
 
 function setupTestStats() {
@@ -152,6 +168,8 @@ function emit() {
 }
 
 window.Testem = {
+  // set during init
+  initTestFrameworkHooks: undefined,
   emitConnectionQueue: [],
   useCustomAdapter: function(adapter) {
     adapter(this);
