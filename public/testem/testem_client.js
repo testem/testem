@@ -60,17 +60,25 @@ It also restarts the tests by refreshing the page when instructed by the server 
   }
 })();
 
+var testFrameworkDidInit = false;
 function initTestFrameworkHooks(socket) {
+  if (testFrameworkDidInit) { return; }
+
   if (typeof getJasmineRequireObj === 'function') {
     jasmine2Adapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof jasmine === 'object') {
     jasmineAdapter(socket);
+    testFrameworkDidInit = true;
   } else if ((typeof mocha).match(/function|object/)) {
     mochaAdapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof QUnit === 'object') {
     qunitAdapter(socket);
+    testFrameworkDidInit = true;
   } else if (typeof buster !== 'undefined') {
     busterAdapter(socket);
+    testFrameworkDidInit = true;
   }
 }
 
