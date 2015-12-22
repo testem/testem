@@ -37,6 +37,10 @@ describe('examples', function() {
     testExample(path.join('examples/qunit_simple'), done);
   });
 
+  it('runs lazy qunit', function(done) {
+    testExample(path.join('examples/qunit_lazy'), done);
+  });
+
   it('runs routes', function(done) {
     testExample(path.join('examples/routes'), done);
   });
