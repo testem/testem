@@ -61,40 +61,40 @@ It also restarts the tests by refreshing the page when instructed by the server 
 })();
 
 var testFrameworkDidInit = false;
-function initTestFrameworkHooks(socket) {
-  if (testFrameworkDidInit) { return; }
-
-  if (typeof getJasmineRequireObj === 'function') {
-    jasmine2Adapter(socket);
-    testFrameworkDidInit = true;
-  } else if (typeof jasmine === 'object') {
-    jasmineAdapter(socket);
-    testFrameworkDidInit = true;
-  } else if ((typeof mocha).match(/function|object/)) {
-    mochaAdapter(socket);
-    testFrameworkDidInit = true;
-  } else if (typeof QUnit === 'object') {
-    qunitAdapter(socket);
-    testFrameworkDidInit = true;
-  } else if (typeof buster !== 'undefined') {
-    busterAdapter(socket);
-    testFrameworkDidInit = true;
+function hookIntoTestFramework(socket) {
+  if (testFrameworkDidInit) {
+    return;
   }
 
-  return testFrameworkDidInit;
+  var found = true;
+  if (typeof getJasmineRequireObj === 'function') {
+    jasmine2Adapter(socket);
+  } else if (typeof jasmine === 'object') {
+    jasmineAdapter(socket);
+  } else if ((typeof mocha).match(/function|object/)) {
+    mochaAdapter(socket);
+  } else if (typeof QUnit === 'object') {
+    qunitAdapter(socket);
+  } else if (typeof buster !== 'undefined') {
+    busterAdapter(socket);
+  } else {
+    found = false;
+  }
+
+  testFrameworkDidInit = found;
+  return found;
 }
 
 function init() {
   interceptWindowOnError();
   takeOverConsole();
   setupTestStats();
-  Testem.initTestFrameworkHooks = function() {
-     if (!initTestFrameworkHooks(Testem)) {
-      throw new Error('Testem was unable to detect a test framework, please be sure to have one loaded before invoking Testem.initTestFrameowkrHooks');
-     }
-
+  Testem.hookIntoTestFramework = function() {
+    if (!hookIntoTestFramework(Testem)) {
+      throw new Error('Testem was unable to detect a test framework, please load it before invoking Testem.hookIntoTestFramework');
+    }
   };
-  initTestFrameworkHooks(Testem);
+  hookIntoTestFramework(Testem);
 }
 
 function setupTestStats() {
