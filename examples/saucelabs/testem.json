@@ -17,7 +17,8 @@
     },
     "SL_Chrome_Current_No_Details": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "chrome", "--no-ct", "-u"]
+      "args": ["-b", "chrome", "--no-ct", "-u"],
+      "protocol": "tap"
     },
     "SL_Firefox_Current": {
       "exe": "../../node_modules/.bin/saucie",

@@ -218,4 +218,36 @@ describe('tap process test runner', function() {
       launcher.process.stdin.end(tap);
     });
   });
+
+  describe('onProcessError', function() {
+    var reporter, config;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      config = new Config('ci', {
+        reporter: reporter
+      });
+    });
+
+    it('handles crashing processes', function(done) {
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/tap-bail-out.js')]
+      };
+      var launcher = new Launcher('node-tap-bail-out', settings, config);
+      var runner = new TapProcessTestRunner(launcher, reporter);
+
+      runner.start(function() {
+        var total = reporter.total;
+        var pass = reporter.pass;
+        expect(pass).to.equal(0);
+        expect(total).to.equal(1);
+
+        var results = reporter.results;
+        var failingTest = results[0];
+        expect(failingTest.result.error.message).to.equal('Reason');
+        done();
+      });
+    });
+  });
 });
