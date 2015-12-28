@@ -101,6 +101,30 @@ describe('test reporters', function() {
         ]);
       });
     });
+
+    context('without name', function() {
+      it('writes out TAP', function() {
+        var stream = new PassThrough();
+        var reporter = new TapReporter(false, stream);
+        reporter.report('phantomjs', {
+          passed: true,
+          logs: []
+        });
+        reporter.finish();
+        assert.deepEqual(stream.read().toString().split('\n'), [
+          'ok 1 phantomjs',
+          '',
+          '1..1',
+          '# tests 1',
+          '# pass  1',
+          '# skip  0',
+          '# fail  0',
+          '',
+          '# ok',
+          ''
+        ]);
+      });
+    });
   });
 
   describe('dot reporter', function() {

@@ -209,6 +209,8 @@ describe('tap process test runner', function() {
 
         var results = reporter.results;
         var failingTest = results[1];
+        expect(failingTest.result.name).to.eq('hello should say hello to person');
+
         var failingItems = failingTest.result.items;
         var error = failingItems[0];
         expect(error.stack).to.match(/Error\:/);
@@ -245,7 +247,31 @@ describe('tap process test runner', function() {
 
         var results = reporter.results;
         var failingTest = results[0];
+        expect(failingTest.result.launcherId).to.equal(launcher.id);
+        expect(failingTest.result.name).to.equal('bailout');
         expect(failingTest.result.error.message).to.equal('Reason');
+        done();
+      });
+    });
+
+    it('not errored processes', function(done) {
+      var settings = {
+        exe: 'node-not-found'
+      };
+      var launcher = new Launcher('node-tap-bail-out', settings, config);
+      var runner = new TapProcessTestRunner(launcher, reporter);
+
+      runner.start(function() {
+        var total = reporter.total;
+        var pass = reporter.pass;
+        expect(pass).to.equal(0);
+        expect(total).to.equal(1);
+
+        var results = reporter.results;
+        var failingTest = results[0];
+        expect(failingTest.result.launcherId).to.equal(launcher.id);
+        expect(failingTest.result.name).to.equal('error');
+        expect(failingTest.result.error.message).to.match(/ENOENT/);
         done();
       });
     });
