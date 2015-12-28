@@ -54,8 +54,21 @@ describe('Server', function() {
       server.stop(done);
     });
 
-    it('gets the home page', function(done) {
-      request(baseUrl, done);
+    it('redirects to an id', function(done) {
+      request(baseUrl, { followRedirect: false }, function(err, res) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(302);
+        expect(res.headers.location).to.match(/^\/[0-9]+$/);
+        done();
+      });
+    });
+
+    it('serves the homepage after redirect', function(done) {
+      request(baseUrl, { followRedirect: true }, function(err, res) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        done();
+      });
     });
 
     it('gets scripts for the home page', function(done) {
@@ -114,16 +127,25 @@ describe('Server', function() {
       });
     });
 
-    function assertUrlReturnsFileContents(url, file, done) {
-      request(url, function(err, req, text) {
-        expect(text).to.equal(fs.readFileSync(file).toString());
-        done();
-      });
-    }
-
     it('lists directories', function(done) {
       request(baseUrl + 'data', function(err, req, text) {
         expect(text).to.match(/<a href=\"blah.txt\">blah.txt<\/a>/);
+        done();
+      });
+    });
+
+    it('serves local content with browser ids', function(done) {
+      assertUrlReturnsFileContents(baseUrl + '1234' + '/web/hello.js', 'tests/web/hello.js', done);
+    });
+
+    it('serves local content with tap id', function(done) {
+      assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
+    });
+
+    it('accepts other http methods', function(done) {
+      request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
         done();
       });
     });
@@ -256,7 +278,6 @@ describe('Server', function() {
           done();
         });
       });
-
     });
   });
 
@@ -315,3 +336,12 @@ describe('Server', function() {
     });
   });
 });
+
+function assertUrlReturnsFileContents(url, file, done) {
+  request(url, function(err, res, text) {
+    expect(err).to.be.null();
+    expect(res.statusCode).to.eq(200);
+    expect(text).to.equal(fs.readFileSync(file).toString());
+    done();
+  });
+}
