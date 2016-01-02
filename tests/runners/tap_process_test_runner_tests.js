@@ -256,9 +256,9 @@ describe('tap process test runner', function() {
 
     it('not errored processes', function(done) {
       var settings = {
-        exe: 'node-not-found'
+        exe: 'nope-not-existing'
       };
-      var launcher = new Launcher('node-tap-bail-out', settings, config);
+      var launcher = new Launcher('nope-not-existing', settings, config);
       var runner = new TapProcessTestRunner(launcher, reporter);
 
       runner.start(function() {

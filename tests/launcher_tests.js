@@ -105,13 +105,12 @@ describe('Launcher', function() {
       });
     });
     it('sends SIGKILL when SIGTERM is ignored', function(done) {
-      settings.command = 'node ' + path.join(__dirname, 'fixtures/ignore_sigterm');
+      settings.command = 'node ' + path.join(__dirname, 'fixtures/processes/ignore_sigterm.js');
       launcher.start();
       launcher.killTimeout = 200;
-      launcher.on('processExit', function() {
-        done();
-      });
-      launcher.kill();
+      setTimeout(function() {
+        launcher.kill(null, done);
+      }, 200);
     });
   });
 
