@@ -5,6 +5,7 @@
 	"requirePaddingNewLinesAfterBlocks": null,
 	"safeContextKeyword": "self",
 	"disallowMultipleVarDecl": { "allExcept": ["undefined"] },
+	"requireSpacesInsideObjectBrackets": null,
 	"excludeFiles": [
 		"examples/*",
 		"testcases/*",
