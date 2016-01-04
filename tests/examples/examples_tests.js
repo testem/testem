@@ -33,6 +33,10 @@ describe('examples', function() {
     testExample(path.join('examples/mocha_simple'), done);
   });
 
+  it('runs lazy mocha', function(done) {
+    testExample(path.join('examples/mocha_lazy'), done);
+  });
+
   it('runs qunit', function(done) {
     testExample(path.join('examples/qunit_simple'), done);
   });
