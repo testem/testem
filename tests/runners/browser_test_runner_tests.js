@@ -107,4 +107,21 @@ describe('browser test runner', function() {
       })).to.be.true();
     });
   });
+
+  describe('finish', function() {
+    var runner;
+
+    beforeEach(function() {
+      var reporter = new TapReporter();
+      var config = new Config('ci', { reporter: reporter });
+      var launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+    });
+
+    it('ignores multiple finish calls', function(done) {
+      runner.start(done);
+      runner.finish();
+      runner.finish();
+    });
+  });
 });
