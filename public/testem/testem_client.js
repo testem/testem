@@ -71,7 +71,7 @@ function hookIntoTestFramework(socket) {
     jasmine2Adapter(socket);
   } else if (typeof jasmine === 'object') {
     jasmineAdapter(socket);
-  } else if ((typeof mocha).match(/function|object/)) {
+  } else if (typeof Mocha === 'function') {
     mochaAdapter(socket);
   } else if (typeof QUnit === 'object') {
     qunitAdapter(socket);
