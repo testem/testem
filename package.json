@@ -21,7 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "async": "^1.0.0",
+    "async": "^1.5.2",
     "backbone": "^1.1.2",
     "charm": "^1.0.0",
     "commander": "^2.6.0",
