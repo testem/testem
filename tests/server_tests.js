@@ -1,7 +1,6 @@
 var Server = require('../lib/server');
 var Config = require('../lib/config');
 var path = require('path');
-var Backbone = require('backbone');
 var request = require('request');
 var cheerio = require('cheerio');
 var fs = require('fs');
@@ -14,7 +13,6 @@ describe('Server', function() {
   var port = 63571;
 
   describe('http', function() {
-    var runners;
     before(function(done) {
       config = new Config('dev', {
         port: port,
@@ -45,7 +43,6 @@ describe('Server', function() {
         }
       });
       baseUrl = 'http://localhost:' + port + '/';
-      runners = new Backbone.Collection();
 
       server = new Server(config);
       server.start();
@@ -193,7 +190,12 @@ describe('Server', function() {
 
         api4 = http.createServer(function(req, res) {
           res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end(JSON.stringify(req.body));
+          req.on('data', function(data) {
+            res.write(data);
+          });
+          req.on('end', function() {
+            res.end();
+          });
         });
 
         api1.listen(13372, function() {
@@ -284,10 +286,13 @@ describe('Server', function() {
           headers: {
             Accept: 'application/json'
           },
-          body: "{test:'some value'}"
+          body: '{test: \'some value\'}'
         };
         request.post(options, function(err, req, text) {
-          expect(text).to.equal('{"test": "some value"}');
+          if (err) {
+            return done(err);
+          }
+          expect(text).to.equal('{test: \'some value\'}');
           done();
         });
       });
