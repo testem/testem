@@ -330,4 +330,30 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
   });
+
+  describe('teamcity reporter', function() {
+    var stream;
+
+    beforeEach(function() {
+      stream = new PassThrough();
+    });
+
+    it('writes out and XML escapes results', function() {
+      var reporter = new TeamcityReporter(false, stream);
+      reporter.report('phantomjs', {
+        name: 'it does <cool> \"cool\" \'cool\' stuff',
+        passed: true
+      });
+      reporter.report('phantomjs', {
+        name: 'it skips stuff',
+        skipped: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+
+      assert.match(output, /##teamcity\[testSuiteFinished name='mocha\.suite' duration='(\d+(\.\d+)?)'\]/);
+      assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
+    });
+  });
 });
