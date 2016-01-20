@@ -95,6 +95,16 @@ describe('browser test runner', function() {
       })).to.be.true();
     });
 
+    it('counts a test as skipped if it is skipped', function() {
+      runner.onTestResult({
+        failed: 0,
+        skipped: true,
+        name: 'skipped test',
+        runDuration: 20,
+      });
+      expect(reporter.skipped).to.equal(1);
+    });
+
     it('counts a test as passed if it has no failures and has not been skipped', function() {
       runner.onTestResult({
         failed: 0,
