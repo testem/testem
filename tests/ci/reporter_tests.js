@@ -1,6 +1,7 @@
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var DotReporter = require('../../lib/reporters/dot_reporter');
 var XUnitReporter = require('../../lib/reporters/xunit_reporter');
+var TeamcityReporter = require('../../lib/reporters/teamcity_reporter');
 var Config = require('../../lib/config');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('xmldom');
@@ -174,6 +175,22 @@ describe('test reporters', function() {
         output.shift();
         assert.match(output.shift(), /     trace/);
         assert.equal(output, '');
+      });
+    });
+
+    context('with skipped', function() {
+      it('writes out summary', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it does stuff',
+          skipped: true,
+          logs: []
+        });
+        reporter.finish();
+        var output = stream.read().toString();
+        assert.match(output, /  \*/);
+        assert.match(output, /1 tests complete \([0-9]+ ms\)/);
       });
     });
   });

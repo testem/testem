@@ -32,10 +32,10 @@ describe('ci mode app', function() {
 
   describe('multiple launchers', function() {
     beforeEach(function(done) {
-     fs.unlink('tests/fixtures/tape/public/bundle.js', function() {
-       done();
-     });
-   });
+      fs.unlink('tests/fixtures/tape/public/bundle.js', function() {
+        done();
+      });
+    });
 
     it('runs them tests on node, nodetap, and browser', function(done) {
       var config = new Config('ci', {
@@ -80,6 +80,24 @@ describe('ci mode app', function() {
           assert(reporter.results.length >= 1, 'should have a few launchers'); // ball park?
           assert(app.cleanExit.called, 'called process.exit()');
           assert(app.cleanExit.lastCall.args[0], 0);
+          done();
+        });
+        app.start();
+      });
+    });
+
+    it('returns successfully with passed and skipped tests', function(done) {
+      var dir = path.join('tests/fixtures/success-skipped');
+      var config = new Config('ci', {
+        file: path.join(dir, 'testem.json'),
+        port: 0,
+        cwd: dir,
+        launch_in_ci: ['phantomjs'],
+        reporter: new TestReporter(true)
+      });
+      config.read(function() {
+        var app = new App(config, function(exitCode) {
+          expect(exitCode).to.eq(0);
           done();
         });
         app.start();
@@ -253,6 +271,13 @@ describe('ci mode app', function() {
     it('returns 0 if all passed', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 1 };
+      stub(app, 'reporter', reporter);
+      assert.equal(app.getExitCode(), null);
+    });
+
+    it('returns 0 if all skipped', function() {
+      var app = new App(new Config('ci'));
+      var reporter = { total: 1, skipped: 1 };
       stub(app, 'reporter', reporter);
       assert.equal(app.getExitCode(), null);
     });
