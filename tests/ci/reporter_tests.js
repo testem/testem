@@ -140,7 +140,7 @@ describe('test reporters', function() {
         });
         reporter.finish();
         var output = stream.read().toString();
-        assert.match(output, /  \./);
+        assert.match(output, /  \.\n\n/);
         assert.match(output, /1 tests complete \([0-9]+ ms\)/);
       });
     });
