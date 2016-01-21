@@ -55,7 +55,7 @@ function qunitAdapter() {
         passed: params.result,
         line: lineNumber(e),
         file: sourceFile(e),
-        stack: stacktrace(e),
+        stack: stacktrace(e) || params.source,
         message: message(e)
       });
     } else {
@@ -69,6 +69,7 @@ function qunitAdapter() {
           passed: params.result,
           actual: params.actual,
           expected: params.expected,
+          stack: params.source,
           message: params.message
         });
       }
