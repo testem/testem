@@ -1,7 +1,6 @@
 var Server = require('../lib/server');
 var Config = require('../lib/config');
 var path = require('path');
-var Backbone = require('backbone');
 var request = require('request');
 var cheerio = require('cheerio');
 var fs = require('fs');
@@ -14,7 +13,6 @@ describe('Server', function() {
   var port = 63571;
 
   describe('http', function() {
-    var runners;
     before(function(done) {
       config = new Config('dev', {
         port: port,
@@ -39,10 +37,12 @@ describe('Server', function() {
             target: 'http://localhost:13374',
             onlyContentTypes: ['json']
           },
+          '/api4': {
+            target: 'http://localhost:13375'
+          }
         }
       });
       baseUrl = 'http://localhost:' + port + '/';
-      runners = new Backbone.Collection();
 
       server = new Server(config);
       server.start();
@@ -168,7 +168,7 @@ describe('Server', function() {
     });
 
     describe('proxies', function() {
-      var api1, api2, api3;
+      var api1, api2, api3, api4;
 
       beforeEach(function(done) {
         api1 = http.createServer(function(req, res) {
@@ -188,10 +188,22 @@ describe('Server', function() {
           res.end(JSON.stringify({API: 3}));
         });
 
+        api4 = http.createServer(function(req, res) {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          req.on('data', function(data) {
+            res.write(data);
+          });
+          req.on('end', function() {
+            res.end();
+          });
+        });
+
         api1.listen(13372, function() {
           api2.listen(13373, function() {
             api3.listen(13374, function() {
-              done();
+              api4.listen(13375, function() {
+                done();
+              });
             });
           });
         });
@@ -201,7 +213,9 @@ describe('Server', function() {
         api1.close(function() {
           api2.close(function() {
             api3.close(function() {
-              done();
+              api4.close(function() {
+                done();
+              });
             });
           });
         });
@@ -262,6 +276,23 @@ describe('Server', function() {
         };
         request.post(options, function(err, req, text) {
           expect(text).to.equal('{"API":3}');
+          done();
+        });
+      });
+
+      it('proxies post request to api4', function(done) {
+        var options = {
+          url: baseUrl + 'api4/test',
+          headers: {
+            Accept: 'application/json'
+          },
+          body: '{test: \'some value\'}'
+        };
+        request.post(options, function(err, req, text) {
+          if (err) {
+            return done(err);
+          }
+          expect(text).to.equal('{test: \'some value\'}');
           done();
         });
       });
