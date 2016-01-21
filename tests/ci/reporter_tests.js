@@ -1,6 +1,7 @@
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var DotReporter = require('../../lib/reporters/dot_reporter');
 var XUnitReporter = require('../../lib/reporters/xunit_reporter');
+var TeamcityReporter = require('../../lib/reporters/teamcity_reporter');
 var Config = require('../../lib/config');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('xmldom');
@@ -176,6 +177,22 @@ describe('test reporters', function() {
         assert.equal(output, '');
       });
     });
+
+    context('with skipped', function() {
+      it('writes out summary', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it does stuff',
+          skipped: true,
+          logs: []
+        });
+        reporter.finish();
+        var output = stream.read().toString();
+        assert.match(output, /  \*/);
+        assert.match(output, /1 tests complete \([0-9]+ ms\)/);
+      });
+    });
   });
 
   describe('xunit reporter', function() {
@@ -311,6 +328,32 @@ describe('test reporters', function() {
       var output = stream.read().toString();
 
       assertXmlIsValid(output);
+    });
+  });
+
+  describe('teamcity reporter', function() {
+    var stream;
+
+    beforeEach(function() {
+      stream = new PassThrough();
+    });
+
+    it('writes out and XML escapes results', function() {
+      var reporter = new TeamcityReporter(false, stream);
+      reporter.report('phantomjs', {
+        name: 'it does <cool> \"cool\" \'cool\' stuff',
+        passed: true
+      });
+      reporter.report('phantomjs', {
+        name: 'it skips stuff',
+        skipped: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+
+      assert.match(output, /##teamcity\[testSuiteFinished name='mocha\.suite' duration='(\d+(\.\d+)?)'\]/);
+      assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
     });
   });
 });
