@@ -147,7 +147,7 @@ describe('ci mode app', function() {
           } else {
             launcher.process.kill();
           }
-        }, 2000);
+        }, 10000); // TODO Starting PhantomJS on Windows is really slow / find a better way
       });
     });
 
