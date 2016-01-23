@@ -12,6 +12,7 @@ var expect = require('chai').expect;
 var Process = require('did_it_work');
 var path = require('path');
 var http = require('http');
+var childProcess = require('child_process');
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -38,17 +39,19 @@ describe('ci mode app', function() {
     });
 
     it('runs them tests on node, nodetap, and browser', function(done) {
+      var reporter = new TestReporter(true);
+      var dir = path.join('tests/fixtures/tape');
       var config = new Config('ci', {
-        file: 'tests/fixtures/tape/testem.json',
+        file: path.join(dir, 'testem.json'),
         port: 0,
-        cwd: path.join('tests/fixtures/tape/'),
+        cwd: dir,
+        reporter: reporter,
         launch_in_ci: ['node', 'nodeplain', 'phantomjs']
       });
       config.read(function() {
-        var app = new App(config);
-        stub(app, 'cleanExit');
-        var reporter = stub(app, 'reporter', new TestReporter(true));
-        app.cleanExit.once('call', function() {
+        var app = new App(config, function(code) {
+          expect(code).to.eq(1);
+
           var helloWorld = reporter.results.filter(function(r) {
             return r.result.name.match(/hello world/);
           });
@@ -78,8 +81,6 @@ describe('ci mode app', function() {
           assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS');
 
           assert(reporter.results.length >= 1, 'should have a few launchers'); // ball park?
-          assert(app.cleanExit.called, 'called process.exit()');
-          assert(app.cleanExit.lastCall.args[0], 0);
           done();
         });
         app.start();
@@ -139,7 +140,13 @@ describe('ci mode app', function() {
         app.start();
 
         setTimeout(function() {
-          app.launchers()[0].process.kill();
+          var launcher = app.launchers()[0];
+
+          if (launcher.settings.useCrossSpawn) {
+            childProcess.exec('taskkill /pid ' + launcher.process.pid + ' /T');
+          } else {
+            launcher.process.kill();
+          }
         }, 2000);
       });
     });

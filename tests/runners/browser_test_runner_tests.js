@@ -8,7 +8,7 @@ var Launcher = require('../../lib/launcher.js');
 
 describe('browser test runner', function() {
   describe('parallel runners', function() {
-    var runner, reporter, launcher;
+    var ffRunner, chromeRunner, reporter, launcher;
     var ff = {
       name: 'Firefox 21.0',
       socket: new EventEmitter()
@@ -32,12 +32,13 @@ describe('browser test runner', function() {
         reporter: reporter
       });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter);
+      ffRunner = new BrowserTestRunner(launcher, reporter);
+      chromeRunner = new BrowserTestRunner(launcher, reporter);
     });
 
     it('runners do not interfer with another', function() {
-      runner.tryAttach(ff.name, launcher.id, ff.socket);
-      runner.tryAttach(chrome.name, launcher.id, chrome.socket);
+      ffRunner.tryAttach(ff.name, launcher.id, ff.socket);
+      chromeRunner.tryAttach(chrome.name, launcher.id, chrome.socket);
 
       ff.socket.emit('test-result', {passed: false, name: 'Test1'});
       chrome.socket.emit('test-result', {passed: true, name: 'Test2'});
