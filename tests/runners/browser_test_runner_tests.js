@@ -6,7 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 var Config = require('../../lib/config');
 var Launcher = require('../../lib/launcher.js');
 
-describe.only('browser test runner', function() {
+describe('browser test runner', function() {
   describe('parallel runners', function() {
     var runner, reporter, launcher;
     var ff = {
