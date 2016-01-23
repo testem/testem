@@ -103,6 +103,64 @@ describe('ci mode app', function() {
         app.start();
       });
     });
+
+    it('returns with non zero exit code when detected a global error', function(done) {
+      var dir = path.join('tests/fixtures/global-error');
+      var config = new Config('ci', {
+        file: path.join(dir, 'testem.json'),
+        port: 0,
+        cwd: dir,
+        launch_in_ci: ['phantomjs'],
+        reporter: new TestReporter(true)
+      });
+      config.read(function() {
+        var app = new App(config, function(exitCode) {
+          expect(exitCode).to.eq(1);
+          done();
+        });
+        app.start();
+      });
+    });
+
+    it('returns with non zero exit code when browser exits', function(done) {
+      var dir = path.join('tests/fixtures/slow-pass');
+      var config = new Config('ci', {
+        file: path.join(dir, 'testem.json'),
+        port: 0,
+        cwd: dir,
+        launch_in_ci: ['phantomjs'],
+        reporter: new TestReporter(true)
+      });
+      config.read(function() {
+        var app = new App(config, function(exitCode) {
+          expect(exitCode).to.eq(1);
+          done();
+        });
+        app.start();
+
+        setTimeout(function() {
+          app.launchers()[0].process.kill();
+        }, 2000);
+      });
+    });
+
+    it('returns with non zero exit code when browser disconnects', function(done) {
+      var dir = path.join('tests/fixtures/disconnect-test');
+      var config = new Config('ci', {
+        file: path.join(dir, 'testem.json'),
+        port: 0,
+        cwd: dir,
+        launch_in_ci: ['phantomjs'],
+        reporter: new TestReporter(true)
+      });
+      config.read(function() {
+        var app = new App(config, function(exitCode) {
+          expect(exitCode).to.eq(1);
+          done();
+        });
+        app.start();
+      });
+    });
   });
 
   it('fails with explicitly defined missing launchers', function(done) {
