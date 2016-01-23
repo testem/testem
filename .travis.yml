@@ -1,26 +1,36 @@
-language: node_js
-node_js:
-- '0.10'
-- '0.12'
-- '1'
-- '2'
-- '3'
-- '4'
-- '5'
+os:
+- osx
+- linux
+osx_image: xcode7.2
+env:
+  - NODE_VERSION="0.10"
+  - NODE_VERSION="0.12"
+  - NODE_VERSION="4"
+  - NODE_VERSION="5"
 matrix:
   fast_finish: true
   include:
-    - node_js: 5
-      env: BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
+    - os: linux
+      env: NODE_VERSION="5" BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
+    - os: osx
+      env: NODE_VERSION="5" NVM_DIR=~/.nvm
+  exclude:
+    - os: osx
 sudo: false
+before_install:
+  - if [ $TRAVIS_OS_NAME == "osx" ]; then
+      brew update;
+      brew install phantomjs nvm;
+      mkdir ~/.nvm;
+      . $(brew --prefix nvm)/nvm.sh;
+    fi
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
+  - node --version
+  - npm --version
+install:
+  - npm install
 before_script:
   - npm run lint
-deploy:
-  provider: npm
-  email: johannes.wuerbach@googlemail.com
-  api_key:
-    secure: Np9Z9Rb/BqQakf+D5sNOwFt7n4ibGGM6g0BjybTzkOO2FpRIFcwgc6pIQ75RY/uRygZlhR8MVaiY6Dcc5QVzVwi8HEQ7jDl8HqJa3vKm9Njo/JQEuB9LMtR38jLEuHfjlV/qg5mYRszgnKiNiVZNfETKx/aW6iT5Cgq2fl30Anw=
-  on:
-    tags: true
-    repo: testem/testem
-    node: 4
+script:
+  - npm test
