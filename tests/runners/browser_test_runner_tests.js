@@ -40,8 +40,8 @@ describe('browser test runner', function() {
       ffRunner.tryAttach(ff.name, launcher.id, ff.socket);
       chromeRunner.tryAttach(chrome.name, launcher.id, chrome.socket);
 
-      ff.socket.emit('test-result', {passed: false, name: 'Test1'});
-      chrome.socket.emit('test-result', {passed: true, name: 'Test2'});
+      ff.socket.emit('test-result', {failed: 1, name: 'Test1'});
+      chrome.socket.emit('test-result', {passed: 1, name: 'Test2'});
 
       ff.socket.emit('all-test-results');
       chrome.socket.emit('all-test-results');
@@ -104,6 +104,19 @@ describe('browser test runner', function() {
         runDuration: 20,
       });
       expect(reporter.skipped).to.equal(1);
+    });
+
+    it('counts a test as passed when no failures occurred', function() {
+      runner.onTestResult({
+        name: 'no checks',
+        items: [],
+        failed: 0,
+        passed: 0,
+        skipped: false,
+        total: 0,
+        runDuration: 20
+      });
+      expect(reporter.pass).to.equal(1);
     });
 
     it('counts a test as passed if it has no failures and has not been skipped', function() {
