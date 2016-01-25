@@ -6,6 +6,13 @@
 	"safeContextKeyword": "self",
 	"disallowMultipleVarDecl": { "allExcept": ["undefined"] },
 	"requireSpacesInsideObjectBrackets": null,
+	"disallowSpacesInFunctionExpression": {
+		"beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+ 	},
+	"requireSpacesInAnonymousFunctionExpression": null,
 	"excludeFiles": [
 		"examples/*",
 		"testcases/*",
