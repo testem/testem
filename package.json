@@ -25,7 +25,7 @@
     "backbone": "^1.1.2",
     "charm": "^1.0.0",
     "commander": "^2.6.0",
-    "consolidate": "^0.13.1",
+    "consolidate": "^0.14.0",
     "cross-spawn-async": "^2.1.0",
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
