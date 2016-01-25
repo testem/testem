@@ -40,8 +40,8 @@ describe('browser test runner', function() {
       ffRunner.tryAttach(ff.name, launcher.id, ff.socket);
       chromeRunner.tryAttach(chrome.name, launcher.id, chrome.socket);
 
-      ff.socket.emit('test-result', {passed: false, name: 'Test1'});
-      chrome.socket.emit('test-result', {passed: true, name: 'Test2'});
+      ff.socket.emit('test-result', {failed: 1, name: 'Test1'});
+      chrome.socket.emit('test-result', {passed: 1, name: 'Test2'});
 
       ff.socket.emit('all-test-results');
       chrome.socket.emit('all-test-results');
