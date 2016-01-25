@@ -12,7 +12,7 @@ install:
   - npm version
   - npm install
   # Install PhantomJS
-  - IF %PHANTOM_SRC%==npm npm install -g phantomjs@1
+  - IF %PHANTOM_SRC%==npm npm install -g phantomjs
   - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
   - phantomjs -v
 
