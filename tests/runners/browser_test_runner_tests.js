@@ -131,6 +131,20 @@ describe('browser test runner', function() {
         return r.result.passed;
       })).to.be.true();
     });
+
+    it('reports the first failed item as error', function() {
+      var failedItem = { name: 'failed', failed: 1 };
+
+      runner.onTestResult({
+        failed: 1,
+        skipped: false,
+        name: 'failed test',
+        runDuration: 20,
+        items: [{ name: 'passed', passed: 1 }, failedItem]
+      });
+
+      expect(reporter.results[0].result.error).to.eq(failedItem);
+    });
   });
 
   describe('finish', function() {
