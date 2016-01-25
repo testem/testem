@@ -106,6 +106,19 @@ describe('browser test runner', function() {
       expect(reporter.skipped).to.equal(1);
     });
 
+    it('counts a test as passed when no failures occurred', function() {
+      runner.onTestResult({
+        name: 'no checks',
+        items: [],
+        failed: 0,
+        passed: 0,
+        skipped: false,
+        total: 0,
+        runDuration: 20
+      });
+      expect(reporter.pass).to.equal(1);
+    });
+
     it('counts a test as passed if it has no failures and has not been skipped', function() {
       runner.onTestResult({
         passed: true,
