@@ -55,8 +55,9 @@ describe('report file output', function() {
     });
     var app = new App(config, function() {
       expect(app.reportFileName).to.eq(filename);
-      app.reportFile.fileStream.on('finish', done);
-      app.reportFileStream.end();
+
+      // fileStream already closed
+      done();
     });
     app.exit();
   });
