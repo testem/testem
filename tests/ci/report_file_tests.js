@@ -54,6 +54,7 @@ describe('report file output', function() {
       report_file: filename
     });
     var app = new App(config, function() {
+      console.log('entering app finalizer callback');
       expect(app.reportFileName).to.eq(filename);
 
       // fileStream already closed
