@@ -6,7 +6,7 @@ var bd = require('bodydouble');
 var stub = bd.stub;
 var browserLauncher = require('../lib/browser_launcher');
 var path = require('path');
-var fs = require('fs');
+var os = require('os');
 
 chai.use(require('dirty-chai'));
 
@@ -244,23 +244,11 @@ describe('Config', function() {
     });
   });
 
-  it('should customize user_data_dir when provided', function(done) {
+  it('should customize user_data_dir when provided', function() {
     var config = new Config();
-    stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+    expect(config.getUserDataDir()).to.eq(os.tmpdir());
     config.set('user_data_dir', 'node_modules/customDirectory');
-    config.getLaunchers(function(err, launchers) {
-      var correctFlag = config.cwd() + '/node_modules/customDirectory/testem.firefox';
-      if (process.platform === 'win32') {
-        correctFlag = config.cwd() + '\\node_modules\\customDirectory\\testem.firefox';
-      }
-      expect(launchers.firefox.settings.args).to.include(correctFlag);
-      launchers.firefox.settings.setup(config, function() {
-        fs.stat(correctFlag, function(err, stats) {
-          expect(stats.isDirectory());
-          done();
-        });
-      });
-    });
+    expect(config.getUserDataDir()).to.eq(path.resolve(config.cwd(), 'node_modules/customDirectory'));
   });
 
   it('should install custom launchers', function(done) {
