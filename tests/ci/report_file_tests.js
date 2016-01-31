@@ -48,19 +48,25 @@ describe('report file output', function() {
   });
 
   it('allows passing in report_file from config', function(done) {
+    var dir = path.join('tests/fixtures/success-skipped');
+
     var config = new Config('ci', {
+      file: path.join(dir, 'testem.json'),
+      port: 0,
+      cwd: dir,
       reporter: new FakeReporter(),
       stdout_stream: new PassThrough(),
-      report_file: filename
+      report_file: filename,
+      launch_in_ci: ['phantomjs'],
     });
+
     var app = new App(config, function() {
-      console.log('entering app finalizer callback');
       expect(app.reportFileName).to.eq(filename);
 
       // fileStream already closed
       done();
     });
-    app.exit();
+    app.start();
   });
 
   it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
