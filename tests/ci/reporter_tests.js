@@ -260,13 +260,36 @@ describe('test reporters', function() {
         name: 'it didnt work',
         passed: false,
         error: {
-          message: (new Error('it crapped out')).stack
+          message: 'it crapped out',
+          stack: (new Error('it crapped out')).stack
         }
       });
       reporter.finish();
       var output = stream.read().toString();
-      assert.match(output, /it didnt work"/);
-      assert.match(output, /it crapped out/);
+      assert.match(output, /it didnt work/);
+      assert.match(output, /CDATA\[Error: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs errors without stack traces', function() {
+      var config = new Config('ci', {
+        xunit_intermediate_output: false,
+        xunit_exclude_stack: true
+      });
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        error: {
+          message: 'it crapped out',
+          stack: (new Error('it crapped out')).stack
+        }
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /it didnt work/);
+      assert.notMatch(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
     });
