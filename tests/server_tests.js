@@ -9,6 +9,8 @@ var http = require('http');
 var https = require('https');
 
 describe('Server', function() {
+  this.timeout(10000);
+
   var baseUrl, server, config;
   var port = 63571;
 
