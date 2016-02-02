@@ -10,10 +10,10 @@ env:
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      env: NODE_VERSION="5" BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
     - os: osx
       env: NODE_VERSION="5" NVM_DIR=~/.nvm
+    - os: linux
+      env: NODE_VERSION="5" BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
   exclude:
     - os: osx
 sudo: false
