@@ -1,5 +1,13 @@
 {
-  "dependencies": {
+  "devDependencies": {
     "jasmine-core": "^2.4.1"
-  }
+  },
+  "scripts": {
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
 }

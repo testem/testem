@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "tape": "^4.4.0",
+    "webpack": "^1.12.12"
+  },
+  "scripts": {
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
+}

@@ -3,9 +3,6 @@
         "Node": {
             "command": "node tests.js",
             "protocol": "tap"
-        },
-        "NodePlain": {
-            "command": "node tests.js"
         }
     },
     "framework": "tap",

@@ -1,9 +1,10 @@
 {
-    "launchers": {
-        "Node": {
-            "command": "mocha tests.js"
-        }
-    },
-    "launch_in_dev": [ "Node" ],
-    "launch_in_ci": [ "Node" ]
+  "launchers": {
+    "Node": {
+      "command": "mocha tests.js",
+      "protocol": "tap"
+    }
+  },
+  "launch_in_dev": [ "Node" ],
+  "launch_in_ci": [ "Node" ]
 }

@@ -1,3 +1,9 @@
-Install jshint via
+## Setup
 
-    npm install jshint
+First install dependencies
+
+    npm install
+
+Then, just run tests
+
+    npm test

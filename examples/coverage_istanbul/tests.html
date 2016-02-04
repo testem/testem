@@ -2,30 +2,24 @@
 <html>
 <head>
 <title>My Test Page</title>
-<link rel="stylesheet" href="/testem/jasmine.css">
-<script src="/testem/jasmine.js"></script>
+<link rel="stylesheet" href="/node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+<script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+<script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+<script src="/node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 <script src="/testem.js"></script>
 <script>
-Testem.on('all-test-results', function(results){
-  var xhr = new XMLHttpRequest()
-  xhr.open('POST', 'http://localhost:7358/')
-  xhr.send(JSON.stringify(window.__coverage__))
-})
+  Testem.on('all-test-results', function(results) {
+    var xhr = new XMLHttpRequest();
+    var coverage = JSON.stringify(window.__coverage__);
+    xhr.open('POST', '/coverage');
+    xhr.send(coverage);
+  });
 </script>
-<script src="/testem/jasmine-html.js"></script>
-<script src="instrumented/hello.js"></script>
-<script src="instrumented/hello_tests.js"></script>
+<script src="/instrumented/hello.js"></script>
+<script src="/instrumented/hello_tests.js"></script>
 </head>
 <body>
 <h1>Test Page</h1>
-<script>
-var reporter = new jasmine.TrivialReporter
-  , env = jasmine.getEnv()
-env.specFilter = function(spec){
-  return reporter.specFilter(spec)
-}
-env.addReporter(reporter)
-env.execute()
-</script>
+<div id="jasmine_content"></div>
 </body>
 </html>

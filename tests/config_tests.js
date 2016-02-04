@@ -328,11 +328,11 @@ describe('Config', function() {
       });
     });
     it('excludes using src_files_ignore', function(done) {
-      config.set('src_files', ['integration/*']);
-      config.set('src_files_ignore', ['**/*.sh']);
+      config.set('src_files', ['ci/*']);
+      config.set('src_files_ignore', ['**/report*.js']);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-          fileEntry(path.join('integration', 'browser_tests.bat'))
+          fileEntry(path.join('ci', 'ci_tests.js'))
         ]);
         done();
       });
@@ -354,12 +354,13 @@ describe('Config', function() {
     });
     it('respects order', function(done) {
       config.set('src_files', [
-      'integration/browser_tests.bat',
-      'filewatcher_tests.js'
+      'ui/fake_screen.js',
+      'ci/ci_tests.js'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-          fileEntry(path.join('integration', 'browser_tests.bat'))
+          fileEntry(path.join('ui', 'fake_screen.js')),
+          fileEntry(path.join('ci', 'ci_tests.js'))
         ]);
         done();
       });
@@ -376,39 +377,41 @@ describe('Config', function() {
     it('populates attributes for only the desired globs', function(done) {
       config.set('src_files', [
       {src:'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
-      'integration/*'
+      'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
           fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-          fileEntry(path.join('integration', 'browser_tests.bat')),
-          fileEntry(path.join('integration', 'browser_tests.sh'))
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'report_file_tests.js')),
+          fileEntry(path.join('ci', 'reporter_tests.js'))
         ]);
         done();
       });
     });
-    it('populates attributes for only the desired globs and excludes usig src_files_ignore', function(done) {
+    it('populates attributes for only the desired globs and excludes using src_files_ignore', function(done) {
       config.set('src_files', [
       fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-      'integration/*'
+      'ci/*'
       ]);
-      config.set('src_files_ignore', '**/*.sh');
+      config.set('src_files_ignore', '**/report*.js');
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
           fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-          fileEntry(path.join('integration', 'browser_tests.bat'))
+          fileEntry(path.join('ci', 'ci_tests.js'))
         ]);
         done();
       });
     });
     it('allows URLs', function(done) {
       config.set('src_files', [
-      'file://integration/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
+      'file://ci/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-          fileEntry(path.join('integration', 'browser_tests.bat')),
-          fileEntry(path.join('integration', 'browser_tests.sh')),
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'report_file_tests.js')),
+          fileEntry(path.join('ci', 'reporter_tests.js')),
           fileEntry('http://codeorigin.jquery.com/jquery-2.0.3.min.js')
         ]);
         done();

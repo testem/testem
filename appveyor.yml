@@ -11,7 +11,6 @@ install:
   - ps: Install-Product node 4
   - npm version
   - npm install
-  # Install PhantomJS
   - IF %PHANTOM_SRC%==npm npm install -g phantomjs
   - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
   - phantomjs -v
@@ -19,6 +18,7 @@ install:
 # Post-install test scripts.
 test_script:
   - cmd: npm run testem-tests
+  - cmd: npm run integration
 
 # Don't actually build.
 build: off

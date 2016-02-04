@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "coffee-script": "^1.10.0"
+  },
+  "scripts": {
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
+}

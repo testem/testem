@@ -5,4 +5,4 @@ describe('hello', function(){
     it('should say hello to person', function(){
         expect(hello('Bob')).toBe('hello Bob');
     });
-}); 
+});
