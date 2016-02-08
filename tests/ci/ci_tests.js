@@ -158,7 +158,8 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true)
+        reporter: new TestReporter(true),
+        browser_disconnect_timeout: 0.1
       });
       config.read(function() {
         var app = new App(config, function(exitCode) {

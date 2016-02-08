@@ -62,32 +62,33 @@ Common Configuration Options
 
 ### Config-level options:
 
-    launchers:                [Object]  a specification for all custom launchers
-    launch_in_dev:            [Array]   list of launchers to use for dev runs
-    launch_in_ci:             [Array]   list of launchers to use for CI runs
-    timeout:                  [Number]  timeout for a browser
-    framework:                [String]  test framework to use
-    url:                      [String]  url server runs at (http://{host}:{port}/)
-    src_files:                [Array]   list of files or file patterns to use
-    src_files_ignore:         [Array]   list of files or file patterns to exclude from usage
-    serve_files:              [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
-    serve_files_ignore:       [Array]   list of files or file patterns to exclude from test playground (defaults to src_files_ignore)
-    watch_files:              [Array]   list of files or file patterns to watch changes of (defaults to src_files)
-    css_files:                [Array]   additionals stylesheets to include
-    cwd:                      [Path]    directory to use as root
-    config_dir:               [Path]    directory to use as root for resolving configs, if different than cwd
-    parallel:                 [Number]  max number of parallel runners (1)
-    routes:                   [Object]  overrides for assets paths
-    fail_on_zero_tests:       [Boolean] whether process should exit with error status when no tests found
-    unsafe_file_serving:      [Boolean] allow serving directories that are not in your CWD (false)
-    reporter:                 [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
-    disable_watching:         [Boolean] disable any file watching
-    ignore_missing_launchers: [Boolean] ignore missing launchers in ci mode
-    report_file:              [String]  file to write test results to (stdout)
-    xunit_intermediate_output [Boolean] print tap output for the xunit reporter (false)
-    phantomjs_debug_port:     [Number]  port used to attach phantomjs debugger
-    phantomjs_args:           [Array]   custom arguments for the phantomjs launcher
-    user_data_dir:            [String]  directory to initialize the browser user data directories (default a temporary directory)
+    launchers:                   [Object]  a specification for all custom launchers
+    launch_in_dev:               [Array]   list of launchers to use for dev runs
+    launch_in_ci:                [Array]   list of launchers to use for CI runs
+    timeout:                     [Number]  timeout for a browser
+    framework:                   [String]  test framework to use
+    url:                         [String]  url server runs at (http://{host}:{port}/)
+    src_files:                   [Array]   list of files or file patterns to use
+    src_files_ignore:            [Array]   list of files or file patterns to exclude from usage
+    serve_files:                 [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
+    serve_files_ignore:          [Array]   list of files or file patterns to exclude from test playground (defaults to src_files_ignore)
+    watch_files:                 [Array]   list of files or file patterns to watch changes of (defaults to src_files)
+    css_files:                   [Array]   additionals stylesheets to include
+    cwd:                         [Path]    directory to use as root
+    config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
+    parallel:                    [Number]  max number of parallel runners (1)
+    routes:                      [Object]  overrides for assets paths
+    fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
+    unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
+    reporter:                    [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
+    disable_watching:            [Boolean] disable any file watching
+    ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
+    report_file:                 [String]  file to write test results to (stdout)
+    xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
+    phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
+    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher
+    user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
+    browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
 
 
 ### Available hooks:

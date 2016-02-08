@@ -458,6 +458,12 @@ describe('Config', function() {
       });
     });
   });
+
+  describe('browser_disconnect_timeout', function() {
+    it('defaults to 10 seconds', function() {
+      expect(config.get('browser_disconnect_timeout')).to.eq(10);
+    });
+  });
 });
 
 function mockTopLevelProgOptions() {

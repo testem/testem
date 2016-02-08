@@ -147,6 +147,55 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('onDisconnect', function() {
+    var reporter, launcher, runner, socket;
+
+    beforeEach(function() {
+      reporter = new TapReporter();
+      var config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
+      launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+      socket = new EventEmitter();
+    });
+
+    it('fails when the browser fails to reconnect', function(done) {
+      runner.start(function() {
+        expect(reporter.results[0].result).to.deep.eq({
+          error: undefined,
+          failed: 1,
+          items: undefined,
+          launcherId: launcher.id,
+          logs: [],
+          name: 'Browser undefined disconnected unexpectedly.',
+          passed: false,
+          pending: undefined,
+          runDuration: undefined,
+          skipped: undefined
+        });
+        done();
+      });
+
+      runner.tryAttach('browser', launcher.id, socket);
+      runner.onDisconnect();
+    });
+
+    it('allows to cancel the timeout', function(done) {
+      runner.start(function() {
+        expect(reporter.results.length).to.eq(0);
+        done();
+      });
+
+      runner.tryAttach('browser', launcher.id, socket);
+      runner.onDisconnect();
+      setTimeout(function() {
+        runner.tryAttach('browser', launcher.id, socket);
+        setTimeout(function() {
+          runner.finish();
+        }, 100);
+      }, 50);
+    });
+  });
+
   describe('finish', function() {
     var runner;
 
