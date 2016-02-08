@@ -3,6 +3,17 @@ Contributing to Testem
 
 Open source is all about DIY! If you want something fixed, it's sometimes faster to just roll your sleeves up, not to mention lots more rewarding. This doc will give you some pointers on where to look when you poke around Testem's source code.
 
+Getting Started
+---------------
+
+* Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
+* Run `npm install` and `npm test` to make sure you're off to a good start
+
+> Testem expects `PhantomJS` to be in the PATH, if you don't have one,
+> either install it globally via `npm install -g phantomjs`
+> (*you might need to use `sudo` for global installiation*)
+> or run `npm run install:all` instead of `npm install` during the second step
+
 Brief Code Walk Through
 -----------------------
 
@@ -44,18 +55,23 @@ Or in the spirit of eating our own dog food:
 
     testem
 
+To lint your code:
+
+    npm run lint
+
 If it isn't practical to write a test first, it might be my fault, feel free to chat.
 
 *Protip: to make the tests run faster during TDD, use Mocha's exclusive test feature, i.e. `describe.only` and `it.only`.*
+
 
 ### Integration Tests
 
 There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`
 
-On Unix do
+Node + PhantomJS
 
-    tests/integration/browser_tests.sh
+    npm run integration
 
-and on Windows do
+All available browsers (launchers)
 
-    tests/integration/browser_tests.bat
+    npm run integration:all

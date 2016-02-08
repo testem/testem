@@ -5,16 +5,12 @@ This is an example of how to generate a code coverage report using Testem + Ista
 
 ## Setup
 
-First install istanbul
+First install dependencies
 
-    npm install istanbul -g
+    npm install
 
-Next, you need to run the coverage server in another terminal
+Then, just run tests
 
-    node coverage_server.js
-
-Then, just run testem
-
-    testem
+    npm test
 
 When you are done with the tests, and quit testem, you should see HTML reports in `coverage/lcov-report/index.html`

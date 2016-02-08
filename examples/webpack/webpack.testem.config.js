@@ -5,6 +5,6 @@ module.exports = {
     filename: 'test-bundle.js'
   },
   node: {
-    fs: "empty"
-} 
+    fs: 'empty'
+  }
 };

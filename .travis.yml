@@ -33,4 +33,5 @@ install:
 before_script:
   - npm run lint
 script:
-  - npm test
+  - npm run test
+  - npm run integration

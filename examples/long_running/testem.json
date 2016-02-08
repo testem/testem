@@ -1,0 +1,4 @@
+{
+  "-comment": "Safari 9.0 seems to drop connection after short period of time",
+  "skip": "safari"
+}
