@@ -1,6 +1,7 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
 environment:
+  INTEGRATION_TESTS_CONCURRENCY: 5
   matrix:
   - PHANTOM_SRC: "npm"
   - PHANTOM_SRC: "chocolatey"

@@ -2,8 +2,14 @@
 
 var os = require('os').type();
 var path = require('path');
-var assert = require('assert');
 var shell = require('shelljs');
+var Bluebird = require('bluebird');
+var retry = require('bluebird-retry');
+var tmp = require('tmp');
+var rimraf = require('rimraf');
+
+var rimrafAsync = Bluebird.promisify(rimraf);
+var tmpDirAsync = Bluebird.promisify(tmp.dir);
 
 // skip node@0.10, because of npm@1
 // and inability to pass arguments
@@ -16,9 +22,8 @@ if (version[1] < 1 && version[2] < 12) {
 
 // get extra params
 var argv = process.argv.slice(2);
-var testFlags = argv.length ? ' ' + argv.join(' ') : '';
-
-var testCmd = 'npm run test' + (testFlags ? ' -- ' + testFlags : '');
+var testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
+var testCmd = 'npm run test -- ' + testFlags;
 
 // special examples, require human intervention
 var skipExamples = ['browserstack', 'saucelabs'];
@@ -26,81 +31,90 @@ var skipOnWindows = [
   'coffeescript', // File not found: C:\projects\testem\examples\coffeescript\*.coffee
   'webpack' // 'webpack' is not recognized as an internal or external command, operable program or batch file.
 ];
+var skipDefiningReporter = [
+  'node_example',
+  'node_tap_example'
+];
 var examplesPath = path.join(__dirname, '../examples');
+var DEFAULT_CONCURRENY = 10;
+var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
 
 // show available launchers
 shell.exec('node testem.js launchers');
 shell.echo('');
 shell.echo('Testing with flags:' + (testFlags || '[no custom flags provided]'));
 shell.echo('');
-shell.cd(examplesPath);
 
 // run examples tests
-testExamples(shell.ls('.'), function(code, output)
-{
-  if (output)
-  {
-    shell.echo(output);
+testExamples(shell.ls(examplesPath), function(err) {
+  if (err) {
+    shell.echo(err);
+    process.exit(1);
   }
-
-  // finish with the right code
-  assert.equal(code, 0);
 });
 
 // test examples one by one, async
-function testExamples(examples, callback)
-{
-  var example = examples.shift();
+function testExamples(examples, callback) {
+  Bluebird.map(examples, testExample, { concurrency: concurrency }).asCallback(callback);
+}
 
-  if (!example) {
-    // done here
-    callback(0);
-    return;
-  }
+function tmpDir() {
+  return tmpDirAsync().disposer(function(path) {
+    return rimrafAsync(path);
+  });
+}
 
+function shellExec(cmd, runOpts) {
+  return Bluebird.fromCallback(function(callback) {
+    return shell.exec(cmd, runOpts, function(exitCode, output) {
+      if (exitCode) {
+        return callback(new Error(
+          'Cmd: ' + cmd + ' failed with exit code: ' + exitCode + '\n' + output
+        ));
+      }
+      callback(null, output);
+    });
+  });
+}
+
+function testExample(example) {
   if (skipExamples.indexOf(example) !== -1) {
     // proceed to the next one
-    testExamples(examples, callback);
     return;
   }
 
   if (os === 'Windows_NT' && skipOnWindows.indexOf(example) !== -1) {
     // proceed to the next one
-    testExamples(examples, callback);
     return;
   }
 
-  shell.echo('Testing ' + example);
-  shell.cd(example);
+  var examplePath = path.join(examplesPath, example);
+  var runOpts = {silent: true, cwd: examplePath};
 
-  shell.exec('npm install', {silent: true}, function(installErrCode, installOutput) {
-    // if error code, terminate
-    // right here, right now
-    if (installErrCode) {
-      callback(installErrCode, installOutput);
-      return;
-    }
-
-    shell.exec(testCmd, {silent: true}, function(testErrCode, testOuput)
-    {
-      var result;
-
-      // if error code, terminate
-      // right here, right now
-      if (testErrCode) {
-        callback(testErrCode, testOuput);
-        return;
+  return Bluebird.using(tmpDir(), function(cachePath) {
+    return retry(npmInstall(cachePath, runOpts), { max_tries: 3 }).then(function() {
+      var cmd = testCmd;
+      if (skipDefiningReporter.indexOf(example) === -1) {
+        cmd += ' --launch phantomjs';
       }
 
+      return retry(runExample(cmd, runOpts), { max_tries: 3 });
+    }).then(function(testOuput) {
       // output test results
-      result = testOuput.match(/#[\s]+tests[\s]+[0-9]+[\s\S]+#[\s]+fail[\s]+[0-9]+/);
-      shell.echo(result[0]);
-
-      // step up back
-      shell.cd(examplesPath);
-
-      // proceed to the next one
-      testExamples(examples, callback);
+      shell.echo('Testing ' + example);
+      shell.echo(testOuput);
     });
   });
+}
+
+function runExample(cmd, runOpts) {
+  return function() {
+    return shellExec(cmd, runOpts);
+  };
+}
+
+function npmInstall(cachePath, runOpts) {
+  return function() {
+    return shellExec('npm install --cache=' + cachePath, runOpts);
+  };
 }
