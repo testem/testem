@@ -1,6 +1,7 @@
 var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var expect = require('chai').expect;
+var sinon = require('sinon');
 
 var EventEmitter = require('events').EventEmitter;
 var Config = require('../../lib/config');
@@ -144,6 +145,64 @@ describe('browser test runner', function() {
       });
 
       expect(reporter.results[0].result.error).to.eq(failedItem);
+    });
+  });
+
+  describe('start', function() {
+    var reporter, launcher, runner, socket, sandbox;
+
+    beforeEach(function() {
+      sandbox = sinon.sandbox.create();
+      reporter = new TapReporter();
+      var config = new Config('ci', { reporter: reporter, browser_start_timeout: 0.1 });
+      launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+      socket = new EventEmitter();
+    });
+
+    afterEach(function() {
+      sandbox.restore();
+    });
+
+    it('starts the launcher once', function() {
+      sandbox.stub(launcher, 'start');
+
+      runner.start();
+      runner.start();
+
+      expect(launcher.start.calledOnce).to.be.true();
+    });
+
+    it('fails when the browser fails to start', function(done) {
+      runner.start(function() {
+        expect(reporter.results[0].result).to.deep.eq({
+          error: undefined,
+          failed: 1,
+          items: undefined,
+          launcherId: launcher.id,
+          logs: [],
+          name: 'Browser undefined failed to connect. testem.js not loaded?',
+          passed: false,
+          pending: undefined,
+          runDuration: undefined,
+          skipped: undefined
+        });
+        done();
+      });
+    });
+
+    it('allows to cancel the timeout', function(done) {
+      runner.start(function() {
+        expect(reporter.results.length).to.eq(0);
+        done();
+      });
+
+      setTimeout(function() {
+        runner.tryAttach('browser', launcher.id, socket);
+        setTimeout(function() {
+          runner.finish();
+        }, 100);
+      }, 50);
     });
   });
 
