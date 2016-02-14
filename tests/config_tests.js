@@ -464,6 +464,12 @@ describe('Config', function() {
       expect(config.get('browser_disconnect_timeout')).to.eq(10);
     });
   });
+
+  describe('browser_start_timeout', function() {
+    it('defaults to 30 seconds', function() {
+      expect(config.get('browser_start_timeout')).to.eq(30);
+    });
+  });
 });
 
 function mockTopLevelProgOptions() {
