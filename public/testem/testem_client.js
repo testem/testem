@@ -12,6 +12,8 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* globals qunitAdapter, busterAdapter, decycle */
 /* globals Testem */
 /* exported Testem */
+
+var iframe;
 (function appendTestemIframeOnLoad() {
   var iframeAppended = false;
 
@@ -20,7 +22,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
       return;
     }
     iframeAppended = true;
-    var iframe = document.createElement('iframe');
+    iframe = document.createElement('iframe');
     iframe.style.border = 'none';
     iframe.style.position = 'fixed';
     iframe.style.right = '5px';
@@ -167,16 +169,78 @@ function emit() {
   Testem.emit.apply(Testem, arguments);
 }
 
+var addListener = window.addEventListener ?
+  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
+  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+
+function serializeMessage(message) {
+  // decycle to remove possible cyclic references
+  // stringify for clients that only can handle string postMessages (IE <= 10)
+  return JSON.stringify(decycle(message));
+}
+
+function deserializeMessage(message) {
+  return JSON.parse(message);
+}
+
+addListener(window, 'message', receiveMessage);
+function receiveMessage(event) {
+  if (event.source !== iframe.contentWindow) {
+    // ignore messages not from the iframe
+    return;
+  }
+
+  var message = deserializeMessage(event.data);
+  var type = message.type;
+
+  switch (type) {
+    case 'reload':
+      window.location.reload();
+      break;
+    case 'get-id':
+      sendMessageToIframe('get-id', Testem.getId());
+      break;
+    case 'no-connection-required':
+      Testem.noConnectionRequired();
+      break;
+    case 'iframe-ready':
+      Testem.iframeReady();
+      break;
+  }
+}
+
+function sendMessageToIframe(type, data) {
+  var message = {type: type};
+  if (data) {
+    message.data = data;
+  }
+  message = serializeMessage(message);
+  iframe.contentWindow.postMessage(message, '*');
+}
+
 window.Testem = {
   // set during init
   initTestFrameworkHooks: undefined,
-  emitConnectionQueue: [],
+  emitMessageQueue: [],
   useCustomAdapter: function(adapter) {
     adapter(this);
   },
-  emitConnection: function() {
+  getId: function() {
+    var match = window.location.pathname.match(/^\/(-?[0-9]+)/);
+    return match ? match[1] : null;
+  },
+  emitMessage: function() {
+    if (this._noConnectionRequired) {
+      return;
+    }
     var args = Array.prototype.slice.call(arguments);
-    Testem.emitConnectionQueue.push(args);
+
+    if (this._isIframeReady) {
+      this.emitMessageToIframe(args);
+    } else {
+      // enqueue until iframe is ready
+      this.enqueueMessage(args);
+    }
   },
   emit: function(evt) {
     var argsWithoutFirst = Array.prototype.slice.call(arguments, 1);
@@ -188,7 +252,7 @@ window.Testem = {
         handler.apply(this, argsWithoutFirst);
       }
     }
-    Testem.emitConnection.apply(Testem, arguments);
+    this.emitMessage.apply(this, arguments);
   },
   on: function(evt, callback) {
     if (!this.evtHandlers) {
@@ -199,7 +263,30 @@ window.Testem = {
     }
     this.evtHandlers[evt].push(callback);
   },
-  handleConsoleMessage: null
+  handleConsoleMessage: null,
+  noConnectionRequired: function() {
+    this._noConnectionRequired = true;
+    this.emitMessageQueue = [];
+  },
+  emitMessageToIframe: function(item) {
+    sendMessageToIframe('emit-message', item);
+  },
+  enqueueMessage: function(item) {
+    if (this._noConnectionRequired) {
+      return;
+    }
+    this.emitMessageQueue.push(item);
+  },
+  iframeReady: function() {
+    this.drainMessageQueue();
+    this._isIframeReady = true;
+  },
+  drainMessageQueue: function() {
+    while (this.emitMessageQueue.length) {
+      var item = this.emitMessageQueue.shift();
+      this.emitMessageToIframe(item);
+    }
+  }
 };
 
 init();

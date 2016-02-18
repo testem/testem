@@ -11,9 +11,67 @@ function syncConnectStatus() {
   }
 }
 
+function serializeMessage(message) {
+  // stringify for browsers (IE <= 10) that do not support sending an
+  // object via postMessage
+  // No need to decycle because the messages sent from iframe to parent
+  // are known and will not include arbitrary objects.
+  return JSON.stringify(message);
+}
+
+function deserializeMessage(message) {
+  return JSON.parse(message);
+}
+
+function sendMessageToParent(type, data) {
+  var message = {type: type};
+  if (data) {
+    message.data = data;
+  }
+  message = serializeMessage(message);
+  parent.postMessage(message, '*');
+}
+
+var addListener = window.addEventListener ?
+  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
+  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+
+addListener(window, 'message', handleMessage);
+
+var messageListeners = {};
+function handleMessage(event) {
+  if (event.source !== window.parent) {
+    // Ignore messages not from the parent
+    return;
+  }
+  var message = deserializeMessage(event.data);
+  var type    = message.type;
+  var data    = message.data;
+
+  if (messageListeners[type]) {
+    var callback   = messageListeners[type].callback;
+    var listenOnce = messageListeners[type].listenOnce;
+
+    callback(data);
+
+    if (listenOnce) {
+      messageListeners[type] = null;
+    }
+  }
+}
+
+function addMessageListener(type, callback, listenOnce) {
+  messageListeners[type] = {callback: callback, listenOnce: listenOnce};
+}
+
+function addMessageListenerOnce(type, callback) {
+  var listenOnce = true;
+  addMessageListener(type, callback, listenOnce);
+}
+
 function startTests() {
   socket.disconnect();
-  parent.window.location.reload();
+  sendMessageToParent('reload');
 }
 
 function initUI() {
@@ -71,27 +129,33 @@ function getBrowserName(userAgent) {
   return userAgent;
 }
 
-function getId() {
-  var m = parent.location.pathname.match(/^\/(-?[0-9]+)/);
-  return m ? m[1] : null;
+function getId(callback) {
+  addMessageListenerOnce('get-id', function(id) {
+    callback(id);
+  });
+  sendMessageToParent('get-id');
 }
 
-var addListener = window.addEventListener ?
-  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-
 function init() {
-  var id = getId();
-  if (id === '-1') { // No connection required
-    parent.Testem.emitConnection = function NOOP() {};
-    parent.Testem.emitConnectionQueue = [];
-    return;
-  }
+  getId(function(id) {
+    if (id === '-1') { // No connection required
+      sendMessageToParent('no-connection-required');
+    } else {
+      initSocket(id);
 
+      addListener(window, 'load', initUI);
+      addMessageListener('emit-message', function(item) {
+        TestemConnection.emit.apply(null, item);
+      });
+
+      sendMessageToParent('iframe-ready');
+    }
+  });
+}
+
+function initSocket(id) {
   socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
-  socket.emit('browser-login',
-    getBrowserName(navigator.userAgent),
-    id);
+  socket.emit('browser-login', getBrowserName(navigator.userAgent), id);
   socket.on('connect', function() {
     connectStatus = 'connected';
     syncConnectStatus();
@@ -101,12 +165,6 @@ function init() {
     syncConnectStatus();
   });
   socket.on('start-tests', startTests);
-  addListener(window, 'load', initUI);
-
-  while (parent.Testem.emitConnectionQueue.length > 0) {
-    TestemConnection.emit.apply(this, parent.Testem.emitConnectionQueue.shift());
-  }
-  parent.Testem.emitConnection = TestemConnection.emit;
 }
 
 window.TestemConnection = {
