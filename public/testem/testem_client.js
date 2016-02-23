@@ -185,7 +185,7 @@ function deserializeMessage(message) {
 
 addListener(window, 'message', receiveMessage);
 function receiveMessage(event) {
-  if (event.source !== iframe.contentWindow) {
+  if (!iframe || event.source !== iframe.contentWindow) {
     // ignore messages not from the iframe
     return;
   }
