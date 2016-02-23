@@ -145,7 +145,7 @@ describe('Config', function() {
     it('defaults to config test_page', function(done) {
       var config = new Config('dev', {test_page: 'default' });
       config.read(function() {
-        expect(config.get('test_page')).to.equal('default');
+        expect(config.get('test_page')[0]).to.equal('default');
         done();
       });
     });
@@ -159,7 +159,7 @@ describe('Config', function() {
         }
       });
       config.read(function() {
-        expect(config.get('test_page')).to.equal('http://my-url/path/?library=testem&language=javascript');
+        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?library=testem&language=javascript');
         done();
       });
     });
@@ -173,7 +173,7 @@ describe('Config', function() {
         }
       });
       config.read(function() {
-        expect(config.get('test_page')).to.equal('http://my-url/path/?language=english&os=mac&library=british');
+        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?language=english&os=mac&library=british');
         done();
       });
     });
@@ -184,7 +184,7 @@ describe('Config', function() {
         query_params: '?language=english&library=british'
       });
       config.read(function() {
-        expect(config.get('test_page')).to.equal('http://my-url/path/?language=english&os=mac&library=british');
+        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?language=english&os=mac&library=british');
         done();
       });
     });

@@ -373,6 +373,34 @@ describe('ci mode app', function() {
 
   });
 
+  it('runs two browser instances in parallel with different test pages', function(done) {
+    var reporter = new TestReporter(true);
+    var config = new Config('ci', {
+      file: 'tests/fixtures/multiple_pages/testem.json',
+      port: 0,
+      cwd: path.join('tests/fixtures/multiple_pages'),
+      launch_in_ci: ['phantomjs'],
+      reporter: reporter
+    });
+    config.read(function() {
+      var app = new App(config, function(exitCode) {
+        assert.lengthOf(app.runners, 2, 'two runners are used');
+
+        var firstLauncher = app.runners[0].launcher;
+        var secondLauncher = app.runners[1].launcher;
+
+        assert.equal(firstLauncher.name, 'PhantomJS', 'first launcher is phantomjs');
+        assert.equal(secondLauncher.name, 'PhantomJS', 'second launcher is also phantomjs');
+
+        assert.notEqual(firstLauncher.getUrl(), secondLauncher.getUrl(), 'the launchers used different urls');
+
+        assert.equal(exitCode, 0);
+        done();
+      });
+      app.start();
+    });
+  });
+
 });
 
 describe('runHook', function() {

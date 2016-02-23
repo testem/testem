@@ -1,0 +1,11 @@
+{
+  "framework": "qunit",
+  "test_page": [
+    "test-1.html",
+    "test-2.html"
+  ],
+  "src_files": [
+    "*.js"
+  ],
+  "parallel": "2"
+}
