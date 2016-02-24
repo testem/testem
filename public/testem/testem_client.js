@@ -13,8 +13,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* globals Testem */
 /* exported Testem */
 
-var iframe;
-(function appendTestemIframeOnLoad() {
+function appendTestemIframeOnLoad(callback) {
   var iframeAppended = false;
 
   var appendIframe = function() {
@@ -22,7 +21,7 @@ var iframe;
       return;
     }
     iframeAppended = true;
-    iframe = document.createElement('iframe');
+    var iframe = document.createElement('iframe');
     iframe.style.border = 'none';
     iframe.style.position = 'fixed';
     iframe.style.right = '5px';
@@ -31,6 +30,7 @@ var iframe;
     iframe.allowTransparency = 'true';
     iframe.src = '/testem/connection.html';
     document.body.appendChild(iframe);
+    callback(iframe);
   };
 
   var domReady = function() {
@@ -60,7 +60,7 @@ var iframe;
   if (document.readyState !== 'loading') {
     domReady();
   }
-})();
+}
 
 var testFrameworkDidInit = false;
 function hookIntoTestFramework(socket) {
@@ -88,6 +88,9 @@ function hookIntoTestFramework(socket) {
 }
 
 function init() {
+  appendTestemIframeOnLoad(function(iframe) {
+    Testem.listenTo(iframe);
+  });
   interceptWindowOnError();
   takeOverConsole();
   setupTestStats();
@@ -173,51 +176,6 @@ var addListener = window.addEventListener ?
   function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
   function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
 
-function serializeMessage(message) {
-  // decycle to remove possible cyclic references
-  // stringify for clients that only can handle string postMessages (IE <= 10)
-  return JSON.stringify(decycle(message));
-}
-
-function deserializeMessage(message) {
-  return JSON.parse(message);
-}
-
-addListener(window, 'message', receiveMessage);
-function receiveMessage(event) {
-  if (event.source !== iframe.contentWindow) {
-    // ignore messages not from the iframe
-    return;
-  }
-
-  var message = deserializeMessage(event.data);
-  var type = message.type;
-
-  switch (type) {
-    case 'reload':
-      window.location.reload();
-      break;
-    case 'get-id':
-      sendMessageToIframe('get-id', Testem.getId());
-      break;
-    case 'no-connection-required':
-      Testem.noConnectionRequired();
-      break;
-    case 'iframe-ready':
-      Testem.iframeReady();
-      break;
-  }
-}
-
-function sendMessageToIframe(type, data) {
-  var message = {type: type};
-  if (data) {
-    message.data = data;
-  }
-  message = serializeMessage(message);
-  iframe.contentWindow.postMessage(message, '*');
-}
-
 window.Testem = {
   // set during init
   initTestFrameworkHooks: undefined,
@@ -269,7 +227,15 @@ window.Testem = {
     this.emitMessageQueue = [];
   },
   emitMessageToIframe: function(item) {
-    sendMessageToIframe('emit-message', item);
+    this.sendMessageToIframe('emit-message', item);
+  },
+  sendMessageToIframe: function(type, data) {
+    var message = { type: type };
+    if (data) {
+      message.data = data;
+    }
+    message = this.serializeMessage(message);
+    this.iframe.contentWindow.postMessage(message, '*');
   },
   enqueueMessage: function(item) {
     if (this._noConnectionRequired) {
@@ -286,6 +252,49 @@ window.Testem = {
       var item = this.emitMessageQueue.shift();
       this.emitMessageToIframe(item);
     }
+  },
+  listenTo: function(iframe) {
+    this.iframe = iframe;
+    var self = this;
+
+    addListener(window, 'message', function messageListener(event) {
+      if (event.source !== self.iframe.contentWindow) {
+        // ignore messages not from the iframe
+        return;
+      }
+
+      var message = self.deserializeMessage(event.data);
+      var type = message.type;
+
+      switch (type) {
+        case 'reload':
+          self.reload();
+          break;
+        case 'get-id':
+          self.sendId();
+          break;
+        case 'no-connection-required':
+          self.noConnectionRequired();
+          break;
+        case 'iframe-ready':
+          self.iframeReady();
+          break;
+      }
+    });
+  },
+  sendId: function() {
+    this.sendMessageToIframe('get-id', this.getId());
+  },
+  reload: function() {
+    window.location.reload();
+  },
+  deserializeMessage: function(message) {
+    return JSON.parse(message);
+  },
+  serializeMessage: function(message) {
+    // decycle to remove possible cyclic references
+    // stringify for clients that only can handle string postMessages (IE <= 10)
+    return JSON.stringify(decycle(message));
   }
 };
 
