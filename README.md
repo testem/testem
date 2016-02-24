@@ -271,6 +271,8 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
 
 Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
 
+'/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
+
 ### Dynamic Substitution
 
 To enable dynamically substituting in the Javascript files in your custom test page, you must
