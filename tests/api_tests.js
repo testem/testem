@@ -41,12 +41,36 @@ describe('Api', function() {
   });
 
   describe('restart', function() {
+    var originalTimeout = global.clearTimeout;
+
+    after(function() {
+      global.clearTimeout = originalTimeout;
+    });
+
+    // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
       var api = new Api();
       api.startCI({}, function() {});
       api.app = new App(api.config, done);
       sandbox.stub(api.app, 'stopCurrentRun');
+
+      var calledCookie;
+
+      global.clearTimeout = function(cookie) {
+        calledCookie = cookie;
+        originalTimeout(cookie);
+      };
+
+      var existingTimeout = api.app.timeoutID;
+
+      expect(calledCookie).to.be.undefined;
+      expect(existingTimeout).to.not.be.undefined;
+
       api.restart();
+
+      expect(calledCookie).to.not.be.undefined;
+      expect(calledCookie).to.eql(existingTimeout);
+
       expect(api.app.stopCurrentRun.callCount).to.equal(1);
       api.app.exit();
     });
