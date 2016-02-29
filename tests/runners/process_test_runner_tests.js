@@ -17,6 +17,33 @@ describe('ProcessTestRunner', function() {
     });
   });
 
+  it('calls onStart & onEnd', function(done) {
+    var settings = {
+      exe: 'node',
+      args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
+    };
+    var launcher = new Launcher('node-stdout', settings, config);
+    var runner = new ProcessTestRunner(launcher, reporter);
+
+    var startCalled = false;
+    reporter.onStart = function(name, opts) {
+      expect(name).to.equal('node-stdout');
+      expect(opts).to.deep.equal({ launcherId: launcher.id });
+      startCalled = true;
+    };
+    var endCalled = false;
+    reporter.onEnd = function(name, opts) {
+      expect(name).to.equal('node-stdout');
+      expect(opts).to.deep.equal({ launcherId: launcher.id });
+      endCalled = true;
+    };
+    runner.start(function() {
+      expect(startCalled).to.equal(true);
+      expect(endCalled).to.equal(true);
+      done();
+    });
+  });
+
   it('reads stdout into messages', function(done) {
     var settings = {
       exe: 'node',
@@ -34,7 +61,8 @@ describe('ProcessTestRunner', function() {
             type: 'log'
           }],
           name: 'node-stdout',
-          passed: true
+          failed: 0,
+          passed: 1
         }
       }]);
       done();
@@ -58,7 +86,8 @@ describe('ProcessTestRunner', function() {
             type: 'error'
           }],
           name: 'node-stderr',
-          passed: false,
+          failed: 1,
+          passed: 0,
           error: {
             message: 'Stderr: \n foobar\n'
           }
@@ -84,7 +113,8 @@ describe('ProcessTestRunner', function() {
             type: 'error'
           }],
           name: 'nope-fail',
-          passed: false,
+          failed: 1,
+          passed: 0,
           error: {
             message: 'Error: \n ' + runner.lastErr + '\n'
           }

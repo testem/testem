@@ -70,6 +70,49 @@ describe('tap process test runner', function() {
       launcher.process.stdin.end(tap);
     });
 
+    it('resets tap when restarting', function(done) {
+      var tap = [
+        'TAP version 13',
+        '# hello says hello',
+        'ok 1 hello() should be "hello world"',
+        '',
+        '1..1',
+        '# tests 1',
+        '# pass  1',
+        '',
+        '# ok'
+      ].join('\n');
+      runner.start(function() {
+        expect(reporter.results).to.deep.equal([{
+          result: {
+            failed: 0,
+            id: 1,
+            items: [],
+            launcherId: launcher.id,
+            name: 'hello() should be "hello world"',
+            passed: 1,
+            total: 1
+          }
+        }]);
+        runner.start(function() {
+          expect(reporter.results[1]).to.deep.equal({
+            result: {
+              failed: 0,
+              id: 1,
+              items: [],
+              launcherId: launcher.id,
+              name: 'hello() should be "hello world"',
+              passed: 1,
+              total: 1
+            }
+          });
+          done();
+        });
+        launcher.process.stdin.end(tap);
+      });
+      launcher.process.stdin.end(tap);
+    });
+
     it('read tap with failing test case', function(done) {
       var tap = [
         'TAP version 13',
@@ -221,6 +264,59 @@ describe('tap process test runner', function() {
     });
   });
 
+  describe('start', function() {
+    var runner, reporter, launcher;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      var config = new Config('ci', {
+        reporter: reporter
+      });
+
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/echo.js')],
+        protocol: 'tap'
+      };
+      launcher = new Launcher('tap', settings, config);
+      runner = new TapProcessTestRunner(launcher, reporter);
+    });
+
+    it('calls onStart & onEnd', function(done) {
+      var startCalled = false;
+      reporter.onStart = function(name, opts) {
+        expect(name).to.equal('tap');
+        expect(opts).to.deep.equal({ launcherId: launcher.id });
+        startCalled = true;
+      };
+      var endCalled = false;
+      reporter.onEnd = function(name, opts) {
+        expect(name).to.equal('tap');
+        expect(opts).to.deep.equal({ launcherId: launcher.id });
+        endCalled = true;
+      };
+      var tap = [
+        'TAP version 13',
+        '# hello says hello',
+        'ok 1 hello() should be "hello world"',
+        '# hello says hello to bob',
+        'ok 2 hello(bob) should be "hello bob"',
+        '',
+        '1..2',
+        '# tests 2',
+        '# pass  2',
+        '',
+        '# ok'
+      ].join('\n');
+      runner.start(function() {
+        expect(startCalled).to.equal(true);
+        expect(endCalled).to.equal(true);
+        done();
+      });
+      launcher.process.stdin.end(tap);
+    });
+  });
+
   describe('onProcessError', function() {
     var reporter, config;
 
@@ -247,6 +343,7 @@ describe('tap process test runner', function() {
 
         var results = reporter.results;
         var failingTest = results[0];
+        expect(failingTest.result.failed).to.equal(1);
         expect(failingTest.result.launcherId).to.equal(launcher.id);
         expect(failingTest.result.name).to.equal('bailout');
         expect(failingTest.result.error.message).to.equal('Reason');
@@ -269,6 +366,7 @@ describe('tap process test runner', function() {
 
         var results = reporter.results;
         var failingTest = results[0];
+        expect(failingTest.result.failed).to.equal(1);
         expect(failingTest.result.launcherId).to.equal(launcher.id);
         expect(failingTest.result.name).to.equal('error');
         expect(failingTest.result.error.message).to.match(/ENOENT/);
