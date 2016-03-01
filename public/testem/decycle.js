@@ -45,7 +45,7 @@ function decycle(object) { //jshint ignore:line
   var objects = [];   // Keep a reference to each unique object or array
   var paths = [];     // Keep the path to each unique object or array
 
-  var maxDepth = 4;
+  var maxDepth = 5;
   return (function derez(value, path, depth) {
     if (depth > maxDepth) {
       return 'Max depth.';
