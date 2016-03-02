@@ -267,7 +267,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<failure message=\"it crapped out\">/);
+      assert.match(output, /<error message=\"it crapped out\">/);
       assert.match(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
@@ -290,7 +290,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<failure message=\"it crapped out\"\/>/);
+      assert.match(output, /<error message=\"it crapped out\"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
@@ -306,6 +306,33 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /<skipped\/>/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('skipped tests are not considered failures', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        skipped: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.notMatch(output, /<failure/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs failed tests', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /<failure/);
 
       assertXmlIsValid(output);
     });
