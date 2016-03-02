@@ -267,7 +267,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<error message=\"it crapped out\">/);
+      assert.match(output, /<failure message=\"it crapped out\">/);
       assert.match(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
@@ -290,7 +290,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<error message=\"it crapped out\"\/>/);
+      assert.match(output, /<failure message=\"it crapped out\"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
