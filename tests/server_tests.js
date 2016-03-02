@@ -122,6 +122,23 @@ describe('Server', function() {
       });
     });
 
+    it('renders the first test page by default when multiple are provided', function(done) {
+      config.set('test_page', ['web/tests_template.mustache', 'web/tests.html']);
+      request(baseUrl, function(err, req, text) {
+        expect(text).to.equal(
+          [
+          '<!doctype html>',
+          '<html>',
+          '<head>',
+          '    <script src="web/hello.js"></script>',
+          '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+          '</head>',
+          ''
+          ].join('\n'));
+        done();
+      });
+    });
+
     it('gets a file using a POST request', function(done) {
       request.post(baseUrl + 'web/hello.js', function(err, req, text) {
         expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString());

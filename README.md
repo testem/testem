@@ -290,6 +290,21 @@ Example:
     <link rel="stylesheet" href="{{src}}">
     {{/css_files}}
 
+### Multiple Test Pages
+
+You can also specify multiple test pages to run by passing an array to the `test_page` option.
+
+```json
+{
+  "test_page": [
+    "unit-tests.html",
+    "integration-tests.html"
+  ]
+}
+```
+
+This will cause Testem to run each test page in a separate launcher instance for each launcher you are using. This means that if you define 2 test pages and are using 3 launchers you will get 6 unique runs (2 per launcher).
+
 Launchers
 ---------
 
@@ -357,7 +372,7 @@ If you want to use any of the [PhantomJS command line options](http://phantomjs.
 
 ```javascript
 "phantomjs_args": [
-  "--ignore-ssl-errors=true"  
+  "--ignore-ssl-errors=true"
 ]
 ```
 
