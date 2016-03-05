@@ -292,22 +292,19 @@ describe('ci mode app', function() {
       if (err) {
         return done(err);
       }
-      assert(app.runners[0].launcher.kill.called, 'launcher with process and kill should be called');
+      assert(app.runners[0].stop.called, 'launcher with process and kill should be called');
       done();
     });
     app.runners = [
       {
-        launcher: {
-          process: true,
-          kill: sandbox.stub().callsArg(1)
-        }
+        stop: sandbox.stub().callsArg(0)
       }
     ];
 
     var cb = spy();
     app.cleanUpLaunchers(cb);
     assert(cb.called, 'cleanUpLaunchers calls its given callback');
-    assert(app.runners[0].launcher.kill.called, 'launcher with process and kill should be called');
+    assert(app.runners[0].stop.called, 'launcher with process and kill should be called');
     app.exit();
   });
 
