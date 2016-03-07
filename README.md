@@ -409,6 +409,33 @@ If you need to run a command after your tests have completed (such as removing c
 
 If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
+Running browser code after tests complete
+-------------
+It is possible to send coverage reports or run other javascript in the browser by using the `afterTests` method.
+
+```javascript
+Testem.afterTests(
+  //Asynchronously
+  function(config, data, callback) {
+    var coverage = window.__coverage__;
+    var postBody = JSON.stringify(coverage);
+    if (postBody) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                callback();
+            }
+        };
+        xhr.open('POST', 'http://localhost:7358/', true);
+        xhr.send(postBody);
+    }
+});
+
+//Synchronously
+Testem.afterTests(doStuff);
+```
+
+
 Custom Routes
 -------------
 
