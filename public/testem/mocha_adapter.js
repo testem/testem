@@ -72,7 +72,7 @@ function mochaAdapter() {
 
     oEmit.apply(this, arguments);
 
-    function testPass() {
+    function testPass(test) {
       var tst = {
         passed: 1,
         failed: 0,
@@ -80,6 +80,7 @@ function mochaAdapter() {
         pending: 0,
         id: id++,
         name: name,
+        runDuration: test.duration,
         items: []
       };
       results.passed++;
@@ -102,6 +103,7 @@ function mochaAdapter() {
         pending: 0,
         id: id++,
         name: name,
+        runDuration: test.duration,
         items: items
       };
       return tst;
