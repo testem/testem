@@ -100,6 +100,7 @@ function init() {
     }
   };
   hookIntoTestFramework(Testem);
+  Testem.on('all-test-results', Testem.runAfterTests);
 }
 
 function setupTestStats() {
@@ -180,6 +181,7 @@ window.Testem = {
   // set during init
   initTestFrameworkHooks: undefined,
   emitMessageQueue: [],
+  afterTestsQueue: [],
   useCustomAdapter: function(adapter) {
     adapter(this);
   },
@@ -295,6 +297,23 @@ window.Testem = {
     // decycle to remove possible cyclic references
     // stringify for clients that only can handle string postMessages (IE <= 10)
     return JSON.stringify(decycle(message));
+  },
+  runAfterTests: function() {
+    if (Testem.afterTestsQueue.length) {
+      var afterTestsCallback = this.afterTestsQueue.shift();
+
+      if (typeof afterTestsCallback !== 'function') {
+        throw Error('Callback not a function');
+      } else {
+        afterTestsCallback.call(this, null, null, Testem.runAfterTests);
+      }
+
+    } else {
+      emit('after-tests-complete');
+    }
+  },
+  afterTests: function(cb) {
+    Testem.afterTestsQueue.push(cb);
   }
 };
 

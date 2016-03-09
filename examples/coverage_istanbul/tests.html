@@ -8,12 +8,18 @@
 <script src="/node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 <script src="/testem.js"></script>
 <script>
-  Testem.on('all-test-results', function(results) {
-    var xhr = new XMLHttpRequest();
-    var coverage = JSON.stringify(window.__coverage__);
-    xhr.open('POST', '/coverage');
-    xhr.send(coverage);
-  });
+  Testem.afterTests(
+    function(config, data, callback) {
+      var coverage = JSON.stringify(window.__coverage__);
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          callback();
+        }
+      };
+      xhr.open('POST', '/coverage', true);
+      xhr.send(coverage);
+    });
 </script>
 <script src="/instrumented/hello.js"></script>
 <script src="/instrumented/hello_tests.js"></script>
