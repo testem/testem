@@ -28,6 +28,7 @@ before_install:
   - nvm use $NODE_VERSION
   - node --version
   - npm --version
+  - npm config set spin false
 install:
   - travis_retry npm install
 before_script:
