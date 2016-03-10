@@ -10,9 +10,10 @@ install:
   # Get the latest stable version of nodejs
   - ps: Install-Product node 4
   - npm version
-  - npm install
-  - IF %PHANTOM_SRC%==npm npm install -g phantomjs
-  - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
+  - npm config set spin false
+  - appveyor-retry npm install
+  - IF %PHANTOM_SRC%==npm appveyor-retry npm install -g phantomjs
+  - IF %PHANTOM_SRC%==chocolatey appveyor-retry cinst PhantomJS -y
   - phantomjs -v
 
 # Post-install test scripts.
