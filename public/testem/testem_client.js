@@ -101,6 +101,7 @@ function init() {
   };
   hookIntoTestFramework(Testem);
   Testem.on('all-test-results', Testem.runAfterTests);
+  Testem.on('tap-all-test-results', Testem.runAfterTests);
 }
 
 function setupTestStats() {
@@ -280,6 +281,9 @@ window.Testem = {
           break;
         case 'iframe-ready':
           self.iframeReady();
+          break;
+        case 'tap-all-test-results':
+          self.emit('tap-all-test-results');
           break;
       }
     });
