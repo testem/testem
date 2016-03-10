@@ -165,6 +165,9 @@ function initSocket(id) {
     syncConnectStatus();
   });
   socket.on('start-tests', startTests);
+  socket.on('tap-all-test-results', function() {
+    sendMessageToParent('tap-all-test-results');
+  });
 }
 
 window.TestemConnection = {
