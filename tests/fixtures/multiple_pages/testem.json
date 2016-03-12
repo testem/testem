@@ -7,5 +7,5 @@
   "src_files": [
     "*.js"
   ],
-  "parallel": "2"
+  "parallel": "-1"
 }
