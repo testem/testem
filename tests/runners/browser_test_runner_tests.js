@@ -174,6 +174,8 @@ describe('browser test runner', function() {
     });
 
     it('fails when the browser fails to start', function(done) {
+      launcher.stdout = 'Not allowed to start.';
+
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
           error: undefined,
@@ -181,7 +183,9 @@ describe('browser test runner', function() {
           items: undefined,
           launcherId: launcher.id,
           logs: [],
-          name: 'Browser undefined failed to connect. testem.js not loaded?',
+          name:
+            'Browser undefined failed to connect. testem.js not loaded?\n' +
+            'Stdout: \nNot allowed to start.',
           passed: false,
           pending: undefined,
           runDuration: undefined,
@@ -225,7 +229,9 @@ describe('browser test runner', function() {
           items: undefined,
           launcherId: launcher.id,
           logs: [],
-          name: 'Browser undefined disconnected unexpectedly.',
+          name:
+            'Browser undefined disconnected unexpectedly.\n' +
+            'Stderr: \nBrowser crashed.',
           passed: false,
           pending: undefined,
           runDuration: undefined,
@@ -235,6 +241,8 @@ describe('browser test runner', function() {
       });
 
       runner.tryAttach('browser', launcher.id, socket);
+      launcher.stderr = 'Browser crashed.';
+
       runner.onDisconnect();
     });
 
