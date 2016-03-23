@@ -6,6 +6,7 @@
   "on_start": "./saucie-connect.js",
   "on_exit": "./saucie-disconnect.js",
   "port": 7000,
+  "browser_start_timeout": 90,
   "src_files": [
     "hello.js", "hello_spec.js"
   ],
