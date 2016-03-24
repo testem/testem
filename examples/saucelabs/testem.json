@@ -6,23 +6,24 @@
   "on_start": "./saucie-connect.js",
   "on_exit": "./saucie-disconnect.js",
   "port": 7000,
+  "browser_start_timeout": 90,
   "src_files": [
     "hello.js", "hello_spec.js"
   ],
   "launchers": {
     "SL_Chrome_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "chrome", "--no-ct", "--at", "-u"],
+      "args": ["-b", "chrome", "-v", "latest", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_Chrome_Current_No_Details": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "chrome", "--no-ct", "-u"],
+      "args": ["-b", "chrome", "-v", "latest", "--no-ct", "-u"],
       "protocol": "tap"
     },
     "SL_Firefox_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "firefox", "-v", "42", "--no-ct", "--at", "-u"],
+      "args": ["-b", "firefox", "-v", "latest", "--no-ct", "--at", "-u"],
       "protocol": "browser"
     },
     "SL_Safari_Current": {
