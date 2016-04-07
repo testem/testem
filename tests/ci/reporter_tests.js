@@ -403,7 +403,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
 
-      assert.match(output, /##teamcity\[testSuiteFinished name='mocha\.suite' duration='(\d+(\.\d+)?)'\]/);
+      assert.match(output, /##teamcity\[testSuiteFinished name='testem\.suite' duration='(\d+(\.\d+)?)'\]/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
       assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
     });
