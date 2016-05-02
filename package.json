@@ -23,7 +23,7 @@
   "dependencies": {
     "async": "^1.0.0",
     "backbone": "^1.1.2",
-    "charm": "^1.0.0",
+    "charm": "^1.0.1",
     "commander": "^2.6.0",
     "consolidate": "^0.14.0",
     "cross-spawn-async": "^2.1.0",
