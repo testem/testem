@@ -40,7 +40,7 @@ describe('browser test runner', function() {
       chromeRunner = new BrowserTestRunner(launcher, reporter);
     });
 
-    it('runners do not interfer with another', function() {
+    it('runners do not interfere with each other', function() {
       ffRunner.tryAttach(ff.name, launcher.id, ff.socket);
       chromeRunner.tryAttach(chrome.name, launcher.id, chrome.socket);
 
@@ -60,6 +60,40 @@ describe('browser test runner', function() {
 
       expect(reporter.logsByRunner[chrome.name][0].name).to.equal('Test2');
       expect(reporter.logsByRunner[chrome.name][0].passed).to.equal(true);
+    });
+  });
+
+  describe('receiving \'test-metadata\' event', function() {
+    var eventName = 'test-metadata';
+    var reporter, socket;
+
+    beforeEach(function() {
+      reporter = new TapReporter();
+
+      var id = 1;
+      var launcher = new Launcher('ci', { id: id, protocol: 'browser' }, new Config('ci', {
+        parallel: 2,
+        reporter: reporter
+      }));
+
+      socket = new EventEmitter();
+
+      var runner = new BrowserTestRunner(launcher, reporter);
+      runner.tryAttach('browser', id, socket);
+    });
+
+    it('should pass tag and metadata to reporter', function() {
+      reporter.reportMetadata = function() { /* do nothing */ };
+      sinon.spy(reporter, 'reportMetadata');
+
+      socket.emit(eventName, 'tag', 'metadata');
+
+      sinon.assert.calledWithExactly(reporter.reportMetadata, 'tag', 'metadata');
+    });
+
+    it('should not try to call an absent reporter metadata hook', function() {
+      // testing that the following does not throw an error due to missing function
+      socket.emit(eventName, 'tag', 'metadata');
     });
   });
 
