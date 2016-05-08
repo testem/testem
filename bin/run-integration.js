@@ -87,10 +87,10 @@ function testExample(example) {
     }
 
     return retry(runExample(cmd, runOpts), { max_tries: 3 });
-  }).then(function(testOuput) {
+  }).then(function(testOutput) {
     // output test results
     shell.echo('Testing ' + example);
-    shell.echo(testOuput);
+    shell.echo(testOutput);
   });
 }
 

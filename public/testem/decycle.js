@@ -1,6 +1,7 @@
 // Modified version of https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
 // Handle DOM elements
 // Removed global reference
+// Stop traversing beyond a max depth
 
 /*
     cycle.js
@@ -25,7 +26,7 @@
 /* exported decycle */
 'use strict';
 
-function decycle(object) {
+function decycle(object, maxDepth) {
   // Make a deep copy of an object or array, assuring that there is at most
   // one instance of each object or array in the resulting structure. The
   // duplicate references (which might be forming cycles) are replaced with
@@ -45,7 +46,7 @@ function decycle(object) {
   var objects = [];   // Keep a reference to each unique object or array
   var paths = [];     // Keep the path to each unique object or array
 
-  var maxDepth = 5;
+  maxDepth = maxDepth || 5;
   return (function derez(value, path, depth) {
     if (depth > maxDepth) {
       return 'Max depth.';

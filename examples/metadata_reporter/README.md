@@ -33,4 +33,10 @@ the metadata.
       }
     }
 
+If your metadata object is deep enough that it is truncated when the reporter receives it, you
+can increase the maximum depth before truncation. Back inside of your adapter, configure the
+`socket` that it has access to.
+
+    socket.eventMaxDepth = /* positive integer */;
+
 That's it!

@@ -8,9 +8,9 @@ It also restarts the tests by refreshing the page when instructed by the server 
 
 */
 /* globals document, window */
+/* globals module */
 /* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
 /* globals qunitAdapter, busterAdapter, decycle */
-/* globals Testem */
 /* exported Testem */
 'use strict';
 
@@ -86,6 +86,179 @@ function hookIntoTestFramework(socket) {
 
   testFrameworkDidInit = found;
   return found;
+}
+
+var addListener;
+if (typeof window !== 'undefined') {
+  addListener = window.addEventListener ?
+    function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
+    function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+}
+
+// Used internally in order to remember state involving a message that needs to
+// be fired after a delay. It matters which socket sends the message, because
+// the socket is configurable by custom adapters.
+function Message(socket, emitArgs) {
+  this.socket = socket;
+  this.emitArgs = emitArgs;
+}
+
+var Testem = {
+  emitMessageQueue: [],
+  afterTestsQueue: [],
+
+  // The maximum depth beyond which decycle will truncate an emitted event
+  // object. When undefined, decycle uses its default.
+  eventMaxDepth: undefined,
+
+  useCustomAdapter: function(adapter) {
+    adapter(new TestemSocket());
+  },
+  getId: function() {
+    var match = window.location.pathname.match(/^\/(-?[0-9]+)/);
+    return match ? match[1] : null;
+  },
+  emitMessage: function() {
+    if (this._noConnectionRequired) {
+      return;
+    }
+    var args = Array.prototype.slice.call(arguments);
+
+    var message = new Message(this, args);
+
+    if (this._isIframeReady) {
+      this.emitMessageToIframe(message);
+    } else {
+      // enqueue until iframe is ready
+      this.enqueueMessage(message);
+    }
+  },
+  emit: function(evt) {
+    var argsWithoutFirst = Array.prototype.slice.call(arguments, 1);
+
+    if (this.evtHandlers && this.evtHandlers[evt]) {
+      var handlers = this.evtHandlers[evt];
+      for (var i = 0; i < handlers.length; i++) {
+        var handler = handlers[i];
+        handler.apply(this, argsWithoutFirst);
+      }
+    }
+    this.emitMessage.apply(this, arguments);
+  },
+  on: function(evt, callback) {
+    if (!this.evtHandlers) {
+      this.evtHandlers = {};
+    }
+    if (!this.evtHandlers[evt]) {
+      this.evtHandlers[evt] = [];
+    }
+    this.evtHandlers[evt].push(callback);
+  },
+  handleConsoleMessage: null,
+  noConnectionRequired: function() {
+    this._noConnectionRequired = true;
+    this.emitMessageQueue = [];
+  },
+  emitMessageToIframe: function(message) {
+    message.socket.sendMessageToIframe('emit-message', message.emitArgs);
+  },
+  sendMessageToIframe: function(type, data) {
+    var message = { type: type };
+    if (data) {
+      message.data = data;
+    }
+    message = this.serializeMessage(message);
+    this.iframe.contentWindow.postMessage(message, '*');
+  },
+  enqueueMessage: function(message) {
+    if (this._noConnectionRequired) {
+      return;
+    }
+    this.emitMessageQueue.push(message);
+  },
+  iframeReady: function() {
+    this.drainMessageQueue();
+    this._isIframeReady = true;
+  },
+  drainMessageQueue: function() {
+    while (this.emitMessageQueue.length) {
+      var item = this.emitMessageQueue.shift();
+      this.emitMessageToIframe(item);
+    }
+  },
+  listenTo: function(iframe) {
+    this.iframe = iframe;
+    var self = this;
+
+    addListener(window, 'message', function messageListener(event) {
+      if (event.source !== self.iframe.contentWindow) {
+        // ignore messages not from the iframe
+        return;
+      }
+
+      var message = self.deserializeMessage(event.data);
+      var type = message.type;
+
+      switch (type) {
+        case 'reload':
+          self.reload();
+          break;
+        case 'get-id':
+          self.sendId();
+          break;
+        case 'no-connection-required':
+          self.noConnectionRequired();
+          break;
+        case 'iframe-ready':
+          self.iframeReady();
+          break;
+        case 'tap-all-test-results':
+          self.emit('tap-all-test-results');
+          break;
+      }
+    });
+  },
+  sendId: function() {
+    this.sendMessageToIframe('get-id', this.getId());
+  },
+  reload: function() {
+    window.location.reload();
+  },
+  deserializeMessage: function(message) {
+    return JSON.parse(message);
+  },
+  serializeMessage: function(message) {
+    // decycle to remove possible cyclic references
+    // stringify for clients that only can handle string postMessages (IE <= 10)
+    return JSON.stringify(decycle(message, this.eventMaxDepth));
+  },
+  runAfterTests: function() {
+    if (Testem.afterTestsQueue.length) {
+      var afterTestsCallback = this.afterTestsQueue.shift();
+
+      if (typeof afterTestsCallback !== 'function') {
+        throw Error('Callback not a function');
+      } else {
+        afterTestsCallback.call(this, null, null, Testem.runAfterTests);
+      }
+
+    } else {
+      emit('after-tests-complete');
+    }
+  },
+  afterTests: function(cb) {
+    Testem.afterTestsQueue.push(cb);
+  }
+};
+
+// Represents a configurable socket on top of window.Testem, which is provided
+// to each custom adapter.
+function TestemSocket() {}
+TestemSocket.prototype = Testem;
+
+// Exporting this as a module so that it can be unit tested in Node.
+if (typeof module !== 'undefined') {
+  module.exports = Testem;
 }
 
 function init() {
@@ -175,151 +348,7 @@ function emit() {
   Testem.emit.apply(Testem, arguments);
 }
 
-var addListener = window.addEventListener ?
-  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-
-window.Testem = {
-  // set during init
-  initTestFrameworkHooks: undefined,
-  emitMessageQueue: [],
-  afterTestsQueue: [],
-  useCustomAdapter: function(adapter) {
-    adapter(this);
-  },
-  getId: function() {
-    var match = window.location.pathname.match(/^\/(-?[0-9]+)/);
-    return match ? match[1] : null;
-  },
-  emitMessage: function() {
-    if (this._noConnectionRequired) {
-      return;
-    }
-    var args = Array.prototype.slice.call(arguments);
-
-    if (this._isIframeReady) {
-      this.emitMessageToIframe(args);
-    } else {
-      // enqueue until iframe is ready
-      this.enqueueMessage(args);
-    }
-  },
-  emit: function(evt) {
-    var argsWithoutFirst = Array.prototype.slice.call(arguments, 1);
-
-    if (this.evtHandlers && this.evtHandlers[evt]) {
-      var handlers = this.evtHandlers[evt];
-      for (var i = 0; i < handlers.length; i++) {
-        var handler = handlers[i];
-        handler.apply(this, argsWithoutFirst);
-      }
-    }
-    this.emitMessage.apply(this, arguments);
-  },
-  on: function(evt, callback) {
-    if (!this.evtHandlers) {
-      this.evtHandlers = {};
-    }
-    if (!this.evtHandlers[evt]) {
-      this.evtHandlers[evt] = [];
-    }
-    this.evtHandlers[evt].push(callback);
-  },
-  handleConsoleMessage: null,
-  noConnectionRequired: function() {
-    this._noConnectionRequired = true;
-    this.emitMessageQueue = [];
-  },
-  emitMessageToIframe: function(item) {
-    this.sendMessageToIframe('emit-message', item);
-  },
-  sendMessageToIframe: function(type, data) {
-    var message = { type: type };
-    if (data) {
-      message.data = data;
-    }
-    message = this.serializeMessage(message);
-    this.iframe.contentWindow.postMessage(message, '*');
-  },
-  enqueueMessage: function(item) {
-    if (this._noConnectionRequired) {
-      return;
-    }
-    this.emitMessageQueue.push(item);
-  },
-  iframeReady: function() {
-    this.drainMessageQueue();
-    this._isIframeReady = true;
-  },
-  drainMessageQueue: function() {
-    while (this.emitMessageQueue.length) {
-      var item = this.emitMessageQueue.shift();
-      this.emitMessageToIframe(item);
-    }
-  },
-  listenTo: function(iframe) {
-    this.iframe = iframe;
-    var self = this;
-
-    addListener(window, 'message', function messageListener(event) {
-      if (event.source !== self.iframe.contentWindow) {
-        // ignore messages not from the iframe
-        return;
-      }
-
-      var message = self.deserializeMessage(event.data);
-      var type = message.type;
-
-      switch (type) {
-        case 'reload':
-          self.reload();
-          break;
-        case 'get-id':
-          self.sendId();
-          break;
-        case 'no-connection-required':
-          self.noConnectionRequired();
-          break;
-        case 'iframe-ready':
-          self.iframeReady();
-          break;
-        case 'tap-all-test-results':
-          self.emit('tap-all-test-results');
-          break;
-      }
-    });
-  },
-  sendId: function() {
-    this.sendMessageToIframe('get-id', this.getId());
-  },
-  reload: function() {
-    window.location.reload();
-  },
-  deserializeMessage: function(message) {
-    return JSON.parse(message);
-  },
-  serializeMessage: function(message) {
-    // decycle to remove possible cyclic references
-    // stringify for clients that only can handle string postMessages (IE <= 10)
-    return JSON.stringify(decycle(message));
-  },
-  runAfterTests: function() {
-    if (Testem.afterTestsQueue.length) {
-      var afterTestsCallback = this.afterTestsQueue.shift();
-
-      if (typeof afterTestsCallback !== 'function') {
-        throw Error('Callback not a function');
-      } else {
-        afterTestsCallback.call(this, null, null, Testem.runAfterTests);
-      }
-
-    } else {
-      emit('after-tests-complete');
-    }
-  },
-  afterTests: function(cb) {
-    Testem.afterTestsQueue.push(cb);
-  }
-};
-
-init();
+if (typeof window !== 'undefined') {
+  window.Testem = Testem;
+  init();
+}
