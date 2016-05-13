@@ -359,8 +359,6 @@ describe('tap process test runner', function() {
       var runner = new TapProcessTestRunner(launcher, reporter);
 
       runner.start(function() {
-        console.trace(reporter);
-
         var total = reporter.total;
         var pass = reporter.pass;
         expect(pass).to.equal(0);

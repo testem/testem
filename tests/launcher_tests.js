@@ -104,6 +104,18 @@ describe('Launcher', function() {
         done();
       });
     });
+
+    it('adds the local node modules to the path', function(done) {
+      settings.command = 'node -e "console.log(process.env.PATH)"';
+      config = new Config();
+      launcher.start();
+      launcher.on('processExit', function(code, stdout) {
+        expect(code).to.eq(0);
+        expect(stdout).to.contain(path.join(process.cwd(), 'node_modules', '.bin'));
+        done();
+      });
+    });
+
     it('sends SIGKILL when SIGTERM is ignored', function(done) {
       settings.command = 'node ' + path.join(__dirname, 'fixtures/processes/ignore_sigterm.js');
       launcher.start();
