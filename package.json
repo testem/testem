@@ -23,10 +23,11 @@
   "dependencies": {
     "async": "^1.0.0",
     "backbone": "^1.1.2",
+    "bluebird": "^3.4.0",
     "charm": "^1.0.0",
     "commander": "^2.6.0",
     "consolidate": "^0.14.0",
-    "cross-spawn-async": "^2.1.0",
+    "cross-spawn": "^4.0.0",
     "did_it_work": "0.0.6",
     "express": "^4.10.7",
     "fileset": "^0.2.1",
@@ -60,7 +61,7 @@
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js --launch phantomjs",
     "integration:all": "node ./bin/run-integration.js",
-    "testem-tests": "mocha --timeout 5000 tests/*_tests.js tests/**/*_tests.js -R spec",
+    "testem-tests": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "jshint . && jscs ."
   },

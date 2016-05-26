@@ -22,17 +22,6 @@ describe('Launcher', function() {
       expect(launcher.name).to.equal('say hello');
       expect(launcher.settings).to.equal(settings);
     });
-    it('should launch something, and also kill it', function(done) {
-      launcher.launch();
-      var data = '';
-      launcher.process.stdout.on('data', function(chunk) {
-        data += String(chunk);
-      });
-      launcher.process.on('close', function() {
-        expect(data).to.equal('hello' + EOL);
-        done();
-      });
-    });
     it('should be process iff protocol is not browser', function() {
       settings.protocol = 'browser';
       expect(launcher.isProcess()).not.to.be.ok;
@@ -119,7 +108,7 @@ describe('Launcher', function() {
     it('sends SIGKILL when SIGTERM is ignored', function(done) {
       settings.command = 'node ' + path.join(__dirname, 'fixtures/processes/ignore_sigterm.js');
       launcher.start();
-      launcher.killTimeout = 200;
+      launcher.processCtl.killTimeout = 200;
       setTimeout(function() {
         launcher.kill(null, done);
       }, 200);
@@ -198,7 +187,7 @@ describe('Launcher', function() {
       assert.equal(launcher.commandLine(), '"node -e console.log(process.argv.slice(1).join(\' \')) hello"');
     });
 
-    it('returns commandLine with a single exe', !isWin ? function(done) {
+    xit('returns commandLine with a single exe', !isWin ? function(done) {
       settings.exe = ['node', 'npm'];
       settings.args = function() {
         return ['-e', 'console.log(1)'];
