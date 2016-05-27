@@ -105,18 +105,34 @@ describe('ProcessTestRunner', function() {
     var runner = new ProcessTestRunner(launcher, reporter);
 
     runner.start(function() {
+
+      var expectedMessage = 'Error: \n ' + runner.lastErr + '\n';
+
+      if (runner.lastStderr) {
+        expectedMessage += 'Stderr: \n ' + runner.lastStderr + '\n';
+      }
+
+      var expectedLogs = [{
+        text: runner.lastErr.toString(),
+        type: 'error'
+      }];
+
+      if (runner.lastStderr) {
+        expectedLogs.push({
+          text: runner.lastStderr,
+          type: 'error'
+        });
+      }
+
       expect(reporter.results).to.deep.equal([{
         result: {
           launcherId: launcher.id,
-          logs: [{
-            text: runner.lastErr.toString(),
-            type: 'error'
-          }],
+          logs: expectedLogs,
           name: 'nope-fail',
           failed: 1,
           passed: 0,
           error: {
-            message: 'Error: \n ' + runner.lastErr + '\n'
+            message: expectedMessage
           }
         }
       }]);

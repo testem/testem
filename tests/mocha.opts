@@ -1,0 +1,3 @@
+--timeout 5000
+--require tests/_prepare
+-R spec
