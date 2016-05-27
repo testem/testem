@@ -2,17 +2,16 @@ var Config = require('../lib/config.js');
 var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
-var bd = require('bodydouble');
-var stub = bd.stub;
 var browserLauncher = require('../lib/browser_launcher');
 var path = require('path');
 var os = require('os');
 
-chai.use(require('dirty-chai'));
+var sinon = require('sinon');
 
 describe('Config', function() {
-  var config, appMode, progOptions;
+  var config, appMode, progOptions, sandbox;
   beforeEach(function() {
+    sandbox = sinon.sandbox.create();
     appMode = 'ci';
     progOptions = {
       file: __dirname + '/testem.yml',
@@ -23,7 +22,7 @@ describe('Config', function() {
     config = new Config(appMode, progOptions);
   });
   afterEach(function() {
-    bd.restoreStubs();
+    sandbox.restore();
   });
 
   it('can create', function() {
@@ -199,18 +198,24 @@ describe('Config', function() {
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
-    stub(config, 'get', function() {
+    sandbox.stub(config, 'get', function() {
       return null;
     });
     expect(config.isCwdMode()).to.be.ok();
-    stub(config, 'get', function(key) {
+  });
+
+  it('returns whether isCwdMode (read js files from current dir)', function() {
+    sandbox.stub(config, 'get', function(key) {
       if (key === 'src_files') {
         return ['implementation.js'];
       }
       return null;
     });
     expect(config.isCwdMode()).to.not.be.ok();
-    stub(config, 'get', function(key) {
+  });
+
+  it('returns whether isCwdMode (read js files from current dir)', function() {
+    sandbox.stub(config, 'get', function(key) {
       if (key === 'test_page') {
         return 'tests.html';
       }
@@ -226,20 +231,20 @@ describe('Config', function() {
   });
 
   it('should getLaunchers should call getAvailable browsers', function(done) {
-    stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
-    var getAvailableBrowsers = browserLauncher.getAvailableBrowsers;
-    browserLauncher.getAvailableBrowsers = function(config, cb) {
-      cb([
+    sandbox.stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+
+    sandbox.stub(browserLauncher, 'getAvailableBrowsers', function(config, browsers, cb) {
+      cb(null, [
       {name: 'Chrome', exe: 'chrome.exe'},
       {name: 'Firefox'}
       ]);
-    };
+    });
 
     config.getLaunchers(function(err, launchers) {
+      expect(err).to.be.null();
       expect(launchers.chrome.name).to.equal('Chrome');
       expect(launchers.chrome.settings.exe).to.equal('chrome.exe');
       expect(launchers.firefox.name).to.equal('Firefox');
-      browserLauncher.getAvailableBrowsers = getAvailableBrowsers;
       done();
     });
   });
@@ -252,7 +257,7 @@ describe('Config', function() {
   });
 
   it('should install custom launchers', function(done) {
-    stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+    sandbox.stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
     config.config = {
       launchers: {
         Node: {
@@ -260,18 +265,21 @@ describe('Config', function() {
         }
       }
     };
-    var getAvailableBrowsers = browserLauncher.getAvailableBrowsers;
-    browserLauncher.getAvailableBrowsers = function(config, cb) {cb([]);};
+
+    sandbox.stub(browserLauncher, 'getAvailableBrowsers', function(config, browsers, cb) {
+      cb(null, []);
+    });
+
     config.getLaunchers(function(err, launchers) {
+      expect(err).to.be.null();
       expect(launchers.node.name).to.equal('Node');
       expect(launchers.node.settings.command).to.equal('node tests.js');
-      browserLauncher.getAvailableBrowsers = getAvailableBrowsers;
       done();
     });
   });
 
   it('getWantedLaunchers uses getWantedLauncherNames', function(done) {
-    stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox']);
+    sandbox.stub(config, 'getWantedLauncherNames').returns(['Chrome', 'Firefox']);
     config.getWantedLaunchers({
       chrome: { name: 'Chrome' },
       firefox: { name: 'Firefox' }
@@ -366,7 +374,7 @@ describe('Config', function() {
       });
     });
     it('populates attributes', function(done) {
-      config.set('src_files', [{src:'config_tests.js', attrs: ['data-foo="true"', 'data-bar']}]);
+      config.set('src_files', [{src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']}]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
           fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
@@ -376,7 +384,7 @@ describe('Config', function() {
     });
     it('populates attributes for only the desired globs', function(done) {
       config.set('src_files', [
-      {src:'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
+      {src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
       'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {

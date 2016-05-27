@@ -51,24 +51,4 @@ describe('fileutils', function() {
       });
     });
   });
-
-  describe('browserExeExists', function() {
-    it('returns true for an existing file', function(done) {
-      fileutils.browserExeExists.call({
-        exe: __filename
-      }, function(result) {
-        expect(result).to.be.true();
-        done();
-      });
-    });
-
-    it('returns false for an not existing file', function(done) {
-      fileutils.browserExeExists.call({
-        exe: './not-existing.js'
-      }, function(result) {
-        expect(result).to.be.false();
-        done();
-      });
-    });
-  });
 });

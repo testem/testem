@@ -1,5 +1,12 @@
 'use strict';
 
+var chai = require('chai');
+var dirtyChai = require('dirty-chai');
+var chaiFiles = require('chai-files');
+
+chai.use(chaiFiles);
+chai.use(dirtyChai);
+
 var path = require('path');
 var PATH = 'PATH';
 

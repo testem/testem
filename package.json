@@ -69,6 +69,7 @@
     "bodydouble": "^0.1.2",
     "browserify": "^13.0.0",
     "chai": "^3.0.0",
+    "chai-files": "^1.2.0",
     "cheerio": "^0.20.0",
     "dirty-chai": "^1.2.2",
     "ispy": "^0.1.2",

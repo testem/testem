@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 var ProcessCtl = require('../lib/process-ctl');
 
 var isWin = /^win/.test(process.platform);
-var isNodeLt012 = require('./utils/is-node-lt-012');
+var isNodeLt012 = require('./test-utils/is-node-lt-012');
 
 describe('ProcessCtl', function() {
   describe('spawn', function() {
