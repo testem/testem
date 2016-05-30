@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect;
 var screen = require('./fake_screen');
 var Backbone = require('backbone');
@@ -81,21 +83,21 @@ describe('RunnerTab', !isWin ? function() {
       screen.$setSize(20, 8);
       results = new Backbone.Model();
       runner = new Backbone.Model({
-            name: 'Bob',
-            messages: new Backbone.Collection(),
-            results: results
-          });
+        name: 'Bob',
+        messages: new Backbone.Collection(),
+        results: results
+      });
       runner.hasMessages = function() { return false; };
       appview = new Backbone.Model({currentTab: 0});
       appview.app = {config: new Config(null, {fail_on_zero_tests: true})};
       appview.isPopupVisible = function() { return false; };
       tab = new RunnerTab({
-            runner: runner,
-            appview: appview,
-            selected: true,
-            index: 0,
-            screen: screen
-          });
+        runner: runner,
+        appview: appview,
+        selected: true,
+        index: 0,
+        screen: screen
+      });
       results.set('all', true);
       results.set('passed', 0);
       results.set('total', 0);
@@ -106,14 +108,14 @@ describe('RunnerTab', !isWin ? function() {
       tab.render();
       var border = ' ' + ___ + Chars.topRight + '    ';
       expect(screen.buffer).to.be.deep.equal([
-          '                    ',
-          '                    ',
-          '                    ',
-          border,
-          '       Bob     ' + Chars.vertical + '    ',
-          '     0/0 ' + Chars.fail + '     ' + Chars.vertical + '    ',
-          '               ' + Chars.bottomLeft + '    ',
-          '                    ']);
+        '                    ',
+        '                    ',
+        '                    ',
+        border,
+        '       Bob     ' + Chars.vertical + '    ',
+        '     0/0 ' + Chars.fail + '     ' + Chars.vertical + '    ',
+        '               ' + Chars.bottomLeft + '    ',
+        '                    ']);
     });
 
     it('renders the tab red', function() {

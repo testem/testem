@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('events').EventEmitter;
 
 var width = 100;
@@ -5,8 +7,6 @@ var height = 100;
 var line = 0;
 var col = 0;
 var buffer = [];
-var foreground = null;
-var background = null;
 
 function initialize() {
   buffer = [];
@@ -32,12 +32,10 @@ var FakeScreen = {
     }
     return buffer.slice(start, end);
   },
-  foreground: function(color) {
-    foreground = color;
+  foreground: function() {
     return this;
   },
-  background: function(color) {
-    background = color;
+  background: function() {
     return this;
   },
   position: function(_col, _line) {

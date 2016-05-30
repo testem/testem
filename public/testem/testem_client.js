@@ -12,6 +12,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* globals qunitAdapter, busterAdapter, decycle */
 /* globals Testem */
 /* exported Testem */
+'use strict';
 
 function appendTestemIframeOnLoad(callback) {
   var iframeAppended = false;

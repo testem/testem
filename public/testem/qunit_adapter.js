@@ -16,6 +16,8 @@ Testem's QUnit adapter. Works by using QUnit's hooks:
 
 /* globals QUnit, emit */
 /* exported qunitAdapter */
+'use strict';
+
 function qunitAdapter() {
 
   var results = {

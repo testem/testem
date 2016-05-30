@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+'use strict';
+
 var spawn = require('child_process').spawn;
 
 function run(command, args, cb) {

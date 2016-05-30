@@ -22,10 +22,10 @@
 /*members $ref, apply, call, decycle, hasOwnProperty, length, prototype, push,
     retrocycle, stringify, test, toString, nodeType
 */
+/* exported decycle */
+'use strict';
 
-function decycle(object) { //jshint ignore:line
-  'use strict';
-
+function decycle(object) {
   // Make a deep copy of an object or array, assuring that there is at most
   // one instance of each object or array in the resulting structure. The
   // duplicate references (which might be forming cycles) are replaced with

@@ -9,6 +9,8 @@ Testem's adapter for Jasmine. It works by adding a custom reporter.
 
 /* globals emit, jasmine */
 /* exported jasmineAdapter */
+'use strict';
+
 function jasmineAdapter() {
 
   var results = {

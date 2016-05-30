@@ -1,3 +1,5 @@
+'use strict';
+
 var Config = require('../lib/config.js');
 var chai = require('chai');
 var assert = chai.assert;
@@ -362,8 +364,8 @@ describe('Config', function() {
     });
     it('respects order', function(done) {
       config.set('src_files', [
-      'ui/fake_screen.js',
-      'ci/ci_tests.js'
+        'ui/fake_screen.js',
+        'ci/ci_tests.js'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
@@ -385,7 +387,7 @@ describe('Config', function() {
     it('populates attributes for only the desired globs', function(done) {
       config.set('src_files', [
       {src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
-      'ci/*'
+        'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
@@ -399,8 +401,8 @@ describe('Config', function() {
     });
     it('populates attributes for only the desired globs and excludes using src_files_ignore', function(done) {
       config.set('src_files', [
-      fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
-      'ci/*'
+        fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
+        'ci/*'
       ]);
       config.set('src_files_ignore', '**/report*.js');
       config.getSrcFiles(function(err, files) {
@@ -413,7 +415,7 @@ describe('Config', function() {
     });
     it('allows URLs', function(done) {
       config.set('src_files', [
-      'file://ci/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
+        'file://ci/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
@@ -511,7 +513,7 @@ describe('getTemplateData', function() {
   it('should give templateData', function(done) {
     var fileConfig = {
       src_files: [
-      'web/*.js'
+        'web/*.js'
       ]
     };
     var progOptions = mockTopLevelProgOptions();

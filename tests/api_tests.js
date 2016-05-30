@@ -1,3 +1,5 @@
+'use strict';
+
 var Api = require('../lib/api');
 var App = require('../lib/app');
 var Config = require('../lib/config');
@@ -50,29 +52,37 @@ describe('Api', function() {
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
       var api = new Api();
-      api.startCI({}, function() {});
+      api.startCI({ timeout: 20000 }, function() {});
       api.app = new App(api.config, done);
-      sandbox.stub(api.app, 'stopCurrentRun');
+      sandbox.stub(api.app, 'stopCurrentRun', function (cb) {
+        cb();
+      });
+      sandbox.stub(api.app, 'singleRun');
+      api.app.start(function () {
+        setTimeout(function () {
+          var calledCookie;
 
-      var calledCookie;
+          global.clearTimeout = function(cookie) {
+            calledCookie = cookie;
+            originalTimeout(cookie);
+          };
 
-      global.clearTimeout = function(cookie) {
-        calledCookie = cookie;
-        originalTimeout(cookie);
-      };
+          var existingTimeout = api.app.timeoutID;
 
-      var existingTimeout = api.app.timeoutID;
+          expect(calledCookie).to.be.undefined();
+          expect(existingTimeout).to.not.be.undefined();
 
-      expect(calledCookie).to.be.undefined;
-      expect(existingTimeout).to.not.be.undefined;
+          api.restart();
 
-      api.restart();
+          setTimeout(function () {
+            expect(calledCookie).to.not.be.undefined();
+            expect(calledCookie).to.eql(existingTimeout);
 
-      expect(calledCookie).to.not.be.undefined;
-      expect(calledCookie).to.eql(existingTimeout);
-
-      expect(api.app.stopCurrentRun.callCount).to.equal(1);
-      api.app.exit();
+            expect(api.app.stopCurrentRun.callCount).to.equal(2);
+            api.app.exit();
+          }, 50);
+        }, 50);
+      });
     });
   });
 });

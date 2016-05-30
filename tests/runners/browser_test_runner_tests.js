@@ -1,3 +1,5 @@
+'use strict';
+
 var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var expect = require('chai').expect;
@@ -78,7 +80,7 @@ describe('browser test runner', function() {
         failed: 0,
         skipped: true,
         name: 'skipped test',
-        runDuration: 1,
+        runDuration: 1
       });
       expect(reporter.results.every(function(r) {
         return !r.result.passed;
@@ -90,7 +92,7 @@ describe('browser test runner', function() {
         failed: 1,
         skipped: false,
         name: 'failed test',
-        runDuration: 20,
+        runDuration: 20
       });
       expect(reporter.results.every(function(r) {
         return !r.result.passed;
@@ -102,7 +104,7 @@ describe('browser test runner', function() {
         failed: 0,
         skipped: true,
         name: 'skipped test',
-        runDuration: 20,
+        runDuration: 20
       });
       expect(reporter.skipped).to.equal(1);
     });
@@ -126,7 +128,7 @@ describe('browser test runner', function() {
         failed: 0,
         skipped: false,
         name: 'passed test',
-        runDuration: 15,
+        runDuration: 15
       });
       expect(reporter.results.every(function(r) {
         return r.result.passed;

@@ -9,6 +9,8 @@ Testem`s adapter for Mocha. It works by monkey-patching `Runner.prototype.emit`.
 
 /* globals mocha, emit, Mocha */
 /* exported mochaAdapter */
+'use strict';
+
 function mochaAdapter() {
   var results = {
     failed: 0,
@@ -24,7 +26,7 @@ function mochaAdapter() {
 
   try {
     Runner = mocha.Runner || Mocha.Runner;
-  }catch (e) {
+  } catch (e) {
     console.error('Testem: failed to register adapter for mocha.');
   }
 
@@ -135,4 +137,3 @@ function mochaAdapter() {
   };
 
 }
-

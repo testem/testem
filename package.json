@@ -63,7 +63,7 @@
     "integration:all": "node ./bin/run-integration.js",
     "testem-tests": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
-    "lint": "jshint . && jscs ."
+    "lint": "eslint ."
   },
   "devDependencies": {
     "bodydouble": "^0.1.2",
@@ -72,9 +72,9 @@
     "chai-files": "^1.2.0",
     "cheerio": "^0.20.0",
     "dirty-chai": "^1.2.2",
+    "eslint": "^2.11.0",
+    "eslint-plugin-chai-expect": "^1.1.1",
     "ispy": "^0.1.2",
-    "jscs": "~2.9.0",
-    "jshint": "^2.8.0",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "saucie": "^1.2.0",

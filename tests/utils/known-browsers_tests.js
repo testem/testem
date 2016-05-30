@@ -63,14 +63,14 @@ describe('knownBrowsers', function() {
       });
 
       it('creates a config file on setup', function(done) {
-        expect(firefox.setup.call(launcher, config, function(err) {
+        firefox.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
           expect(file(path.join(browserTmpDir, 'prefs.js'))).to.equal(
             'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
             'user_pref("browser.cache.disk.smart_size.first_run", false);'
           );
           done();
-        }));
+        });
       });
     });
 
@@ -136,13 +136,13 @@ describe('knownBrowsers', function() {
       });
 
       it('creates a config file on setup', function(done) {
-        expect(safari.setup.call(launcher, config, function(err) {
+        safari.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
           expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
             '<script>window.location = \'http://localhost:7357\'</script>'
           );
           done();
-        }));
+        });
       });
     });
 

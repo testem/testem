@@ -1,4 +1,6 @@
 /* globals expect, hello */
+'use strict';
+
 describe('hello', function() {
 
   it('says hello', function() {

@@ -1,4 +1,6 @@
 /* globals QUnit, window */
+'use strict';
+
 QUnit.test('says hello world', function(assert) {
   var done = assert.async();
   setTimeout(function() {

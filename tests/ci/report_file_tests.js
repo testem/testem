@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var App = require('../../lib/app');
 var Config = require('../../lib/config');
@@ -57,7 +59,7 @@ describe('report file output', function() {
       reporter: new FakeReporter(),
       stdout_stream: new PassThrough(),
       report_file: filename,
-      launch_in_ci: ['phantomjs'],
+      launch_in_ci: ['phantomjs']
     });
 
     var app = new App(config, function() {
@@ -77,7 +79,7 @@ describe('report file output', function() {
 
       var config = new Config('ci', {
         reporter: new FakeReporter(),
-        stdout_stream: new PassThrough(),
+        stdout_stream: new PassThrough()
       });
       var app = new App(config, function() {
         fs.stat(filename, function(err) {

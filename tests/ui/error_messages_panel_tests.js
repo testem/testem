@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect;
 var screen = require('./fake_screen');
 var ErrorMessagesPanel = require('../../lib/reporters/dev/error_messages_panel');
