@@ -40,6 +40,9 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
+      launcher.on('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
           {
@@ -67,7 +70,6 @@ describe('tap process test runner', function() {
         ]);
         done();
       });
-      launcher.process.stdin.end(tap);
     });
 
     it('resets tap when restarting', function(done) {
@@ -82,6 +84,9 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
+      launcher.once('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([{
           result: {
@@ -94,6 +99,10 @@ describe('tap process test runner', function() {
             total: 1
           }
         }]);
+
+        launcher.once('processStarted', function(process) {
+          process.stdin.end(tap);
+        });
         runner.start(function() {
           expect(reporter.results[1]).to.deep.equal({
             result: {
@@ -108,9 +117,7 @@ describe('tap process test runner', function() {
           });
           done();
         });
-        launcher.process.stdin.end(tap);
       });
-      launcher.process.stdin.end(tap);
     });
 
     it('read tap with failing test case', function(done) {
@@ -132,6 +139,9 @@ describe('tap process test runner', function() {
         '# pass  1',
         '# fail  1'
       ].join('\n');
+      launcher.on('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
           {
@@ -176,7 +186,6 @@ describe('tap process test runner', function() {
 
         done();
       });
-      launcher.process.stdin.end(tap);
     });
 
     it('reads tape output with a stacktrace', function(done) {
@@ -207,6 +216,9 @@ describe('tap process test runner', function() {
         '# pass  0',
         '# fail  2'
       ].join('\n');
+      launcher.on('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         var total = reporter.total;
         var pass = reporter.pass;
@@ -222,7 +234,6 @@ describe('tap process test runner', function() {
 
         done();
       });
-      launcher.process.stdin.end(tap);
     });
 
     it('reads tap output from mocha with stacktrace', function(done) {
@@ -244,6 +255,9 @@ describe('tap process test runner', function() {
         '# pass 1',
         '# fail 1'
       ].join('\n');
+      launcher.on('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         var total = reporter.total;
         var pass = reporter.pass;
@@ -260,7 +274,6 @@ describe('tap process test runner', function() {
         expect(typeof error.stack).to.equal('string');
         done();
       });
-      launcher.process.stdin.end(tap);
     });
   });
 
@@ -308,12 +321,14 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
+      launcher.on('processStarted', function(process) {
+        process.stdin.end(tap);
+      });
       runner.start(function() {
         expect(startCalled).to.equal(true);
         expect(endCalled).to.equal(true);
         done();
       });
-      launcher.process.stdin.end(tap);
     });
   });
 

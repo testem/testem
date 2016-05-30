@@ -16,6 +16,8 @@ var childProcess = require('child_process');
 
 var FakeReporter = require('../support/fake_reporter');
 
+var isWin = /^win/.test(process.platform);
+
 describe('ci mode app', function() {
   this.timeout(90000);
   var sandbox;
@@ -125,29 +127,35 @@ describe('ci mode app', function() {
 
     it('returns with non zero exit code when browser exits', function(done) {
       var dir = path.join('tests/fixtures/slow-pass');
+      var app;
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true)
+        reporter: new TestReporter(true),
+        on_start: function(config, data, callback) {
+          var launcher = app.launchers()[0];
+
+          launcher.on('processStarted', function(process) {
+            setTimeout(function() {
+              if (isWin) {
+                childProcess.exec('taskkill /pid ' + process.pid + ' /T');
+              } else {
+                process.kill();
+              }
+            }, 10000); // TODO Starting PhantomJS on Windows is really slow / find a better way
+          });
+
+          callback();
+        }
       });
       config.read(function() {
-        var app = new App(config, function(exitCode) {
+        app = new App(config, function(exitCode) {
           expect(exitCode).to.eq(1);
           done();
         });
         app.start();
-
-        setTimeout(function() {
-          var launcher = app.launchers()[0];
-
-          if (launcher.settings.useCrossSpawn) {
-            childProcess.exec('taskkill /pid ' + launcher.process.pid + ' /T');
-          } else {
-            launcher.process.kill();
-          }
-        }, 10000); // TODO Starting PhantomJS on Windows is really slow / find a better way
       });
     });
 
