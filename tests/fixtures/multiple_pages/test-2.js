@@ -1,3 +1,6 @@
+/* global QUnit, window */
+'use strict';
+
 QUnit.module('Test Page #2');
 
 QUnit.test('should be true', function(assert) {

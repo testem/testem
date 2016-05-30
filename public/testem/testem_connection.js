@@ -1,5 +1,6 @@
 /* globals document, parent, window, io, navigator, decycle */
 /* globals TestemConnection */
+'use strict';
 
 var socket;
 var connectStatus = 'disconnected';

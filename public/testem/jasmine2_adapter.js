@@ -9,6 +9,8 @@
 
 /* globals emit, jasmine */
 /* exported jasmine2Adapter */
+'use strict';
+
 function jasmine2Adapter() {
 
   var results = {

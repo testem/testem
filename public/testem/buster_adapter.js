@@ -9,6 +9,8 @@ Testem's adapter for Buster.js. It works by attaching event listeners to the tes
 
 /* globals emit, buster */
 /* exported busterAdapter */
+'use strict';
+
 function busterAdapter() {
 
   var id = 1;

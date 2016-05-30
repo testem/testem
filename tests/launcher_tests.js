@@ -1,3 +1,5 @@
+'use strict';
+
 var Launcher = require('../lib/launcher');
 var Config = require('../lib/config');
 var expect = require('chai').expect;
@@ -24,17 +26,17 @@ describe('Launcher', function() {
     });
     it('should be process iff protocol is not browser', function() {
       settings.protocol = 'browser';
-      expect(launcher.isProcess()).not.to.be.ok;
+      expect(launcher.isProcess()).not.to.be.ok();
       settings.protocol = 'tap';
-      expect(launcher.isProcess()).to.be.ok;
+      expect(launcher.isProcess()).to.be.ok();
       delete settings.protocol;
-      expect(launcher.isProcess()).to.be.ok;
+      expect(launcher.isProcess()).to.be.ok();
     });
     it('should launch if not a process and started', function() {
       stub(launcher, 'isProcess').returns(false);
       stub(launcher, 'launch');
       launcher.start();
-      expect(launcher.launch.called).to.be.ok;
+      expect(launcher.launch.called).to.be.ok();
     });
     it('substitutes variables', function(done) {
       settings.command = 'echo <url> <port>';

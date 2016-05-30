@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect;
 var Backbone = require('backbone');
 var screen = require('./fake_screen');
@@ -92,7 +94,7 @@ describe('SplitLogPanel', !isWin ? function() {
         ]
       });
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    [x✘] failed/);
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] failed/);
     });
     it('shows "failed" without items when failure', function() {
       results.set('total', 1);
@@ -100,7 +102,7 @@ describe('SplitLogPanel', !isWin ? function() {
         name: 'blah', passed: false, failed: 1
       });
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    /);
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}/);
     });
     it('shows the error message', function() {
       results.set('total', 1);
@@ -114,7 +116,7 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n    [x✘] should not be null/);
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] should not be null/);
     });
     it('shows the stacktrace', function() {
       results.set('total', 1);
@@ -212,7 +214,7 @@ describe('SplitLogPanel', !isWin ? function() {
         targetPanel[method] = spy();
         stub(panel, 'targetPanel').returns(targetPanel);
         panel[method]();
-        expect(targetPanel[method].called).to.be.ok;
+        expect(targetPanel[method].called).to.be.ok();
       });
     });
   });

@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var App = require('../../lib/app');
 var TestReporter = require('../../lib/reporters/tap_reporter');

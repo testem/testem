@@ -1,3 +1,5 @@
+'use strict';
+
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var DotReporter = require('../../lib/reporters/dot_reporter');
 var XUnitReporter = require('../../lib/reporters/xunit_reporter');
@@ -140,7 +142,7 @@ describe('test reporters', function() {
         });
         reporter.finish();
         var output = stream.read().toString();
-        assert.match(output, /  \.\n\n/);
+        assert.match(output, / {2}\.\n\n/);
         assert.match(output, /1 tests complete \([0-9]+ ms\)/);
       });
     });
@@ -163,17 +165,17 @@ describe('test reporters', function() {
         var output = stream.read().toString().split('\n');
 
         output.shift();
-        assert.match(output.shift(), /  F/);
+        assert.match(output.shift(), / {2}F/);
         output.shift();
-        assert.match(output.shift(), /  1 tests complete \(\d+ ms\)/);
+        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\)/);
         output.shift();
-        assert.match(output.shift(), /  1\) \[phantomjs\] it fails/);
-        assert.match(output.shift(), /     This should be a number/);
+        assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
+        assert.match(output.shift(), / {5}This should be a number/);
         output.shift();
-        assert.match(output.shift(), /     expected: 7/);
-        assert.match(output.shift(), /       actual: 'Seven'/);
+        assert.match(output.shift(), / {5}expected: 7/);
+        assert.match(output.shift(), / {7}actual: 'Seven'/);
         output.shift();
-        assert.match(output.shift(), /     trace/);
+        assert.match(output.shift(), / {5}trace/);
         assert.equal(output, '');
       });
     });
@@ -189,7 +191,7 @@ describe('test reporters', function() {
         });
         reporter.finish();
         var output = stream.read().toString();
-        assert.match(output, /  \*/);
+        assert.match(output, / {2}\*/);
         assert.match(output, /1 tests complete \([0-9]+ ms\)/);
       });
     });
@@ -200,7 +202,7 @@ describe('test reporters', function() {
 
     beforeEach(function() {
       config = new Config('ci', {
-        xunit_intermediate_output: false,
+        xunit_intermediate_output: false
       });
       stream = new PassThrough();
     });

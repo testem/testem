@@ -1,20 +1,21 @@
-
 /* globals Testem */
+'use strict';
+
 Testem.useCustomAdapter(tapAdapter);
 function tapAdapter(socket) {
 
   var results = {
-      failed: 0,
-      passed: 0,
-      total: 0,
-      tests: []
-    };
+    failed: 0,
+    passed: 0,
+    total: 0,
+    tests: []
+  };
 
   socket.emit('tests-start');
 
   Testem.handleConsoleMessage = function(msg) {
-    var m;
-    if (m = msg.match(/^((?:not )?ok) (\d+) (.+)$/)) {
+    var m = msg.match(/^((?:not )?ok) (\d+) (.+)$/);
+    if (m) {
 
       var passed = m[1] === 'ok';
       var test = {

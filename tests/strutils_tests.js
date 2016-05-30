@@ -1,3 +1,5 @@
+'use strict';
+
 var expect = require('chai').expect;
 var styledString = require('styled_string');
 var strutils = require('../lib/strutils');
