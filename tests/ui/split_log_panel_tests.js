@@ -2,19 +2,20 @@
 
 var expect = require('chai').expect;
 var Backbone = require('backbone');
+var sinon = require('sinon');
+
 var screen = require('./fake_screen');
 var SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
-var stub = require('bodydouble').stub;
-var spy = require('ispy');
 var Chars = require('../../lib/chars');
 var TestResults = require('../../lib/reporters/dev/test_results');
 var isWin = /^win/.test(process.platform);
 
 describe('SplitLogPanel', !isWin ? function() {
 
-  var runner, panel, appview, results, messages;
+  var runner, panel, appview, results, messages, sandbox;
 
   beforeEach(function() {
+    sandbox = sinon.sandbox.create();
     screen.$setSize(10, 20);
     results = new TestResults();
     messages = new Backbone.Collection();
@@ -34,6 +35,10 @@ describe('SplitLogPanel', !isWin ? function() {
       visible: true,
       screen: screen
     });
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   describe('getResultsDisplayText', function() {
@@ -177,19 +182,19 @@ describe('SplitLogPanel', !isWin ? function() {
 
   describe('targetPanel', function() {
     it('is the top if only has test results', function() {
-      stub(runner, 'hasResults').returns(true);
-      stub(runner, 'hasMessages').returns(false);
+      sandbox.stub(runner, 'hasResults').returns(true);
+      sandbox.stub(runner, 'hasMessages').returns(false);
       expect(panel.targetPanel()).to.equal(panel.topPanel);
     });
     it('is the bottom if only has messages', function() {
-      stub(runner, 'hasResults').returns(false);
-      stub(runner, 'hasMessages').returns(true);
+      sandbox.stub(runner, 'hasResults').returns(false);
+      sandbox.stub(runner, 'hasMessages').returns(true);
       expect(panel.targetPanel()).to.equal(panel.bottomPanel);
     });
     context('has both results and messages', function() {
       beforeEach(function() {
-        stub(runner, 'hasResults').returns(true);
-        stub(runner, 'hasMessages').returns(true);
+        sandbox.stub(runner, 'hasResults').returns(true);
+        sandbox.stub(runner, 'hasMessages').returns(true);
       });
       it('is the top if focused on top', function() {
         panel.set('focus', 'top');
@@ -201,8 +206,8 @@ describe('SplitLogPanel', !isWin ? function() {
       });
     });
     it('is the top if has neither', function() {
-      stub(runner, 'hasResults').returns(false);
-      stub(runner, 'hasMessages').returns(false);
+      sandbox.stub(runner, 'hasResults').returns(false);
+      sandbox.stub(runner, 'hasMessages').returns(false);
       expect(panel.targetPanel()).to.equal(panel.topPanel);
     });
   });
@@ -211,32 +216,32 @@ describe('SplitLogPanel', !isWin ? function() {
     'scrollUp scrollDown pageUp pageDown halfPageUp halfPageDown'.split(' ').forEach(function(method) {
       it('delegates ' + method + ' to the target Panel', function() {
         var targetPanel = {};
-        targetPanel[method] = spy();
-        stub(panel, 'targetPanel').returns(targetPanel);
+        targetPanel[method] = sandbox.spy();
+        sandbox.stub(panel, 'targetPanel').returns(targetPanel);
         panel[method]();
-        expect(targetPanel[method].called).to.be.ok();
+        expect(targetPanel[method]).to.have.been.called();
       });
     });
   });
 
   describe('syncDimensions', function() {
     it('shows both panels if has both results and messages', function() {
-      stub(runner, 'hasResults').returns(true);
-      stub(runner, 'hasMessages').returns(true);
+      sandbox.stub(runner, 'hasResults').returns(true);
+      sandbox.stub(runner, 'hasMessages').returns(true);
       panel.syncDimensions();
       expect(panel.topPanel.get('height')).to.equal(6);
       expect(panel.bottomPanel.get('height')).to.equal(6);
     });
     it('show top panel only if only has results', function() {
-      stub(runner, 'hasResults').returns(true);
-      stub(runner, 'hasMessages').returns(false);
+      sandbox.stub(runner, 'hasResults').returns(true);
+      sandbox.stub(runner, 'hasMessages').returns(false);
       panel.syncDimensions();
       expect(panel.topPanel.get('height')).to.equal(12);
       expect(panel.bottomPanel.get('height')).to.equal(0);
     });
     it('show bottom panel only if only has messages', function() {
-      stub(runner, 'hasResults').returns(false);
-      stub(runner, 'hasMessages').returns(true);
+      sandbox.stub(runner, 'hasResults').returns(false);
+      sandbox.stub(runner, 'hasMessages').returns(true);
       panel.syncDimensions();
       expect(panel.topPanel.get('height')).to.equal(0);
       expect(panel.bottomPanel.get('height')).to.equal(12);
@@ -245,8 +250,8 @@ describe('SplitLogPanel', !isWin ? function() {
 
   describe('render', function() {
     it('renders', function() {
-      stub(panel, 'getResultsDisplayText').returns('1 tests passed.');
-      stub(panel, 'getMessagesText').returns('This is a message.');
+      sandbox.stub(panel, 'getResultsDisplayText').returns('1 tests passed.');
+      sandbox.stub(panel, 'getMessagesText').returns('This is a message.');
       panel.syncResultsDisplay();
       panel.syncMessages();
       panel.render();

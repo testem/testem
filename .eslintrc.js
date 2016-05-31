@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   plugins: [
-    'chai-expect',
+    'chai-expect'
   ],
   extends: 'eslint:recommended',
   env: {
@@ -104,6 +104,7 @@ module.exports = {
     'space-in-parens': 2,
     'space-infix-ops': 2,
     'space-unary-ops': 2,
+    'space-before-function-paren': ["error", { "anonymous": "never", "named": "never" }],
 
     // JSHint "quotmark"
     quotes: [2, 'single'],
@@ -111,6 +112,6 @@ module.exports = {
     /*** chai-expect ***/
 
     'chai-expect/missing-assertion': 2,
-    'chai-expect/no-inner-compare': 2,
+    'chai-expect/no-inner-compare': 2
   },
 };

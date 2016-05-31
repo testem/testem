@@ -5,10 +5,6 @@ var App = require('../../lib/app');
 var TestReporter = require('../../lib/reporters/tap_reporter');
 var Config = require('../../lib/config');
 var sinon = require('sinon');
-var bd = require('bodydouble');
-var mock = bd.mock;
-var stub = bd.stub;
-var spy = require('ispy');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var Process = require('did_it_work');
@@ -302,7 +298,8 @@ describe('ci mode app', function() {
       if (err) {
         return done(err);
       }
-      assert(app.runners[0].stop.called, 'launcher with process and kill should be called');
+
+      expect(app.runners[0].stop).to.have.been.called();
       done();
     });
     app.runners = [
@@ -311,10 +308,12 @@ describe('ci mode app', function() {
       }
     ];
 
-    var cb = spy();
+    var cb = sandbox.spy();
     app.cleanUpLaunchers(cb);
-    assert(cb.called, 'cleanUpLaunchers calls its given callback');
-    assert(app.runners[0].stop.called, 'launcher with process and kill should be called');
+
+    expect(cb).to.have.been.called();
+    expect(app.runners[0].stop).to.have.been.called();
+
     app.exit();
   });
 
@@ -327,15 +326,15 @@ describe('ci mode app', function() {
     });
     config.read(function() {
       var app = new App(config);
-      stub(app, 'cleanExit');
-      stub(app, 'reporter', new TestReporter(true));
-      app.start();
       var start = Date.now();
-      app.cleanExit.once('call', function() {
+      sandbox.stub(app, 'cleanExit', function() {
         assert.lengthOf(app.runners, 1, 'There must be one runner');
         assert(Date.now() - start < 30000, 'Timeout does not wait for test to finish if it takes too long');
         done();
       });
+      sandbox.stub(app, 'reporter', new TestReporter(true));
+      app.start();
+
     });
   });
 
@@ -344,28 +343,28 @@ describe('ci mode app', function() {
     it('returns 0 if all passed', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 1 };
-      stub(app, 'reporter', reporter);
+      sandbox.stub(app, 'reporter', reporter);
       assert.equal(app.getExitCode(), null);
     });
 
     it('returns 0 if all skipped', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, skipped: 1 };
-      stub(app, 'reporter', reporter);
+      sandbox.stub(app, 'reporter', reporter);
       assert.equal(app.getExitCode(), null);
     });
 
     it('returns 1 if fails', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 0 };
-      stub(app, 'reporter', reporter);
+      sandbox.stub(app, 'reporter', reporter);
       assert.match(app.getExitCode(), /Not all tests passed/);
     });
 
     it('returns 0 if no tests ran', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 0, pass: 0 };
-      stub(app, 'reporter', reporter);
+      sandbox.stub(app, 'reporter', reporter);
       assert.equal(app.getExitCode(), null);
     });
 
@@ -374,7 +373,7 @@ describe('ci mode app', function() {
         fail_on_zero_tests: true
       }));
       var reporter = { total: 0, pass: 0 };
-      stub(app, 'reporter', reporter);
+      sandbox.stub(app, 'reporter', reporter);
       assert.match(app.getExitCode(), /No tests found\./);
     });
 
@@ -412,20 +411,25 @@ describe('ci mode app', function() {
 
 describe('runHook', function() {
 
-  var fakeP;
+  var fakeP, sandbox;
 
   beforeEach(function() {
-    fakeP = mock(new Process(''), {
-      fluent: true,
-      override: {
-        complete: function(callback) {
-          process.nextTick(function() {
-            callback(null);
-          });
-          return this;
-        }
-      }
+    sandbox = sinon.sandbox.create();
+
+    fakeP = new Process('');
+
+    sandbox.stub(fakeP, 'complete', function(callback) {
+      process.nextTick(function() {
+        callback(null);
+      });
+      return this;
     });
+    sandbox.spy(fakeP, 'kill');
+    sandbox.spy(fakeP, 'goodIfMatches');
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   it('runs hook', function(done) {
@@ -433,7 +437,7 @@ describe('runHook', function() {
       on_start: 'launch nuclear-missile'
     });
     var app = new App(config);
-    stub(app, 'Process').returns(fakeP);
+    sandbox.stub(app, 'Process').returns(fakeP);
     app.runHook('on_start', function() {
       assert(app.Process.called, 'how come you dont call me?');
       assert.equal(app.Process.lastCall.args, 'launch nuclear-missile');
@@ -446,7 +450,7 @@ describe('runHook', function() {
       on_start: 'launch <type> nuclear-missile'
     });
     var app = new App(config);
-    stub(app, 'Process').returns(fakeP);
+    sandbox.stub(app, 'Process').returns(fakeP);
     app.runHook('on_start', {type: 'soviet'}, function() {
       assert(app.Process.called, 'how come you dont call me?');
       assert.equal(app.Process.lastCall.args, 'launch soviet nuclear-missile');
@@ -478,7 +482,7 @@ describe('runHook', function() {
       }
     });
     var app = new App(config);
-    stub(app, 'Process').returns(fakeP);
+    sandbox.stub(app, 'Process').returns(fakeP);
     app.runHook('on_start', function() {
       assert.equal(app.Process.lastCall.args[0], 'launch nuclear-missile');
       assert.equal(fakeP.goodIfMatches.lastCall.args[0], 'launched.');
@@ -496,7 +500,7 @@ describe('runHook', function() {
       }
     });
     var app = new App(config);
-    stub(app, 'Process').returns(fakeP);
+    sandbox.stub(app, 'Process').returns(fakeP);
     app.runHook('on_start', function() {
       assert.equal(app.Process.lastCall.args[0],
         'tunnel dev.app.com:2837 -u http://dev.app.com:2837/');
@@ -512,7 +516,7 @@ describe('runHook', function() {
       }
     });
     var app = new App(config);
-    stub(app, 'Process').returns(fakeP);
+    sandbox.stub(app, 'Process').returns(fakeP);
     app.runHook('on_start', function() {
       assert(app.Process.called, 'call Process');
       assert.deepEqual(app.Process.lastCall.args, ['launch', ['nuclear-missile', '7357']]);
@@ -577,15 +581,14 @@ describe('runHook', function() {
       config.set('on_start', 'launch missile');
       config.set('before_tests', null);
       var app = new App(config);
-      stub(app, 'Process').returns(fakeP);
-      stub(app, 'reporter', new TestReporter(true));
-      stub(app, 'cleanExit');
-      app.start();
-      app.cleanExit.once('call', function() {
+      sandbox.stub(app, 'Process').returns(fakeP);
+      sandbox.stub(app, 'reporter', new TestReporter(true));
+      sandbox.stub(app, 'cleanExit', function() {
         assert.deepEqual(app.Process.lastCall.args[0], 'launch missile');
-        assert(fakeP.kill.called, 'should have killed');
+        expect(fakeP.kill).to.have.been.called();
         done();
       });
+      app.start();
     });
   });
 

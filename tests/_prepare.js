@@ -1,9 +1,11 @@
 'use strict';
 
 var chai = require('chai');
+var sinonChai = require('sinon-chai');
 var dirtyChai = require('dirty-chai');
 var chaiFiles = require('chai-files');
 
+chai.use(sinonChai);
 chai.use(chaiFiles);
 chai.use(dirtyChai);
 

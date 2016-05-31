@@ -66,7 +66,6 @@
   },
   "devDependencies": {
     "bluebird-retry": "^0.6.1",
-    "bodydouble": "^0.1.2",
     "browserify": "^13.0.0",
     "chai": "^3.0.0",
     "chai-files": "^1.2.0",
@@ -74,12 +73,12 @@
     "dirty-chai": "^1.2.2",
     "eslint": "^2.11.0",
     "eslint-plugin-chai-expect": "^1.1.1",
-    "ispy": "^0.1.2",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "saucie": "^1.2.0",
     "shelljs": "^0.7.0",
     "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
     "tape": "^4.0.0",
     "tmp": "0.0.28"
   },
