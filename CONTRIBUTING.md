@@ -71,7 +71,3 @@ There are also some integrations tests that test running all the examples in the
 Node + PhantomJS
 
     npm run integration
-
-All available browsers (launchers)
-
-    npm run integration:all
