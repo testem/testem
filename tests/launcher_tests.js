@@ -4,22 +4,27 @@ var Launcher = require('../lib/launcher');
 var Config = require('../lib/config');
 var expect = require('chai').expect;
 var assert = require('chai').assert;
-var bd = require('bodydouble');
 var EOL = require('os').EOL;
 var path = require('path');
-var stub = bd.stub;
+var sinon = require('sinon');
 
 var isWin = /^win/.test(process.platform);
 
 describe('Launcher', function() {
   describe('via command', function() {
-    var settings, config, launcher;
+    var settings, config, launcher, sandbox;
 
     beforeEach(function() {
+      sandbox = sinon.sandbox.create();
       settings = {command: 'echo hello'};
       config = new Config(null, {port: '7357', url: 'http://blah.com/'});
       launcher = new Launcher('say hello', settings, config);
     });
+
+    afterEach(function() {
+      sandbox.restore();
+    });
+
     it('should instantiate', function() {
       expect(launcher.name).to.equal('say hello');
       expect(launcher.settings).to.equal(settings);
@@ -33,10 +38,10 @@ describe('Launcher', function() {
       expect(launcher.isProcess()).to.be.ok();
     });
     it('should launch if not a process and started', function() {
-      stub(launcher, 'isProcess').returns(false);
-      stub(launcher, 'launch');
+      sandbox.stub(launcher, 'isProcess').returns(false);
+      sandbox.stub(launcher, 'launch');
       launcher.start();
-      expect(launcher.launch.called).to.be.ok();
+      expect(launcher.launch).to.have.been.called();
     });
     it('substitutes variables', function(done) {
       settings.command = 'echo <url> <port>';
@@ -47,7 +52,7 @@ describe('Launcher', function() {
       });
     });
     it('substitutes variables with a random id for browsers', function(done) {
-      stub(launcher, 'isProcess').returns(false);
+      sandbox.stub(launcher, 'isProcess').returns(false);
       settings.command = 'echo <url> <port>';
       launcher.start();
       launcher.on('processExit', function(code, stdout) {

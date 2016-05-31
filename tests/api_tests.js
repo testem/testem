@@ -54,12 +54,12 @@ describe('Api', function() {
       var api = new Api();
       api.startCI({ timeout: 20000 }, function() {});
       api.app = new App(api.config, done);
-      sandbox.stub(api.app, 'stopCurrentRun', function (cb) {
+      sandbox.stub(api.app, 'stopCurrentRun', function(cb) {
         cb();
       });
       sandbox.stub(api.app, 'singleRun');
-      api.app.start(function () {
-        setTimeout(function () {
+      api.app.start(function() {
+        setTimeout(function() {
           var calledCookie;
 
           global.clearTimeout = function(cookie) {
@@ -74,7 +74,7 @@ describe('Api', function() {
 
           api.restart();
 
-          setTimeout(function () {
+          setTimeout(function() {
             expect(calledCookie).to.not.be.undefined();
             expect(calledCookie).to.eql(existingTimeout);
 
