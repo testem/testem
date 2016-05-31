@@ -5,11 +5,6 @@ var path = require('path');
 var shell = require('shelljs');
 var Bluebird = require('bluebird');
 var retry = require('bluebird-retry');
-var tmp = require('tmp');
-var rimraf = require('rimraf');
-
-var rimrafAsync = Bluebird.promisify(rimraf);
-var tmpDirAsync = Bluebird.promisify(tmp.dir);
 
 // skip node@0.10, because of npm@1
 // and inability to pass arguments
@@ -58,12 +53,6 @@ function testExamples(examples, callback) {
   Bluebird.map(examples, testExample, { concurrency: concurrency }).asCallback(callback);
 }
 
-function tmpDir() {
-  return tmpDirAsync().disposer(function(path) {
-    return rimrafAsync(path);
-  });
-}
-
 function shellExec(cmd, runOpts) {
   return Bluebird.fromCallback(function(callback) {
     return shell.exec(cmd, runOpts, function(exitCode, output) {
@@ -91,19 +80,17 @@ function testExample(example) {
   var examplePath = path.join(examplesPath, example);
   var runOpts = {silent: true, cwd: examplePath};
 
-  return Bluebird.using(tmpDir(), function(cachePath) {
-    return retry(npmInstall(cachePath, runOpts), { max_tries: 3 }).then(function() {
-      var cmd = testCmd;
-      if (skipDefiningReporter.indexOf(example) === -1) {
-        cmd += ' --launch phantomjs';
-      }
+  return retry(npmInstall(runOpts), { max_tries: 3 }).then(function() {
+    var cmd = testCmd;
+    if (skipDefiningReporter.indexOf(example) === -1) {
+      cmd += ' --launch phantomjs';
+    }
 
-      return retry(runExample(cmd, runOpts), { max_tries: 3 });
-    }).then(function(testOuput) {
-      // output test results
-      shell.echo('Testing ' + example);
-      shell.echo(testOuput);
-    });
+    return retry(runExample(cmd, runOpts), { max_tries: 3 });
+  }).then(function(testOuput) {
+    // output test results
+    shell.echo('Testing ' + example);
+    shell.echo(testOuput);
   });
 }
 
@@ -113,8 +100,8 @@ function runExample(cmd, runOpts) {
   };
 }
 
-function npmInstall(cachePath, runOpts) {
+function npmInstall(runOpts) {
   return function() {
-    return shellExec('npm install --cache=' + cachePath, runOpts);
+    return shellExec('npm install', runOpts);
   };
 }
