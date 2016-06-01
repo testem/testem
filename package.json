@@ -21,7 +21,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "async": "^1.0.0",
     "backbone": "^1.1.2",
     "bluebird": "^3.4.0",
     "charm": "^1.0.0",
@@ -73,6 +72,7 @@
     "dirty-chai": "^1.2.2",
     "eslint": "^2.11.0",
     "eslint-plugin-chai-expect": "^1.1.1",
+    "eslint-plugin-mocha": "^3.0.0",
     "mocha": "^2.1.0",
     "request": "^2.51.0",
     "saucie": "^1.2.0",

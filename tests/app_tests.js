@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var fireworm = require('fireworm');
+var Bluebird = require('bluebird');
 
 var Config = require('../lib/config');
 var App = require('../lib/app');
@@ -21,17 +22,26 @@ describe('App', function() {
   });
 
   describe('triggerRun', function() {
+    var finish;
     beforeEach(function(done) {
       config = new Config('dev', {}, {
         reporter: new FakeReporter()
       });
-      app = new App(config, function() {});
+      app = new App(config, function() {
+        finish();
+      });
       sandbox.spy(app, 'triggerRun');
-      app.start(done);
+      sandbox.spy(app, 'cleanUpProcessLaunchers');
+      sandbox.stub(app, 'singleRun', function() {
+        return Bluebird.resolve().delay(50);
+      })
+      app.once('testRun', done);
+      app.start();
     });
 
     afterEach(function(done) {
-      app.exit(null, done);
+      finish = done;
+      app.exit();
     });
 
     it('triggers a run on start', function() {
@@ -39,10 +49,9 @@ describe('App', function() {
     });
 
     it('can only be executed once at the same time', function() {
-      sandbox.stub(app, 'cleanUpProcessLaunchers');
       app.triggerRun('one');
       app.triggerRun('two');
-      expect(app.cleanUpProcessLaunchers.callCount).to.eq(1);
+      expect(app.cleanUpProcessLaunchers).to.have.been.calledOnce();
     });
   });
 
@@ -91,7 +100,9 @@ describe('App', function() {
         src_files: srcFiles,
         reporter: new FakeReporter()
       });
-      app = new App(config, done);
+      app = new App(config, function() {
+        done();
+      });
       app.start(function() {
         expect(add.getCall(0).args[0]).to.eq(srcFiles);
         app.exit();
@@ -104,7 +115,9 @@ describe('App', function() {
         src_files: srcFiles,
         reporter: new FakeReporter()
       });
-      app = new App(config, done);
+      app = new App(config, function() {
+        done();
+      });
       app.start(function() {
         sandbox.spy(app, 'triggerRun');
         app.fileWatcher.onFileChanged.call(app.fileWatcher, 'test.js');
@@ -119,7 +132,9 @@ describe('App', function() {
         disable_watching: true,
         reporter: new FakeReporter()
       });
-      app = new App(config, done);
+      app = new App(config, function() {
+        done();
+      });
       app.start(function() {
         expect(app.fileWatcher).to.eq(undefined);
         app.exit();

@@ -1,7 +1,8 @@
 module.exports = {
   root: true,
   plugins: [
-    'chai-expect'
+    'chai-expect',
+    'mocha'
   ],
   extends: 'eslint:recommended',
   env: {
@@ -112,6 +113,7 @@ module.exports = {
     /*** chai-expect ***/
 
     'chai-expect/missing-assertion': 2,
-    'chai-expect/no-inner-compare': 2
+    'chai-expect/no-inner-compare': 2,
+    'mocha/no-exclusive-tests': 2
   },
 };

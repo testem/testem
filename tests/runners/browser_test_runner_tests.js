@@ -4,6 +4,7 @@ var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var expect = require('chai').expect;
 var sinon = require('sinon');
+var Bluebird = require('bluebird');
 
 var EventEmitter = require('events').EventEmitter;
 var Config = require('../../lib/config');
@@ -167,11 +168,12 @@ describe('browser test runner', function() {
     });
 
     it('starts the launcher once', function() {
-      sandbox.stub(launcher, 'start');
+      sandbox.stub(launcher, 'start', function() {
+        return Bluebird.resolve();
+      });
 
       runner.start();
       runner.start();
-
       expect(launcher.start.calledOnce).to.be.true();
     });
 
@@ -209,6 +211,18 @@ describe('browser test runner', function() {
           runner.finish();
         }, 100);
       }, 50);
+    });
+
+    it.only('does not start the launcher when already connected', function(done) {
+      sandbox.spy(launcher, 'start');
+
+      runner.socket = new EventEmitter();
+      runner.socket.on('start-tests', function() {
+        expect(launcher.start).not.to.have.been.called();
+        done();
+      })
+
+      runner.start();
     });
   });
 

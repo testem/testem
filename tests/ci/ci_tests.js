@@ -11,6 +11,7 @@ var Process = require('did_it_work');
 var path = require('path');
 var http = require('http');
 var childProcess = require('child_process');
+var Bluebird = require('bluebird');
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -213,13 +214,20 @@ describe('ci mode app', function() {
     });
   });
 
-  it('allows passing in reporter from config', function() {
+  it('allows passing in reporter from config', function(done) {
     var fakeReporter = new FakeReporter();
     var config = new Config('ci', {
       reporter: fakeReporter
     });
-    var app = new App(config);
-    assert.strictEqual(app.reporter, fakeReporter);
+    var app = new App(config, function() {
+      assert.strictEqual(app.reporter, fakeReporter);
+      done();
+    });
+
+    sandbox.stub(app, 'triggerRun');
+
+    app.start();
+    app.exit();
   });
 
   it('wrapUp reports error to reporter', function(done) {
@@ -235,6 +243,9 @@ describe('ci mode app', function() {
       done();
     });
 
+    sandbox.stub(app, 'triggerRun');
+
+    app.start();
     app.wrapUp(new Error('blarg'));
   });
 
@@ -273,27 +284,29 @@ describe('ci mode app', function() {
     });
     sandbox.spy(app, 'stopServer');
 
+    sandbox.stub(app, 'triggerRun');
+    app.start();
     app.wrapUp(error);
   });
 
   it('kills launchers on wrapUp', function(done) {
     var app = new App(new Config('ci', {
       launch_in_ci: []
-    }), function(err) {
-      if (err) {
-        return done(err);
-      }
+    }), function() {
       assert(app.cleanUpLaunchers.called, 'clean up launchers should be called');
       done();
     });
 
     sandbox.spy(app, 'cleanUpLaunchers');
+
+    sandbox.stub(app, 'triggerRun');
     app.start(function() {
       app.exit();
     });
   });
 
-  it('cleans up idling launchers', function(done) {
+  // Convert to disposer unit test
+  xit('cleans up idling launchers', function(done) {
     var app = new App(new Config('ci'), function(exitCode, err) {
       if (err) {
         return done(err);
@@ -304,17 +317,19 @@ describe('ci mode app', function() {
     });
     app.runners = [
       {
-        stop: sandbox.stub().callsArg(0)
+        stop: function(cb) {
+          return Bluebird.resolve().asCallback(cb);
+        }
       }
     ];
 
-    var cb = sandbox.spy();
-    app.cleanUpLaunchers(cb);
+    sandbox.spy(app.runners[0], 'stop');
 
-    expect(cb).to.have.been.called();
-    expect(app.runners[0].stop).to.have.been.called();
+    app.cleanUpLaunchers(function() {
+      expect(app.runners[0].stop).to.have.been.called();
 
-    app.exit();
+      app.exit();
+    });
   });
 
   it('timeout does not wait for idling launchers', function(done) {
@@ -322,7 +337,8 @@ describe('ci mode app', function() {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),
       timeout: 2,
-      launch_in_ci: ['phantomjs']
+      launch_in_ci: ['phantomjs'],
+      reporter: new TestReporter(true)
     });
     config.read(function() {
       var app = new App(config);
@@ -332,9 +348,7 @@ describe('ci mode app', function() {
         assert(Date.now() - start < 30000, 'Timeout does not wait for test to finish if it takes too long');
         done();
       });
-      sandbox.stub(app, 'reporter', new TestReporter(true));
       app.start();
-
     });
   });
 
@@ -343,28 +357,28 @@ describe('ci mode app', function() {
     it('returns 0 if all passed', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 1 };
-      sandbox.stub(app, 'reporter', reporter);
+      app.reporter = reporter;
       assert.equal(app.getExitCode(), null);
     });
 
     it('returns 0 if all skipped', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, skipped: 1 };
-      sandbox.stub(app, 'reporter', reporter);
+      app.reporter = reporter;
       assert.equal(app.getExitCode(), null);
     });
 
     it('returns 1 if fails', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 1, pass: 0 };
-      sandbox.stub(app, 'reporter', reporter);
+      app.reporter = reporter;
       assert.match(app.getExitCode(), /Not all tests passed/);
     });
 
     it('returns 0 if no tests ran', function() {
       var app = new App(new Config('ci'));
       var reporter = { total: 0, pass: 0 };
-      sandbox.stub(app, 'reporter', reporter);
+      app.reporter = reporter;
       assert.equal(app.getExitCode(), null);
     });
 
@@ -373,7 +387,7 @@ describe('ci mode app', function() {
         fail_on_zero_tests: true
       }));
       var reporter = { total: 0, pass: 0 };
-      sandbox.stub(app, 'reporter', reporter);
+      app.reporter = reporter;
       assert.match(app.getExitCode(), /No tests found\./);
     });
 
@@ -464,12 +478,12 @@ describe('runHook', function() {
       on_start: function(cfg, data, callback) {
         assert.equal(cfg.get('port'), 777);
         assert.equal(data.viva, 'la revolucion');
-        callback(1);
+        callback(new Error('hookError'));
       }
     });
     var app = new App(config);
     app.runHook('on_start', {viva: 'la revolucion'}, function(error) {
-      assert.equal(error, 1);
+      assert.equal(error.message, 'hookError');
       done();
     });
   });
@@ -564,9 +578,9 @@ describe('runHook', function() {
       on_start: {}
     });
     var app = new App(config);
-    assert.throw(function() {
-      app.runHook('on_start', function() {});
-    }, 'No command or exe/args specified for hook on_start');
+    app.runHook('on_start', function(err) {
+      expect(err.message).to.eq('No command or exe/args specified for hook on_start');
+    });
   });
 
   it('kills on_start process on exit', function(done) {
@@ -575,19 +589,18 @@ describe('runHook', function() {
       file: 'tests/fixtures/tape/testem.json',
       port: 0,
       cwd: 'tests/fixtures/tape/',
-      launch_in_ci: ['node']
+      launch_in_ci: ['node'],
+      reporter: new TestReporter(true)
     });
     config.read(function() {
       config.set('on_start', 'launch missile');
       config.set('before_tests', null);
-      var app = new App(config);
-      sandbox.stub(app, 'Process').returns(fakeP);
-      sandbox.stub(app, 'reporter', new TestReporter(true));
-      sandbox.stub(app, 'cleanExit', function() {
+      var app = new App(config, function() {
         assert.deepEqual(app.Process.lastCall.args[0], 'launch missile');
         expect(fakeP.kill).to.have.been.called();
         done();
       });
+      sandbox.stub(app, 'Process').returns(fakeP);
       app.start();
     });
   });

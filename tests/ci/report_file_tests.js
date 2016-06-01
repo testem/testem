@@ -88,6 +88,7 @@ describe('report file output', function() {
           done();
         });
       });
+      app.start();
       app.exit();
     });
   });
