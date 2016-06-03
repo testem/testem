@@ -55,6 +55,8 @@ module.exports = {
 
     yoda: 2,
 
+    semi: 2,
+
     /*** Strict Mode ***/
 
     // JSHint "strict"

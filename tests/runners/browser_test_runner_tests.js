@@ -213,14 +213,14 @@ describe('browser test runner', function() {
       }, 50);
     });
 
-    it.only('does not start the launcher when already connected', function(done) {
+    it('does not start the launcher when already connected', function(done) {
       sandbox.spy(launcher, 'start');
 
       runner.socket = new EventEmitter();
       runner.socket.on('start-tests', function() {
         expect(launcher.start).not.to.have.been.called();
         done();
-      })
+      });
 
       runner.start();
     });

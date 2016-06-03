@@ -34,7 +34,7 @@ describe('App', function() {
       sandbox.spy(app, 'cleanUpProcessLaunchers');
       sandbox.stub(app, 'singleRun', function() {
         return Bluebird.resolve().delay(50);
-      })
+      });
       app.once('testRun', done);
       app.start();
     });
