@@ -7,7 +7,7 @@ var expect = require('chai').expect;
 var rimraf = require('rimraf');
 var path = require('path');
 var PassThrough = require('stream').PassThrough;
-var ReportFile = require('../../lib/report_file');
+var ReportFile = require('../../lib/utils/report-file');
 var tmp = require('tmp');
 
 var FakeReporter = require('../support/fake_reporter');
@@ -101,14 +101,14 @@ describe('report file output', function() {
       expect(output).to.match(/some test results/);
       done();
     });
-    reportFile.stream.write('some test results');
-    reportFile.stream.end();
+    reportFile.outputStream.write('some test results');
+    reportFile.outputStream.end();
   });
 
   it('writes out results to the file', function(done) {
     var stream = new PassThrough();
     var reportFile = new ReportFile(filename, stream);
-    var reportStream = reportFile.stream;
+    var reportStream = reportFile.outputStream;
 
     reportFile.fileStream.on('finish', function() {
       fs.readFile(filename, function(err, data) {
@@ -137,7 +137,7 @@ describe('report file output', function() {
       reportFile.fileStream.on('finish', function() {
         fs.stat(nestedFilename, done);
       });
-      reportFile.stream.end();
+      reportFile.outputStream.end();
     });
   });
 });

@@ -15,7 +15,6 @@ describe('Api', function() {
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(App.prototype, 'initReporter').returns(new FakeReporter());
     sandbox.stub(Config.prototype, 'read');
   });
 
@@ -49,6 +48,7 @@ describe('Api', function() {
     it('allows to restart the tests', function(done) {
       var api = new Api();
       api.startDev({ timeout: 20000 }, function() {});
+      api.config.progOptions.reporter = new FakeReporter(); // TODO Find a better way
       api.app = new App(api.config, function() {
         done();
       });
