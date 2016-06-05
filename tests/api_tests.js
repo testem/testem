@@ -1,10 +1,12 @@
 'use strict';
 
+var sinon = require('sinon');
+var expect = require('chai').expect;
+var Bluebird = require('bluebird');
+
 var Api = require('../lib/api');
 var App = require('../lib/app');
 var Config = require('../lib/config');
-var sinon = require('sinon');
-var expect = require('chai').expect;
 
 var FakeReporter = require('./support/fake_reporter');
 
@@ -13,7 +15,6 @@ describe('Api', function() {
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(App.prototype, 'initReporter').returns(new FakeReporter());
     sandbox.stub(Config.prototype, 'read');
   });
 
@@ -43,44 +44,40 @@ describe('Api', function() {
   });
 
   describe('restart', function() {
-    var originalTimeout = global.clearTimeout;
-
-    after(function() {
-      global.clearTimeout = originalTimeout;
-    });
-
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
       var api = new Api();
-      api.startCI({ timeout: 20000 }, function() {});
-      api.app = new App(api.config, done);
-      sandbox.stub(api.app, 'stopCurrentRun', function(cb) {
-        cb();
+      api.startDev({ timeout: 20000 }, function() {});
+      api.config.progOptions.reporter = new FakeReporter(); // TODO Find a better way
+      api.app = new App(api.config, function() {
+        done();
       });
-      sandbox.stub(api.app, 'singleRun');
+      sandbox.spy(api.app, 'stopCurrentRun');
+      sandbox.stub(api.app, 'singleRun', function() {
+        return Bluebird.resolve().delay(100);
+      });
       api.app.start(function() {
         setTimeout(function() {
           var calledCookie;
-
-          global.clearTimeout = function(cookie) {
-            calledCookie = cookie;
-            originalTimeout(cookie);
-          };
 
           var existingTimeout = api.app.timeoutID;
 
           expect(calledCookie).to.be.undefined();
           expect(existingTimeout).to.not.be.undefined();
 
-          api.restart();
+          var originalTimeout = global.clearTimeout;
+          sandbox.stub(global, 'clearTimeout', function(cookie) {
+            calledCookie = cookie;
+            originalTimeout(cookie);
 
-          setTimeout(function() {
             expect(calledCookie).to.not.be.undefined();
             expect(calledCookie).to.eql(existingTimeout);
 
             expect(api.app.stopCurrentRun.callCount).to.equal(2);
             api.app.exit();
-          }, 50);
+          });
+
+          api.restart();
         }, 50);
       });
     });

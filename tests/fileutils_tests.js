@@ -70,7 +70,7 @@ describe('fileutils', function() {
       sandbox.stub(childProcess, 'spawn', function() {
         setTimeout(function() {
           process.emit('close', 127);
-        })
+        });
         return process;
       });
 
