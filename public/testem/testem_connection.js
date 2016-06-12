@@ -1,5 +1,4 @@
-/* globals document, parent, window, io, navigator, decycle */
-/* globals TestemConnection */
+/* globals document, parent, window, io, navigator */
 'use strict';
 
 var socket;
@@ -146,7 +145,7 @@ function init() {
 
       addListener(window, 'load', initUI);
       addMessageListener('emit-message', function(item) {
-        TestemConnection.emit.apply(null, item);
+        socket.emit.apply(socket, item);
       });
 
       sendMessageToParent('iframe-ready');
@@ -170,19 +169,5 @@ function initSocket(id) {
     sendMessageToParent('tap-all-test-results');
   });
 }
-
-window.TestemConnection = {
-  emit: function() {
-    var args = Array.prototype.slice.apply(arguments);
-
-    // Workaround IE 8 max instructions
-    setTimeout(function() {
-      var decycled = decycle(args);
-      setTimeout(function() {
-        socket.emit.apply(socket, decycled);
-      }, 0);
-    }, 0);
-  }
-};
 
 init();
