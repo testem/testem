@@ -347,6 +347,15 @@ describe('Config', function() {
         done();
       });
     });
+    it('excludes using src_files', function(done) {
+      config.set('src_files', ['ci/*', '!**/report*.js']);
+      config.getSrcFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js'))
+        ]);
+        done();
+      });
+    });
     it('can read files from directories with spaces', function(done) {
       config.set('cwd', 'tests/space test/');
       config.set('src_files', 'test.js');
