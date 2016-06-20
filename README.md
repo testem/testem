@@ -431,9 +431,11 @@ Testem.afterTests(
     }
 });
 
-//Synchronously
+// Synchronously.
 Testem.afterTests(doStuff);
 ```
+
+NOTE: You must call the `callback()` argument or your tests will hang.
 
 
 Custom Routes
