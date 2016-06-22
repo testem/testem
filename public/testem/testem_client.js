@@ -237,7 +237,7 @@ var Testem = {
   },
   runAfterTests: function() {
     if (Testem.afterTestsQueue.length) {
-      var afterTestsCallback = this.afterTestsQueue.shift();
+      var afterTestsCallback = Testem.afterTestsQueue.shift();
 
       if (typeof afterTestsCallback !== 'function') {
         throw Error('Callback not a function');
