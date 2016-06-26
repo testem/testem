@@ -81,7 +81,12 @@ describe('ci mode app', function() {
           assert.include(launchers, 'NodePlain');
           assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS');
 
-          assert(reporter.results.length >= 1, 'should have a few launchers'); // ball park?
+          var globalLauncher = reporter.results.filter(function(r) {
+            return r.launcher === null;
+          });
+          expect(globalLauncher).to.be.empty();
+
+          expect(reporter.results.length).to.eq(5);
           done();
         });
         app.start();
