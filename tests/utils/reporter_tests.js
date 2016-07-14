@@ -36,7 +36,7 @@ describe('Reporter', function() {
     sandbox.restore();
   });
 
-  describe('new', function() {
+  describe('"new"', function() {
     it('can report to a file', function() {
       var close;
       tmpNameAsync().then(function(path) {
@@ -69,7 +69,7 @@ describe('Reporter', function() {
     });
   });
 
-  describe('with', function() {
+  describe('"with"', function() {
     var app = mockApp();
 
     it('can be used as a disposable which returns a reporter', function() {
@@ -83,6 +83,19 @@ describe('Reporter', function() {
       return Bluebird.using(Reporter.with(app, process.stdout), function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
+        expect(close).to.have.been.called();
+      });
+    });
+
+    it('closes the reporter when promise is rejected with error hidden from the reporter', function() {
+      var close;
+      return Bluebird.using(Reporter.with(app, process.stdout), function(reporter) {
+        close = sandbox.spy(reporter, 'close');
+
+        var mockError = new Error('Not all tests passed.');
+        mockError.hideFromReporter = true;
+        return Bluebird.reject(mockError);
+      }).catch(function() {
         expect(close).to.have.been.called();
       });
     });
