@@ -298,11 +298,11 @@ describe('ci mode app', function() {
     var app = new App(new Config('ci', {
       launch_in_ci: []
     }), function() {
-      assert(app.cleanUpLaunchers.called, 'clean up launchers should be called');
+      assert(app.killRunners.called, 'clean up launchers should be called');
       done();
     });
 
-    sandbox.spy(app, 'cleanUpLaunchers');
+    sandbox.spy(app, 'killRunners');
 
     sandbox.stub(app, 'triggerRun');
     app.start(function() {
@@ -317,7 +317,7 @@ describe('ci mode app', function() {
         return done(err);
       }
 
-      expect(app.runners[0].stop).to.have.been.called();
+      expect(app.runners[0].exit).to.have.been.called();
       done();
     });
     app.runners = [
@@ -328,10 +328,10 @@ describe('ci mode app', function() {
       }
     ];
 
-    sandbox.spy(app.runners[0], 'stop');
+    sandbox.spy(app.runners[0], 'exit');
 
-    app.cleanUpLaunchers(function() {
-      expect(app.runners[0].stop).to.have.been.called();
+    app.exitRunners(function() {
+      expect(app.runners[0].exit).to.have.been.called();
 
       app.exit();
     });
