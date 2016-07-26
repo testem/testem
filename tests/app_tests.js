@@ -31,7 +31,7 @@ describe('App', function() {
         finish();
       });
       sandbox.spy(app, 'triggerRun');
-      sandbox.spy(app, 'cleanUpProcessLaunchers');
+      sandbox.spy(app, 'stopRunners');
       sandbox.stub(app, 'singleRun', function() {
         return Bluebird.resolve().delay(50);
       });
@@ -49,9 +49,11 @@ describe('App', function() {
     });
 
     it('can only be executed once at the same time', function() {
+      app.currentRun = Bluebird.resolve();
+
       app.triggerRun('one');
       app.triggerRun('two');
-      expect(app.cleanUpProcessLaunchers).to.have.been.calledOnce();
+      expect(app.stopRunners).to.have.been.calledOnce();
     });
   });
 

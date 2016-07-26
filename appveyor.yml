@@ -4,7 +4,7 @@ environment:
   INTEGRATION_TESTS_CONCURRENCY: 5
   matrix:
   - PHANTOM_SRC: "npm"
-  - PHANTOM_SRC: "chocolatey"
+  # - PHANTOM_SRC: "chocolatey"
 
 # Install scripts. (runs after repo cloning)
 install:
