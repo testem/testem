@@ -96,6 +96,7 @@ describe('knownBrowsers', function() {
           '--no-first-run',
           '--ignore-certificate-errors',
           '--test-type',
+          '--no-sandbox',
           '--disable-renderer-backgrounding',
           '--disable-background-timer-throttling',
           url
