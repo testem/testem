@@ -1,5 +1,5 @@
 {
-  "name": "testem",
+  "name": "vanuan-testem",
   "description": "Test'em 'scripts! Javascript Unit testing made easy.",
   "keywords": [
     "javascript",
@@ -7,7 +7,7 @@
     "unittest",
     "browser"
   ],
-  "version": "1.9.1",
+  "version": "1.9.2",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
