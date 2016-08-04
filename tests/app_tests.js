@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var fireworm = require('fireworm');
+var fireworm = require('vanuan-fireworm');
 var Bluebird = require('bluebird');
 
 var Config = require('../lib/config');
