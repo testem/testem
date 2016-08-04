@@ -11,10 +11,10 @@
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/testem/testem.git"
+    "url": "git://github.com/Vanuan/testem.git"
   },
   "bugs": {
-    "url": "http://github.com/testem/testem/issues"
+    "url": "http://github.com/Vanuan/testem/issues"
   },
   "engines": [
     "node >= 0.8.0"
