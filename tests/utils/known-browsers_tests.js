@@ -1,7 +1,7 @@
 'use strict';
 
 var Bluebird = require('bluebird');
-var _ = require('lodash');
+var find = require('lodash.find');
 var tmp = require('tmp');
 var path = require('path');
 
@@ -47,7 +47,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('any', config);
 
-        firefox = _.find(browsers, function(browser) {
+        firefox = find(browsers, function(browser) {
           return browser.name === 'Firefox';
         });
       });
@@ -80,7 +80,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('any', config);
 
-        chrome = _.find(browsers, function(browser) {
+        chrome = find(browsers, function(browser) {
           return browser.name === 'Chrome';
         });
       });
@@ -120,7 +120,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('any', config);
 
-        safari = _.find(browsers, function(browser) {
+        safari = find(browsers, function(browser) {
           return browser.name === 'Safari';
         });
       });
@@ -152,7 +152,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('any', config);
 
-        opera = _.find(browsers, function(browser) {
+        opera = find(browsers, function(browser) {
           return browser.name === 'Opera';
         });
       });
@@ -174,7 +174,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('any', config);
 
-        phantomJS = _.find(browsers, function(browser) {
+        phantomJS = find(browsers, function(browser) {
           return browser.name === 'PhantomJS';
         });
         scriptPath = path.resolve(__dirname, '../../assets/phantom.js');
@@ -225,7 +225,7 @@ describe('knownBrowsers', function() {
       beforeEach(function() {
         var browsers = knownBrowsers('win32', config);
 
-        internetExplorer = _.find(browsers, function(browser) {
+        internetExplorer = find(browsers, function(browser) {
           return browser.name === 'IE';
         });
       });
