@@ -156,11 +156,12 @@ describe('Config', function() {
         test_page: 'http://my-url/path/',
         query_params: {
           library: 'testem',
-          language: 'javascript'
+          language: 'javascript',
+          flag: ''
         }
       });
       config.read(function() {
-        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?library=testem&language=javascript');
+        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?library=testem&language=javascript&flag');
         done();
       });
     });
@@ -182,10 +183,10 @@ describe('Config', function() {
     it('handles string query param argument', function(done) {
       var config = new Config('dev', {
         test_page: 'http://my-url/path/?language=python&os=mac',
-        query_params: '?language=english&library=british'
+        query_params: '?language=english&speak&library=british&flag'
       });
       config.read(function() {
-        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?language=english&os=mac&library=british');
+        expect(config.get('test_page')[0]).to.equal('http://my-url/path/?language=english&os=mac&speak&library=british&flag');
         done();
       });
     });
