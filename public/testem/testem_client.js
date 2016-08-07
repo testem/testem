@@ -215,6 +215,9 @@ var Testem = {
         case 'tap-all-test-results':
           self.emit('tap-all-test-results');
           break;
+        case 'stop-run':
+          self.emit('after-tests-complete');
+          break;
       }
     });
   },
