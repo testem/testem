@@ -320,12 +320,25 @@ describe('browser test runner', function() {
       var reporter = new TapReporter();
       var config = new Config('ci', { reporter: reporter });
       var launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter);
+      runner = new BrowserTestRunner(launcher, reporter, 1, true);
     });
 
     it('ignores multiple finish calls', function(done) {
       runner.start(done);
       runner.finish();
+      runner.finish();
+    });
+
+    it('removes created event listeners', function(done) {
+      var countBefore = runner.launcher.listeners('processExit').length;
+      runner.start(function(err) {
+        if (err) {
+          return done(err);
+        }
+        var countAfter = runner.launcher.listeners('processExit').length;
+        expect(countAfter).to.eq(countBefore);
+        done();
+      });
       runner.finish();
     });
   });

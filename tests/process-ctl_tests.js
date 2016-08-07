@@ -155,6 +155,26 @@ describe('ProcessCtl', function() {
         expect(processCtl._killTimer).to.be.null();
       });
     });
+
+    it('removes all registered event listeners', function() {
+      processCtl.spawn('node', [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')]);
+
+      var closeCountBefore = processCtl.process.listeners('close').length;
+      var errorCountBefore = processCtl.process.listeners('error').length;
+
+      var targetProcess = processCtl.process;
+
+      return Bluebird.delay(500).then(function() {
+        return processCtl.kill();
+      }).then(function() {
+        var killHandler = 1;
+        var closeCountAfter = targetProcess.listeners('close').length + killHandler;
+        var errorCountAfter = targetProcess.listeners('error').length;
+
+        expect(errorCountAfter).to.eq(errorCountBefore);
+        expect(closeCountAfter).to.eq(closeCountBefore);
+      });
+    });
   });
 
   describe('onStdOut', function() {

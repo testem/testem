@@ -391,4 +391,37 @@ describe('tap process test runner', function() {
       });
     });
   });
+
+  describe('finish', function() {
+    var reporter, config;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      config = new Config('ci', {
+        reporter: reporter
+      });
+    });
+
+    it('removes created event listeners', function(done) {
+      var settings = {
+        exe: 'nope-not-existing'
+      };
+      var launcher = new Launcher('nope-not-existing', settings, config);
+      var runner = new TapProcessTestRunner(launcher, reporter);
+
+      var startedCountBefore = runner.launcher.listeners('processStarted').length;
+      var errorCountBefore = runner.launcher.listeners('processError').length;
+      runner.start(function(err) {
+        if (err) {
+          return done(err);
+        }
+
+        var startedCountAfter = runner.launcher.listeners('processStarted').length;
+        var errorCountAfter = runner.launcher.listeners('processError').length;
+        expect(startedCountAfter).to.eq(startedCountBefore);
+        expect(errorCountAfter).to.eq(errorCountBefore);
+        done();
+      });
+    });
+  });
 });
