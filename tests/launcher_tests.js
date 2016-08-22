@@ -4,7 +4,6 @@ var Launcher = require('../lib/launcher');
 var Config = require('../lib/config');
 var expect = require('chai').expect;
 var assert = require('chai').assert;
-var EOL = require('os').EOL;
 var path = require('path');
 var sinon = require('sinon');
 
@@ -71,7 +70,7 @@ describe('Launcher', function() {
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
         assert.equal(code, 0);
-        assert.equal(stdout, 'hello' + EOL);
+        assert.equal(stdout, 'hello\n');
         done();
       });
     });
