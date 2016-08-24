@@ -71,7 +71,7 @@
     "browserify": "^13.0.0",
     "chai": "^3.0.0",
     "chai-files": "^1.2.0",
-    "cheerio": "^0.20.0",
+    "cheerio": "^0.22.0",
     "dirty-chai": "^1.2.2",
     "eslint": "^3.2.2",
     "eslint-plugin-chai-expect": "^1.1.1",
