@@ -75,7 +75,7 @@
     "dirty-chai": "^1.2.2",
     "eslint": "^3.2.2",
     "eslint-plugin-chai-expect": "^1.1.1",
-    "eslint-plugin-mocha": "^4.3.0",
+    "eslint-plugin-mocha": "^4.4.0",
     "mocha": "^3.0.0",
     "request": "^2.51.0",
     "saucie": "^1.2.0",
