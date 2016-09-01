@@ -90,6 +90,7 @@ Common Configuration Options
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
     browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
     browser_start_timeout        [Number]  timeout to error after browser start in seconds (30s)
+    browser_args:                [Object]  hash of browsers (keys) and their custom aruments (values)
 
 ### Available hooks:
 

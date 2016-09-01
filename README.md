@@ -326,6 +326,23 @@ This will display something like the following
 
 This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process &mdash; as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in dev-mode.
 
+Customizing Browser Arguments
+-----------------------------
+
+Testem passes its own list of arguments to some of the browsers it launches. You can add your own custom arguments to these lists by including the `browser_args` option in your Testem configuration. For example:
+
+```javascript
+"browser_args": {
+  "Chrome": [
+    "--auto-open-devtools-for-tabs"
+  ]
+}
+```
+
+You can supply arguments to any number of browsers Testem has available by using the launcher name as a key in `browser_args`. Values may be an array of string arguments or, if only one, a single string.
+
+Read [more details](docs/browser_args.md) about the browser argument options.
+
 Running Tests in Node and Custom Process Launchers
 --------------------------------------------------
 
