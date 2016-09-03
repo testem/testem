@@ -20,7 +20,7 @@ function addBrowserArgsToConfig(config, browserName) {
       args[browserName] = '--testem';
       return args;
     }
-  }
+  };
 }
 
 function createConfig() {
@@ -65,7 +65,7 @@ describe('knownBrowsers', function() {
     describe('Firefox', function() {
       var browsers;
       var firefox;
-      
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
@@ -122,7 +122,7 @@ describe('knownBrowsers', function() {
     describe('Chrome', function() {
       var browsers;
       var chrome;
-     
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
@@ -194,7 +194,7 @@ describe('knownBrowsers', function() {
     describe('Safari', function() {
       var browsers;
       var safari;
-     
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
@@ -250,7 +250,7 @@ describe('knownBrowsers', function() {
     describe('Opera', function() {
       var browsers;
       var opera;
-     
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
@@ -297,7 +297,7 @@ describe('knownBrowsers', function() {
       var browsers;
       var phantomJS;
       var scriptPath;
-     
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
@@ -367,7 +367,8 @@ describe('knownBrowsers', function() {
           ]);
         });
 
-        it('constructs correct args with phantomjs_debug_port and browser_args', function() {        config.get = function(name) {
+        it('constructs correct args with phantomjs_debug_port and browser_args', function() {
+          config.get = function(name) {
             if (name === 'phantomjs_debug_port') {
               return '1234';
             } else if (name === 'browser_args') {
@@ -409,7 +410,7 @@ describe('knownBrowsers', function() {
     describe('Internet Explorer', function() {
       var browsers;
       var internetExplorer;
-     
+
       function setup(browserName) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);

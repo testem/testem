@@ -70,7 +70,7 @@ describe('browserArgs', function() {
         };
 
         browserArgs.addCustomArgs(knownBrowsers, config);
-        
+
         expect(knownBrowsers[0].args()).to.deep.equal([ '--fake' ].concat(defaultArgs));
 
         // Resets known browsers value
@@ -129,7 +129,7 @@ describe('browserArgs', function() {
         var defaultArgs = createKnownBrowsers()[0].args();
 
         browserArgs.parseArgs('Chrome', '--fake', knownBrowsers);
-        
+
         expect(knownBrowsers[0].args()).to.deep.equal([ '--fake' ].concat(defaultArgs));
       });
 
@@ -139,7 +139,7 @@ describe('browserArgs', function() {
         var defaultArgs = createKnownBrowsers()[0].args();
 
         browserArgs.parseArgs('Chrome', [ '--fake' ], knownBrowsers);
-        
+
         expect(knownBrowsers[0].args()).to.deep.equal([ '--fake' ].concat(defaultArgs));
       });
 
@@ -149,7 +149,7 @@ describe('browserArgs', function() {
         var defaultArgs = createKnownBrowsers()[1].args;
 
         browserArgs.parseArgs('Firefox', '--fake', knownBrowsers);
-        
+
         expect(knownBrowsers[1].args).to.deep.equal([ '--fake' ].concat(defaultArgs));
       });
 
@@ -159,7 +159,7 @@ describe('browserArgs', function() {
         var defaultArgs = createKnownBrowsers()[1].args;
 
         browserArgs.parseArgs('Firefox', [ '--fake' ], knownBrowsers);
-        
+
         expect(knownBrowsers[1].args).to.deep.equal([ '--fake' ].concat(defaultArgs));
       });
     });
