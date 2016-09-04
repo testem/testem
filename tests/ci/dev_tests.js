@@ -37,10 +37,12 @@ describe('dev mode app', function() {
         });
         app.start();
         app.once('testRun', function() {
-          app.triggerRun('restart');
+          process.nextTick(function() {
+            app.triggerRun('restart');
 
-          app.once('testRun', function() {
-            app.exit(new Error('Run killed.'));
+            app.once('testRun', function() {
+              app.exit(new Error('Run killed.'));
+            });
           });
         });
       });
