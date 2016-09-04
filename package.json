@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "backbone": "^1.1.2",
-    "bluebird": "^3.4.0",
+    "bluebird": ">=3.4.0 <=3.4.5",
     "charm": "^1.0.0",
     "commander": "^2.6.0",
     "consolidate": "^0.14.0",

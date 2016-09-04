@@ -12,6 +12,34 @@ var file = require('chai-files').file;
 
 var knownBrowsers = require('../../lib/utils/known-browsers');
 
+function addBrowserArgsToConfig(config, browserName) {
+  config.get = function(name) {
+    var args = {};
+
+    if (name === 'browser_args') {
+      args[browserName] = '--testem';
+      return args;
+    }
+  };
+}
+
+function createConfig() {
+  return {
+    getHomeDir: function() {
+      return 'home/dir';
+    },
+    get: function() {
+      return;
+    }
+  };
+}
+
+function findBrowser(browsers, browserName) {
+  return find(browsers, function(browser) {
+    return browser.name === browserName;
+  });
+}
+
 describe('knownBrowsers', function() {
   var browserTmpDir;
   var url = 'http://localhost:7357';
@@ -26,14 +54,7 @@ describe('knownBrowsers', function() {
   var config;
 
   beforeEach(function() {
-    config = {
-      getHomeDir: function() {
-        return 'home/dir';
-      },
-      get: function() {
-        return;
-      }
-    };
+    config = createConfig();
 
     return tmpDirAsync().then(function(path) {
       browserTmpDir = path;
@@ -42,14 +63,22 @@ describe('knownBrowsers', function() {
 
   describe('Any platform', function() {
     describe('Firefox', function() {
+      var browsers;
       var firefox;
 
-      beforeEach(function() {
-        var browsers = knownBrowsers('any', config);
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
 
-        firefox = find(browsers, function(browser) {
-          return browser.name === 'Firefox';
-        });
+        browsers = knownBrowsers('any', config);
+        firefox = findBrowser(browsers, 'Firefox');
+      }
+
+      beforeEach(function() {
+        setup();
       });
 
       it('exists', function() {
@@ -72,17 +101,41 @@ describe('knownBrowsers', function() {
           done();
         });
       });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('Firefox');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(firefox.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', '-profile', browserTmpDir, url
+          ]);
+        });
+      });
     });
 
     describe('Chrome', function() {
+      var browsers;
       var chrome;
 
-      beforeEach(function() {
-        var browsers = knownBrowsers('any', config);
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
 
-        chrome = find(browsers, function(browser) {
-          return browser.name === 'Chrome';
-        });
+        browsers = knownBrowsers('any', config);
+        chrome = findBrowser(browsers, 'Chrome');
+      }
+
+      beforeEach(function() {
+        setup();
       });
 
       it('exists', function() {
@@ -112,17 +165,49 @@ describe('knownBrowsers', function() {
           '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         ]);
       });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('Chrome');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(chrome.args.call(launcher, config, url)).to.deep.eq([
+            '--testem',
+            '--user-data-dir=' + browserTmpDir,
+            '--no-default-browser-check',
+            '--no-first-run',
+            '--ignore-certificate-errors',
+            '--test-type',
+            '--disable-renderer-backgrounding',
+            '--disable-background-timer-throttling',
+            url
+          ]);
+        });
+      });
     });
 
     describe('Safari', function() {
+      var browsers;
       var safari;
 
-      beforeEach(function() {
-        var browsers = knownBrowsers('any', config);
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
 
-        safari = find(browsers, function(browser) {
-          return browser.name === 'Safari';
-        });
+        browsers = knownBrowsers('any', config);
+        safari = findBrowser(browsers, 'Safari');
+      }
+
+      beforeEach(function() {
+        setup();
       });
 
       it('exists', function() {
@@ -144,17 +229,41 @@ describe('knownBrowsers', function() {
           done();
         });
       });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('Safari');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(safari.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', path.join(browserTmpDir, 'start.html')
+          ]);
+        });
+      });
     });
 
     describe('Opera', function() {
+      var browsers;
       var opera;
 
-      beforeEach(function() {
-        var browsers = knownBrowsers('any', config);
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
 
-        opera = find(browsers, function(browser) {
-          return browser.name === 'Opera';
-        });
+        browsers = knownBrowsers('any', config);
+        opera = findBrowser(browsers, 'Opera');
+      }
+
+      beforeEach(function() {
+        setup();
       });
 
       it('exists', function() {
@@ -166,17 +275,42 @@ describe('knownBrowsers', function() {
           '--user-data-dir=' + browserTmpDir, '-pd', browserTmpDir, url
         ]);
       });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('Opera');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(opera.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', '--user-data-dir=' + browserTmpDir, '-pd', browserTmpDir, url
+          ]);
+        });
+      });
     });
 
     describe('PhantomJS', function() {
-      var phantomJS, scriptPath;
+      var browsers;
+      var phantomJS;
+      var scriptPath;
+
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
+
+        browsers = knownBrowsers('any', config);
+        phantomJS = findBrowser(browsers, 'PhantomJS');
+      }
 
       beforeEach(function() {
-        var browsers = knownBrowsers('any', config);
-
-        phantomJS = find(browsers, function(browser) {
-          return browser.name === 'PhantomJS';
-        });
+        setup();
         scriptPath = path.resolve(__dirname, '../../assets/phantom.js');
       });
 
@@ -196,6 +330,7 @@ describe('knownBrowsers', function() {
             return '1234';
           }
         };
+
         expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
           '--remote-debugger-port=1234',
           '--remote-debugger-autorun=true',
@@ -215,23 +350,100 @@ describe('knownBrowsers', function() {
           'arg1', 'arg2', scriptPath, url
         ]);
       });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('PhantomJS');
+          scriptPath = path.resolve(__dirname, '../../assets/phantom.js');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args and browser_args', function() {
+          expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', scriptPath, url
+          ]);
+        });
+
+        it('constructs correct args with phantomjs_debug_port and browser_args', function() {
+          config.get = function(name) {
+            if (name === 'phantomjs_debug_port') {
+              return '1234';
+            } else if (name === 'browser_args') {
+              return {
+                PhantomJS: '--testem'
+              };
+            }
+          };
+
+          expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
+            '--testem',
+            '--remote-debugger-port=1234',
+            '--remote-debugger-autorun=true',
+            scriptPath,
+            url
+          ]);
+        });
+
+        it('constructs correct args with phantomjs_args and browser_args', function() {
+          config.get = function(name) {
+            if (name === 'phantomjs_args') {
+              return ['arg1', 'arg2'];
+            } else if (name === 'browser_args') {
+              return {
+                PhantomJS: '--testem'
+              };
+            }
+          };
+
+          expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', 'arg1', 'arg2', scriptPath, url
+          ]);
+        });
+      });
     });
   });
 
   describe('Windows', function() {
     describe('Internet Explorer', function() {
+      var browsers;
       var internetExplorer;
 
-      beforeEach(function() {
-        var browsers = knownBrowsers('win32', config);
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
 
-        internetExplorer = find(browsers, function(browser) {
-          return browser.name === 'IE';
-        });
+        browsers = knownBrowsers('win32', config);
+        internetExplorer = findBrowser(browsers, 'IE');
+      }
+
+      beforeEach(function() {
+        setup();
       });
 
       it('exists', function() {
         expect(internetExplorer).to.exist();
+      });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('IE');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(internetExplorer.args.call(launcher, config, url)).to.deep.eq([
+            '--testem'
+          ]);
+        });
       });
     });
   });
