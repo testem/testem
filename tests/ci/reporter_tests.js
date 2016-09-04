@@ -402,12 +402,40 @@ describe('test reporters', function() {
         name: 'it skips stuff',
         skipped: true
       });
+
+      reporter.report('phantomjs', {
+        name: 'it handles failures',
+        passed: false,
+        error: {
+          passed: false,
+          message: 'foo',
+          stack: 'bar'
+        }
+      });
+
+      reporter.report('phantomjs', {
+        name: 'it handles undefined errors',
+        passed: false,
+        skipped: undefined,
+        error: undefined,
+        pending: undefined
+      });
+
       reporter.finish();
       var output = stream.read().toString();
 
       assert.match(output, /##teamcity\[testSuiteFinished name='testem\.suite' duration='(\d+(\.\d+)?)'\]/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testStarted name='phantomjs - it skips stuff']/);
       assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it skips stuff']/);
+      assert.match(output, /##teamcity\[testStarted name='phantomjs - it handles failures']/);
+      assert.match(output, /##teamcity\[testFailed name='phantomjs - it handles failures' message='foo' details='bar']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles failures']/);
+      assert.match(output, /##teamcity\[testStarted name='phantomjs - it handles undefined errors']/);
+      assert.match(output, /##teamcity\[testFailed name='phantomjs - it handles undefined errors' message='' details='']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors']/);
     });
   });
 });
