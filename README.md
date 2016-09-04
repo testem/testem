@@ -255,7 +255,10 @@ You can also use a custom page for testing. To do this, first you need to specif
 
 ```json
 {
-  "test_page": "tests.html"
+  "test_page": "tests.html",
+  "launch_in_dev": [
+    "Chrome"
+  ]
 }
 ```
 
