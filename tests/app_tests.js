@@ -74,17 +74,21 @@ describe('App', function() {
       expect(app.paused).to.be.false();
     });
 
-    it('doesn\'t run tests when reset and paused', function(done) {
+    it('doesn\'t run tests when reset and paused', function() {
       app.paused = true;
       var runHook = sandbox.spy(app, 'runHook');
-      app.runTests(null, done);
-      expect(runHook.called).to.be.false();
+
+      return app.runTests().then(function() {
+        expect(runHook.called).to.be.false();
+      });
     });
 
-    it('runs tests when reset and not paused', function(done) {
+    it('runs tests when reset and not paused', function() {
       var runHook = sandbox.spy(app, 'runHook');
-      app.runTests(null, done);
-      expect(runHook.called).to.be.true();
+
+      return app.runTests().then(function() {
+        expect(runHook.called).to.be.true();
+      });
     });
   });
 
