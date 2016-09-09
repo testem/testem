@@ -4,6 +4,7 @@ var Bluebird = require('bluebird');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var tmp = require('tmp');
+var fs = require('fs');
 
 var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 
@@ -66,6 +67,8 @@ describe('Reporter', function() {
         sinon.match.same(reporter.reportFileStream),
         sinon.match.any,
         sinon.match.any);
+
+      fs.unlinkSync('report.xml');
     });
   });
 
