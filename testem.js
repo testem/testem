@@ -15,7 +15,7 @@ program
   .option('--host [hostname]', 'host name - defaults to localhost', String)
   .option('-l, --launch [list]', 'list of launchers to launch(comma separated)')
   .option('-s, --skip [list]', 'list of launchers to skip(comma separated)')
-  .option('-d, --debug [file]', 'output debug to debug log - defaults to testem.log', 'testem.log')
+  .option('-d, --debug [file]', 'output debug to debug log - defaults to testem.log')
   .option('-t, --test_page [page]', 'the html page to drive the tests')
   .option('-g, --growl', 'turn on growl / native notifications');
 

@@ -495,6 +495,33 @@ describe('Config', function() {
       expect(config.get('browser_start_timeout')).to.eq(30);
     });
   });
+
+  describe('debug', function() {
+    describe('when unset', function() {
+      it('is not defined', function() {
+        var config = new Config('dev', {});
+        expect(config.get('debug')).not.to.exist();
+      });
+    });
+
+    describe('when set', function() {
+      it('defaults to testem.log', function() {
+        var config = new Config('dev', {
+          debug: true
+        });
+        expect(config.get('debug')).to.eq('testem.log');
+      });
+    });
+
+    describe('when set and file name specified', function() {
+      it('uses the provided file name', function() {
+        var config = new Config('dev', {
+          debug: 'debug.log'
+        });
+        expect(config.get('debug')).to.eq('debug.log');
+      });
+    });
+  });
 });
 
 function mockTopLevelProgOptions() {
