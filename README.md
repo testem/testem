@@ -396,6 +396,9 @@ If you want to use any of the [PhantomJS command line options](http://phantomjs.
 ]
 ```
 
+You can also customize the phantomjs launcher file by specifying the `phantomjs_launcher` option.
+In this launcher you can change options like the `viewPortSize`. See `assets/phantom.js` for the default launcher.
+
 Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
 
