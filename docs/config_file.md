@@ -86,7 +86,7 @@ Common Configuration Options
     report_file:                 [String]  file to write test results to (stdout)
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
-    phantomjs_launch_script:     [String]  path of custom phantomjs launcher file
+    phantomjs_launch_script:     [String]  path of custom phantomjs launch script
     phantomjs_args:              [Array]   custom arguments for the phantomjs launcher
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
     browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
