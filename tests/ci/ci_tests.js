@@ -357,6 +357,28 @@ describe('ci mode app', function() {
     });
   });
 
+  it('returns with non zero exit code and reports an error when a hook was not executable', function(done) {
+    var reporter = new TestReporter(true);
+    var config = new Config('ci', {
+      port: 0,
+      cwd: path.join('tests/fixtures/basic_test'),
+      before_tests: 'not-found',
+      launch_in_ci: ['phantomjs'],
+      reporter: reporter
+    });
+    config.read(function() {
+      var app = new App(config, function(exitCode) {
+        expect(exitCode).to.eq(1);
+        var result = reporter.results[0].result;
+
+        expect(result.launcherId).to.eq(0);
+        expect(result.error.message).to.contain('not-found');
+        done();
+      });
+      app.start();
+    });
+  });
+
   describe('getExitCode', function() {
 
     it('returns 0 if all passed', function() {

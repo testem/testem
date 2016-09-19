@@ -32,6 +32,8 @@ var skipDefiningReporter = [
 ];
 var examplesPath = path.join(__dirname, '../examples');
 var DEFAULT_CONCURRENY = 10;
+var TIMEOUT = 180000; // npm install is sometimes really slow...
+var RETRIES = 3;
 var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
 
 // show available launchers
@@ -56,7 +58,7 @@ function testExamples(examples, callback) {
 function shellExec(cmd, runOpts) {
   return Bluebird.fromCallback(function(callback) {
     return shell.exec(cmd, runOpts, function(exitCode, output) {
-      if (exitCode) {
+      if (exitCode !== 0) {
         return callback(new Error(
           'Cmd: ' + cmd + ' failed with exit code: ' + exitCode + '\n' + output
         ));
@@ -78,15 +80,15 @@ function testExample(example) {
   }
 
   var examplePath = path.join(examplesPath, example);
-  var runOpts = {silent: true, cwd: examplePath};
+  var runOpts = {silent: true, cwd: examplePath, timeout: TIMEOUT};
 
-  return retry(npmInstall(runOpts), { max_tries: 3 }).then(function() {
+  return retry(npmInstall(runOpts), { max_tries: RETRIES }).then(function() {
     var cmd = testCmd;
     if (skipDefiningReporter.indexOf(example) === -1) {
       cmd += ' --launch phantomjs';
     }
 
-    return retry(runExample(cmd, runOpts), { max_tries: 3 });
+    return retry(runExample(cmd, runOpts), { max_tries: RETRIES });
   }).then(function(testOutput) {
     // output test results
     shell.echo('Testing ' + example);
