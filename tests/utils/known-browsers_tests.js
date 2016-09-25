@@ -102,6 +102,26 @@ describe('knownBrowsers', function() {
         });
       });
 
+      it('allows to provide a custom prefs.js', function(done) {
+        var customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_prefs.js');
+
+        config.get = function(name) {
+          if (name === 'firefox_prefs_js') {
+            return customPrefsJSPath;
+          }
+        };
+
+        firefox.setup.call(launcher, config, function(err) {
+          expect(err).to.be.null();
+          expect(file(path.join(browserTmpDir, 'prefs.js'))).to.equal(
+            'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
+            'user_pref("browser.cache.disk.smart_size.first_run", false);\n' +
+            'user_pref("dom.max_script_run_time", 0);\n'
+          );
+          done();
+        });
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Firefox');

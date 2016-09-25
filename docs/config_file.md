@@ -70,7 +70,7 @@ Common Configuration Options
     config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
-    firefox_profile:             [String]  relative path to firefox profile directory for testem to use. by default one is created automatically.
+    firefox_prefs_js:            [String]  path to firefox custom prefs.js file to be used
     framework:                   [String]  test framework to use
     ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
     parallel:                    [Number]  max number of parallel runners (1)
