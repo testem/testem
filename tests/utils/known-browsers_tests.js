@@ -402,6 +402,20 @@ describe('knownBrowsers', function() {
             '--testem', 'arg1', 'arg2', scriptPath, url
           ]);
         });
+
+        it('constructs correct args with custom launch script', function() {
+          var customScriptPath = './custom_phantom.js';
+
+          config.get = function(name) {
+            if (name === 'phantomjs_launch_script') {
+              return customScriptPath;
+            }
+          };
+
+          expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', customScriptPath, url
+          ]);
+        });
       });
     });
   });
