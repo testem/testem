@@ -94,7 +94,7 @@ describe('knownBrowsers', function() {
       it('creates a config file on setup', function(done) {
         firefox.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'prefs.js'))).to.equal(
+          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal(
             'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
             'user_pref("browser.cache.disk.smart_size.first_run", false);'
           );
@@ -102,18 +102,18 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('allows to provide a custom prefs.js', function(done) {
-        var customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_prefs.js');
+      it('allows to provide a custom user.js', function(done) {
+        var customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_user.js');
 
         config.get = function(name) {
-          if (name === 'firefox_prefs_js') {
+          if (name === 'firefox_user_js') {
             return customPrefsJSPath;
           }
         };
 
         firefox.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'prefs.js'))).to.equal(
+          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal(
             'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
             'user_pref("browser.cache.disk.smart_size.first_run", false);\n' +
             'user_pref("dom.max_script_run_time", 0);\n'
