@@ -135,7 +135,7 @@ function takeOverConsole() {
         doDefault = Testem.handleConsoleMessage(message);
       }
       if (doDefault !== false) {
-        args.unshift(method);
+        args.unshift('console-' + method);
         emit.apply(console, args);
         if (original && original.apply) {
           // Do this for normal browsers
