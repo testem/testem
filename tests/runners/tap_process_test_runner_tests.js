@@ -165,7 +165,7 @@ describe('tap process test runner', function() {
                 ok: false,
                 operator: 'equal',
                 passed: false,
-                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n'
+                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n'
               }],
               launcherId: launcher.id,
               name: 'hello() should be "hello world"',
