@@ -94,6 +94,14 @@ Common Configuration Options
     watch_files:                 [Array]   list of files or file patterns to watch changes of (defaults to src_files)
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
 
+### HTTPS:
+
+Testem allows the test page to be served via HTTPS. To enable HTTPS either the pfx or the cert and key options need to be specificed. More details around HTTPS in Node can be found here: https://nodejs.org/dist/latest-v4.x/docs/api/https.html#https_https_createserver_options_requestlistener
+
+    cert:                        [String]  path to a public x509 certificate to use
+    key:                         [String]  path to a private key to use for SS
+    pfx:                         [String]  path to certificate, private key and CA certificates to use for SSL
+
 ### Available hooks:
 
     on_start:             Runs on suite startup
