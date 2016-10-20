@@ -156,4 +156,8 @@ describe('ProcessCtl', function() {
       });
     });
   });
+
+  describe('onStdOut', function() {
+    // TODO
+  });
 });

@@ -1,12 +1,14 @@
 {
     "launchers": {
         "Node": {
-            "command": "node tests.js",
+            "exe": "node",
+            "args": ["tests.js"],
             "protocol": "tap",
             "cwd": "tests/fixtures/tape/"
         },
         "NodePlain": {
-            "command": "node tests.js",
+            "exe": "node",
+            "args": ["tests.js"],
             "cwd": "tests/fixtures/tape/"
         }
     },

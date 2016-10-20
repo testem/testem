@@ -1,8 +1,7 @@
 'use strict';
 
+var isNodeLt = require('../../lib/utils/is-node-lt');
+
 module.exports = function() {
-  var nodeVer = process.version.substr(1).split('.').map(function(num) {
-    return parseInt(num, 10);
-  });
-  return (nodeVer[0] < 4);
+  return isNodeLt(4);
 };

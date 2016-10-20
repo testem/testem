@@ -7,7 +7,8 @@ var assert = require('chai').assert;
 var path = require('path');
 var sinon = require('sinon');
 
-var isWin = /^win/.test(process.platform);
+var os = require('os');
+var isWin = require('../lib/utils/is-win')();
 
 describe('Launcher', function() {
   describe('via command', function() {
@@ -70,15 +71,7 @@ describe('Launcher', function() {
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
         assert.equal(code, 0);
-        assert.equal(stdout, 'hello\n');
-        done();
-      });
-    });
-    it('returns stderr on processExit', function(done) {
-      settings.command = 'node -e "console.error(\'hello\')"';
-      launcher.start();
-      launcher.on('processExit', function(code, stdout, stderr) {
-        assert.equal(stderr, 'hello\n');
+        assert.equal(stdout, 'hello' + os.EOL);
         done();
       });
     });
@@ -89,19 +82,34 @@ describe('Launcher', function() {
       var originalEnv = process.env;
       process.env.TESTEM_USER_CONFIG = 'copied';
 
-      settings.command = 'node -e "console.log(process.env.TESTEM_USER_CONFIG)"';
+      var command = 'echo ';
+      if (isWin) {
+        command += '%TESTEM_USER_CONFIG%';
+      } else {
+        command += '$TESTEM_USER_CONFIG';
+      }
+
+      settings.command = command;
       config = new Config();
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
         assert.equal(code, 0);
-        assert.equal(stdout, 'copied\n');
+        assert.equal(stdout, 'copied' + os.EOL);
         process.env = originalEnv;
         done();
       });
     });
 
     it('adds the local node modules to the path', function(done) {
-      settings.command = 'node -e "console.log(process.env.PATH)"';
+      var command = 'echo ';
+      if (isWin) {
+        command += '%PATH%';
+      } else {
+        command += '$PATH';
+      }
+
+      settings.command = command;
+
       config = new Config();
       launcher.start();
       launcher.on('processExit', function(code, stdout) {
@@ -109,15 +117,6 @@ describe('Launcher', function() {
         expect(stdout).to.contain(path.join(process.cwd(), 'node_modules', '.bin'));
         done();
       });
-    });
-
-    it('sends SIGKILL when SIGTERM is ignored', function(done) {
-      settings.command = 'node ' + path.join(__dirname, 'fixtures/processes/ignore_sigterm.js');
-      launcher.start();
-      launcher.processCtl.killTimeout = 200;
-      setTimeout(function() {
-        launcher.kill(null, done);
-      }, 200);
     });
   });
 
@@ -223,5 +222,22 @@ describe('Launcher', function() {
       });
     });
 
+    it('returns stderr on processExit', function(done) {
+      settings.args = ['-e', 'console.error(\'hello\')'];
+      launcher.start();
+      launcher.on('processExit', function(code, stdout, stderr) {
+        assert.equal(stderr, 'hello\n');
+        done();
+      });
+    });
+
+    it('sends SIGKILL when SIGTERM is ignored', function(done) {
+      settings.args = [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')];
+      launcher.start();
+      launcher.processCtl.killTimeout = 200;
+      setTimeout(function() {
+        launcher.kill(null, done);
+      }, 200);
+    });
   });
 });
