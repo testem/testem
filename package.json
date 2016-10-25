@@ -42,7 +42,7 @@
     "npmlog": "^4.0.0",
     "printf": "^0.2.3",
     "rimraf": "^2.4.4",
-    "socket.io": "1.5.0",
+    "socket.io": "^1.5.1",
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
     "tap-parser": "^1.1.3",
