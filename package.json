@@ -46,7 +46,7 @@
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
     "tap-parser": "^1.1.3",
-    "xmldom": "^0.1.19"
+    "xmldom": "^0.1.22"
   },
   "files": [
     "lib",
