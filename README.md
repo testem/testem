@@ -438,7 +438,6 @@ It is possible to send coverage reports or run other javascript in the browser b
 
 ```javascript
 Testem.afterTests(
-  //Asynchronously
   function(config, data, callback) {
     var coverage = window.__coverage__;
     var postBody = JSON.stringify(coverage);
@@ -453,9 +452,6 @@ Testem.afterTests(
         xhr.send(postBody);
     }
 });
-
-//Synchronously
-Testem.afterTests(doStuff);
 ```
 
 
