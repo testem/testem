@@ -4,10 +4,8 @@ os:
 osx_image: xcode7.3
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "4"
-  - "6"
+  - '4'
+  - '6'
 matrix:
   fast_finish: true
   include:
