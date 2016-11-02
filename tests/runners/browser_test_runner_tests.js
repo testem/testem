@@ -5,6 +5,7 @@ var TapReporter = require('../../lib/reporters/tap_reporter');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var Bluebird = require('bluebird');
+var path = require('path');
 
 var EventEmitter = require('events').EventEmitter;
 var Config = require('../../lib/config');
@@ -203,7 +204,9 @@ describe('browser test runner', function() {
 
     it('starts the launcher once', function() {
       sandbox.stub(launcher, 'start', function() {
-        return Bluebird.resolve();
+        return Bluebird.resolve({
+          on: function() {}
+        });
       });
 
       runner.start();
@@ -211,9 +214,8 @@ describe('browser test runner', function() {
       expect(launcher.start.calledOnce).to.be.true();
     });
 
-    it('fails when the browser fails to start', function(done) {
-      launcher.stdout = 'Not allowed to start.';
 
+    it('fails without command or exe', function(done) {
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
           error: undefined,
@@ -222,8 +224,28 @@ describe('browser test runner', function() {
           launcherId: launcher.id,
           logs: [],
           name:
-            'Browser undefined failed to connect. testem.js not loaded?\n' +
-            'Stdout: \nNot allowed to start.',
+            'Browser undefined failed with error Error: No command or exe/args specified for launcher ci.',
+          passed: false,
+          pending: undefined,
+          runDuration: undefined,
+          skipped: undefined
+        });
+        done();
+      });
+    });
+
+    it('fails when the browser fails to start', function(done) {
+      launcher.settings.exe = 'not-found';
+      runner.start(function() {
+        expect(reporter.results[0].result).to.deep.eq({
+          error: undefined,
+          failed: 1,
+          items: undefined,
+          launcherId: launcher.id,
+          logs: [],
+          name:
+            'Browser \"not-found http://localhost:7357/' + launcher.id +
+            '\" failed with error Error: spawn not-found ENOENT.',
           passed: false,
           pending: undefined,
           runDuration: undefined,
@@ -234,6 +256,8 @@ describe('browser test runner', function() {
     });
 
     it('allows to cancel the timeout', function(done) {
+      launcher.settings.exe = 'node';
+      launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results.length).to.eq(0);
         done();
@@ -272,6 +296,8 @@ describe('browser test runner', function() {
     });
 
     it('fails when the browser fails to reconnect', function(done) {
+      launcher.settings.exe = 'node';
+      launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
           error: undefined,
@@ -280,8 +306,8 @@ describe('browser test runner', function() {
           launcherId: launcher.id,
           logs: [],
           name:
-            'Browser undefined disconnected unexpectedly.\n' +
-            'Stderr: \nBrowser crashed.',
+            'Browser \"node ' + path.join(__dirname, 'fixtures/processes/just-running.js') +
+            ' http://localhost:7357/' + launcher.id + '\" disconnected unexpectedly.',
           passed: false,
           pending: undefined,
           runDuration: undefined,
@@ -291,12 +317,13 @@ describe('browser test runner', function() {
       });
 
       runner.tryAttach('browser', launcher.id, socket);
-      launcher.stderr = 'Browser crashed.';
 
       runner.onDisconnect();
     });
 
     it('allows to cancel the timeout', function(done) {
+      launcher.settings.exe = 'node';
+      launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results.length).to.eq(0);
         done();
@@ -326,19 +353,6 @@ describe('browser test runner', function() {
     it('ignores multiple finish calls', function(done) {
       runner.start(done);
       runner.finish();
-      runner.finish();
-    });
-
-    it('removes created event listeners', function(done) {
-      var countBefore = runner.launcher.listeners('processExit').length;
-      runner.start(function(err) {
-        if (err) {
-          return done(err);
-        }
-        var countAfter = runner.launcher.listeners('processExit').length;
-        expect(countAfter).to.eq(countBefore);
-        done();
-      });
       runner.finish();
     });
   });

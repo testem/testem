@@ -42,8 +42,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
@@ -86,8 +86,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.once('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.once('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([{
@@ -102,8 +102,8 @@ describe('tap process test runner', function() {
           }
         }]);
 
-        launcher.once('processStarted', function(process) {
-          process.stdin.end(tap);
+        launcher.processCtl.once('processStarted', function(process) {
+          process.process.stdin.end(tap);
         });
         runner.start(function() {
           expect(reporter.results[1]).to.deep.equal({
@@ -141,8 +141,8 @@ describe('tap process test runner', function() {
         '# pass  1',
         '# fail  1'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
@@ -218,8 +218,8 @@ describe('tap process test runner', function() {
         '# pass  0',
         '# fail  2'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         var total = reporter.total;
@@ -257,8 +257,8 @@ describe('tap process test runner', function() {
         '# pass 1',
         '# fail 1'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         var total = reporter.total;
@@ -323,8 +323,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(startCalled).to.equal(true);
@@ -387,39 +387,6 @@ describe('tap process test runner', function() {
         expect(failingTest.result.launcherId).to.equal(launcher.id);
         expect(failingTest.result.name).to.equal('error');
         expect(failingTest.result.error.message).to.match(/ENOENT/);
-        done();
-      });
-    });
-  });
-
-  describe('finish', function() {
-    var reporter, config;
-
-    beforeEach(function() {
-      reporter = new FakeReporter();
-      config = new Config('ci', {
-        reporter: reporter
-      });
-    });
-
-    it('removes created event listeners', function(done) {
-      var settings = {
-        exe: 'nope-not-existing'
-      };
-      var launcher = new Launcher('nope-not-existing', settings, config);
-      var runner = new TapProcessTestRunner(launcher, reporter);
-
-      var startedCountBefore = runner.launcher.listeners('processStarted').length;
-      var errorCountBefore = runner.launcher.listeners('processError').length;
-      runner.start(function(err) {
-        if (err) {
-          return done(err);
-        }
-
-        var startedCountAfter = runner.launcher.listeners('processStarted').length;
-        var errorCountAfter = runner.launcher.listeners('processError').length;
-        expect(startedCountAfter).to.eq(startedCountBefore);
-        expect(errorCountAfter).to.eq(errorCountBefore);
         done();
       });
     });

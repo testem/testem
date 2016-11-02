@@ -141,27 +141,4 @@ describe('ProcessTestRunner', function() {
       done();
     });
   });
-
-  it('removes created event listeners', function(done) {
-    var settings = {
-      exe: 'node',
-      args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
-    };
-    var launcher = new Launcher('nope-fail', settings, config);
-    var runner = new ProcessTestRunner(launcher, reporter);
-
-    var exitCountBefore = runner.launcher.listeners('processExit').length;
-    var errorCountBefore = runner.launcher.listeners('processError').length;
-    runner.start(function(err) {
-      if (err) {
-        return done(err);
-      }
-
-      var exitCountAfter = runner.launcher.listeners('processExit').length;
-      var errorCountAfter = runner.launcher.listeners('processError').length;
-      expect(exitCountAfter).to.eq(exitCountBefore);
-      expect(errorCountAfter).to.eq(errorCountBefore);
-      done();
-    });
-  });
 });
