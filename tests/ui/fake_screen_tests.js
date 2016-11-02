@@ -10,8 +10,7 @@ describe('FakeScreen', !isWin ? function() {
     screen.$setSize(10, 10);
   });
   it('has initially', function() {
-    expect(screen.buffer).to.deep.equal(
-      ['          ',
+    expect(screen.buffer).to.deep.equal([
       '          ',
       '          ',
       '          ',
@@ -20,7 +19,9 @@ describe('FakeScreen', !isWin ? function() {
       '          ',
       '          ',
       '          ',
-      '          ']);
+      '          ',
+      '          '
+    ]);
   });
   it('does stuff', function() {
     screen.position(0, 1);
