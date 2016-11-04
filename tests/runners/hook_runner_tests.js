@@ -9,8 +9,8 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 var tmp = require('tmp');
 
-var HookRunner = require('../lib/hook_runner');
-var isWin = require('../lib/utils/is-win')();
+var HookRunner = require('../../lib/runners/hook_runner');
+var isWin = require('../../lib/utils/is-win')();
 
 var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 // fs.access would be enough, but isn't supported in Node 0.10
@@ -225,7 +225,7 @@ describe('HookRunner', function() {
       return tmpNameAsync().then(function(tmpPath) {
         hook = {
           exe: 'node',
-          args: [ path.join(__dirname, 'fixtures/processes/background-hook.js'), tmpPath ],
+          args: [ path.join(__dirname, '../fixtures/processes/background-hook.js'), tmpPath ],
           wait_for_text: 'Ready!',
           wait_for_text_timeout: 5000
         };

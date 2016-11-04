@@ -62,7 +62,7 @@ describe('ProcessTestRunner', function() {
             text: 'foobar',
             type: 'log'
           }],
-          name: 'node-stdout',
+          name: 'error',
           failed: 0,
           passed: 1
         }
@@ -84,14 +84,18 @@ describe('ProcessTestRunner', function() {
         result: {
           launcherId: launcher.id,
           logs: [{
+            text: 'Non-zero exit code: 1',
+            type: 'error'
+          },
+          {
             text: 'foobar',
             type: 'error'
           }],
-          name: 'node-stderr',
+          name: 'error',
           failed: 1,
           passed: 0,
           error: {
-            message: 'Stderr: \n foobar\n'
+            message: 'Non-zero exit code: 1\nStderr: \n foobar\n'
           }
         }
       }]);
@@ -107,8 +111,7 @@ describe('ProcessTestRunner', function() {
     var runner = new ProcessTestRunner(launcher, reporter);
 
     runner.start(function() {
-
-      var expectedMessage = 'Error: \n ' + runner.lastErr + '\n';
+      var expectedMessage = runner.lastErr + '\n';
 
       if (runner.lastStderr) {
         expectedMessage += 'Stderr: \n ' + runner.lastStderr + '\n';
@@ -130,7 +133,7 @@ describe('ProcessTestRunner', function() {
         result: {
           launcherId: launcher.id,
           logs: expectedLogs,
-          name: 'nope-fail',
+          name: 'error',
           failed: 1,
           passed: 0,
           error: {

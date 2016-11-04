@@ -192,7 +192,7 @@ describe('browser test runner', function() {
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
       reporter = new TapReporter();
-      var config = new Config('ci', { reporter: reporter, browser_start_timeout: 0.1 });
+      var config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter);
       socket = new EventEmitter();
@@ -218,17 +218,17 @@ describe('browser test runner', function() {
     it('fails without command or exe', function(done) {
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
-          error: undefined,
+          error: {
+            message: 'Error: No command or exe/args specified for launcher ci\n'
+          },
           failed: 1,
-          items: undefined,
           launcherId: launcher.id,
-          logs: [],
-          name:
-            'Browser undefined failed with error Error: No command or exe/args specified for launcher ci.',
-          passed: false,
-          pending: undefined,
-          runDuration: undefined,
-          skipped: undefined
+          logs: [{
+            text: 'Error: No command or exe/args specified for launcher ci',
+            type: 'error'
+          }],
+          name: 'error',
+          passed: 0
         });
         done();
       });
@@ -237,19 +237,62 @@ describe('browser test runner', function() {
     it('fails when the browser fails to start', function(done) {
       launcher.settings.exe = 'not-found';
       runner.start(function() {
-        expect(reporter.results[0].result).to.deep.eq({
-          error: undefined,
+        expect(reporter.results[0].result).to.shallowDeepEqual({
+          error: {},
           failed: 1,
           items: undefined,
           launcherId: launcher.id,
-          logs: [],
-          name:
-            'Browser \"not-found http://localhost:7357/' + launcher.id +
-            '\" failed with error Error: spawn not-found ENOENT.',
-          passed: false,
-          pending: undefined,
-          runDuration: undefined,
-          skipped: undefined
+          logs: [{
+            type: 'error'
+          }],
+          passed: 0
+        });
+        expect(reporter.results[0].result.error.message).to.match(/ENOENT/);
+        expect(reporter.results[0].result.logs[0].text).to.match(/ENOENT/);
+        done();
+      });
+    });
+
+    it('fails when the browser fails to connect', function(done) {
+      launcher.settings.exe = 'node';
+      launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
+      runner.start(function() {
+        expect(reporter.results[0].result).to.deep.eq({
+          error: {
+            message: 'Error: Browser failed to connect within 2s. testem.js not loaded?\n'
+          },
+          failed: 1,
+          launcherId: launcher.id,
+          logs: [{
+            text: 'Error: Browser failed to connect within 2s. testem.js not loaded?',
+            type: 'error'
+          }],
+          name: 'error',
+          passed: 0
+        });
+        done();
+      });
+    });
+
+    it('fails when the browser exits unexpectedly', function(done) {
+      launcher.settings.exe = 'node';
+      launcher.settings.args = ['-e', 'console.log(\'test\')'];
+      runner.start(function() {
+        expect(reporter.results[0].result).to.deep.eq({
+          error: {
+            message: 'Error: Browser exited unexpectedly\nStdout: \n test\n\n'
+          },
+          failed: 1,
+          launcherId: launcher.id,
+          logs: [{
+            text: 'Error: Browser exited unexpectedly',
+            type: 'error'
+          }, {
+            text: 'test\n',
+            type: 'log'
+          }],
+          name: 'error',
+          passed: 0
         });
         done();
       });
@@ -300,18 +343,17 @@ describe('browser test runner', function() {
       launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
-          error: undefined,
+          error: {
+            message: 'Error: Browser disconnected\n'
+          },
           failed: 1,
-          items: undefined,
           launcherId: launcher.id,
-          logs: [],
-          name:
-            'Browser \"node ' + path.join(__dirname, 'fixtures/processes/just-running.js') +
-            ' http://localhost:7357/' + launcher.id + '\" disconnected unexpectedly.',
-          passed: false,
-          pending: undefined,
-          runDuration: undefined,
-          skipped: undefined
+          logs: [{
+            text: 'Error: Browser disconnected',
+            type: 'error'
+          }],
+          name: 'error',
+          passed: 0
         });
         done();
       });
