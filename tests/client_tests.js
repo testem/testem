@@ -66,4 +66,25 @@ describe('Testem Client', function() {
 
     sinon.assert.calledWithExactly(global.decycle, sinon.match.any, eventMaxDepth);
   });
+
+  it('runs registered hooks after all tests finished', function(done) {
+    var firstCalled = false;
+    var secondCalled = false;
+    Testem.afterTests(function(config, data, cb) {
+      firstCalled = true;
+      cb();
+    });
+
+    Testem.afterTests(function(config, data, cb) {
+      secondCalled = true;
+      cb();
+    });
+
+    Testem.on('after-tests-complete', function() {
+      expect(firstCalled).to.be.true();
+      expect(secondCalled).to.be.true();
+      done();
+    });
+    Testem.runAfterTests();
+  });
 });
