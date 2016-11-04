@@ -2,11 +2,13 @@
 
 var chai = require('chai');
 var sinonChai = require('sinon-chai');
-var dirtyChai = require('dirty-chai');
 var chaiFiles = require('chai-files');
+var chaiShallowDeepEqual = require('chai-shallow-deep-equal');
+var dirtyChai = require('dirty-chai');
 
 chai.use(sinonChai);
 chai.use(chaiFiles);
+chai.use(chaiShallowDeepEqual);
 chai.use(dirtyChai);
 
 var path = require('path');

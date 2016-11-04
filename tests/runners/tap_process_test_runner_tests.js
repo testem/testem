@@ -42,8 +42,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
@@ -86,8 +86,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.once('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.once('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([{
@@ -102,8 +102,8 @@ describe('tap process test runner', function() {
           }
         }]);
 
-        launcher.once('processStarted', function(process) {
-          process.stdin.end(tap);
+        launcher.processCtl.once('processStarted', function(process) {
+          process.process.stdin.end(tap);
         });
         runner.start(function() {
           expect(reporter.results[1]).to.deep.equal({
@@ -141,8 +141,8 @@ describe('tap process test runner', function() {
         '# pass  1',
         '# fail  1'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(reporter.results).to.deep.equal([
@@ -218,8 +218,8 @@ describe('tap process test runner', function() {
         '# pass  0',
         '# fail  2'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         var total = reporter.total;
@@ -257,8 +257,8 @@ describe('tap process test runner', function() {
         '# pass 1',
         '# fail 1'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         var total = reporter.total;
@@ -323,8 +323,8 @@ describe('tap process test runner', function() {
         '',
         '# ok'
       ].join('\n');
-      launcher.on('processStarted', function(process) {
-        process.stdin.end(tap);
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
       });
       runner.start(function() {
         expect(startCalled).to.equal(true);

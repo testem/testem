@@ -45,19 +45,21 @@ describe('Launcher', function() {
     });
     it('substitutes variables', function(done) {
       settings.command = 'echo <url> <port>';
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/http:\/\/blah.com\/-1 7357(\r\n|\n)/);
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(stdout).to.match(/http:\/\/blah.com\/-1 7357(\r\n|\n)/);
+          done();
+        });
       });
     });
     it('substitutes variables with a random id for browsers', function(done) {
       sandbox.stub(launcher, 'isProcess').returns(false);
       settings.command = 'echo <url> <port>';
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/);
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(stdout).to.match(/http:\/\/blah.com\/([0-9]+) 7357(\r\n|\n)/);
+          done();
+        });
       });
     });
     it('executes setup', function(done) {
@@ -68,11 +70,12 @@ describe('Launcher', function() {
       launcher.start();
     });
     it('returns exit code, stdout and stderr on processExit', function(done) {
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        assert.equal(code, 0);
-        assert.equal(stdout, 'hello' + os.EOL);
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          assert.equal(code, 0);
+          assert.equal(stdout, 'hello' + os.EOL);
+          done();
+        });
       });
     });
     it('returns commandLine', function() {
@@ -91,12 +94,13 @@ describe('Launcher', function() {
 
       settings.command = command;
       config = new Config();
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        assert.equal(code, 0);
-        assert.equal(stdout, 'copied' + os.EOL);
-        process.env = originalEnv;
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          assert.equal(code, 0);
+          assert.equal(stdout, 'copied' + os.EOL);
+          process.env = originalEnv;
+          done();
+        });
       });
     });
 
@@ -111,11 +115,12 @@ describe('Launcher', function() {
       settings.command = command;
 
       config = new Config();
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(code).to.eq(0);
-        expect(stdout).to.contain(path.join(process.cwd(), 'node_modules', '.bin'));
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(code).to.eq(0);
+          expect(stdout).to.contain(path.join(process.cwd(), 'node_modules', '.bin'));
+          done();
+        });
       });
     });
   });
@@ -131,18 +136,20 @@ describe('Launcher', function() {
     });
 
     it('should launch and also kill it', function(done) {
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/hello http:\/\/blah.com\/-1+(\r\n|\n)/);
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(stdout).to.match(/hello http:\/\/blah.com\/-1+(\r\n|\n)/);
+          done();
+        });
       });
     });
     it('should substitute variables for args', function(done) {
       settings.args = ['-e', echoArgs, '<port>', '<url>'];
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.match(/7357 http:\/\/blah.com\/-1 http:\/\/blah.com\/-1+(\r\n|\n)/);
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(stdout).to.match(/7357 http:\/\/blah.com\/-1 http:\/\/blah.com\/-1+(\r\n|\n)/);
+          done();
+        });
       });
     });
     it('calls args as function with config', function(done) {
@@ -151,10 +158,11 @@ describe('Launcher', function() {
         return ['-e', echoArgs, 'hello'];
       };
 
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        expect(stdout).to.eq('hello\n');
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          expect(stdout).to.eq('hello\n');
+          done();
+        });
       });
     });
 
@@ -163,11 +171,12 @@ describe('Launcher', function() {
         return ['-e', echoArgs, 'hello'];
       };
 
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        assert.equal(code, 0);
-        assert.equal(stdout, 'hello\n');
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          assert.equal(code, 0);
+          assert.equal(stdout, 'hello\n');
+          done();
+        });
       });
     });
 
@@ -176,11 +185,12 @@ describe('Launcher', function() {
         return ['-e', 'console.error(process.argv.slice(1).join(\' \'))', 'hello'];
       };
 
-      launcher.start();
-      launcher.on('processExit', function(code, stdout, stderr) {
-        assert.equal(stdout, '');
-        assert.equal(stderr, 'hello\n');
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout, stderr) {
+          assert.equal(stdout, '');
+          assert.equal(stderr, 'hello\n');
+          done();
+        });
       });
     });
 
@@ -197,11 +207,12 @@ describe('Launcher', function() {
       settings.args = function() {
         return ['-e', 'console.log(1)'];
       };
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        assert.equal(stdout, '1\n');
-        assert.equal(launcher.commandLine(), '"node -e console.log(1)"');
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          assert.equal(stdout, '1\n');
+          assert.equal(launcher.commandLine(), '"node -e console.log(1)"');
+          done();
+        });
       });
     } : function() {
       xit('TODO: Fix and re-enable for windows');
@@ -212,32 +223,25 @@ describe('Launcher', function() {
       process.env.TESTEM_USER_CONFIG = 'copied';
 
       settings.args = ['-e', 'console.log(process.env.TESTEM_USER_CONFIG)'];
-      launcher.start();
-      launcher.on('processExit', function(code, stdout) {
-        assert.equal(code, 0);
-        assert.equal(stdout, 'copied\n');
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout) {
+          assert.equal(code, 0);
+          assert.equal(stdout, 'copied\n');
 
-        process.env = originalEnv;
-        done();
+          process.env = originalEnv;
+          done();
+        });
       });
     });
 
     it('returns stderr on processExit', function(done) {
       settings.args = ['-e', 'console.error(\'hello\')'];
-      launcher.start();
-      launcher.on('processExit', function(code, stdout, stderr) {
-        assert.equal(stderr, 'hello\n');
-        done();
+      launcher.start().then(function(launchedProcess) {
+        launchedProcess.on('processExit', function(code, stdout, stderr) {
+          assert.equal(stderr, 'hello\n');
+          done();
+        });
       });
-    });
-
-    it('sends SIGKILL when SIGTERM is ignored', function(done) {
-      settings.args = [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')];
-      launcher.start();
-      launcher.processCtl.killTimeout = 200;
-      setTimeout(function() {
-        launcher.kill(null, done);
-      }, 200);
     });
   });
 });
