@@ -84,7 +84,7 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "tape": "^4.0.0",
-    "tmp": "0.0.29"
+    "tmp": "0.0.30"
   },
   "bin": {
     "testem": "./testem.js"
