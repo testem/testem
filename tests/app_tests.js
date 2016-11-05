@@ -7,6 +7,7 @@ var Bluebird = require('bluebird');
 
 var Config = require('../lib/config');
 var App = require('../lib/app');
+var RunTimeout = require('../lib/utils/run-timeout');
 
 var FakeReporter = require('./support/fake_reporter');
 
@@ -54,6 +55,104 @@ describe('App', function() {
       app.triggerRun('one');
       app.triggerRun('two');
       expect(app.stopRunners).to.have.been.calledOnce();
+    });
+  });
+
+  describe('singleRun', function() {
+    var runner;
+    beforeEach(function() {
+      config = new Config('dev', {}, {
+        reporter: new FakeReporter()
+      });
+      app = new App(config);
+      runner = {
+        start: function() {
+          return Bluebird.resolve().delay(100).then(function() {
+            if (this.killed) {
+              throw new Error('Killed');
+            }
+
+            return;
+          }.bind(this));
+        },
+        exit: function() {
+          this.killed = true;
+
+          return Bluebird.resolve();
+        }
+      };
+      app.runners = [runner];
+
+      sandbox.spy(runner, 'start');
+      sandbox.spy(runner, 'exit');
+    });
+
+    it('times out slow runners', function() {
+      return Bluebird.using(RunTimeout.with(0.005), function(timeout) {
+        timeout.on('timeout', function() {
+          app.killRunners();
+        });
+
+        return app.singleRun(timeout);
+      }).then(function() {
+        expect('Should never be called').to.be.true();
+      }, function(err) {
+        expect(err.message).to.eq('Killed');
+        expect(err.hideFromReporter).not.to.exist();
+        expect(runner.start).to.have.been.called();
+        expect(runner.exit).to.have.been.called();
+      });
+    });
+
+    it('doesn\'t start additional runners when timed out', function() {
+      return Bluebird.using(RunTimeout.with(0), function(timeout) {
+        timeout.on('timeout', function() {
+          app.killRunners();
+        });
+        timeout.setTimedOut();
+
+        return app.singleRun(timeout);
+      }).then(function() {
+        expect('Should never be called').to.be.true();
+      }, function(err) {
+        expect(err.message).to.eq('Run timed out.');
+        expect(err.hideFromReporter).not.to.exist();
+        expect(runner.start).to.not.have.been.called();
+        expect(runner.exit).to.have.been.called();
+      });
+    });
+
+    it('resolves when restarting', function() {
+      app.restarting = true;
+
+      return Bluebird.using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
+        timeout.on('timeout', function() {
+          app.killRunners();
+        });
+        return app.singleRun(timeout);
+      }).then(function() {
+        expect(runner.start).to.not.have.been.called();
+        expect(runner.exit).to.not.have.been.called();
+      });
+    });
+
+    it('rejects when exiting', function() {
+      app.exited = true;
+
+      return Bluebird.using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
+        timeout.timedOut = true;
+        timeout.on('timeout', function() {
+          app.killRunners();
+        });
+        return app.singleRun(timeout);
+      }).then(function() {
+        expect('Should never be called').to.be.true();
+      }, function(err) {
+        expect(err.message).to.eq('Run canceled.');
+        expect(err.hideFromReporter).to.be.true();
+        expect(runner.start).to.not.have.been.called();
+        expect(runner.exit).to.not.have.been.called();
+      });
     });
   });
 
