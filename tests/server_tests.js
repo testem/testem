@@ -43,6 +43,9 @@ describe('Server', function() {
           },
           '/api4': {
             target: 'http://localhost:13375'
+          },
+          '/api-error': {
+            target: 'http://localhost:13376'
           }
         }
       });
@@ -327,6 +330,16 @@ describe('Server', function() {
         };
         request.get(options, function(err, req, text) {
           expect(text).to.equal('Not found: /api3/test');
+          done();
+        });
+      });
+
+      it('returns an error when a requst can not be proxied', function(done) {
+        var options = {
+          url: baseUrl + 'api-error/test'
+        };
+        request.get(options, function(err, req, text) {
+          expect(text).to.match(/ECONNREFUSED/);
           done();
         });
       });
