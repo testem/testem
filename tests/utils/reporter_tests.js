@@ -68,7 +68,9 @@ describe('Reporter', function() {
         sinon.match.any,
         sinon.match.any);
 
-      fs.unlinkSync('report.xml');
+      return reporter.close().then(function() {
+        fs.unlinkSync('report.xml');
+      });
     });
   });
 

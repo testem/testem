@@ -300,7 +300,7 @@ describe('browser test runner', function() {
 
     it('allows to cancel the timeout', function(done) {
       launcher.settings.exe = 'node';
-      launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
+      launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results.length).to.eq(0);
         done();
