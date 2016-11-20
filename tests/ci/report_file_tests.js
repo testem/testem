@@ -3,6 +3,7 @@
 var fs = require('fs');
 var App = require('../../lib/app');
 var Config = require('../../lib/config');
+var Bluebird = require('bluebird');
 var expect = require('chai').expect;
 var rimraf = require('rimraf');
 var path = require('path');
@@ -12,41 +13,33 @@ var tmp = require('tmp');
 
 var FakeReporter = require('../support/fake_reporter');
 
+var tmpDirAsync = Bluebird.promisify(tmp.dir);
+var tmpFileAsync = Bluebird.promisify(tmp.file);
+var rimrafAsync = Bluebird.promisify(rimraf);
+
 describe('report file output', function() {
   this.timeout(30000);
 
-  var mainReportDir, reportDir, filename;
-  before(function(done) {
-    tmp.dir(function(err, path) {
-      if (err) {
-        return done(err);
-      }
-      mainReportDir = path;
-      done();
-    });
-  });
-  after(function(done) {
-    rimraf(mainReportDir, function() {
-      // TODO Handle unlink failures
-      done();
-    });
-  });
+  var reportDir, filename;
+  beforeEach(function() {
+    return tmpDirAsync({
+      keep: true
+    }).then(function(dir) {
+      reportDir = dir;
 
-  beforeEach(function(done) {
-    tmp.dir({template: path.join(mainReportDir, '/reports-XXXXXX')}, function(err, dirPath) {
-      if (err) {
-        return done(err);
-      }
-      reportDir = dirPath;
-
-      tmp.file({dir: dirPath, name: 'test-reports.xml'}, function(err, filePath) {
-        if (err) {
-          return done(err);
-        }
-        filename = filePath;
-        done();
+      return tmpFileAsync({
+        dir: dir,
+        name: 'test-reports.xml',
+        keep: true,
+        discardDescriptor: true
       });
+    }).then(function(filePath) {
+      filename = filePath;
     });
+  });
+
+  afterEach(function() {
+    return rimrafAsync(reportDir);
   });
 
   it('allows passing in report_file from config', function(done) {
