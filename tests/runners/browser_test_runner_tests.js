@@ -37,8 +37,8 @@ describe('browser test runner', function() {
         reporter: reporter
       });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      ffRunner = new BrowserTestRunner(launcher, reporter);
-      chromeRunner = new BrowserTestRunner(launcher, reporter);
+      ffRunner = new BrowserTestRunner(launcher, reporter, null, null, config);
+      chromeRunner = new BrowserTestRunner(launcher, reporter, null, null, config);
     });
 
     it('runners do not interfere with each other', function() {
@@ -72,14 +72,15 @@ describe('browser test runner', function() {
       reporter = new TapReporter();
 
       var id = 1;
-      var launcher = new Launcher('ci', { id: id, protocol: 'browser' }, new Config('ci', {
+      var config = new Config('ci', {
         parallel: 2,
         reporter: reporter
-      }));
+      });
+      var launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
 
       socket = new EventEmitter();
 
-      var runner = new BrowserTestRunner(launcher, reporter);
+      var runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       runner.tryAttach('browser', id, socket);
     });
 
@@ -194,7 +195,7 @@ describe('browser test runner', function() {
       reporter = new TapReporter();
       var config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter);
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       socket = new EventEmitter();
     });
 
@@ -334,7 +335,7 @@ describe('browser test runner', function() {
       reporter = new TapReporter();
       var config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter);
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       socket = new EventEmitter();
     });
 
@@ -389,7 +390,7 @@ describe('browser test runner', function() {
       var reporter = new TapReporter();
       var config = new Config('ci', { reporter: reporter });
       var launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter, 1, true);
+      runner = new BrowserTestRunner(launcher, reporter, 1, true, config);
     });
 
     it('ignores multiple finish calls', function(done) {
