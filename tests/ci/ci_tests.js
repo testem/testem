@@ -180,6 +180,33 @@ describe('ci mode app', function() {
         app.start();
       });
     });
+
+    it('forwards console messages to the reporter', function(done) {
+      var reporter = new TestReporter(true);
+      var dir = path.join('tests/fixtures/console-test');
+      var config = new Config('ci', {
+        file: path.join(dir, 'testem.json'),
+        port: 0,
+        cwd: dir,
+        launch_in_ci: ['phantomjs'],
+        reporter: reporter
+      });
+
+      config.read(function() {
+        var app = new App(config, function(exitCode) {
+          expect(exitCode).to.eq(0);
+          expect(reporter.results[0].result.logs).to.deep.eq([
+            { type: 'log', text: '\'log - test\'\n' },
+            { type: 'warn', text: '\'warn - test\'\n' },
+            { type: 'error', text: '\'error - test\'\n' },
+            { type: 'info', text: '\'info - test\'\n' }
+          ]);
+
+          done();
+        });
+        app.start();
+      });
+    });
   });
 
   it('fails with explicitly defined missing launchers', function(done) {
