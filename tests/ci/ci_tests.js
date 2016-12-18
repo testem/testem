@@ -251,7 +251,7 @@ describe('ci mode app', function() {
       reporter: fakeReporter
     });
     var app = new App(config, function() {
-      assert.strictEqual(app.reporter, fakeReporter);
+      assert.strictEqual(app.reporter.reporters[0], fakeReporter);
       done();
     });
 
@@ -409,29 +409,40 @@ describe('ci mode app', function() {
 
     it('returns 0 if all passed', function() {
       var app = new App(new Config('ci'));
-      var reporter = { total: 1, pass: 1 };
-      app.reporter = reporter;
-      assert.equal(app.getExitCode(), null);
-    });
-
-    it('returns 0 if all skipped', function() {
-      var app = new App(new Config('ci'));
-      var reporter = { total: 1, skipped: 1 };
-      app.reporter = reporter;
+      app.reporter = {
+        hasPassed: function() {
+          return true;
+        },
+        hasTests: function() {
+          return true;
+        }
+      };
       assert.equal(app.getExitCode(), null);
     });
 
     it('returns 1 if fails', function() {
       var app = new App(new Config('ci'));
-      var reporter = { total: 1, pass: 0 };
-      app.reporter = reporter;
+      app.reporter = {
+        hasPassed: function() {
+          return false;
+        },
+        hasTests: function() {
+          return true;
+        }
+      };
       assert.match(app.getExitCode(), /Not all tests passed/);
     });
 
     it('returns 0 if no tests ran', function() {
       var app = new App(new Config('ci'));
-      var reporter = { total: 0, pass: 0 };
-      app.reporter = reporter;
+      app.reporter = {
+        hasPassed: function() {
+          return true;
+        },
+        hasTests: function() {
+          return false;
+        }
+      };
       assert.equal(app.getExitCode(), null);
     });
 
@@ -439,11 +450,16 @@ describe('ci mode app', function() {
       var app = new App(new Config('ci', {
         fail_on_zero_tests: true
       }));
-      var reporter = { total: 0, pass: 0 };
-      app.reporter = reporter;
+      app.reporter = {
+        hasPassed: function() {
+          return true;
+        },
+        hasTests: function() {
+          return false;
+        }
+      };
       assert.match(app.getExitCode(), /No tests found\./);
     });
-
   });
 
   it('runs two browser instances in parallel with different test pages', function(done) {

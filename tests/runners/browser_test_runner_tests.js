@@ -1,7 +1,7 @@
 'use strict';
 
 var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
-var TapReporter = require('../../lib/reporters/tap_reporter');
+var FakeReporter = require('../support/fake_reporter');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var Bluebird = require('bluebird');
@@ -28,6 +28,8 @@ describe('browser test runner', function() {
         this.logsByRunner[browser] = this.logsByRunner[browser] || [];
         this.logsByRunner[browser].push(msg);
       };
+      this.onStart = function() {};
+      this.onEnd = function() {};
     };
 
     beforeEach(function() {
@@ -69,7 +71,7 @@ describe('browser test runner', function() {
     var reporter, socket;
 
     beforeEach(function() {
-      reporter = new TapReporter();
+      reporter = new FakeReporter();
 
       var id = 1;
       var config = new Config('ci', {
@@ -103,7 +105,7 @@ describe('browser test runner', function() {
     var runner, reporter;
 
     beforeEach(function() {
-      reporter = new TapReporter();
+      reporter = new FakeReporter();
       var config = new Config('ci', {
         parallel: 2,
         reporter: reporter
@@ -192,7 +194,7 @@ describe('browser test runner', function() {
 
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
-      reporter = new TapReporter();
+      reporter = new FakeReporter();
       var config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
@@ -332,7 +334,7 @@ describe('browser test runner', function() {
     var reporter, launcher, runner, socket;
 
     beforeEach(function() {
-      reporter = new TapReporter();
+      reporter = new FakeReporter();
       var config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
@@ -341,7 +343,7 @@ describe('browser test runner', function() {
 
     it('fails when the browser fails to reconnect', function(done) {
       launcher.settings.exe = 'node';
-      launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
+      launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
           error: {
@@ -387,7 +389,7 @@ describe('browser test runner', function() {
     var runner;
 
     beforeEach(function() {
-      var reporter = new TapReporter();
+      var reporter = new FakeReporter();
       var config = new Config('ci', { reporter: reporter });
       var launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, 1, true, config);
