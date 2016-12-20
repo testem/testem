@@ -86,24 +86,11 @@ describe('report file output', function() {
     });
   });
 
-  it('writes out results to the normal output stream', function(done) {
-    var fakeStdout = new PassThrough();
-    var reportFile = new ReportFile(filename, fakeStdout);
-    reportFile.fileStream.on('finish', function() {
-      var output = fakeStdout.read().toString();
-      expect(output).to.match(/some test results/);
-      done();
-    });
-    reportFile.outputStream.write('some test results');
-    reportFile.outputStream.end();
-  });
-
   it('writes out results to the file', function(done) {
-    var stream = new PassThrough();
-    var reportFile = new ReportFile(filename, stream);
+    var reportFile = new ReportFile(filename);
     var reportStream = reportFile.outputStream;
 
-    reportFile.fileStream.on('finish', function() {
+    reportFile.outputStream.on('finish', function() {
       fs.readFile(filename, function(err, data) {
         if (err) {
           return done(err);
@@ -125,9 +112,8 @@ describe('report file output', function() {
         return done(err);
       }
 
-      var fakeStdout = new PassThrough();
-      var reportFile = new ReportFile(nestedFilename, fakeStdout);
-      reportFile.fileStream.on('finish', function() {
+      var reportFile = new ReportFile(nestedFilename);
+      reportFile.outputStream.on('finish', function() {
         fs.stat(nestedFilename, done);
       });
       reportFile.outputStream.end();

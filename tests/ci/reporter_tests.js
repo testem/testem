@@ -221,36 +221,6 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
-    it('disable writing summary XML when intermediate output is enabled', function() {
-      config.set('xunit_intermediate_output', true);
-      var reporter = new XUnitReporter(false, stream, config);
-      reporter.report('phantomjs', {
-        name: 'it does <cool> \"cool\" \'cool\' stuff',
-        passed: true
-      });
-      reporter.finish();
-      var output = stream.read().toString();
-      assert.match(output, /Disabled XML to stdout when intermediate output is set/);
-    });
-
-    it('uses stdout to print intermediate test results when intermediate output is enabled', function() {
-      config.set('xunit_intermediate_output', true);
-      var reporter = new XUnitReporter(false, stream, config);
-      var displayed = false;
-      var write = process.stdout.write;
-      process.stdout.write = function(string, encoding, fd) {
-        write.apply(process.stdout, [string, encoding, fd]);
-        displayed = true;
-      };
-      reporter.report('phantomjs', {
-        name: 'it does stuff',
-        passed: true,
-        logs: []
-      });
-      assert(displayed);
-      process.stdout.write = write;
-    });
-
     it('does not print intermediate test results when intermediate output is disabled', function() {
       var reporter = new XUnitReporter(false, stream, config);
       var displayed = false;
