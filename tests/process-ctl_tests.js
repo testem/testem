@@ -2,7 +2,7 @@
 
 var Bluebird = require('bluebird');
 var path = require('path');
-
+var sinon = require('sinon');
 var expect = require('chai').expect;
 
 var ProcessCtl = require('../lib/process-ctl');
@@ -117,6 +117,38 @@ describe('ProcessCtl', function() {
     it('fails when no executable was found', function() {
       return processCtl.spawn(['notFound']).catch(function(err) {
         expect(err.toString()).to.eq('Error: No executable found in: [ \'notFound\' ]');
+      });
+    });
+  });
+
+  describe('exec', function() {
+    var processCtl, sandbox;
+
+    beforeEach(function() {
+      sandbox = sinon.sandbox.create();
+      processCtl = new ProcessCtl('test');
+    });
+
+    beforeEach(function() {
+      sandbox.restore();
+    });
+
+    it('supports commands with quotes', function() {
+      sandbox.spy(processCtl, 'spawn');
+      return processCtl.exec('echo "hello world"').then(function(p) {
+        return new Bluebird.Promise(function(resolve) {
+          return p.on('processExit', resolve);
+        }).then(function(exitCode) {
+          expect(exitCode).to.eq(0);
+          if (isWin) {
+            expect(p.stdout).to.eq('"hello world"\r\n');
+          } else {
+            expect(p.stdout).to.eq('hello world\n');
+          }
+          expect(processCtl.spawn).to.have.been.calledWith(
+            'echo', ['"hello world"'], { shell: true }
+          );
+        });
       });
     });
   });
