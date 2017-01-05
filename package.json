@@ -78,7 +78,7 @@
     "eslint-plugin-mocha": "^4.3.0",
     "mocha": "^3.0.0",
     "request": "^2.51.0",
-    "saucie": "^2.0.0",
+    "saucie": "^3.0.0",
     "shelljs": "^0.7.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
