@@ -9,6 +9,8 @@ var fs = require('fs');
 var expect = require('chai').expect;
 var http = require('http');
 var https = require('https');
+var BaseServer = require('net').Server;
+var express = require('express');
 
 describe('Server', function() {
   this.timeout(10000);
@@ -22,7 +24,7 @@ describe('Server', function() {
         port: port,
         src_files: [
           'web/hello.js',
-          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          {src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
         ],
         routes: {
           '/direct-test': 'web/direct',
@@ -62,7 +64,7 @@ describe('Server', function() {
     });
 
     it('redirects to an id', function(done) {
-      request(baseUrl, { followRedirect: false }, function(err, res) {
+      request(baseUrl, {followRedirect: false}, function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(302);
         expect(res.headers.location).to.match(/^\/[0-9]+$/);
@@ -71,7 +73,7 @@ describe('Server', function() {
     });
 
     it('serves the homepage after redirect', function(done) {
-      request(baseUrl, { followRedirect: true }, function(err, res) {
+      request(baseUrl, {followRedirect: true}, function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(200);
         done();
@@ -81,7 +83,9 @@ describe('Server', function() {
     it('gets scripts for the home page', function(done) {
       request(baseUrl, function(err, req, text) {
         var $ = cheerio.load(text);
-        var srcs = $('script').map(function() { return $(this).attr('src'); }).get();
+        var srcs = $('script').map(function() {
+          return $(this).attr('src');
+        }).get();
         expect(srcs).to.deep.equal([
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
           '/testem.js',
@@ -354,7 +358,7 @@ describe('Server', function() {
         cert: 'tests/fixtures/certs/localhost.cert',
         src_files: [
           'web/hello.js',
-          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          {src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
         ],
         cwd: 'tests'
       });
@@ -373,7 +377,7 @@ describe('Server', function() {
     });
 
     it('gets the home page', function(done) {
-      request({ url: baseUrl, strictSSL: false }, done);
+      request({url: baseUrl, strictSSL: false}, done);
     });
   });
 
@@ -400,6 +404,30 @@ describe('Server', function() {
       expect(config.get('port')).to.eq(server.server.address().port);
     });
   });
+
+  describe('injectMiddleware passes app and server', function() {
+    it(function(done) {
+      config = new Config('dev', {
+        port: 0,
+        cwd: 'tests',
+        middlewear: [
+          function(app, server) {
+            expect(app).to.be.instanceof(express);
+            expect(server).to.be.instanceof(BaseServer);
+            done();
+          }
+        ]
+      });
+      server = new Server(config);
+      server.start();
+    });
+    after(function(done) {
+      server.stop(function() {
+        done();
+      });
+    });
+  });
+
 });
 
 function assertUrlReturnsFileContents(url, file, done) {
