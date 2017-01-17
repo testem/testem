@@ -405,8 +405,8 @@ describe('Server', function() {
     });
   });
 
-  describe('injectMiddleware passes app and server', function() {
-    it(function(done) {
+  describe('injectMiddleware', function() {
+    it('passes app and server', function(done) {
       config = new Config('dev', {
         port: 0,
         cwd: 'tests',
