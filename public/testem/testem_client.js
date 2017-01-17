@@ -14,8 +14,23 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* exported Testem */
 'use strict';
 
+function getTestemIframeSrc() {
+  // Compute a URL to testem/connection.html based on the URL from which this
+  // script was loaded (not the document's base URL, in case the document was
+  // loaded via a file: URL)
+  var scripts = document.getElementsByTagName('script');
+  var thisScript = scripts[scripts.length - 1];
+  var a = document.createElement('a');
+  a.href = thisScript.src;
+  a.pathname = '/testem/connection.html';
+  return a.href;
+}
+
 function appendTestemIframeOnLoad(callback) {
   var iframeAppended = false;
+  // Needs to call this synchronously during script load so we know which
+  // <script> tag is loading us and we can grab the right src attribute.
+  var iframeHref = getTestemIframeSrc();
 
   var appendIframe = function() {
     if (iframeAppended) {
@@ -29,7 +44,7 @@ function appendTestemIframeOnLoad(callback) {
     iframe.style.bottom = '5px';
     iframe.frameBorder = '0';
     iframe.allowTransparency = 'true';
-    iframe.src = '/testem/connection.html';
+    iframe.src = iframeHref;
     document.body.appendChild(iframe);
     callback(iframe);
   };
@@ -115,6 +130,11 @@ var Testem = {
     adapter(new TestemSocket());
   },
   getId: function() {
+    // If the test page defined a custom method for discovering our id, use
+    // that
+    if (window.getTestemId) {
+      return window.getTestemId();
+    }
     var match = window.location.pathname.match(/^\/(-?[0-9]+)/);
     return match ? match[1] : null;
   },
