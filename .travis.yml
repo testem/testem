@@ -2,6 +2,10 @@ os:
 - osx
 - linux
 osx_image: xcode8
+addons:
+  apt:
+    packages:
+      - xvfb
 language: node_js
 node_js:
   - "0.10"
@@ -27,6 +31,8 @@ before_install:
     fi
   - npm config set spin false
 install:
+  - export DISPLAY=':99.0'
+  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
   - travis_retry npm install
 before_script:
   - if [ $TRAVIS_OS_NAME == "linux" ] && [ $TRAVIS_NODE_VERSION == "4" ]; then

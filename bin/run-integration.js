@@ -28,7 +28,8 @@ var skipOnWindows = [
 ];
 var skipDefiningReporter = [
   'node_example',
-  'node_tap_example'
+  'node_tap_example',
+  'electron'
 ];
 var examplesPath = path.join(__dirname, '../examples');
 var DEFAULT_CONCURRENY = 10;

@@ -131,23 +131,23 @@ describe('Launcher', function() {
 
     beforeEach(function() {
       config = new Config(null, {port: '7357', url: 'http://blah.com/'});
-      settings = {exe: 'node', args: ['-e', echoArgs, 'hello']};
+      settings = {exe: 'node', args: ['-e', echoArgs, 'hello'], test_page: 'tp.html'};
       launcher = new Launcher('test launcher', settings, config);
     });
 
     it('should launch and also kill it', function(done) {
       launcher.start().then(function(launchedProcess) {
         launchedProcess.on('processExit', function(code, stdout) {
-          expect(stdout).to.match(/hello http:\/\/blah.com\/-1+(\r\n|\n)/);
+          expect(stdout).to.match(/hello http:\/\/blah.com\/-1\/tp\.html+(\r\n|\n)/);
           done();
         });
       });
     });
     it('should substitute variables for args', function(done) {
-      settings.args = ['-e', echoArgs, '<port>', '<url>'];
+      settings.args = ['-e', echoArgs, '<port>', '<url>', '<baseUrl>', '<testPage>', '<id>'];
       launcher.start().then(function(launchedProcess) {
         launchedProcess.on('processExit', function(code, stdout) {
-          expect(stdout).to.match(/7357 http:\/\/blah.com\/-1 http:\/\/blah.com\/-1+(\r\n|\n)/);
+          expect(stdout).to.match(/7357 http:\/\/blah.com\/-1\/tp\.html http:\/\/blah.com\/ tp\.html -1 http:\/\/blah.com\/-1\/tp.html+(\r\n|\n)/);
           done();
         });
       });
