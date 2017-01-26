@@ -419,12 +419,7 @@ describe('Server', function() {
         ]
       });
       server = new Server(config);
-      server.once('server-start', function() {
-        done();
-      });
       server.start();
-    });
-    after(function(done) {
       server.stop(function() {
         done();
       });
