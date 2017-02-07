@@ -130,7 +130,7 @@ describe('Launcher', function() {
     var config, settings, launcher;
 
     beforeEach(function() {
-      config = new Config(null, {port: '7357', url: 'http://blah.com/'});
+      config = new Config(null, {port: '7357', url: 'http://blah.com/', cwd: '/foo/bar'});
       settings = {exe: 'node', args: ['-e', echoArgs, 'hello'], test_page: 'tp.html'};
       launcher = new Launcher('test launcher', settings, config);
     });
@@ -144,10 +144,10 @@ describe('Launcher', function() {
       });
     });
     it('should substitute variables for args', function(done) {
-      settings.args = ['-e', echoArgs, '<port>', '<url>', '<baseUrl>', '<testPage>', '<id>'];
+      settings.args = ['-e', echoArgs, '<port>', '<url>', '<baseUrl>', '<testPage>', '<id>', '<cwd>'];
       launcher.start().then(function(launchedProcess) {
         launchedProcess.on('processExit', function(code, stdout) {
-          expect(stdout).to.match(/7357 http:\/\/blah.com\/-1\/tp\.html http:\/\/blah.com\/ tp\.html -1 http:\/\/blah.com\/-1\/tp.html+(\r\n|\n)/);
+          expect(stdout).to.match(/7357 http:\/\/blah.com\/-1\/tp\.html http:\/\/blah.com\/ tp\.html -1 \/foo\/bar http:\/\/blah.com\/-1\/tp.html+(\r\n|\n)/);
           done();
         });
       });
