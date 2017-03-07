@@ -334,7 +334,7 @@ describe('Server', function() {
           }
         };
         request.get(options, function(err, req, text) {
-          expect(text).to.equal('Not found: /api3/test');
+          expect(text).to.equal('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api3/test</pre>\n</body>\n');
           done();
         });
       });
