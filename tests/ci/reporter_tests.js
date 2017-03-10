@@ -31,84 +31,179 @@ var assertXmlIsValid = function(xmlString) {
 describe('test reporters', function() {
 
   describe('tap reporter', function() {
-    context('without errors', function() {
-      it('writes out TAP', function() {
-        var stream = new PassThrough();
-        var reporter = new TapReporter(false, stream);
-        reporter.report('phantomjs', {
-          name: 'it does stuff',
-          passed: true,
-          logs: []
+    var config, stream;
+
+    beforeEach(function() {
+      stream = new PassThrough();
+    });
+
+    context('with default configuration', function() {
+      beforeEach(function() {
+        config = new Config('ci', {});
+      });
+
+      context('without errors', function() {
+        it('writes out TAP', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log']
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: []
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - it does stuff',
+            '    ---',
+            '        Log: |',
+            '            \'some log\'',
+            '    ...',
+            'skip 2 phantomjs - it is skipped',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  1',
+            '# skip  1',
+            '# fail  0',
+            '',
+            '# ok',
+            ''
+          ]);
         });
-        reporter.report('phantomjs', {
-          name: 'it is skipped',
-          skipped: true,
-          logs: []
+      });
+
+      context('with errors', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log']
+          });
+          reporter.report('phantomjs', {
+            name: 'it fails',
+            passed: false,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information']
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: []
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - it does stuff',
+            '    ---',
+            '        Log: |',
+            '            \'some log\'',
+            '    ...',
+            'not ok 2 phantomjs - it fails',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        Log: |',
+            '            \'I am a log\'',
+            '            \'Useful information\'',
+            '    ...',
+            'skip 3 phantomjs - it is skipped',
+            '',
+            '1..3',
+            '# tests 3',
+            '# pass  1',
+            '# skip  1',
+            '# fail  1',
+            ''
+          ]);
         });
-        reporter.finish();
-        assert.deepEqual(stream.read().toString().split('\n'), [
-          'ok 1 phantomjs - it does stuff',
-          'skip 2 phantomjs - it is skipped',
-          '',
-          '1..2',
-          '# tests 2',
-          '# pass  1',
-          '# skip  1',
-          '# fail  0',
-          '',
-          '# ok',
-          ''
-        ]);
       });
     });
 
-    context('with errors', function() {
-      it('writes out TAP with failure info', function() {
-        var stream = new PassThrough();
-        var reporter = new TapReporter(false, stream);
-        reporter.report('phantomjs', {
-          name: 'it does stuff',
-          passed: true,
-          logs: []
+    context('with quiet logs', function() {
+      beforeEach(function() {
+        config = new Config('ci', { tap_quiet_logs: true });
+      });
+
+      context('without errors', function() {
+        it('writes out TAP', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log']
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: []
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - it does stuff',
+            'skip 2 phantomjs - it is skipped',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  1',
+            '# skip  1',
+            '# fail  0',
+            '',
+            '# ok',
+            ''
+          ]);
         });
-        reporter.report('phantomjs', {
-          name: 'it fails',
-          passed: false,
-          error: { message: 'it crapped out' },
-          logs: ['I am a log', 'Useful information']
+      });
+
+      context('with errors', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log']
+          });
+          reporter.report('phantomjs', {
+            name: 'it fails',
+            passed: false,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information']
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: []
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - it does stuff',
+            'not ok 2 phantomjs - it fails',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        Log: |',
+            '            \'I am a log\'',
+            '            \'Useful information\'',
+            '    ...',
+            'skip 3 phantomjs - it is skipped',
+            '',
+            '1..3',
+            '# tests 3',
+            '# pass  1',
+            '# skip  1',
+            '# fail  1',
+            ''
+          ]);
         });
-        reporter.report('phantomjs', {
-          name: 'it is skipped',
-          skipped: true,
-          logs: []
-        });
-        reporter.finish();
-        assert.deepEqual(stream.read().toString().split('\n'), [
-          'ok 1 phantomjs - it does stuff',
-          'not ok 2 phantomjs - it fails',
-          '    ---',
-          '        message: >',
-          '            it crapped out',
-          '        Log: |',
-          '            \'I am a log\'',
-          '            \'Useful information\'',
-          '    ...',
-          'skip 3 phantomjs - it is skipped',
-          '',
-          '1..3',
-          '# tests 3',
-          '# pass  1',
-          '# skip  1',
-          '# fail  1',
-          ''
-        ]);
       });
     });
 
     context('without name', function() {
       it('writes out TAP', function() {
-        var stream = new PassThrough();
-        var reporter = new TapReporter(false, stream);
+        var reporter = new TapReporter(false, stream, config);
         reporter.report('phantomjs', {
           passed: true,
           logs: []
