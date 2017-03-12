@@ -161,6 +161,16 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
+## TAP Options
+
+By default, the TAP reporter outputs logs from all tests that emit logs. You cann disable this behavior and only emit logs for failed tests using:
+
+```json
+{
+  "tap_quiet_logs": true
+}
+```
+
 ## Other Test Reporters
 
 Testem has other test reporters than TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them

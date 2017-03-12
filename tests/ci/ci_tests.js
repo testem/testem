@@ -16,6 +16,10 @@ var FakeReporter = require('../support/fake_reporter');
 
 var isWin = /^win/.test(process.platform);
 
+function makeTestReporter() {
+  return new TestReporter(true, undefined, new Config('ci', {}));
+}
+
 describe('ci mode app', function() {
   this.timeout(90000);
   var sandbox;
@@ -39,7 +43,7 @@ describe('ci mode app', function() {
     });
 
     it('runs them tests on node, nodetap, and browser', function(done) {
-      var reporter = new TestReporter(true);
+      var reporter = makeTestReporter();
       var dir = path.join('tests/fixtures/tape');
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
@@ -99,7 +103,7 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true)
+        reporter: makeTestReporter()
       });
       config.read(function() {
         var app = new App(config, function(exitCode) {
@@ -117,7 +121,7 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true)
+        reporter: makeTestReporter()
       });
       config.read(function() {
         var app = new App(config, function(exitCode) {
@@ -136,7 +140,7 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true),
+        reporter: makeTestReporter(),
         on_start: function(config, data, callback) {
           var launcher = app.launchers()[0];
 
@@ -169,7 +173,7 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         launch_in_ci: ['phantomjs'],
-        reporter: new TestReporter(true),
+        reporter: makeTestReporter(),
         browser_disconnect_timeout: 0.1
       });
       config.read(function() {
@@ -182,7 +186,7 @@ describe('ci mode app', function() {
     });
 
     it('forwards console messages to the reporter', function(done) {
-      var reporter = new TestReporter(true);
+      var reporter = makeTestReporter();
       var dir = path.join('tests/fixtures/console-test');
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
@@ -369,7 +373,7 @@ describe('ci mode app', function() {
       cwd: path.join('tests/fixtures/fail_later'),
       timeout: 2,
       launch_in_ci: ['phantomjs'],
-      reporter: new TestReporter(true)
+      reporter: makeTestReporter()
     });
     config.read(function() {
       var app = new App(config);
@@ -384,7 +388,7 @@ describe('ci mode app', function() {
   });
 
   it('returns with non zero exit code and reports an error when a hook was not executable', function(done) {
-    var reporter = new TestReporter(true);
+    var reporter = makeTestReporter();
     var config = new Config('ci', {
       port: 0,
       cwd: path.join('tests/fixtures/basic_test'),
@@ -463,7 +467,7 @@ describe('ci mode app', function() {
   });
 
   it('runs two browser instances in parallel with different test pages', function(done) {
-    var reporter = new TestReporter(true);
+    var reporter = makeTestReporter();
     var config = new Config('ci', {
       file: 'tests/fixtures/multiple_pages/testem.json',
       port: 0,
