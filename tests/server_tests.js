@@ -24,7 +24,7 @@ describe('Server', function() {
         port: port,
         src_files: [
           'web/hello.js',
-          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
         ],
         routes: {
           '/direct-test': 'web/direct',
@@ -358,7 +358,7 @@ describe('Server', function() {
         cert: 'tests/fixtures/certs/localhost.cert',
         src_files: [
           'web/hello.js',
-          {src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
         ],
         cwd: 'tests'
       });
