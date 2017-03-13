@@ -377,7 +377,7 @@ describe('Server', function() {
     });
 
     it('gets the home page', function(done) {
-      request({ url: baseUrl, strictSSL: false}, done);
+      request({ url: baseUrl, strictSSL: false }, done);
     });
   });
 
