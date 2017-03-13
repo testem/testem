@@ -64,7 +64,7 @@ describe('Server', function() {
     });
 
     it('redirects to an id', function(done) {
-      request(baseUrl, {followRedirect: false}, function(err, res) {
+      request(baseUrl, { followRedirect: false }, function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(302);
         expect(res.headers.location).to.match(/^\/[0-9]+$/);
@@ -73,7 +73,7 @@ describe('Server', function() {
     });
 
     it('serves the homepage after redirect', function(done) {
-      request(baseUrl, {followRedirect: true}, function(err, res) {
+      request(baseUrl, { followRedirect: true }, function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(200);
         done();
@@ -410,7 +410,7 @@ describe('Server', function() {
       config = new Config('dev', {
         port: 0,
         cwd: 'tests',
-        middlewear: [
+        middleware: [
           function(app, server) {
             expect(app).to.be.instanceof(express);
             expect(server).to.be.instanceof(BaseServer);
