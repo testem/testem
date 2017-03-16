@@ -83,7 +83,7 @@ Common Configuration Options
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
     reporter:                    [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
     report_file:                 [String]  file to write test results to (stdout)
-    route or routes:                      [Object]  overrides for assets paths
+    route or routes:             [Object]  overrides for assets paths
     src_files:                   [Array]   list of files or file patterns to use
     src_files_ignore:            [Array]   list of files or file patterns to exclude from usage
     serve_files:                 [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
