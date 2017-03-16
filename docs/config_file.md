@@ -81,7 +81,7 @@ Common Configuration Options
     phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from http://phantomjs.org/api/command-line.html
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
     proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/nodejitsu/node-http-proxy#options
-    reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity")
+    reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     routes:                      [Object]  overrides for assets paths
     src_files:                   [Array]   string or array list of files or file patterns to use
