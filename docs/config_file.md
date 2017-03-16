@@ -87,6 +87,7 @@ Common Configuration Options
     src_files_ignore:            [Array]   list of files or file patterns to exclude from usage
     serve_files:                 [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
     serve_files_ignore:          [Array]   list of files or file patterns to exclude from test playground (defaults to src_files_ignore)
+    tap_quiet_logs               [Boolean] whether to suppress non-failing logs in TAP reporting
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
