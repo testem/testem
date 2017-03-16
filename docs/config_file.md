@@ -105,7 +105,10 @@ Testem allows the test page to be served via HTTPS. To enable HTTPS either the p
 
 ### Available hooks:
 
+Hooks can be defined as a string in which case they run as a shell command or as a function in which case they will be passed 3 arguments: the Testem config object, a data object if present (see below), and a callback which should be invoked with a falsey argument (or no arguments) to indicate a passing result or with a truthy argument (such as an `Error` object) to indicate a failing result.
+
     on_start:             Runs on suite startup
+    on_change:            Runs when a (non-config) file being watched is changed. Has a data object with a `file` property set to the changed file's path
     before_tests:         Runs before every run of tests
     after_tests:          Runs after every run of tests
     on_exit:              Runs before suite exits
