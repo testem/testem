@@ -141,6 +141,7 @@ Will print them out. The output might look like
     Chrome
     Firefox
     Safari
+    Safari Technology Preview
     Opera
     PhantomJS
 
