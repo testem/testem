@@ -63,6 +63,7 @@ Note: This guide doesn't go into depth about the numerous command line arguments
 * Opera
 * PhantomJS
 * Safari
+* Safari Technology Preview
 
 Logging
 -------

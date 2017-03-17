@@ -267,6 +267,62 @@ describe('knownBrowsers', function() {
       });
     });
 
+    describe('Safari Technology Preview', function() {
+      var browsers;
+      var safariTP;
+
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
+
+        browsers = knownBrowsers('any', config);
+        safariTP = findBrowser(browsers, 'Safari Technology Preview');
+      }
+
+      beforeEach(function() {
+        setup();
+      });
+
+      it('exists', function() {
+        expect(safariTP).to.exist();
+      });
+
+      it('constructs correct args', function() {
+        expect(safariTP.args.call(launcher, config, url)).to.deep.eq([
+          path.join(browserTmpDir, 'start.html')
+        ]);
+      });
+
+      it('creates a config file on setup', function(done) {
+        safariTP.setup.call(launcher, config, function(err) {
+          expect(err).to.be.null();
+          expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
+            '<script>window.location = \'http://localhost:7357\'</script>'
+          );
+          done();
+        });
+      });
+
+      describe('browser_args', function() {
+        beforeEach(function() {
+          setup('Safari Technology Preview');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(safariTP.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', path.join(browserTmpDir, 'start.html')
+          ]);
+        });
+      });
+    });
+
     describe('Opera', function() {
       var browsers;
       var opera;
