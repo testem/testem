@@ -93,7 +93,7 @@ Common Configuration Options
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
-    watch_files:                 [Array]   string or array list of files or file patterns to watch changes of (defaults to src_files)
+    watch_files:                 [Array]   string or array list of files or file patterns to watch changes of (defaults to `src_files`)
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
 
 ### HTTPS:
