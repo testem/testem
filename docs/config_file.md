@@ -77,6 +77,7 @@ Common Configuration Options
     launchers:                   [Object]  a specification for all custom launchers
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
+    middleware:                  [Array]   list of functions to use as express middleware (each receives app and server as arguments)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
     phantomjs_args:              [Array]   custom arguments for the phantomjs launcher
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
