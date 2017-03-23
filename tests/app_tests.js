@@ -29,7 +29,8 @@ describe('App', function() {
         reporter: new FakeReporter()
       });
       app = new App(config, function() {
-        finish();
+        if (finish) { finish(); }
+        else { done(); }
       });
       sandbox.spy(app, 'triggerRun');
       sandbox.spy(app, 'stopRunners');

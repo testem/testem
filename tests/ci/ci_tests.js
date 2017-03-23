@@ -214,17 +214,18 @@ describe('ci mode app', function() {
   });
 
   it('fails with explicitly defined missing launchers', function(done) {
+    var browser = isWin ? 'Safari Technology Preview' : 'IE';
     var config = new Config('ci', {
       file: 'tests/fixtures/basic_test/testem.json',
       port: 0,
       cwd: path.join('tests/fixtures/basic_test/'),
-      launch_in_ci: ['opera'],
+      launch_in_ci: [browser],
       reporter: new FakeReporter()
     });
     config.read(function() {
       var app = new App(config, function(exitCode, err) {
         expect(exitCode).to.eq(1);
-        expect(err.message).to.eq('Launcher opera not found. Not installed?');
+        expect(err.message).to.eq('Launcher ' + browser + ' not found. Not installed?');
         done();
       });
       app.start();
@@ -326,7 +327,8 @@ describe('ci mode app', function() {
 
   it('kills launchers on wrapUp', function(done) {
     var app = new App(new Config('ci', {
-      launch_in_ci: []
+      launch_in_ci: [],
+      reporter: new FakeReporter()
     }), function() {
       assert(app.killRunners.called, 'clean up launchers should be called');
       done();
