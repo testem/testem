@@ -53,10 +53,10 @@ Common Configuration Options
     file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.yml)
     host:                    [String]  server host to use (localhost)
     port:                    [Number]  server port to use (7357)
-    launch:                  [Array]   list of launchers to use for current runs (defaults to current mode)
-    skip:                    [Array]   list of launchers to skip
+    launch:                  [Array]   Comma-delimited list of launchers to use for current runs (defaults to current mode)
+    skip:                    [Array]   Comma-delimited list of launchers to skip
     debug:                   [Boolean] debug mode (false)
-    test_page:               [String]  path to the page to use to run tests
+    test_page:               [String]  string (or array of string) paths to the pages to use to run tests
     growl:                   [Boolean] enables growl / native notifications (false)
     bail_on_uncaught_error:  [Boolean] whether process should exit with error status when there are top level uncaught errors (via `window.onerror`) (true)
 
@@ -64,8 +64,8 @@ Common Configuration Options
 
     browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
     browser_start_timeout        [Number]  timeout to error after browser start in seconds (30s)
-    browser_args:                [Object]  hash of browsers (keys) and their custom aruments (values)
-    css_files:                   [Array]   additionals stylesheets to include
+    browser_args:                [Object]  hash of browsers (keys) to an array of their custom aruments (values)
+    css_files:                   [Array]   string or array of additional stylesheets to include
     cwd:                         [Path]    directory to use as root
     config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     disable_watching:            [Boolean] disable any file watching
@@ -73,26 +73,27 @@ Common Configuration Options
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
     framework:                   [String]  test framework to use
     ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
-    parallel:                    [Number]  max number of parallel runners (1)
-    launchers:                   [Object]  a specification for all custom launchers
+    launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
+    parallel:                    [Number]  max number of parallel runners (1)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
-    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher
+    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from http://phantomjs.org/api/command-line.html
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
-    reporter:                    [String]  name of the reporter to be used in ci mode (tap, xunit, dot)
+    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/nodejitsu/node-http-proxy#options
+    reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     routes:                      [Object]  overrides for assets paths
-    src_files:                   [Array]   list of files or file patterns to use
-    src_files_ignore:            [Array]   list of files or file patterns to exclude from usage
-    serve_files:                 [Array]   list of files or file patterns to inject into test playground (defaults to src_files)
-    serve_files_ignore:          [Array]   list of files or file patterns to exclude from test playground (defaults to src_files_ignore)
+    src_files:                   [Array]   string or array list of files or file patterns to use
+    src_files_ignore:            [Array]   string or array list of files or file patterns to exclude from usage
+    serve_files:                 [Array]   string or array list of files or file patterns to inject into test playground (defaults to `src_files`)
+    serve_files_ignore:          [Array]   string or array list of files or file patterns to exclude from test playground (defaults to `src_files_ignore`)
     tap_quiet_logs               [Boolean] whether to suppress non-failing logs in TAP reporting
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
-    watch_files:                 [Array]   list of files or file patterns to watch changes of (defaults to src_files)
+    watch_files:                 [Array]   string or array list of files or file patterns to watch changes of (defaults to `src_files`)
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
 
 ### HTTPS:
