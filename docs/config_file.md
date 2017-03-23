@@ -40,7 +40,7 @@ Here's an example `testem.js` file that defines a [custom reporter](custom_repor
 Common Configuration Options
 ----------------------------
 
-* **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values at the moment are `jasmine`, `qunit`, `mocha`, and `buster`.
+* **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values at the moment are `jasmine`, `jasmine2`, `qunit`, `mocha`, `buster`, `custom`, and `tap`. Defaults to `jasmine`.
 * **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in CoffeeScript or TypeScript, this should be your `.coffee` or `.ts` files. If you are writing in Javascript, this would just be your `.js` files, but if you have a compile step for your JS, this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
 * **serve_files** - the location of the source files to be served to the browser. If don't have a compilation step, don't set this option, and it will default to *src_files*. If you have a compilation step, you should set this to the `*.js` file(s) that result from the compilation.
 * **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `jasmine.js`.
@@ -71,11 +71,12 @@ Common Configuration Options
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
-    framework:                   [String]  test framework to use
+    framework:                   [String]  test framework to use; defaults to "jasmine"
     ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
     launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
+    middleware                   [Array]   list of functions to be called with the express app instance
     parallel:                    [Number]  max number of parallel runners (1)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
     phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from http://phantomjs.org/api/command-line.html
@@ -83,17 +84,20 @@ Common Configuration Options
     proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/nodejitsu/node-http-proxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
-    routes:                      [Object]  overrides for assets paths
+    route or routes:             [Object]  overrides for assets paths
     src_files:                   [Array]   string or array list of files or file patterns to use
     src_files_ignore:            [Array]   string or array list of files or file patterns to exclude from usage
     serve_files:                 [Array]   string or array list of files or file patterns to inject into test playground (defaults to `src_files`)
     serve_files_ignore:          [Array]   string or array list of files or file patterns to exclude from test playground (defaults to `src_files_ignore`)
+    single_run                   [Boolean] whether or not test is to be single-run
+    stdout_stream                [Stream]  the stdout stream to use (defaults to `process.stdout`)
     tap_quiet_logs               [Boolean] whether to suppress non-failing logs in TAP reporting
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
     watch_files:                 [Array]   string or array list of files or file patterns to watch changes of (defaults to `src_files`)
+    xunit_exclude_stack:         [Boolean] whether to exclude stack traces in xunit reporter
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
 
 ### HTTPS:
