@@ -13,9 +13,16 @@ The `report` method gets called for each test with `prefix` and `data` arguments
 * `prefix` - name of the test runner (ie PhantomJS)
 * `data`
     * `passed` - whether test passed
+    * `failed` - whether test failed
+    * `pending` - whether test is still pending
     * `name` - test name
+    * `error` - Error object (`passed`, `message`, `stack`)
     * `error.message` - error stack
-    * `logs` - test output
+    * `logs` - test output (array of log objects (`type` ("log", "warn", "error", "info") and `text`))
+    * `skipped` - skipped test count
+    * `runDuration` - how long the test ran
+    * `launcherId` - Unique ID of the launcher
+    * `items` - Array of error objects
 
 The `finish` method gets called when tests are complete, and can output summary information.
 
