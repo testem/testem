@@ -24,6 +24,7 @@ function qunitAdapter() {
     failed: 0,
     passed: 0,
     skipped: 0,
+    todo: 0,
     total: 0,
     tests: []
   };
@@ -91,6 +92,7 @@ function qunitAdapter() {
     currentTest.failed = params.failed;
     currentTest.passed = params.passed;
     currentTest.skipped = params.skipped;
+    currentTest.todo = params.todo;
     currentTest.total = params.total;
     currentTest.runDuration = params.runtime;
 
@@ -98,7 +100,7 @@ function qunitAdapter() {
 
     if (currentTest.skipped) {
       results.skipped++;
-    } else if (currentTest.failed > 0) {
+    } else if (results.failed > 0 && !results.todo) {
       results.failed++;
     } else {
       results.passed++;
