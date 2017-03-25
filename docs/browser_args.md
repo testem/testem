@@ -70,7 +70,7 @@ Logging
 
 Using browser arguments can be tricky. It can be hard to know if the options you've supplied are working correctly. Testem will log warning messages whenever it encounters a problem with any of the `browser_args` options. You will need to use the `debug` configuration option in order to read the log.
 
-Read [more details](docs/config_file.md) about the config options including `debug`.
+Read [more details](config_file.md) about the config options including `debug`.
 
 Potential warnings:
 
