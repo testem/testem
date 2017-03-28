@@ -48,6 +48,10 @@ Common Configuration Options
 
 ## Option Reference
 
+### Potentially available browsers
+
+Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari Technology Preview
+
 ### CLI-level options:
 
     file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.yml)
