@@ -35,6 +35,7 @@
     "lodash.assignin": "^4.1.0",
     "lodash.clonedeep": "^4.4.1",
     "lodash.find": "^4.5.1",
+    "lodash.uniqby": "^4.7.0",
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
     "node-notifier": "^5.0.1",

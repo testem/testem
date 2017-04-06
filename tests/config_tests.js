@@ -338,6 +338,13 @@ describe('Config', function() {
         done();
       });
     });
+    it('does not return duplicates when file matches multiple globs', function(done) {
+      config.set('src_files', ['config_tests.js', 'config_tests.js']);
+      config.getSrcFiles(function(err, files) {
+        expect(files).to.deep.equal([fileEntry('config_tests.js')]);
+        done();
+      });
+    });
     it('excludes using src_files_ignore', function(done) {
       config.set('src_files', ['ci/*']);
       config.set('src_files_ignore', ['**/report*.js']);
@@ -468,12 +475,35 @@ describe('Config', function() {
         done();
       });
     });
+    it('does not return duplicates when file matches multiple globs', function(done) {
+      var egg = [ {
+        'attrs': [],
+        'src': 'testem.yml'
+      }];
+      config.set('src_files', ['t*.yml', 'testem.yml']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal(egg);
+        done();
+      });
+    });
   });
 
   describe('getCSSFiles', function() {
     it('loads css_files correctly', function(done) {
       config.set('cwd', 'tests');
       config.set('src_files', 'fixtures/styles/*.css');
+      config.getSrcFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('fixtures', 'styles', 'print.css')),
+          fileEntry(path.join('fixtures', 'styles', 'screen.css'))
+        ]);
+        done();
+      });
+    });
+
+    it('does not return duplicates when file matches multiple globs', function(done) {
+      config.set('cwd', 'tests');
+      config.set('src_files', ['fixtures/styles/*.css', 'fixtures/styles/*.css']);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
           fileEntry(path.join('fixtures', 'styles', 'print.css')),
