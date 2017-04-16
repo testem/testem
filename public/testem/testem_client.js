@@ -10,7 +10,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* globals document, window */
 /* globals module */
 /* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
-/* globals qunitAdapter, busterAdapter, decycle */
+/* globals qunitAdapter, busterAdapter, decycle, TestemConfig */
 /* exported Testem */
 'use strict';
 
@@ -118,13 +118,19 @@ function Message(socket, emitArgs) {
   this.emitArgs = emitArgs;
 }
 
+// eslint-disable-next-line no-use-before-define
+if (typeof TestemConfig === 'undefined' || {}) {
+  var TestemConfig = {};
+}
+
 var Testem = {
   emitMessageQueue: [],
   afterTestsQueue: [],
+  console: {},
 
   // The maximum depth beyond which decycle will truncate an emitted event
   // object. When undefined, decycle uses its default.
-  eventMaxDepth: undefined,
+  decycleDepth: TestemConfig.decycle_depth,
 
   useCustomAdapter: function(adapter) {
     adapter(new TestemSocket());
@@ -142,7 +148,10 @@ var Testem = {
     if (this._noConnectionRequired) {
       return;
     }
-    var args = Array.prototype.slice.call(arguments);
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    }
 
     var message = new Message(this, args);
 
@@ -154,12 +163,15 @@ var Testem = {
     }
   },
   emit: function(evt) {
-    var argsWithoutFirst = Array.prototype.slice.call(arguments, 1);
+    var argsWithoutFirst = new Array(arguments.length - 1);
+    for (var i = 0; i < argsWithoutFirst.length; ++i) {
+      argsWithoutFirst[i] = arguments[i];
+    }
 
     if (this.evtHandlers && this.evtHandlers[evt]) {
       var handlers = this.evtHandlers[evt];
-      for (var i = 0; i < handlers.length; i++) {
-        var handler = handlers[i];
+      for (var j = 0; j < handlers.length; j++) {
+        var handler = handlers[j];
         handler.apply(this, argsWithoutFirst);
       }
     }
@@ -184,10 +196,26 @@ var Testem = {
   },
   sendMessageToIframe: function(type, data) {
     var message = { type: type };
+    var decycleDepth = -1;
     if (data) {
       message.data = data;
+
+      if (data[0] === 'browser-console') {
+        // User content in data
+        decycleDepth = this.decycleDepth + 1;
+      } else if (data[0] === 'test-result') {
+        // User content in data.test.items
+        decycleDepth = this.decycleDepth + 3;
+      } else if (data[0] === 'all-test-results') {
+        // User content in data.tests.test.items
+        decycleDepth = this.decycleDepth + 4;
+      } else {
+        // Events don't contain user content / cycles
+        decycleDepth = -1;
+      }
     }
-    message = this.serializeMessage(message);
+
+    message = this.serializeMessage(message, decycleDepth);
     this.iframe.contentWindow.postMessage(message, '*');
   },
   enqueueMessage: function(message) {
@@ -250,10 +278,13 @@ var Testem = {
   deserializeMessage: function(message) {
     return JSON.parse(message);
   },
-  serializeMessage: function(message) {
+  serializeMessage: function(message, depth) {
     // decycle to remove possible cyclic references
+    if (depth !== -1) {
+      message = decycle(message, depth);
+    }
     // stringify for clients that only can handle string postMessages (IE <= 10)
-    return JSON.stringify(decycle(message, this.eventMaxDepth));
+    return JSON.stringify(message);
   },
   runAfterTests: function() {
     if (Testem.afterTestsQueue.length) {
@@ -324,25 +355,30 @@ function setupTestStats() {
 function takeOverConsole() {
   function intercept(method) {
     var original = console[method];
+    Testem.console[method] = original;
     console[method] = function() {
       var doDefault, message;
-      var args = Array.prototype.slice.apply(arguments);
+      var args = new Array(arguments.length);
+      for (var i = 0; i < args.length; ++i) {
+        args[i] = arguments[i];
+      }
+
       if (Testem.handleConsoleMessage) {
-        message = decycle(args).join(' ');
+        message = decycle(args, Testem.decycleDepth).join(' ');
         doDefault = Testem.handleConsoleMessage(message);
       }
+
       if (doDefault !== false) {
-        args.unshift('console-' + method);
-        emit.apply(console, args);
-        if (original && original.apply) {
+        args.unshift(method);
+        args.unshift('browser-console');
+        emit.apply(Testem, args);
+
+        if (typeof original === 'object') {
+          // Do this for IE
+          Function.prototype.apply.call(original, console, arguments);
+        } else {
           // Do this for normal browsers
           original.apply(console, arguments);
-        } else if (original) {
-          // Do this for IE
-          if (!message) {
-            message = decycle(args).join(' ');
-          }
-          original(message);
         }
       }
     };

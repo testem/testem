@@ -526,6 +526,18 @@ describe('Config', function() {
     });
   });
 
+  describe('client_decycle_depth', function() {
+    it('defaults to 5', function() {
+      expect(config.get('client_decycle_depth')).to.eq(5);
+    });
+  });
+
+  describe('client', function() {
+    it('returns config options used within the client', function() {
+      expect(config.client()).to.have.all.keys(['decycle_depth']);
+    });
+  });
+
   describe('debug', function() {
     describe('when unset', function() {
       it('is not defined', function() {

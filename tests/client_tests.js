@@ -5,7 +5,6 @@ var sinon = require('sinon');
 var Testem = require('../public/testem/testem_client');
 
 describe('Testem Client', function() {
-
   it('passes new socket to each custom adapter', function() {
     var socket1, socket2;
 
@@ -20,8 +19,8 @@ describe('Testem Client', function() {
     expect(socket1).to.not.equal(socket2);
   });
 
-  it('emits message with custom decycle depth to iframe', function() {
-    var eventMaxDepth = 10;
+  it('doesn\'t decycle build-in messages', function() {
+    var decycleDepth = 10;
 
     global.decycle = sinon.spy();
 
@@ -34,15 +33,36 @@ describe('Testem Client', function() {
         }
       };
 
-      socket.eventMaxDepth = eventMaxDepth;
-      socket.emitMessage();
+      socket.decycleDepth = decycleDepth;
+      socket.emitMessage('test');
     });
 
-    sinon.assert.calledWithExactly(global.decycle, sinon.match.any, eventMaxDepth);
+    sinon.assert.notCalled(global.decycle);
+  });
+
+  it('emits message with custom decycle depth to iframe for user messages', function() {
+    var decycleDepth = 10;
+
+    global.decycle = sinon.spy();
+
+    Testem._isIframeReady = true;
+
+    Testem.useCustomAdapter(function(socket) {
+      socket.iframe = {
+        contentWindow: {
+          postMessage: function() {}
+        }
+      };
+
+      socket.decycleDepth = decycleDepth;
+      socket.emitMessage('browser-console', 'log', 'test');
+    });
+
+    sinon.assert.calledWithExactly(global.decycle, sinon.match.any, decycleDepth + 1);
   });
 
   it('drains message with custom decycle depth from queue', function() {
-    var eventMaxDepth = 10;
+    var decycleDepth = 10;
 
     global.decycle = sinon.spy();
 
@@ -56,15 +76,15 @@ describe('Testem Client', function() {
         }
       };
 
-      socket.eventMaxDepth = eventMaxDepth;
-      socket.emitMessage();
+      socket.decycleDepth = decycleDepth;
+      socket.emitMessage('browser-console', 'log', 'test');
     });
 
     expect(Testem.emitMessageQueue).to.not.be.empty();
 
     Testem.drainMessageQueue();
 
-    sinon.assert.calledWithExactly(global.decycle, sinon.match.any, eventMaxDepth);
+    sinon.assert.calledWithExactly(global.decycle, sinon.match.any, decycleDepth + 1);
   });
 
   it('runs registered hooks after all tests finished', function(done) {

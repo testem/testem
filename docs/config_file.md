@@ -69,9 +69,10 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
     browser_start_timeout        [Number]  timeout to error after browser start in seconds (30s)
     browser_args:                [Object]  hash of browsers (keys) to an array of their custom aruments (values)
+    client_decycle_depth         [Number]  number of times to recurse while decycling objects within the client (5)
+    config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     css_files:                   [Array]   string or array of additional stylesheets to include
     cwd:                         [Path]    directory to use as root
-    config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
