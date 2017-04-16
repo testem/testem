@@ -1,5 +1,6 @@
 Got Scripts? Test&rsquo;em!
 =================
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/airportyh/testem?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/testem/testem.svg?branch=master)](https://travis-ci.org/testem/testem) [![Dependency Status](https://david-dm.org/testem/testem.svg)](https://david-dm.org/testem/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
 
