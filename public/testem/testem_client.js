@@ -164,8 +164,8 @@ var Testem = {
   },
   emit: function(evt) {
     var argsWithoutFirst = new Array(arguments.length - 1);
-    for (var i = 0; i < argsWithoutFirst.length; ++i) {
-      argsWithoutFirst[i] = arguments[i];
+    for (var i = 1; i < arguments.length; ++i) {
+      argsWithoutFirst[i - 1] = arguments[i];
     }
 
     if (this.evtHandlers && this.evtHandlers[evt]) {
