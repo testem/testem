@@ -57,6 +57,80 @@ describe('browserArgs', function() {
         browserArgs.addCustomArgs(createKnownBrowsers(), config);
       });
 
+      it('warns if args for a browser is an object but missing mode field', function(done) {
+        config.browser_args = {
+          chrome: {
+            args: '--fake'
+          }
+        };
+
+        log.once('log.warn', function(warning) {
+          expect(warning.message).to.equal('Type error: when using an object to specify browser_args for chrome you must specify a mode');
+          done();
+        });
+
+        browserArgs.addCustomArgs(createKnownBrowsers(), config);
+      });
+
+      it('warns if args for a browser is an object but missing args field', function(done) {
+        config.browser_args = {
+          chrome: {
+            mode: 'dev'
+          }
+        };
+
+        log.once('log.warn', function(warning) {
+          expect(warning.message).to.equal('Type error: when using an object to specify browser_args for chrome you must specify args');
+          done();
+        });
+
+        browserArgs.addCustomArgs(createKnownBrowsers(), config);
+      });
+
+      it('ignores args that specify a mode different from the current mode', function() {
+        // Get Chrome's default args
+        var defaultArgs = createKnownBrowsers()[0].args();
+
+        knownBrowsers = createKnownBrowsers();
+
+        config.appMode = 'ci';
+        config.browser_args = {
+          chrome: {
+            mode: 'dev',
+            args: '--fake'
+          }
+        };
+
+        browserArgs.addCustomArgs(knownBrowsers, config);
+
+        expect(knownBrowsers[0].args()).to.deep.equal(defaultArgs);
+
+        // Resets known browsers value
+        knownBrowsers = createKnownBrowsers();
+      });
+
+      it('adds args in object form when specifying a matching mode and args fields', function() {
+        // Get Chrome's default args
+        var defaultArgs = createKnownBrowsers()[0].args();
+
+        knownBrowsers = createKnownBrowsers();
+
+        config.appMode = 'dev';
+        config.browser_args = {
+          chrome: {
+            mode: 'dev',
+            args: '--fake'
+          }
+        };
+
+        browserArgs.addCustomArgs(knownBrowsers, config);
+
+        expect(knownBrowsers[0].args()).to.deep.equal([ '--fake' ].concat(defaultArgs));
+
+        // Resets known browsers value
+        knownBrowsers = createKnownBrowsers();
+      });
+
       // NOTE: knownBrowsers[0] is Chrome
       it('adds args to browser regardless of key capitalization', function() {
         // Get Chrome's default args
