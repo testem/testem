@@ -32,7 +32,6 @@ Conventions
 * The keys are launcher names, e.g., "Chrome" and they don't need to be capitalized
 * The values can be either:
   * An array of strings (if you need to add many arguments)
-  * A single string (if you only need to add one argument)
 
     ```javascript
     "browser_args": {
@@ -40,11 +39,24 @@ Conventions
         "--auto-open-devtools-for-tabs"
       ]
     }
+    ```
 
-    // OR
+  * A single string (if you only need to add one argument)
 
+    ```javascript
     "browser_args": {
       "chrome": "--auto-open-devtools-for-tabs"
+     }
+     ```
+
+  * An object specifying a string `mode` (either `ci` or `dev`) and `args` in the form of one of the first two options. The `mode` will determine which environments the given `args` apply to.
+
+     ```javascript
+     "browser_args": {
+       "chrome": {
+         "mode": "ci",
+         "args": [ "--auto-open-devtools-for-tabs" ]
+       }
      }
     ```
 
