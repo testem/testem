@@ -74,7 +74,7 @@
     "chai-shallow-deep-equal": "^1.4.4",
     "cheerio": "^0.22.0",
     "dirty-chai": "^1.2.2",
-    "eslint": "^3.2.2",
+    "eslint": "^4.1.0",
     "eslint-plugin-chai-expect": "^1.1.1",
     "eslint-plugin-mocha": "^4.3.0",
     "mocha": "^3.0.0",
