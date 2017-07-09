@@ -11,6 +11,7 @@ var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 
 var Reporter = require('../../lib/utils/reporter');
 var FakeReporter = require('../support/fake_reporter');
+var TapReporter = require('../../lib/reporters/tap_reporter');
 
 var fsReadFileAsync = Bluebird.promisify(fs.readFile);
 var fsUnlinkAsync = Bluebird.promisify(fs.unlink);
@@ -177,6 +178,23 @@ describe('Reporter', function() {
           expect(output).to.match(/tests 1/);
         });
       });
+    });
+
+    it('creates a reporter when custom reporter dependent on configs is provided', function() {
+      var CustomReporter = function() {
+        TapReporter.apply(this, arguments);
+      };
+      CustomReporter.prototype = Object.create(TapReporter.prototype);
+
+      var config = { get: sinon.stub() };
+      config.get.withArgs('reporter').returns(CustomReporter);
+      config.get.withArgs('tap_quiet_logs').returns(true);
+      var app = { config: config };
+      var reporter = new Reporter(app, stream);
+
+      expect(reporter).to.be.ok();
+      expect(reporter.reporters.length).to.equal(1);
+      expect(reporter.reporters[0].quietLogs).to.be.true();
     });
 
     it('writes xml to stream and file with xunit reporter and intermediate output is enabled', function() {

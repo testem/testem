@@ -71,8 +71,5 @@ To use your custom reporter, set `reporter` in your `testem.js` config file:
             "src/*.js",
             "tests/*_tests.js"
         ]
-        "reporter": new MyReporter()
+        "reporter": MyReporter
     };
-
-
-
