@@ -138,7 +138,7 @@ describe('Reporter', function() {
       expect(reporter.reporters.length).to.eq(1);
 
       reporter.report('phantomjs', {
-        name: 'it does <cool> \"cool\" \'cool\' stuff',
+        name: 'it does <cool> "cool" \'cool\' stuff',
         passed: true
       });
       reporter.finish();
@@ -162,7 +162,7 @@ describe('Reporter', function() {
         }, stream, path);
 
         reporter.report('phantomjs', {
-          name: 'it does <cool> \"cool\" \'cool\' stuff',
+          name: 'it does <cool> "cool" \'cool\' stuff',
           passed: true
         });
 
@@ -196,7 +196,7 @@ describe('Reporter', function() {
         }, stream, path);
 
         reporter.report('phantomjs', {
-          name: 'it does <cool> \"cool\" \'cool\' stuff',
+          name: 'it does <cool> "cool" \'cool\' stuff',
           passed: true
         });
         reporter.finish();
@@ -229,7 +229,7 @@ describe('Reporter', function() {
         }, stream, path);
 
         reporter.report('phantomjs', {
-          name: 'it does <cool> \"cool\" \'cool\' stuff',
+          name: 'it does <cool> "cool" \'cool\' stuff',
           passed: true
         });
         reporter.finish();

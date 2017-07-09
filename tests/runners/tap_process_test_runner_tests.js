@@ -232,7 +232,7 @@ describe('tap process test runner', function() {
         var failingItems = failingTest.result.items;
         var stack = failingItems[0].stack;
         expect(typeof stack).to.equal('string');
-        expect(stack).to.match(/Error\:/);
+        expect(stack).to.match(/Error:/);
 
         done();
       });
@@ -272,7 +272,7 @@ describe('tap process test runner', function() {
 
         var failingItems = failingTest.result.items;
         var error = failingItems[0];
-        expect(error.stack).to.match(/Error\:/);
+        expect(error.stack).to.match(/Error:/);
         expect(typeof error.stack).to.equal('string');
         done();
       });

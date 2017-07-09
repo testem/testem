@@ -238,8 +238,8 @@ describe('Config', function() {
 
     sandbox.stub(browserLauncher, 'getAvailableBrowsers', function(config, browsers, cb) {
       cb(null, [
-      {name: 'Chrome', exe: 'chrome.exe'},
-      {name: 'Firefox'}
+        {name: 'Chrome', exe: 'chrome.exe'},
+        {name: 'Firefox'}
       ]);
     });
 
@@ -405,7 +405,7 @@ describe('Config', function() {
     });
     it('populates attributes for only the desired globs', function(done) {
       config.set('src_files', [
-      {src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
+        {src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
         'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {
@@ -568,17 +568,17 @@ describe('Config', function() {
 
 function mockTopLevelProgOptions() {
   var options = [
-  { name: function() { return 'timeout'; } }
+    { name: function() { return 'timeout'; } }
   ];
   var commands = [
-  { name: function() { return 'ci'; } },
-  { name: function() { return 'launchers'; } }
+    { name: function() { return 'ci'; } },
+    { name: function() { return 'launchers'; } }
   ];
   var parentOptions = {
     port: 8081,
     options: [
-    {name: function() { return 'port'; }},
-    {name: function() { return 'launcher'; }}
+      {name: function() { return 'port'; }},
+      {name: function() { return 'launcher'; }}
     ],
     cwd: 'tests'
   };
@@ -604,11 +604,11 @@ describe('getTemplateData', function() {
     var config = new Config('dev', progOptions, fileConfig);
     config.getTemplateData(function(err, data) {
       expect(data.serve_files).to.deep.have.members([
-      { src: 'web/hello.js', attrs: [] },
-      { src: 'web/hello_tst.js', attrs: [] }
+        { src: 'web/hello.js', attrs: [] },
+        { src: 'web/hello_tst.js', attrs: [] }
       ]);
       expect(data.css_files).to.deep.have.members([
-      { src: '', attrs: [] }
+        { src: '', attrs: [] }
       ]);
       done();
     });

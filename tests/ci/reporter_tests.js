@@ -305,13 +305,13 @@ describe('test reporters', function() {
     it('writes out and XML escapes results', function() {
       var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
-        name: 'it does <cool> \"cool\" \'cool\' stuff',
+        name: 'it does <cool> "cool" \'cool\' stuff',
         passed: true
       });
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
-      assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; \'cool\' stuff"/);
+      assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; 'cool' stuff"/);
 
       assertXmlIsValid(output);
     });
@@ -346,7 +346,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<error message=\"it crapped out\">/);
+      assert.match(output, /<error message="it crapped out">/);
       assert.match(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
@@ -369,7 +369,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
-      assert.match(output, /<error message=\"it crapped out\"\/>/);
+      assert.match(output, /<error message="it crapped out"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
 
       assertXmlIsValid(output);
@@ -422,7 +422,7 @@ describe('test reporters', function() {
         name: 'it failed with quotes',
         passed: false,
         error: {
-          message: (new Error('<it> \"crapped\" out')).stack
+          message: (new Error('<it> "crapped" out')).stack
         }
       });
       reporter.finish();
@@ -472,7 +472,7 @@ describe('test reporters', function() {
     it('writes out and XML escapes results', function() {
       var reporter = new TeamcityReporter(false, stream);
       reporter.report('phantomjs', {
-        name: 'it does <cool> \"cool\" \'cool\' stuff',
+        name: 'it does <cool> "cool" \'cool\' stuff',
         passed: true
       });
       reporter.report('phantomjs', {

@@ -103,7 +103,7 @@ function decycle(object, maxDepth) {
         for (name in value) {
           if (Object.prototype.hasOwnProperty.call(value, name)) {
             nu[name] = derez(value[name],
-                path + '[' + JSON.stringify(name) + ']', depth + 1);
+              path + '[' + JSON.stringify(name) + ']', depth + 1);
           }
         }
       }
