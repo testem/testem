@@ -28,7 +28,6 @@ function qunitAdapter() {
     tests: []
   };
   var currentTest;
-  var currentModule;
   var id = 1;
 
   function lineNumber(e) {
@@ -82,7 +81,7 @@ function qunitAdapter() {
   QUnit.testStart(function(params) {
     currentTest = {
       id: id++,
-      name: (currentModule ? currentModule + ': ' : '') + params.name,
+      name: (params.module ? params.module + ': ' : '') + params.name,
       items: []
     };
     emit('tests-start');
@@ -108,12 +107,6 @@ function qunitAdapter() {
 
     emit('test-result', currentTest);
   });
-  QUnit.moduleStart(function(params) {
-    currentModule = params.name;
-  });
-  QUnit.moduleEnd = function() {
-    currentModule = undefined;
-  };
   QUnit.done(function(params) {
     results.runDuration = params.runtime;
     emit('all-test-results', results);
