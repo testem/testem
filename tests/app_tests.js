@@ -247,4 +247,33 @@ describe('App', function() {
       });
     });
   });
+
+  describe('start', function() {
+    var finish;
+    var onExitCb;
+    beforeEach(function() {
+      onExitCb = sandbox.stub().yields(null);
+      config = new Config('dev', {}, {
+        reporter: new FakeReporter(),
+        on_exit: onExitCb
+      });
+      app = new App(config, function() {
+        expect(onExitCb.called).to.be.true();
+        finish();
+      });
+      app.once('testRun', app.exit);
+    });
+
+    it('calls on_exit hook on success', function(done) {
+      finish = done;
+      sandbox.stub(app, 'waitForTests').usingPromise(Bluebird.Promise).resolves();
+      app.start();
+    });
+
+    it('calls on_exit hook on failure', function(done) {
+      finish = done;
+      sandbox.stub(app, 'waitForTests').usingPromise(Bluebird.Promise).rejects();
+      app.start();
+    });
+  });
 });
