@@ -6,16 +6,18 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 
 var ProcessCtl = require('../lib/process-ctl');
+var Config = require('../lib/config');
 
 var isWin = /^win/.test(process.platform);
 var isNodeLt012 = require('./support/is-node-lt-012');
+var config = new Config('ci', {}, {});
 
 describe('ProcessCtl', function() {
   describe('spawn', function() {
     var processCtl;
 
     beforeEach(function() {
-      processCtl = new ProcessCtl('test');
+      processCtl = new ProcessCtl('test', config);
     });
 
     it('emits a processStarted event', function() {
@@ -126,7 +128,7 @@ describe('ProcessCtl', function() {
 
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
-      processCtl = new ProcessCtl('test');
+      processCtl = new ProcessCtl('test', config);
     });
 
     beforeEach(function() {
@@ -157,7 +159,7 @@ describe('ProcessCtl', function() {
     var processCtl;
 
     beforeEach(function() {
-      processCtl = new ProcessCtl('test', { killTimeout: 50 });
+      processCtl = new ProcessCtl('test', config, { killTimeout: 50 });
     });
 
     it('kills regular processes', function() {
