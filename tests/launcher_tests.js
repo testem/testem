@@ -29,7 +29,7 @@ describe('Launcher', function() {
       expect(launcher.name).to.equal('say hello');
       expect(launcher.settings).to.equal(settings);
     });
-    it('should be process iff protocol is not browser', function() {
+    it('should be process if protocol is not browser', function() {
       settings.protocol = 'browser';
       expect(launcher.isProcess()).not.to.be.ok();
       settings.protocol = 'tap';
