@@ -20,7 +20,12 @@ function serializeMessage(message) {
 }
 
 function deserializeMessage(message) {
-  return JSON.parse(message);
+  try {
+    return JSON.parse(message);
+  } catch (error) {
+    console.error('Testem: Error deserializing message:', message);
+    return {};
+  }
 }
 
 function sendMessageToParent(type, data) {
