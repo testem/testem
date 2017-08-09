@@ -251,14 +251,23 @@ describe('App', function() {
   describe('start', function() {
     var finish;
     var onExitCb;
+    var onExitFinished;
+
     beforeEach(function() {
-      onExitCb = sandbox.stub().yields(null);
+      onExitFinished = false;
+      onExitCb = sinon.stub().callsFake(function(config, data, callback) {
+        setTimeout(function() {
+          callback(null);
+          onExitFinished = true;
+        }, 10);
+      });
       config = new Config('dev', {}, {
         reporter: new FakeReporter(),
         on_exit: onExitCb
       });
       app = new App(config, function() {
         expect(onExitCb.called).to.be.true();
+        expect(onExitFinished).to.be.true();
         finish();
       });
       app.once('testRun', app.exit);
@@ -270,7 +279,7 @@ describe('App', function() {
       app.start();
     });
 
-    it('calls on_exit hook on failure', function(done) {
+    it('calls on_exit hook on failure and waits for it to finish', function(done) {
       finish = done;
       sandbox.stub(app, 'waitForTests').usingPromise(Bluebird.Promise).rejects();
       app.start();
