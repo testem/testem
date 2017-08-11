@@ -70,6 +70,8 @@ function mochaAdapter() {
           emit('all-test-results', results);
         }
       }, 0);
+    } else if (evt === 'fail') {
+      testFail(test, err);
     }
 
     oEmit.apply(this, arguments);

@@ -402,8 +402,21 @@ describe('mochaAdapter', function() {
         expect(originalEmit).to.have.been.calledWith(evt, test, err);
       });
 
-      it('should not emit a "test-result" event', function() {
-        expect(_emit).not.to.have.been.called();
+      it('should emit a "test-result" event', function() {
+        expect(_emit).to.have.been.calledWith('test-result', {
+          failed: 1,
+          id: 1,
+          items: [{
+            passed: false,
+            message: 'The error message',
+            stack: 'The stack trace'
+          }],
+          name: 'foo ',
+          passed: 0,
+          pending: 0,
+          runDuration: 123,
+          total: 1
+        });
       });
     });
   });
