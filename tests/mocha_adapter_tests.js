@@ -213,21 +213,8 @@ describe('mochaAdapter', function() {
           fn();
         });
 
-        it('should emit a "test-result" event', function() {
-          expect(_emit).to.have.been.calledWith('test-result', {
-            failed: 1,
-            id: 1,
-            items: [{
-              passed: false,
-              message: 'The error message',
-              stack: 'The stack trace'
-            }],
-            name: 'foo ',
-            passed: 0,
-            pending: 0,
-            runDuration: 123,
-            total: 1
-          });
+        it('should not emit a "test-result" event', function() {
+          expect(_emit).not.to.have.been.called();
         });
 
         it('should not emit an "all-test-results" event', function() {
@@ -334,9 +321,9 @@ describe('mochaAdapter', function() {
         fn = _setTimeout.lastCall.args[0];
         fn();
 
-        runner.emit(evt, tests.failed, {message: 'msg', stack: 'trace'});
-        fn = _setTimeout.lastCall.args[0];
-        fn();
+        // Note: Have to run it with "fail" event because "test end" on failure doesn't do anything
+        // by itself.
+        runner.emit('fail', tests.failed, {message: 'msg', stack: 'trace'});
 
         runner.emit(evt, tests.pending, err);
         fn = _setTimeout.lastCall.args[0];
@@ -416,6 +403,19 @@ describe('mochaAdapter', function() {
           pending: 0,
           runDuration: 123,
           total: 1
+        });
+      });
+
+      describe('and then a "test end" event is emitted', function() {
+        beforeEach(function() {
+          evt = 'test end';
+          test = tests.failed;
+          err = {message: 'The error message', stack: 'The stack trace'};
+          runner.emit(evt, test, err);
+        });
+
+        it('should have emitted a "test-result" event just once', function() {
+          expect(_emit).to.have.been.calledOnce();
         });
       });
     });

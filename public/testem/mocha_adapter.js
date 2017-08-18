@@ -61,8 +61,6 @@ function mochaAdapter() {
         waiting--;
         if (test.state === 'passed') {
           testPass(test);
-        } else if (test.state === 'failed') {
-          testFail(test, err);
         } else if (test.pending) {
           testPending(test);
         }
