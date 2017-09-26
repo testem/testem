@@ -87,7 +87,7 @@ function busterAdapter() {
   runner.on('test:deferred', onDeferred);
 
   runner.on('suite:end', function() {
-    emit('all-test-results', results);
+    emit('all-test-results');
   });
 
 }

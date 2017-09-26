@@ -109,7 +109,7 @@ function qunitAdapter() {
   });
   QUnit.done(function(params) {
     results.runDuration = params.runtime;
-    emit('all-test-results', results);
+    emit('all-test-results');
   });
 
 }

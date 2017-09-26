@@ -37,7 +37,7 @@ function tapAdapter(socket) {
       socket.emit('test-result', test);
       results.tests.push(test);
     } else if (msg === '# ok' || msg.match(/^# tests \d+/)) {
-      socket.emit('all-test-results', results);
+      socket.emit('all-test-results');
     }
 
   };

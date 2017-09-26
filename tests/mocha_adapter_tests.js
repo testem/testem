@@ -106,13 +106,7 @@ describe('mochaAdapter', function() {
       });
 
       it('should emit an "all-test-results" event', function() {
-        expect(_emit).to.have.been.calledWith('all-test-results', {
-          failed: 0,
-          passed: 0,
-          pending: 0,
-          tests: [],
-          total: 0
-        });
+        expect(_emit).to.have.been.calledWith('all-test-results');
       });
     });
 
@@ -182,7 +176,7 @@ describe('mochaAdapter', function() {
         });
 
         it('should not emit an "all-test-results" event', function() {
-          expect(_emit).not.to.have.been.calledWith('all-test-results', sinon.match.object);
+          expect(_emit).not.to.have.been.calledWith('all-test-results');
         });
       });
     });
@@ -218,7 +212,7 @@ describe('mochaAdapter', function() {
         });
 
         it('should not emit an "all-test-results" event', function() {
-          expect(_emit).not.to.have.been.calledWith('all-test-results', sinon.match.object);
+          expect(_emit).not.to.have.been.calledWith('all-test-results');
         });
       });
     });
@@ -261,7 +255,7 @@ describe('mochaAdapter', function() {
         });
 
         it('should not emit an "all-test-results" event', function() {
-          expect(_emit).not.to.have.been.calledWith('all-test-results', sinon.match.object);
+          expect(_emit).not.to.have.been.calledWith('all-test-results');
         });
       });
     });
@@ -289,24 +283,7 @@ describe('mochaAdapter', function() {
           });
 
           it('should emit an "all-test-results" event', function() {
-            expect(_emit).to.have.been.calledWith('all-test-results', {
-              failed: 0,
-              passed: 1,
-              pending: 0,
-              tests: [
-                {
-                  failed: 0,
-                  id: 1,
-                  items: [],
-                  name: 'foo bar ',
-                  passed: 1,
-                  pending: 0,
-                  runDuration: 456,
-                  total: 1
-                }
-              ],
-              total: 1
-            });
+            expect(_emit).to.have.been.calledWith('all-test-results');
           });
         });
       });
@@ -335,44 +312,8 @@ describe('mochaAdapter', function() {
           runner.emit('end', {}, null);
         });
 
-        it('should emit an "all-test-results" which aggregates all test results', function() {
-          expect(_emit).to.have.been.calledWith('all-test-results', {
-            failed: 1,
-            passed: 1,
-            pending: 0, // NOTE: not sure if this is really supposed to be 0, but it's the current behavior
-            tests: [
-              {
-                failed: 0,
-                id: 1,
-                items: [],
-                name: 'foo bar ',
-                passed: 1,
-                pending: 0,
-                runDuration: 456,
-                total: 1
-              },
-              {
-                failed: 1,
-                id: 2,
-                items: [{passed: false, message: 'msg', stack: 'trace'}],
-                name: 'foo ',
-                passed: 0,
-                pending: 0,
-                runDuration: 123,
-                total: 1
-              },
-              {
-                failed: 0,
-                id: 3,
-                items: [],
-                name: 'foo bar baz ',
-                passed: 0,
-                pending: 1,
-                total: 1
-              }
-            ],
-            total: 3
-          });
+        it('should emit an "all-test-results" event', function() {
+          expect(_emit).to.have.been.calledWith('all-test-results');
         });
       });
     });

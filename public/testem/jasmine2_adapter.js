@@ -70,7 +70,7 @@ function jasmine2Adapter() {
     };
 
     this.jasmineDone = function() {
-      emit('all-test-results', results);
+      emit('all-test-results');
     };
 
   }
