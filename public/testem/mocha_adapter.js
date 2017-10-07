@@ -52,7 +52,7 @@ function mochaAdapter() {
       emit('tests-start');
     } else if (evt === 'end') {
       if (waiting === 0) {
-        emit('all-test-results', results);
+        emit('all-test-results');
       }
       ended = true;
     } else if (evt === 'test end') {
@@ -65,7 +65,7 @@ function mochaAdapter() {
           testPending(test);
         }
         if (ended && waiting === 0) {
-          emit('all-test-results', results);
+          emit('all-test-results');
         }
       }, 0);
     } else if (evt === 'fail') {

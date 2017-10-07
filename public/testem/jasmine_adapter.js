@@ -68,7 +68,7 @@ function jasmineAdapter() {
     emit('test-result', test);
   };
   JasmineAdapterReporter.prototype.reportRunnerResults = function() {
-    emit('all-test-results', results);
+    emit('all-test-results');
   };
   jasmine.getEnv().addReporter(new JasmineAdapterReporter());
 

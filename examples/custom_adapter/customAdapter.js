@@ -27,7 +27,7 @@ function customTestFrameworkAdapter(socket) {
 
     // Store all the tests in an array for simplicity of running.
     var tests = []
-    
+
     var started = false
     window.test = function test(name, fn){
         tests.push([name, fn])
@@ -101,7 +101,7 @@ function customTestFrameworkAdapter(socket) {
 
             // Now actually report back this test result
             socket.emit("test-result", result)
-            
+
             // update the total tally and add to the collection of
             // overall results
             results.total++
@@ -110,9 +110,9 @@ function customTestFrameworkAdapter(socket) {
 
         // Report back all test results and the fact that
         // we are done running them.
-        socket.emit("all-test-results", results)
+        socket.emit("all-test-results")
     }
-    
+
 
 }
 
