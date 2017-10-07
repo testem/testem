@@ -55,11 +55,6 @@
       "exe": "../../node_modules/.bin/saucie",
       "args": ["-b", "internet explorer", "-v", "9", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
-    },
-    "SL_IE_8": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "8", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
     }
   },
   "launch_in_dev": ["PhantomJS"],
@@ -73,7 +68,6 @@
     "SL_MS_Edge",
     "SL_IE_11",
     "SL_IE_10",
-    "SL_IE_9",
-    "SL_IE_8"
+    "SL_IE_9"
   ]
 }
