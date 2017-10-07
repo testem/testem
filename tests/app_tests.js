@@ -34,7 +34,7 @@ describe('App', function() {
       });
       sandbox.spy(app, 'triggerRun');
       sandbox.spy(app, 'stopRunners');
-      sandbox.stub(app, 'singleRun', function() {
+      sandbox.stub(app, 'singleRun').callsFake(function() {
         return Bluebird.resolve().delay(50);
       });
       app.once('testRun', done);
@@ -194,7 +194,7 @@ describe('App', function() {
 
   describe('file watching', function() {
     beforeEach(function() {
-      sandbox.stub(Config.prototype, 'readConfigFile', function(file, cb) {
+      sandbox.stub(Config.prototype, 'readConfigFile').callsFake(function(file, cb) {
         cb();
       });
     });

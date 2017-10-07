@@ -69,7 +69,7 @@ describe('dev mode app', function() {
         });
         var logins = 0;
         var onBrowserLogin = app.onBrowserLogin;
-        sinon.stub(app, 'onBrowserLogin', function() {
+        sinon.stub(app, 'onBrowserLogin').callsFake(function() {
           onBrowserLogin.apply(app, arguments);
           logins += 1;
 

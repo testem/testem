@@ -67,7 +67,7 @@ describe('fileutils', function() {
     it('returns false for not existing executables with a custom which', function() {
       var process = new EventEmitter();
 
-      sandbox.stub(childProcess, 'spawn', function() {
+      sandbox.stub(childProcess, 'spawn').callsFake(function() {
         setTimeout(function() {
           process.emit('close', 127);
         });

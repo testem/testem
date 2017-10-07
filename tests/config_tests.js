@@ -201,14 +201,14 @@ describe('Config', function() {
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
-    sandbox.stub(config, 'get', function() {
+    sandbox.stub(config, 'get').callsFake(function() {
       return null;
     });
     expect(config.isCwdMode()).to.be.ok();
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
-    sandbox.stub(config, 'get', function(key) {
+    sandbox.stub(config, 'get').callsFake(function(key) {
       if (key === 'src_files') {
         return ['implementation.js'];
       }
@@ -218,7 +218,7 @@ describe('Config', function() {
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
-    sandbox.stub(config, 'get', function(key) {
+    sandbox.stub(config, 'get').callsFake(function(key) {
       if (key === 'test_page') {
         return 'tests.html';
       }
@@ -234,9 +234,9 @@ describe('Config', function() {
   });
 
   it('should getLaunchers should call getAvailable browsers', function(done) {
-    sandbox.stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) {return cb(null, n);});
 
-    sandbox.stub(browserLauncher, 'getAvailableBrowsers', function(config, browsers, cb) {
+    sandbox.stub(browserLauncher, 'getAvailableBrowsers').callsFake(function(config, browsers, cb) {
       cb(null, [
         {name: 'Chrome', exe: 'chrome.exe'},
         {name: 'Firefox'}
@@ -260,7 +260,7 @@ describe('Config', function() {
   });
 
   it('should install custom launchers', function(done) {
-    sandbox.stub(config, 'getWantedLaunchers', function(n, cb) {return cb(null, n);});
+    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) {return cb(null, n);});
     config.config = {
       launchers: {
         Node: {
@@ -269,7 +269,7 @@ describe('Config', function() {
       }
     };
 
-    sandbox.stub(browserLauncher, 'getAvailableBrowsers', function(config, browsers, cb) {
+    sandbox.stub(browserLauncher, 'getAvailableBrowsers').callsFake(function(config, browsers, cb) {
       cb(null, []);
     });
 
