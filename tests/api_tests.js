@@ -53,7 +53,7 @@ describe('Api', function() {
         done();
       });
       sandbox.spy(api.app, 'stopCurrentRun');
-      sandbox.stub(api.app, 'singleRun', function() {
+      sandbox.stub(api.app, 'singleRun').callsFake(function() {
         return Bluebird.resolve().delay(100);
       });
       api.app.start(function() {
@@ -66,7 +66,7 @@ describe('Api', function() {
           expect(existingTimeout).to.not.be.undefined();
 
           var originalTimeout = global.clearTimeout;
-          sandbox.stub(global, 'clearTimeout', function(cookie) {
+          sandbox.stub(global, 'clearTimeout').callsFake(function(cookie) {
             calledCookie = cookie;
             originalTimeout(cookie);
 

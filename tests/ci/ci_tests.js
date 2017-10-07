@@ -380,7 +380,7 @@ describe('ci mode app', function() {
     config.read(function() {
       var app = new App(config);
       var start = Date.now();
-      sandbox.stub(app, 'cleanExit', function() {
+      sandbox.stub(app, 'cleanExit').callsFake(function() {
         assert.lengthOf(app.runners, 1, 'There must be one runner');
         assert(Date.now() - start < 30000, 'Timeout does not wait for test to finish if it takes too long');
         done();

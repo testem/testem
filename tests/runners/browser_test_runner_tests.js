@@ -206,7 +206,7 @@ describe('browser test runner', function() {
     });
 
     it('starts the launcher once', function() {
-      sandbox.stub(launcher, 'start', function() {
+      sandbox.stub(launcher, 'start').callsFake(function() {
         return Bluebird.resolve({
           on: function() {}
         });
