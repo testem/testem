@@ -49,7 +49,7 @@ function decycle(object, maxDepth) {
   maxDepth = maxDepth || 5;
   return (function derez(value, path, depth) {
     if (depth > maxDepth) {
-      return `Decycle max depth reached at ${maxDepth}. You may override the default by setting "client_decycle_depth" in your testem config.`;
+      return 'Decycle max depth reached at ' + maxDepth + '. You may override the default by setting "client_decycle_depth" in your testem config.';
     }
 
     // The derez recurses through the object, producing the deep copy.
