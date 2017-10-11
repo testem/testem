@@ -33,6 +33,7 @@
     "http-proxy": "^1.13.1",
     "js-yaml": "^3.2.5",
     "lodash.assignin": "^4.1.0",
+    "lodash.castarray": "^4.4.0",
     "lodash.clonedeep": "^4.4.1",
     "lodash.find": "^4.5.1",
     "lodash.uniqby": "^4.7.0",
