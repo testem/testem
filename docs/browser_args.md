@@ -49,7 +49,18 @@ Conventions
      }
      ```
 
-  * An object specifying a string `mode` (either `ci` or `dev`) and `args` in the form of one of the first two options. The `mode` will determine which environments the given `args` apply to.
+  * An object of arguments keyed by mode (either `ci` or `dev`) in the form of one of the first two options. Arguments applicable to both modes can be specified with the `all` key.
+
+     ```javascript
+     "browser_args": {
+       "chrome": {
+         "all": "--no-default-browser-check",
+         "ci": [ "--auto-open-devtools-for-tabs" ]
+       }
+     }
+    ```
+
+  * **DEPRECATED** An object specifying a string `mode` (either `ci` or `dev`) and `args` in the form of one of the first two options. The `mode` will determine which environments the given `args` apply to.
 
      ```javascript
      "browser_args": {

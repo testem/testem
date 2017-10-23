@@ -353,7 +353,7 @@ Testem passes its own list of arguments to some of the browsers it launches. You
 }
 ```
 
-You can supply arguments to any number of browsers Testem has available by using the launcher name as a key in `browser_args`. Values may be an array of string arguments, a single string, or an object specifying `args` and a `mode` to apply them to.
+You can supply arguments to any number of browsers Testem has available by using the launcher name as a key in `browser_args`. Values may be an array of string arguments, a single string, or an object of arguments by mode.
 
 Read [more details](docs/browser_args.md) about the browser argument options.
 

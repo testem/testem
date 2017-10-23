@@ -131,6 +131,29 @@ describe('browserArgs', function() {
         knownBrowsers = createKnownBrowsers();
       });
 
+      it('warns about deprecation of mode and args fields', function(done) {
+        knownBrowsers = createKnownBrowsers();
+
+        config.appMode = 'dev';
+        config.browser_args = {
+          chrome: {
+            mode: 'dev',
+            args: '--fake'
+          }
+        };
+
+        log.once('log.warn', function(warning) {
+          expect(warning.message).to.equal('[DEPRECATION] Specifying browser_args as a hash with "mode" and "args" properties has been deprecated. Mode should be a key with its arguments as a value.');
+          done();
+        });
+
+        browserArgs.addCustomArgs(knownBrowsers, config);
+
+        // Resets known browsers value
+        knownBrowsers = createKnownBrowsers();
+      });
+
+
       // NOTE: knownBrowsers[0] is Chrome
       it('adds args to browser regardless of key capitalization', function() {
         // Get Chrome's default args
@@ -149,6 +172,75 @@ describe('browserArgs', function() {
 
         // Resets known browsers value
         knownBrowsers = createKnownBrowsers();
+      });
+
+      describe('object form with mode as key', function() {
+        it('adds args for matching appMode', function() {
+          // Get Chrome's default args
+          var defaultArgs = createKnownBrowsers()[0].args();
+
+          knownBrowsers = createKnownBrowsers();
+
+          config.appMode = 'dev';
+          config.browser_args = {
+            chrome: {
+              dev: ['--fake'],
+              ci: ['--ci-only']
+            }
+          };
+
+          browserArgs.addCustomArgs(knownBrowsers, config);
+
+          expect(knownBrowsers[0].args()).to.deep.equal([ '--fake' ].concat(defaultArgs));
+
+          // Resets known browsers value
+          knownBrowsers = createKnownBrowsers();
+        });
+
+        it('adds args with "all" merged in', function() {
+          // Get Chrome's default args
+          var defaultArgs = createKnownBrowsers()[0].args();
+
+          knownBrowsers = createKnownBrowsers();
+
+          config.appMode = 'ci';
+          config.browser_args = {
+            chrome: {
+              all: '--all',
+              dev: ['--fake'],
+              ci: ['--ci-only']
+            }
+          };
+
+          browserArgs.addCustomArgs(knownBrowsers, config);
+
+          expect(knownBrowsers[0].args()).to.deep.equal([ '--all', '--ci-only' ].concat(defaultArgs));
+
+          // Resets known browsers value
+          knownBrowsers = createKnownBrowsers();
+        });
+
+        it('adds "all" args if arguments for the appMode are not set', function() {
+          // Get Chrome's default args
+          var defaultArgs = createKnownBrowsers()[0].args();
+
+          knownBrowsers = createKnownBrowsers();
+
+          config.appMode = 'ci';
+          config.browser_args = {
+            chrome: {
+              all: '--all',
+              dev: ['--fake']
+            }
+          };
+
+          browserArgs.addCustomArgs(knownBrowsers, config);
+
+          expect(knownBrowsers[0].args()).to.deep.equal([ '--all' ].concat(defaultArgs));
+
+          // Resets known browsers value
+          knownBrowsers = createKnownBrowsers();
+        });
       });
     });
 
