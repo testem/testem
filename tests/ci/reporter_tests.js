@@ -474,7 +474,8 @@ describe('test reporters', function() {
       var reporter = new TeamcityReporter(false, stream);
       reporter.report('phantomjs', {
         name: 'it does <cool> "cool" \'cool\' stuff',
-        passed: true
+        passed: true,
+        runDuration: 1234
       });
       reporter.report('phantomjs', {
         name: 'it skips stuff',
@@ -496,7 +497,8 @@ describe('test reporters', function() {
         passed: false,
         skipped: undefined,
         error: undefined,
-        pending: undefined
+        pending: undefined,
+        runDuration: 42
       });
 
       reporter.finish();
@@ -504,7 +506,7 @@ describe('test reporters', function() {
 
       assert.match(output, /##teamcity\[testSuiteFinished name='testem\.suite' duration='(\d+(\.\d+)?)'\]/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it does <cool> "cool" \|'cool\|' stuff' duration='1234']/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it skips stuff']/);
       assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
       assert.match(output, /##teamcity\[testFinished name='phantomjs - it skips stuff']/);
@@ -513,7 +515,7 @@ describe('test reporters', function() {
       assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles failures']/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it handles undefined errors']/);
       assert.match(output, /##teamcity\[testFailed name='phantomjs - it handles undefined errors' message='' details='']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors']/);
+      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors' duration='42']/);
     });
   });
 });
