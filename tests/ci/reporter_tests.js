@@ -504,18 +504,61 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
 
-      assert.match(output, /##teamcity\[testSuiteFinished name='testem\.suite' duration='(\d+(\.\d+)?)'\]/);
-      assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it does <cool> "cool" \|'cool\|' stuff' duration='1234']/);
-      assert.match(output, /##teamcity\[testStarted name='phantomjs - it skips stuff']/);
-      assert.match(output, /##teamcity\[testIgnored name='phantomjs - it skips stuff' message='pending']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it skips stuff']/);
-      assert.match(output, /##teamcity\[testStarted name='phantomjs - it handles failures']/);
-      assert.match(output, /##teamcity\[testFailed name='phantomjs - it handles failures' message='foo' details='bar']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles failures']/);
-      assert.match(output, /##teamcity\[testStarted name='phantomjs - it handles undefined errors']/);
-      assert.match(output, /##teamcity\[testFailed name='phantomjs - it handles undefined errors' message='' details='']/);
-      assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors' duration='42']/);
+      assert.match(output, /##teamcity\[testSuiteStarted name='phantomjs']/);
+      assert.match(output, /##teamcity\[testSuiteFinished name='phantomjs']/);
+      assert.match(output, /##teamcity\[testStarted name='it does <cool> "cool" \|'cool\|' stuff']/);
+      assert.match(output, /##teamcity\[testFinished name='it does <cool> "cool" \|'cool\|' stuff' duration='1234']/);
+      assert.match(output, /##teamcity\[testStarted name='it skips stuff']/);
+      assert.match(output, /##teamcity\[testIgnored name='it skips stuff' message='pending']/);
+      assert.match(output, /##teamcity\[testFinished name='it skips stuff']/);
+      assert.match(output, /##teamcity\[testStarted name='it handles failures']/);
+      assert.match(output, /##teamcity\[testFailed name='it handles failures' message='foo' details='bar']/);
+      assert.match(output, /##teamcity\[testFinished name='it handles failures']/);
+      assert.match(output, /##teamcity\[testStarted name='it handles undefined errors']/);
+      assert.match(output, /##teamcity\[testFailed name='it handles undefined errors' message='' details='']/);
+      assert.match(output, /##teamcity\[testFinished name='it handles undefined errors' duration='42']/);
+    });
+
+    it('uses prefix to nest tests', function() {
+      var reporter = new TeamcityReporter(false, stream);
+      reporter.report('firefox', {
+        name: 'test in firefox',
+        passed: true,
+      });
+      reporter.report('firefox', {
+        name: 'it handles failures',
+        passed: false,
+        error: {
+          passed: false,
+          message: 'foo',
+          stack: 'bar'
+        }
+      });
+      reporter.report('opera', {
+        name: 'ignored test in opera',
+        skipped: true,
+      });
+
+      reporter.finish();
+      var output = stream.read().toString();
+
+      assert.match(output, new RegExp([
+        "##teamcity\\[testSuiteStarted name='firefox']",
+        "##teamcity\\[testStarted name='test in firefox']",
+        "##teamcity\\[testFinished name='test in firefox']",
+        "##teamcity\\[testStarted name='it handles failures']",
+        "##teamcity\\[testFailed name='it handles failures' message='foo' details='bar']",
+        "##teamcity\\[testFinished name='it handles failures']",
+        "##teamcity\\[testSuiteFinished name='firefox']",
+      ].join('\n')));
+
+      assert.match(output, new RegExp([
+        "##teamcity\\[testSuiteStarted name='opera']",
+        "##teamcity\\[testStarted name='ignored test in opera']",
+        "##teamcity\\[testIgnored name='ignored test in opera' message='pending']",
+        "##teamcity\\[testFinished name='ignored test in opera']",
+        "##teamcity\\[testSuiteFinished name='opera']"
+      ].join('\n')));
     });
   });
 });
