@@ -119,7 +119,7 @@ function Message(socket, emitArgs) {
 }
 
 // eslint-disable-next-line no-use-before-define
-if (typeof TestemConfig === 'undefined' || {}) {
+if (typeof TestemConfig === 'undefined') {
   var TestemConfig = {};
 }
 
