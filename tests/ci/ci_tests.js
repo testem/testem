@@ -9,7 +9,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var http = require('http');
-var childProcess = require('child_process');
+var execa = require('execa');
 var Bluebird = require('bluebird');
 
 var FakeReporter = require('../support/fake_reporter');
@@ -147,7 +147,7 @@ describe('ci mode app', function() {
           launcher.on('processStarted', function(process) {
             setTimeout(function() {
               if (isWin) {
-                childProcess.exec('taskkill /pid ' + process.pid + ' /T');
+                execa('taskkill /pid ' + process.pid + ' /T');
               } else {
                 process.kill();
               }
