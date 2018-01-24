@@ -29,6 +29,7 @@ function qunitAdapter() {
     tests: []
   };
   var currentTest;
+  var supportsTotalToRun = false;
   var id = 1;
 
   function lineNumber(e) {
@@ -50,6 +51,15 @@ function qunitAdapter() {
     }
     return undefined;
   }
+
+  QUnit.begin(function(data) {
+    if ('totalToRun' in data) {
+      // Older versions of QUnit do not have this:
+      // https://github.com/qunitjs/qunit/pull/1256
+      results.total = data.totalToRun;
+      supportsTotalToRun = true;
+    }
+  });
 
   QUnit.log(function(params, e) {
     if (e) {
@@ -93,11 +103,13 @@ function qunitAdapter() {
     currentTest.passed = params.passed;
     currentTest.skipped = params.skipped;
     currentTest.todo = params.todo;
-    currentTest.total = params.total;
     currentTest.runDuration = params.runtime;
     currentTest.testId = params.testId;
 
-    results.total++;
+    if (!supportsTotalToRun) {
+      results.total++;
+      currentTest.total = params.total;
+    }
 
     if (currentTest.skipped) {
       results.skipped++;
