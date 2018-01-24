@@ -271,6 +271,7 @@ describe('test reporters', function() {
         assert.match(output.shift(), / {7}actual: 'Seven'/);
         output.shift();
         assert.match(output.shift(), / {5}trace/);
+        output.shift();
         assert.equal(output, '');
       });
     });
