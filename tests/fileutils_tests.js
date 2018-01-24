@@ -1,8 +1,6 @@
 'use strict';
 
 var path = require('path');
-var childProcess = require('child_process');
-var EventEmitter = require('events').EventEmitter;
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
@@ -59,21 +57,6 @@ describe('fileutils', function() {
     });
 
     it('returns false for an not existing executable', function() {
-      return fileutils.executableExists('not-found').then(function(result) {
-        expect(result).to.be.false();
-      });
-    });
-
-    it('returns false for not existing executables with a custom which', function() {
-      var process = new EventEmitter();
-
-      sandbox.stub(childProcess, 'spawn').callsFake(function() {
-        setTimeout(function() {
-          process.emit('close', 127);
-        });
-        return process;
-      });
-
       return fileutils.executableExists('not-found').then(function(result) {
         expect(result).to.be.false();
       });

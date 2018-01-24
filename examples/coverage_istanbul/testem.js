@@ -1,7 +1,6 @@
 var path  = require('path');
 var http  = require('http');
 var fs    = require('fs');
-var cp    = require('child_process');
 var shell = require('shelljs');
 var port  = 7358;
 var server;

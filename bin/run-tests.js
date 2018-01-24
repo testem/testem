@@ -1,39 +1,21 @@
 #!/usr/bin/env node
 'use strict';
 
-var spawn = require('child_process').spawn;
+var execa = require('execa');
+var command = 'npm';
 
-function run(command, args, cb) {
-
-  console.log('Running: ' + command + ' ' + args.join(' '));
-
-  var child = spawn(command, args, { stdio: 'inherit' });
-
-  child.on('error', function(err) {
-    cb(err);
-  });
-
-  child.on('exit', function(code) {
-    if (code === 0) {
-      return cb();
-    }
-
-    cb(code);
-  });
-}
-
-var testArgs;
+var args;
 if (process.env.BROWSER_TESTS) {
-  testArgs = ['run', 'browser-tests'];
+  args = ['run', 'browser-tests'];
 } else {
-  testArgs = ['run', 'testem-tests'];
+  args = ['run', 'testem-tests'];
 }
 
-run('npm', testArgs, function(err) {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
+console.log('Running: ' + command + ' ' + args.join(' '));
 
-  process.exit(0);
+execa(command, args, { stdio: 'inherit' }).then(function(result) {
+  process.exit(result.code);
+}).catch(function(err) {
+  console.error(err);
+  process.exit(1);
 });
