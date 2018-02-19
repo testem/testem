@@ -85,10 +85,10 @@ function hookIntoTestFramework(socket) {
   }
 
   var found = true;
+  console.log(jasmine3Adapter);
   if(getJasmineRequireObj && getJasmineRequireObj().version && getJasmineRequireObj().version() === '3.0.0'){
     jasmine3Adapter(socket);
-  }
-  if (typeof getJasmineRequireObj === 'function') {
+  } else if (typeof getJasmineRequireObj === 'function') {
     jasmine2Adapter(socket);
   } else if (typeof jasmine === 'object') {
     jasmineAdapter(socket);
