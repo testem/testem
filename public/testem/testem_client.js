@@ -9,7 +9,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 */
 /* globals document, window */
 /* globals module */
-/* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
+/* globals jasmineAdapter, jasmine2Adapter, jasmine3Adapter, mochaAdapter */
 /* globals qunitAdapter, busterAdapter, decycle, TestemConfig */
 /* exported Testem */
 'use strict';
@@ -85,6 +85,9 @@ function hookIntoTestFramework(socket) {
   }
 
   var found = true;
+  if(getJasmineRequireObj && getJasmineRequireObj().version && getJasmineRequireObj().version() === '3.0.0'){
+    jasmine3Adapter(socket);
+  }
   if (typeof getJasmineRequireObj === 'function') {
     jasmine2Adapter(socket);
   } else if (typeof jasmine === 'object') {
