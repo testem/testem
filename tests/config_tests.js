@@ -39,6 +39,22 @@ describe('Config', function() {
     expect(config.get('port')).not.to.be.undefined();
   });
 
+  it('gives defaultOptions properties when got', function() {
+    var defaultOptions = {
+      host: 'localhost',
+      port: 7337,
+      config_dir: process.cwd(),
+      test_page: 'http://my/test/page',
+      file: 'defaultFile'
+    };
+    config.setDefaultOptions(defaultOptions);
+    expect(config.get('host')).to.equal('localhost');
+    expect(config.get('port')).to.equal(7337);
+    expect(config.get('config_dir')).to.equal(process.cwd());
+    // returns file from progOptions and not defaultOptions because progOptions has higher priority
+    expect(config.get('file')).to.equal(progOptions.file);
+  });
+
   describe('accepts empty config file', function() {
     var config;
     beforeEach(function(done) {

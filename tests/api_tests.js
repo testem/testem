@@ -43,6 +43,56 @@ describe('Api', function() {
     });
   });
 
+  describe('defaultOptions', function() {
+    it('set in testem when using dev mode', function() {
+      var api = new Api();
+      var options = {
+        host: 'localhost',
+        port: 7337,
+        config_dir: process.cwd(),
+        test_page: 'http://my/test/page'
+      };
+
+      api.setDefaultOptions(options);
+      api.startDev({parallel: 5, on_exit: 'test'});
+      expect(api.config.read.callCount).to.equal(1);
+      expect(api.config.defaultOptions).to.equals(options);
+    });
+
+    it('set in testem when using CI mode', function() {
+      var api = new Api();
+      var options = {
+        host: 'localhost',
+        port: 7337,
+        config_dir: process.cwd(),
+        test_page: 'http://my/test/page'
+      };
+      api.setDefaultOptions(options);
+      api.startCI({parallel: 5, on_exit: 'test'});
+      expect(api.config.read.callCount).to.equal(1);
+      expect(api.config.get('host')).to.equal('localhost');
+      expect(api.config.get('port')).to.equal(7337);
+      expect(api.config.get('config_dir')).to.equal(process.cwd());
+      expect(api.config.defaultOptions).to.equals(options);
+    });
+
+    it('set in testem when startServer is called', function() {
+      var api = new Api();
+      var options = {
+        host: 'localhost',
+        port: 7337,
+        config_dir: process.cwd(),
+        test_page: 'http://my/test/page'
+      };
+      api.setDefaultOptions(options);
+      api.startServer(options);
+      expect(api.config.get('host')).to.equal('localhost');
+      expect(api.config.get('port')).to.equal(7337);
+      expect(api.config.get('config_dir')).to.equal(process.cwd());
+      expect(api.config.defaultOptions).to.equals(options);
+    });
+  });
+
   describe('restart', function() {
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {

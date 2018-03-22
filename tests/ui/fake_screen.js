@@ -45,7 +45,7 @@ var FakeScreen = {
   },
   write: function(str) {
     // get rid of all display codes
-    str = str.replace(/\u001b\[[0-9]+m/g, '');
+    str = str.replace(/\\x1b\[[0-9]+m/g, '');
 
     var original = buffer[line];
     if (!original) {
