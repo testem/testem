@@ -347,12 +347,12 @@ describe('browser test runner', function() {
       runner.start(function() {
         expect(reporter.results[0].result).to.deep.eq({
           error: {
-            message: 'Error: Browser disconnected\n'
+            message: 'Error: Browser timeout exceeded: 0.1s\n'
           },
           failed: 1,
           launcherId: launcher.id,
           logs: [{
-            text: 'Error: Browser disconnected',
+            text: 'Error: Browser timeout exceeded: 0.1s',
             type: 'error'
           }],
           name: 'error',
