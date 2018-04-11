@@ -4,10 +4,14 @@ module.exports = {
     'chai-expect',
     'mocha'
   ],
+  parserOptions: {
+    ecmaVersion: 6,
+  },
   extends: 'eslint:recommended',
   env: {
     browser: false,
     node: true,
+    es6: true,
   },
   globals: {},
   rules: {

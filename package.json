@@ -16,9 +16,9 @@
   "bugs": {
     "url": "http://github.com/testem/testem/issues"
   },
-  "engines": [
-    "node >= 0.8.0"
-  ],
+  "engines": {
+    "node": "^4.5 || 6.* || >= 7.*"
+  },
   "license": "MIT",
   "dependencies": {
     "backbone": "^1.1.2",
