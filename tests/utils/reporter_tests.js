@@ -181,10 +181,8 @@ describe('Reporter', function() {
     });
 
     it('creates a reporter when custom reporter dependent on configs is provided', function() {
-      var CustomReporter = function() {
-        TapReporter.apply(this, arguments);
-      };
-      CustomReporter.prototype = Object.create(TapReporter.prototype);
+      class CustomReporter extends TapReporter {
+      }
 
       var config = { get: sinon.stub() };
       config.get.withArgs('reporter').returns(CustomReporter);
