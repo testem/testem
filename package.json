@@ -41,7 +41,7 @@
     "mustache": "^2.2.1",
     "node-notifier": "^5.0.1",
     "npmlog": "^4.0.0",
-    "printf": "^0.2.3",
+    "printf": "^0.3.0",
     "rimraf": "^2.4.4",
     "socket.io": "^2.1.0",
     "spawn-args": "^0.2.0",
