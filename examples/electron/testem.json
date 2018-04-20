@@ -1,0 +1,22 @@
+{
+  "framework": "qunit",
+  "test_page": [
+    "test.html"
+  ],
+  "src_files": [
+    "*.js"
+  ],
+  "launchers": {
+    "cli": {
+      "exe": "node",
+      "args": [ "./runtests.js", "<baseUrl>", "<testPage>", "<id>" ],
+      "protocol": "browser"
+    }
+  },
+  "launch_in_dev": [
+    "cli"
+  ],
+  "launch_in_ci": [
+    "cli"
+  ]
+}

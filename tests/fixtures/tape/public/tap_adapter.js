@@ -1,41 +1,45 @@
+/* globals Testem */
+'use strict';
 
+Testem.useCustomAdapter(tapAdapter);
+function tapAdapter(socket) {
 
-Testem.useCustomAdapter(tapAdapter)
-function tapAdapter(socket){
+  var results = {
+    failed: 0,
+    passed: 0,
+    total: 0,
+    tests: []
+  };
 
-    var results = {
-        failed: 0
-        , passed: 0
-        , total: 0
-        , tests: []
+  socket.emit('tests-start');
+
+  Testem.handleConsoleMessage = function(msg) {
+    var m = msg.match(/^((?:not )?ok) (\d+) (.+)$/);
+    if (m) {
+
+      var passed = m[1] === 'ok';
+      var test = {
+        passed: passed ? 1 : 0,
+        failed: passed ? 0 : 1,
+        total: 1,
+        id: m[2],
+        name: m[3],
+        items: []
+      };
+
+      if (passed) {
+        results.passed++;
+      } else {
+        results.failed++;
+      }
+      results.total++;
+
+      socket.emit('test-result', test);
+      results.tests.push(test);
+    } else if (msg === '# ok' || msg.match(/^# tests \d+/)) {
+      socket.emit('all-test-results');
     }
 
-    socket.emit('tests-start')
-
-    Testem.handleConsoleMessage = function(msg){
-        var m
-        if (m = msg.match(/^((?:not )?ok) (\d+) (.+)$/)){
-
-            var passed = m[1] === 'ok'
-            var test = {
-                passed: passed ? 1 : 0,
-                failed: passed ? 0 : 1,
-                total: 1,
-                id: m[2],
-                name: m[3],
-                items: []
-            }
-
-            if (passed) results.passed++
-            else results.failed++
-            results.total++
-
-            socket.emit('test-result', test)
-            results.tests.push(test)
-        }else if (msg === '# ok' || msg.match(/^# tests \d+/)){
-            socket.emit('all-test-results', results)
-        }
-        
-    }
+  };
 
 }

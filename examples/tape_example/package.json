@@ -1,11 +1,14 @@
 {
-  "name": "tape_example",
-  "version": "0.0.0",
-  "description": "Example tests using tape",
   "devDependencies": {
-    "tape": "~1.1.0"
+    "browserify": "^13.0.0",
+    "tape": "^4.4.0"
   },
   "scripts": {
-    "test": "node tests.js"
-  }
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
 }

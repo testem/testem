@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>Test'em</title>
-  <script src="/testem/jasmine.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js"></script>
   <script src="/testem.js"></script>
-  <script src="/testem/jasmine-html.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js"></script>
   <script>
     (function() {
       var jasmineEnv = jasmine.getEnv()
@@ -18,7 +18,7 @@
 
   {{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
 
-  <link rel="stylesheet" href="/testem/jasmine.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.css">
 
   {{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 </head>

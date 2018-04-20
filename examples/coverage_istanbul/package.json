@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "istanbul": "^0.4.2",
+    "jasmine-core": "^2.4.1",
+    "rimraf": "^2.5.1"
+  },
+  "scripts": {
+    "pretest": "rimraf coverage instrumented coverage*.json",
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
+}

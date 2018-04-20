@@ -1,3 +1,4 @@
-/coverage
-/instrumented
-/coverage.json
+coverage
+coverage*.json
+instrumented
+node_modules

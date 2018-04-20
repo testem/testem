@@ -1,7 +1,10 @@
-describe('hello', function(){
+/* globals expect, hello */
+'use strict';
 
-  it('says hello', function(){
+describe('hello', function() {
+
+  it('says hello', function() {
     expect(hello()).toEqual('hello world');
   });
-  
+
 });

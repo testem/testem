@@ -1,17 +1,41 @@
+os:
+- osx
+- linux
+osx_image: xcode8
+addons:
+  apt:
+    packages:
+      - xvfb
 language: node_js
 node_js:
-- '0.12'
-- '0.10'
-- iojs
+  - "4"
+  - "6"
+  - "8"
 matrix:
   fast_finish: true
+  include:
+    - os: osx
+      node_js: "8"
+    - os: linux
+      node_js: "8"
+      env: BROWSER_TESTS=1 SAUCE_USERNAME=testem-ci SAUCE_ACCESS_KEY=1f00979e-0252-4d69-98ff-f6c85d1a746b
+  exclude:
+    - os: osx
 sudo: false
-deploy:
-  provider: npm
-  email: johannes.wuerbach@googlemail.com
-  api_key:
-    secure: GpFEM1tptEqlRo/y2UgrLCoZy7am8Zf/1Ve/hAsDuejdLkV7iH394QT+3Uv5MFPS765wg3PpaSJ7111QEMX3DOhDdBiFvBKC/+BgzEb3OrwcdfrbbKwru+a+OyJvQLqFElChy+bGlsR1jUo5w9DlMTECv7I0Rgz0hQXClzi3PeA=
-  on:
-    tags: true
-    repo: airportyh/testem
-    node: '0.12'
+before_install:
+  - if [ $TRAVIS_OS_NAME == "osx" ]; then
+      brew update;
+      brew install phantomjs;
+    fi
+  - npm config set spin false
+install:
+  - export DISPLAY=':99.0'
+  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  - travis_retry npm install
+before_script:
+  - if [ $TRAVIS_OS_NAME == "linux" ] && [ $TRAVIS_NODE_VERSION == "4" ]; then
+      npm run lint;
+    fi
+script:
+  - npm run test
+  - npm run integration

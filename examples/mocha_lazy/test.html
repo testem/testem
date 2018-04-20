@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em</title>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.css">
+</head>
+<body>
+<div id="mocha"></div>
+<script src="/testem.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/chai/3.4.1/chai.js"></script>
+<script>mocha.setup('bdd')</script>
+<script src="hello.js"></script>
+<script src="hello_spec.js"></script>
+<script>
+Testem.hookIntoTestFramework();
+mocha.run()
+</script>
+</body>
+</html>

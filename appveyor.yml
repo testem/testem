@@ -1,31 +1,26 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
-# Test against these versions of Node.js.
 environment:
+  INTEGRATION_TESTS_CONCURRENCY: 5
   matrix:
   - PHANTOM_SRC: "npm"
-  - PHANTOM_SRC: "chocolatey"
+  # - PHANTOM_SRC: "chocolatey"
 
 # Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node
-  - ps: Install-Product node 0.12
-  # Typical npm stuff.
-  - md C:\nc
-  - npm install -g npm@^2
-  # Workaround https://github.com/npm/npm/wiki/Troubleshooting#upgrading-on-windows
-  - set PATH=%APPDATA%\npm;%PATH%
-  - npm config set cache C:\nc
+  # Get the latest stable version of nodejs
+  - ps: Install-Product node 8
   - npm version
-  - npm install
-  # Install PhantomJS
-  - IF %PHANTOM_SRC%==npm npm install -g phantomjs
-  - IF %PHANTOM_SRC%==chocolatey cinst PhantomJS -y
+  - npm config set spin false
+  - IF %PHANTOM_SRC%==npm appveyor-retry npm install -g phantomjs-prebuilt
+  - IF %PHANTOM_SRC%==chocolatey appveyor-retry cinst PhantomJS -y
   - phantomjs -v
+  - appveyor-retry npm install
 
 # Post-install test scripts.
 test_script:
-  - cmd: npm test
+  - cmd: npm run testem-tests
+  - cmd: npm run integration
 
 # Don't actually build.
 build: off

@@ -1,85 +1,83 @@
-var expect = require('chai').expect
-var screen = require('./fake_screen')
-var ScrollableTextPanel = require('../../lib/dev/ui/scrollable_text_panel')
-var isWin = /^win/.test(process.platform)
+'use strict';
 
-describe('ScrollableTextPanel', !isWin ? function(){
+var expect = require('chai').expect;
+var screen = require('./fake_screen');
+var ScrollableTextPanel = require('../../lib/reporters/dev/scrollable_text_panel');
+var isWin = /^win/.test(process.platform);
 
-  var panel
+describe('ScrollableTextPanel', !isWin ? function() {
 
+  var panel;
 
-  context('10x2 screen', function(){
+  context('10x2 screen', function() {
 
-    beforeEach(function(){
-      screen.$setSize(10, 3)
+    beforeEach(function() {
+      screen.$setSize(10, 3);
       panel = new ScrollableTextPanel({
         line: 0,
         col: 0,
         width: 10,
         height: 2,
         screen: screen
-      })
-    })
-    it('renders stuff', function(){
-      panel.set('text', 'hello') // triggers render
-      expect(panel.get('textLines')).to.deep.equal(['hello'])
-      expect(screen.buffer[0]).to.equal('hello     ')
-    })
-    it('wraps text', function(){
-      panel.set('text', 'hello there tommy')
-      expect(screen.buffer[0]).to.equal('hello ther')
-      expect(screen.buffer[1]).to.equal('e tommy   ')
-    })
-    it('does not render if not visible', function(){
-      panel.set('visible', false)
-      panel.set('text', 'hello')
-      expect(screen.buffer).to.deep.equal([ '          ', '          ', '          ' ])
-    })
+      });
+    });
+    it('renders stuff', function() {
+      panel.set('text', 'hello'); // triggers render
+      expect(panel.get('textLines')).to.deep.equal(['hello']);
+      expect(screen.buffer[0]).to.equal('hello     ');
+    });
+    it('wraps text', function() {
+      panel.set('text', 'hello there tommy');
+      expect(screen.buffer[0]).to.equal('hello ther');
+      expect(screen.buffer[1]).to.equal('e tommy   ');
+    });
+    it('does not render if not visible', function() {
+      panel.set('visible', false);
+      panel.set('text', 'hello');
+      expect(screen.buffer).to.deep.equal(['          ', '          ', '          ']);
+    });
 
-    context('with paragraph text', function(){
-      beforeEach(function(){
-        panel.set('text', 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.')
-      })
-      it('scrolls', function(){
-        expect(screen.buffer[0]).to.equal('Charm obje')
-        panel.scrollDown()
-        expect(screen.buffer[0]).to.equal('cts pass a')
-        panel.scrollUp()
-        expect(screen.buffer[0]).to.equal('Charm obje')
-      })
-      it('pages up and down', function(){
-        expect(screen.buffer).to.deep.equal([ 'Charm obje',
+    context('with paragraph text', function() {
+      beforeEach(function() {
+        panel.set('text', 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.');
+      });
+      it('scrolls', function() {
+        expect(screen.buffer[0]).to.equal('Charm obje');
+        panel.scrollDown();
+        expect(screen.buffer[0]).to.equal('cts pass a');
+        panel.scrollUp();
+        expect(screen.buffer[0]).to.equal('Charm obje');
+      });
+      it('pages up and down', function() {
+        expect(screen.buffer).to.deep.equal(['Charm obje',
           'cts pass a',
-          '          '])
-        panel.pageDown()
-        expect(screen.buffer).to.deep.equal([ 'long the d',
+          '          ']);
+        panel.pageDown();
+        expect(screen.buffer).to.deep.equal(['long the d',
           'ata events',
-          '          '])
-        panel.pageUp()
-        expect(screen.buffer).to.deep.equal([ 'Charm obje',
+          '          ']);
+        panel.pageUp();
+        expect(screen.buffer).to.deep.equal(['Charm obje',
           'cts pass a',
-          '          '])
-      })
-      it('half pages up and down', function(){
-        panel.halfPageDown()
-        expect(screen.buffer).to.deep.equal([ 'cts pass a', 'long the d', '          ' ])
-        panel.halfPageUp()
-        expect(screen.buffer).to.deep.equal([ 'Charm obje', 'cts pass a', '          '])
-      })
-      it('properly erases existing text', function(){
-        panel.set('text', 'hello')
+          '          ']);
+      });
+      it('half pages up and down', function() {
+        panel.halfPageDown();
+        expect(screen.buffer).to.deep.equal(['cts pass a', 'long the d', '          ']);
+        panel.halfPageUp();
+        expect(screen.buffer).to.deep.equal(['Charm obje', 'cts pass a', '          ']);
+      });
+      it('properly erases existing text', function() {
+        panel.set('text', 'hello');
 
-      })
-    })
+      });
+    });
 
+  });
 
-
-  })
-
-
-  context('6x6 with 2 char padding', function(){
-    beforeEach(function(){
-      screen.$setSize(10, 10)
+  context('6x6 with 2 char padding', function() {
+    beforeEach(function() {
+      screen.$setSize(10, 10);
       panel = new ScrollableTextPanel({
         line: 2,
         col: 2,
@@ -87,10 +85,10 @@ describe('ScrollableTextPanel', !isWin ? function(){
         height: 6,
         text: 'Charm objects pass along the data events from their input stream except for events generated from querying the terminal device.',
         screen: screen
-      })
-    })
+      });
+    });
 
-    it('writes and wraps correctly', function(){
+    it('writes and wraps correctly', function() {
       expect(screen.buffer).to.deep.equal([
         '          ',
         '          ',
@@ -101,9 +99,9 @@ describe('ScrollableTextPanel', !isWin ? function(){
         '   the d  ',
         '  ata ev  ',
         '          ',
-        '          ' ])
-    })
-  })
-}: function() {
-  xit('TODO: Fix and re-enable for windows')
-})
+        '          ']);
+    });
+  });
+} : function() {
+  xit('TODO: Fix and re-enable for windows');
+});

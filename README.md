@@ -1,7 +1,7 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://travis-ci.org/airportyh/testem.svg?branch=master)](https://travis-ci.org/airportyh/testem) [![Dependency Status](https://david-dm.org/airportyh/testem.svg)](https://david-dm.org/airportyh/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
+[![Build Status](https://travis-ci.org/testem/testem.svg?branch=master)](https://travis-ci.org/testem/testem) [![Dependency Status](https://david-dm.org/testem/testem.svg)](https://david-dm.org/testem/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
 
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
@@ -60,14 +60,14 @@ The simplest way to use Testem, in the TDD spirit, is to start in an empty direc
 
 You will see a terminal-based interface which looks like this
 
-![Initial interface](https://github.com/airportyh/testem/raw/master/images/initial.png)
+![Initial interface](https://github.com/testem/testem/raw/master/images/initial.png)
 
 Now open your browser and go to the specified URL. You should now see
 
-![Zero of zero](https://github.com/airportyh/testem/raw/master/images/zeros.png)
+![Zero of zero](https://github.com/testem/testem/raw/master/images/zeros.png)
 
 We see 0/0 for tests because at this point we haven't written any code. As we write them, Testem will pick up any `.js` files
-that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first"(written in Jasmine)
+that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first" (written in Jasmine)
 
 ```javascript
 describe('hello', function(){
@@ -78,7 +78,7 @@ describe('hello', function(){
 ```
 Save that file and now you should see
 
-![Red](https://github.com/airportyh/testem/raw/master/images/red.png)
+![Red](https://github.com/testem/testem/raw/master/images/red.png)
 
 Testem should automatically pick up the new files you've added and also any changes that you make to them and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
@@ -90,7 +90,7 @@ function hello(){
 
 So you should now see
 
-![Green](https://github.com/airportyh/testem/raw/master/images/green.png)
+![Green](https://github.com/testem/testem/raw/master/images/green.png)
 
 ### Using the Text User Interface
 
@@ -141,6 +141,7 @@ Will print them out. The output might look like
     Chrome
     Firefox
     Safari
+    Safari Technology Preview
     Opera
     PhantomJS
 
@@ -158,14 +159,26 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](http:
 
 TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
 
-* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
+* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
+
+## TAP Options
+
+By default, the TAP reporter outputs logs from all tests that emit logs. You can disable this behavior and only emit logs for failed tests using:
+
+```json
+{
+  "tap_quiet_logs": true
+}
+```
 
 ## Other Test Reporters
 
-Testem has other test reporters than TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
+Testem has other test reporters besides TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
 
     testem ci -R dot
+
+You can also [add your own reporter](docs/custom_reporter.md).
 
 ### Example xunit reporter output
 
@@ -196,7 +209,6 @@ Note that the real output is not pretty printed.
     ##teamcity[testFinished name='PhantomJS 1.9 - goodbye should say goodbye']
 
     ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
-
 
 ### Command line options
 
@@ -233,7 +245,7 @@ The `src_files` can also be unix glob patterns.
 ```
 
 You can also ignore certain files using `src_files_ignore`.
-***Update: I've removed the ability to use a space-separated list of globs as a string in the src_files property because it disallowed matching files or directories with spaces in them.***
+***Update: I've removed the ability to use a space-separated list of globs as a string in the `src_files` property because it disallowed matching files or directories with spaces in them.***
 
 ```json
 {
@@ -254,7 +266,10 @@ You can also use a custom page for testing. To do this, first you need to specif
 
 ```json
 {
-  "test_page": "tests.html"
+  "test_page": "tests.html",
+  "launch_in_dev": [
+    "Chrome"
+  ]
 }
 ```
 
@@ -262,7 +277,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` or `buster.js` include to enable *Testem* with your test page.
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` or `buster.js` scripts to enable *Testem* with your test page.
 
 ```html
 <script src="/testem.js"></script>
@@ -270,18 +285,39 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
 
 Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
 
+'/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
+
 ### Dynamic Substitution
 
-To enable dynamically substituting in the Javascript files in your custom test page, you must
+To enable dynamic substitutions within the Javascript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path
+2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
     {{#serve_files}}
     <script src="{{src}}"></script>
     {{/serve_files}}
+
+    {{#css_files}}
+    <link rel="stylesheet" href="{{src}}">
+    {{/css_files}}
+
+### Multiple Test Pages
+
+You can also specify multiple test pages to run by passing an array to the `test_page` option.
+
+```json
+{
+  "test_page": [
+    "unit-tests.html",
+    "integration-tests.html"
+  ]
+}
+```
+
+This will cause Testem to run each test page in a separate launcher instance for each launcher you are using. This means that if you define 2 test pages and are using 3 launchers you will get 6 unique runs (2 per launcher).
 
 Launchers
 ---------
@@ -302,7 +338,24 @@ This will display something like the following
     Opera         browser       ✔
     Mocha         process(TAP)  ✔
 
-This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process &mdash; as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launch in CI-mode. Similarly, the "Dev" column those that will automatically launch in dev-mode.
+This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process &mdash; as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launched in CI-mode. Similarly, the "Dev" column lists those that will automatically launch in dev-mode.
+
+Customizing Browser Arguments
+-----------------------------
+
+Testem passes its own list of arguments to some of the browsers it launches. You can add your own custom arguments to these lists by including the `browser_args` option in your Testem configuration. For example:
+
+```javascript
+"browser_args": {
+  "Chrome": [
+    "--auto-open-devtools-for-tabs"
+  ]
+}
+```
+
+You can supply arguments to any number of browsers Testem has available by using the launcher name as a key in `browser_args`. Values may be an array of string arguments, a single string, or an object of arguments by mode.
+
+Read [more details](docs/browser_args.md) about the browser argument options.
 
 Running Tests in Node and Custom Process Launchers
 --------------------------------------------------
@@ -346,6 +399,17 @@ And verify that it's in the list.
 
 If you want to debug tests in PhantomJS, include the `phantomjs_debug_port` option in your testem configuration, referencing an available port number.  Once testem has started PhantomJS, navigate (with a traditional browser) to http://localhost:<port> and attach to one of PhantomJS's browser tabs (probably the second one in the list).  `debugger` statements will now break in the debugging console.
 
+If you want to use any of the [PhantomJS command line options](http://phantomjs.org/api/command-line.html), include the `phantomjs_args` option in your testem configuration. For example:
+
+```javascript
+"phantomjs_args": [
+  "--ignore-ssl-errors=true"
+]
+```
+
+You can also customize the phantomjs launcher file by specifying the `phantomjs_launch_script` option.
+In this launcher you can change options like the `viewPortSize`. See `assets/phantom.js` for the default launcher.
+
 Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
 
@@ -369,7 +433,7 @@ Since you want to be serving the `.js` files that are generated and not the `.co
 ]
 ```
 
-Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can used here as well.
+Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can be used here as well.
 
 If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
@@ -378,6 +442,29 @@ If you need to run a command after your tests have completed (such as removing c
 ```
 
 If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
+
+Running browser code after tests complete
+-------------
+It is possible to send coverage reports or run other JavaScript in the browser by using the `afterTests` method.
+
+```javascript
+Testem.afterTests(
+  function(config, data, callback) {
+    var coverage = window.__coverage__;
+    var postBody = JSON.stringify(coverage);
+    if (postBody) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                callback();
+            }
+        };
+        xhr.open('POST', 'http://localhost:7358/', true);
+        xhr.send(postBody);
+    }
+});
+```
+
 
 Custom Routes
 -------------
@@ -392,7 +479,7 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
     + public
       + tests.html
 
-Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css` you can use the "routes" option to do that
+Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css`. You can use the "routes" option to do that
 
 ```javascript
 "routes": {
@@ -405,7 +492,7 @@ Let's say you want to serve `tests.html` at the top level url `/tests.html`, all
 DIY: Use Any Test Framework
 ---------------------------
 
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/airportyh/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
 Then, to use it, in your config file simply set
 
@@ -413,19 +500,17 @@ Then, to use it, in your config file simply set
 "framework": "custom"
 ```
 
-And then make sure you include the adapter code in your test suite and you are ready to go. Here for the [full example](https://github.com/airportyh/testem/tree/master/examples/custom_adapter).
+And then make sure you include the adapter code in your test suite and you are ready to go. See here for the [full example](https://github.com/testem/testem/tree/master/examples/custom_adapter).
 
-Growl or Growl-ish Notifications
+Native notifications
 --------------------------------
 
-If you'd prefer not to be looking at the terminal while developing, you can us growl notification (or simply desktop notifications on some platforms) using the `-g` option.
-
-But, to use this option, you may first need to install some additional software, see the [node-growl page](https://github.com/visionmedia/node-growl#install) for more details.
+If you'd prefer not to be looking at the terminal while developing, you can enable native notifications (e.g. notification center, growl) using the `-g` option.
 
 API Proxy
 --------------------------------
 
-The proxy option allows you to transparently forward http requests to an external endpoint.
+The proxy option allows you to transparently forward HTTP requests to an external endpoint.
 
 Simply add a `proxies` section to the `testem.json` configuration file.
 
@@ -444,47 +529,47 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 }
 ```
 
-This functionality is implemented as a *transparent proxy* hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
+This functionality is implemented as a *transparent proxy*, hence a request to
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
 Example Projects
 ----------------
 
-I've created [examples](https://github.com/airportyh/testem/tree/master/examples/) for various setups
+I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
 
-* [Simple QUnit project](https://github.com/airportyh/testem/tree/master/examples/qunit_simple)
-* [Simple Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_simple)
-* [Jasmine 2](https://github.com/airportyh/testem/tree/master/examples/jasmine2)
-* [Custom Jasmine project](https://github.com/airportyh/testem/tree/master/examples/jasmine_custom)
-* [Custom Jasmine project using Require.js](https://github.com/airportyh/testem/tree/master/examples/jasmine_requirejs)
-* [Simple Mocha Project](https://github.com/airportyh/testem/tree/master/examples/mocha_simple)
-* [Mocha + Chai](https://github.com/airportyh/testem/tree/master/examples/mocha_chai_simple)
-* [Hybrid Project](https://github.com/airportyh/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Buster.js Project](https://github.com/airportyh/testem/tree/master/examples/buster)
-* [Coffeescript Project](https://github.com/airportyh/testem/tree/master/examples/coffeescript)
-* [Browserify Project](https://github.com/airportyh/testem/tree/master/examples/browserify)
-* [JSHint Example](https://github.com/airportyh/testem/tree/master/examples/jshint)
-* [Custom Test Framework](https://github.com/airportyh/testem/tree/master/examples/custom_adapter)
-* [Tape Example](https://github.com/airportyh/testem/tree/master/examples/tape_example)
-* [BrowserStack Integration](https://github.com/airportyh/testem/tree/master/examples/browserstack) **bleeding edge**
-* [SauceLabs Integration](https://github.com/airportyh/testem/tree/master/examples/saucelabs) **bleeding edge**
-* [Code Coverage with Istanbul](https://github.com/airportyh/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
+* [Simple QUnit project](https://github.com/testem/testem/tree/master/examples/qunit_simple)
+* [Simple Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_simple)
+* [Jasmine 2](https://github.com/testem/testem/tree/master/examples/jasmine2)
+* [Custom Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_custom)
+* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
+* [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
+* [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
+* [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Buster.js Project](https://github.com/testem/testem/tree/master/examples/buster)
+* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
+* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
+* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
+* [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
+* [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
+* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack) **bleeding edge**
+* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs) **bleeding edge**
+* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
 
 Known Issues
 ------------
 
-1. On Windows, Mocha fails to run under Testem due to an [issue](https://github.com/joyent/node/issues/3871) in Node core. Until that gets resolved, I've made a [workaround](https://github.com/airportyh/mocha/tree/windowsfix) for mocha. To install this fork of Mocha, do
+1. On Windows, Mocha fails to run under Testem due to an [issue](https://github.com/joyent/node/issues/3871) in Node core. Until that gets resolved, I've made a [workaround](https://github.com/airportyh/mocha/tree/windowsfix) for Mocha. To install this fork of Mocha, do
 
         npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
 
-2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/airportyh/testem/issues/130).
+2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/testem/testem/issues/130).
 
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/airportyh/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
 
 Roadmap
 -------
@@ -492,13 +577,10 @@ Roadmap
 1. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
 2. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
 
-Contributors
-------------
+Core Maintainer(s)
+------------------
 
-* [Toby Ho](https://github.com/airportyh)
 * [Johannes Würbach](https://github.com/johanneswuerbach)
-* [Raynos](https://github.com/Raynos)
-* [Derek Brans](https://github.com/dbrans)
 
 Community
 ---------
@@ -508,7 +590,7 @@ Community
 Credits
 -------
 
-Testem depends on these great software
+Testem depends on the following great software
 
 * [Jasmine](http://jasmine.github.io/)
 * [QUnit](http://code.google.com/p/jqunit/)
@@ -523,16 +605,3 @@ Testem depends on these great software
 * [Express](http://expressjs.com/)
 * [jQuery](http://jquery.com/)
 * [Backbone](http://backbonejs.org/)
-
-License
--------
-
-(The MIT License)
-
-Copyright (c) 2012 Toby Ho &lt;airportyh@gmail.com&gt;
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

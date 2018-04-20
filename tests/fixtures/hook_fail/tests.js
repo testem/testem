@@ -1,5 +1,7 @@
-describe('ok', function(){
-  it('ok', function(){
+'use strict';
+
+describe('ok', function() {
+  it('ok', function() {
     // ok
-  })
-})
+  });
+});

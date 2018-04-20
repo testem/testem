@@ -7,42 +7,46 @@
     "unittest",
     "browser"
   ],
-  "version": "0.8.0",
+  "version": "2.2.1",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/airportyh/testem.git"
+    "url": "git://github.com/testem/testem.git"
   },
   "bugs": {
-    "url": "http://github.com/airportyh/testem/issues"
+    "url": "http://github.com/testem/testem/issues"
   },
-  "engines": [
-    "node >= 0.8.0"
-  ],
+  "engines": {
+    "node": "^4.5 || 6.* || >= 7.*"
+  },
   "license": "MIT",
   "dependencies": {
-    "async": "^0.9.0",
     "backbone": "^1.1.2",
+    "bluebird": "^3.4.6",
     "charm": "^1.0.0",
-    "colors": "^1.0.3",
     "commander": "^2.6.0",
-    "consolidate": "^0.11.0",
-    "cross-spawn": "^0.2.6",
-    "did_it_work": "0.0.6",
+    "consolidate": "^0.14.0",
+    "execa": "^0.10.0",
     "express": "^4.10.7",
-    "fileset": "^0.1.5",
-    "fireworm": "^0.6.6",
-    "glob": "^4.3.5",
-    "growl": "^1.8.1",
-    "http-proxy": "^1.8.1",
+    "fireworm": "^0.7.0",
+    "glob": "^7.0.4",
+    "http-proxy": "^1.13.1",
     "js-yaml": "^3.2.5",
-    "mkdirp": "^0.5.0",
-    "mustache": "^1.0.0",
-    "npmlog": "^1.0.0",
-    "rimraf": "^2.2.8",
-    "socket.io": "^1.3.4",
+    "lodash.assignin": "^4.1.0",
+    "lodash.castarray": "^4.4.0",
+    "lodash.clonedeep": "^4.4.1",
+    "lodash.find": "^4.5.1",
+    "lodash.uniqby": "^4.7.0",
+    "mkdirp": "^0.5.1",
+    "mustache": "^2.2.1",
+    "node-notifier": "^5.0.1",
+    "npmlog": "^4.0.0",
+    "printf": "^0.2.3",
+    "rimraf": "^2.4.4",
+    "socket.io": "^2.1.0",
+    "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
-    "tap": "^0.6.0",
+    "tap-parser": "^5.1.0",
     "xmldom": "^0.1.19"
   },
   "files": [
@@ -55,19 +59,33 @@
     "views"
   ],
   "scripts": {
-    "test": "mocha --timeout 3000 tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js -R spec",
-    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/ui/*_tests.js tests/ci/*_tests.js; cover report html; open cover_html/index.html"
+    "install:all": "npm install && npm install phantomjs-prebuilt",
+    "test": "./bin/run-tests.js",
+    "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
+    "integration": "node ./bin/run-integration.js",
+    "testem-tests": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
+    "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "bodydouble": "^0.1.2",
-    "chai": "^2.0.0",
-    "cheerio": "^0.18.0",
-    "concat-stream": "^1.4.7",
-    "ispy": "^0.1.2",
-    "mocha": "^2.1.0",
+    "bluebird-retry": "^0.9.0",
+    "browserify": "^13.0.0",
+    "chai": "^4.0.2",
+    "chai-files": "^1.2.0",
+    "chai-shallow-deep-equal": "^1.4.4",
+    "cheerio": "^0.22.0",
+    "dirty-chai": "^2.0.0",
+    "eslint": "^4.1.0",
+    "eslint-plugin-chai-expect": "^1.1.1",
+    "eslint-plugin-mocha": "^4.3.0",
+    "mocha": "^3.0.0",
     "request": "^2.51.0",
-    "sinon": "^1.12.2",
-    "tmp": "0.0.25"
+    "saucie": "^3.0.1",
+    "shelljs": "^0.7.0",
+    "sinon": "^4.0.1",
+    "sinon-chai": "^3.0.0",
+    "tape": "^4.0.0",
+    "tmp": "0.0.33"
   },
   "bin": {
     "testem": "./testem.js"

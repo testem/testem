@@ -3,6 +3,17 @@ Contributing to Testem
 
 Open source is all about DIY! If you want something fixed, it's sometimes faster to just roll your sleeves up, not to mention lots more rewarding. This doc will give you some pointers on where to look when you poke around Testem's source code.
 
+Getting Started
+---------------
+
+* Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
+* Run `npm install` and `npm test` to make sure you're off to a good start
+
+> Testem expects `PhantomJS` to be in the PATH, if you don't have one,
+> either install it globally via `npm install -g phantomjs-prebuilt`
+> (*you might need to use `sudo` for global installiation*)
+> or run `npm run install:all` instead of `npm install` during the second step
+
 Brief Code Walk Through
 -----------------------
 
@@ -44,26 +55,19 @@ Or in the spirit of eating our own dog food:
 
     testem
 
-If it isn't practical to write a test first, it might be my fault, feel free to chat. 
+To lint your code:
+
+    npm run lint
+
+If it isn't practical to write a test first, it might be my fault, feel free to chat.
 
 *Protip: to make the tests run faster during TDD, use Mocha's exclusive test feature, i.e. `describe.only` and `it.only`.*
+
 
 ### Integration Tests
 
 There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`
 
-On Unix do
+Node + PhantomJS
 
-    tests/integration/browser_tests.sh
-
-and on Windows do
-
-    tests/integration/browser_tests.bat
-
-Coding Style
-------------
-
-This is where I am going deviate from the norm. I like writing *semicolon-less* Javascript. It is unconventional, but there's is a method to the madness. To master this style of Javascript, read [mir.aculo.us's article for the short version](http://mir.aculo.us/2012/04/16/writing-semicolon-less-javascript-the-for-people-who-want-to-get-stuff-done-edition/) or [inimino's for the long version](http://inimino.org/~inimino/blog/javascript_semicolons). *You are not required to follow my coding style though.* The only principles you should follow are
-
-1. Have fun.
-2. Be thoughtful of others.
+    npm run integration

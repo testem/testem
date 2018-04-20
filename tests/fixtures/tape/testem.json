@@ -1,19 +1,22 @@
 {
     "launchers": {
         "Node": {
-            "command": "node tests.js",
+            "exe": "node",
+            "args": ["tests.js"],
             "protocol": "tap",
             "cwd": "tests/fixtures/tape/"
         },
         "NodePlain": {
-            "command": "node tests.js",
+            "exe": "node",
+            "args": ["tests.js"],
             "cwd": "tests/fixtures/tape/"
         }
     },
     "src_files": [
-        "*.js"
+        "public/*.js"
     ],
-    "before_tests": "npm run browserify",
+    "cwd": "tests/fixtures/tape/",
+    "before_tests": "node before-tests.js",
     "test_page": "public/tests.html",
-    "launch_in_dev": ["Node", "PhantomJS"]
+    "launch_in_dev": ["Node", "PhantomJS", "NodePlain"]
 }

@@ -3,18 +3,16 @@
         "Node": {
             "command": "node tests.js",
             "protocol": "tap"
-        },
-        "NodePlain": {
-            "command": "node tests.js"
         }
     },
     "framework": "tap",
-    "src_files": [
-        "*.js"
+    "src_files_ignore": [
+        "bundle.js"
     ],
     "serve_files": [
         "bundle.js"
     ],
+    "serve_files_ignore": [],
     "before_tests": "browserify tests.js -o bundle.js",
     "launch_in_dev": ["Node", "PhantomJS"]
 }

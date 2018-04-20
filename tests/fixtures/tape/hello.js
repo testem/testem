@@ -1,4 +1,6 @@
+'use strict';
+
 module.exports = hello;
-function hello(name){
-    return 'hello world';
+function hello() {
+  return 'hello world';
 }

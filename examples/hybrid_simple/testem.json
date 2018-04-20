@@ -1,7 +1,6 @@
 {
-    "framework": "mocha",
+    "framework": "mocha+chai",
     "src_files": [
-        "chai.js",
         "hello.js",
         "tests.js"
     ],

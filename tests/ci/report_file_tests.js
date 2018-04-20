@@ -1,103 +1,122 @@
-var fs = require('fs')
-var App = require('../../lib/ci')
-var TestReporter = require('../../lib/ci/test_reporters/tap_reporter')
-var Config = require('../../lib/config')
-var bd = require('bodydouble')
-var mock = bd.mock
-var stub = bd.stub
-var assert = require('chai').assert
-var expect = require('chai').expect
-var Process = require('did_it_work')
-var exec = require('child_process').exec
-var rimraf = require('rimraf')
-var path = require('path')
-var PassThrough = require('stream').PassThrough
-var ReportFile = require('../../lib/ci/report_file')
-var XUnitReporter = require('../../lib/ci/test_reporters/xunit_reporter')
-var tmp = require('tmp')
+'use strict';
+
+var fs = require('fs');
+var App = require('../../lib/app');
+var Config = require('../../lib/config');
+var Bluebird = require('bluebird');
+var expect = require('chai').expect;
+var rimraf = require('rimraf');
+var path = require('path');
+var PassThrough = require('stream').PassThrough;
+var ReportFile = require('../../lib/utils/report-file');
+var tmp = require('tmp');
+
+var FakeReporter = require('../support/fake_reporter');
+
+var tmpDirAsync = Bluebird.promisify(tmp.dir);
+var tmpFileAsync = Bluebird.promisify(tmp.file);
+var rimrafAsync = Bluebird.promisify(rimraf);
 
 describe('report file output', function() {
-  var mainReportDir, reportDir, filename;
-  before(function(done) {
-    tmp.dir(function(err, path) {
-      mainReportDir = path
-      done()
-    })
-  })
-  after(function(done) {
-    rimraf(mainReportDir, function() {
-      done()
-    })
-  })
+  this.timeout(30000);
 
-  beforeEach(function(done) {
-    tmp.dir({template: path.join(mainReportDir, '/reports-XXXXXX')}, function(err, dirPath){
-      if(err) throw err
-      reportDir = dirPath
+  var reportDir, filename;
+  beforeEach(function() {
+    return tmpDirAsync({
+      keep: true
+    }).then(function(dir) {
+      reportDir = dir;
 
-      tmp.file({dir: dirPath, name: 'test-reports.xml'}, function(err, filePath) {
-        filename = filePath
-        done()
-      })
-    })
-  })
+      return tmpFileAsync({
+        dir: dir,
+        name: 'test-reports.xml',
+        keep: true,
+        discardDescriptor: true
+      });
+    }).then(function(filePath) {
+      filename = filePath;
+    });
+  });
 
-  it('allows passing in report_file from config', function(){
-    var fakeReporter = {}
+  afterEach(function() {
+    return rimrafAsync(reportDir);
+  });
+
+  it('allows passing in report_file from config', function(done) {
+    var dir = path.join('tests/fixtures/success-skipped');
+
     var config = new Config('ci', {
-      reporter: fakeReporter,
-      report_file: filename
-    })
-    var app = new App(config)
-    assert.strictEqual(app.reportFileName, filename)
-  })
+      file: path.join(dir, 'testem.json'),
+      port: 0,
+      cwd: dir,
+      reporter: new FakeReporter(),
+      stdout_stream: new PassThrough(),
+      report_file: filename,
+      launch_in_ci: ['phantomjs']
+    });
 
-  it("doesn't create a file if the report_file parameter is not passed in", function(done){
-    var filename = tmp.tmpNameSync()
-    var fakeReporter = {}
-    var config = new Config('ci', {
-      reporter: fakeReporter,
-    })
-    var app = new App(config)
-    fs.readFile(filename, function(error, data) {
-      expect(error).not.to.be.null
-      done()
-    })
-  })
+    var app = new App(config, function() {
+      expect(app.reportFileName).to.eq(filename);
 
-  it('writes out results to the normal output stream', function(){
-    var fakeStdout = new PassThrough()
-    var reportFile = new ReportFile(filename, fakeStdout)
-    reportFile.stream.write('some test results')
-    var output = fakeStdout.read().toString()
-    assert.match(output, /some test results/)
-  })
+      // fileStream already closed
+      done();
+    });
+    app.start();
+  });
 
-  it('writes out results to the file', function(done){
-    var stream = new PassThrough()
-    var reportFile = new ReportFile(filename, stream)
-    var reportStream = reportFile.stream
+  it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
+    tmp.tmpName(function(err, filename) {
+      if (err) {
+        return done(err);
+      }
 
-    reportStream.on('finish', function() {
-      fs.readFile(filename, function(error, data) {
-        assert.match(data, /test data/)
-        done()
-      })
-    })
-    reportStream.write('test data')
-    reportStream.end()
-  })
+      var config = new Config('ci', {
+        reporter: new FakeReporter(),
+        stdout_stream: new PassThrough()
+      });
+      var app = new App(config, function() {
+        fs.stat(filename, function(err) {
+          expect(err).not.to.be.null();
+          expect(err.code).to.eq('ENOENT');
+          done();
+        });
+      });
+      app.start();
+      app.exit();
+    });
+  });
 
-  it("creates folders in the path if they don't exist", function(done) {
-    var nestedFilename = tmp.tmpNameSync({dir: reportDir, name: 'nested/test/folders/test-reports.xml'})
+  it('writes out results to the file', function(done) {
+    var reportFile = new ReportFile(filename);
+    var reportStream = reportFile.outputStream;
 
-    var fakeStdout = new PassThrough()
-    var reportFile = new ReportFile(nestedFilename, fakeStdout)
+    reportFile.outputStream.on('finish', function() {
+      fs.readFile(filename, function(err, data) {
+        if (err) {
+          return done(err);
+        }
 
-    fs.open(nestedFilename, 'r', function(error, fd) {
-      expect(error).to.be.null
-      done()
-    })
-  })
-})
+        expect(data).to.match(/test data/);
+        done();
+      });
+    });
+    reportStream.write('test data');
+    reportStream.end();
+  });
 
+  it('creates folders in the path if they don\'t exist', function(done) {
+    var name = 'nested/test/folders/test-reports.xml';
+
+    tmp.tmpName({dir: reportDir, name: name}, function(err, nestedFilename) {
+      if (err) {
+        return done(err);
+      }
+
+      var reportFile = new ReportFile(nestedFilename);
+      reportFile.outputStream.on('finish', function() {
+        fs.stat(nestedFilename, done);
+      });
+      reportFile.outputStream.end();
+    });
+  });
+});

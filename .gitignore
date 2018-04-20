@@ -1,11 +1,4 @@
-/node_modules/.bin/
-/node_modules/*
-testem.log2
-*.log
-tunnel
-node_modules
-.idea
-.coverage_data
-cover_html
-test-results.xml
-reports
+/node_modules
+npm-debug.log
+npm-debug.log.*
+testem.log
