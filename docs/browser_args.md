@@ -59,6 +59,15 @@ Conventions
        }
      }
     ```
+    
+  * Additionally you may provide a path to the browsers binary
+  
+      ```javascript
+     "browser_args": {
+       "Chromium": {
+         "path": "/my/local/Chromium-binary"
+       }
+     }
 
   * **DEPRECATED** An object specifying a string `mode` (either `ci` or `dev`) and `args` in the form of one of the first two options. The `mode` will determine which environments the given `args` apply to.
 
