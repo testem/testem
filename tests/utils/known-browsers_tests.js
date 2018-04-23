@@ -122,7 +122,7 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('a custom browser path for firefox is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for firefox ', function(){
         var customPath = '/my/custom/path/to/firefox';
 
         config.get = function(name) {
@@ -204,7 +204,7 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('a custom browser path for chrome is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for chrome ', function(){
         var customPath = '/my/custom/path/to/chrome';
 
         config.get = function(name) {
@@ -286,7 +286,7 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('a custom browser path for safari is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for safari ', function(){
         var customPath = '/my/custom/path/to/safari';
 
         config.get = function(name) {
@@ -360,7 +360,7 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('a custom browser path for Safari Technology Preview is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function(){
         var customPath = '/my/custom/path/to/safari-technology-preview';
 
         config.get = function(name) {
@@ -424,7 +424,7 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('a custom browser path for opera is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for opera ', function(){
         var customPath = '/my/custom/path/to/opera';
 
         config.get = function(name) {
@@ -517,7 +517,7 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('a custom browser path for phantomjs is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for phantomjs ', function(){
         var customPath = '/my/custom/path/to/phantomjs';
 
         config.get = function(name) {
@@ -628,7 +628,7 @@ describe('knownBrowsers', function() {
         expect(internetExplorer).to.exist();
       });
 
-      it('a custom browser path for IE is listed as the possiblePath', function(){
+      it('allows a custom path to be used as the possiblePath for IE ', function(){
         var customPath = 'c:\\my\\custom\\path\\to\\IE';
 
         config.get = function(name) {
