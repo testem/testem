@@ -342,11 +342,14 @@ This displays the current list of launchers that are available. Launchers can la
 
 Customizing Browser Paths
 -----------------------------
-You can add your own custom paths to browser binaries by including the `browser_paths` option in your Testem configuration. For example:
+You can add your own custom paths to browser binaries by including `browser_paths` and/or `browser_exes` options in your Testem configuration. For example:
 
 ```javascript
 "browser_paths": {
   "Chromium": "./node_modules/puppeteer/.local-chromium/mac-549031/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+}
+"browser_exes": {
+  "Chromium": "chrome-custom-binary"
 }
 ```
 
