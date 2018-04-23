@@ -340,6 +340,18 @@ This will display something like the following
 
 This displays the current list of launchers that are available. Launchers can launch either a browser or a custom process &mdash; as shown in the "Type" column. Custom launchers can be defined to launch custom processes. The "CI" column indicates the launchers which will be automatically launched in CI-mode. Similarly, the "Dev" column lists those that will automatically launch in dev-mode.
 
+Customizing Browser Paths
+-----------------------------
+You can add your own custom paths to browser binaries by including the `browser_paths` option in your Testem configuration. For example:
+
+```javascript
+"browser_paths": {
+  "Chromium": "./node_modules/puppeteer/.local-chromium/mac-549031/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+}
+```
+
+Adding a browser_path for a browser will override all default places for testem to look for the browser. So if the browser doesn't exist at the path you provided, you will get failures.
+
 Customizing Browser Arguments
 -----------------------------
 

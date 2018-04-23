@@ -122,6 +122,24 @@ describe('knownBrowsers', function() {
         });
       });
 
+      it('a custom browser path for firefox is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/firefox';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              Firefox: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        firefox = findBrowser(browsers, 'Firefox');
+
+        expect(firefox.possiblePath).to.be.a('string');
+        expect(firefox.possiblePath).to.equal(customPath);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Firefox');
@@ -184,6 +202,24 @@ describe('knownBrowsers', function() {
           process.env.HOME + '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
           '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         ]);
+      });
+
+      it('a custom browser path for chrome is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/chrome';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              Chrome: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        chrome = findBrowser(browsers, 'Chrome');
+
+        expect(chrome.possiblePath).to.be.a('string');
+        expect(chrome.possiblePath).to.equal(customPath);
       });
 
       describe('browser_args', function() {
@@ -250,6 +286,24 @@ describe('knownBrowsers', function() {
         });
       });
 
+      it('a custom browser path for safari is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/safari';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              Safari: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        safari = findBrowser(browsers, 'Safari');
+
+        expect(safari.possiblePath).to.be.a('string');
+        expect(safari.possiblePath).to.equal(customPath);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Safari');
@@ -306,6 +360,24 @@ describe('knownBrowsers', function() {
         });
       });
 
+      it('a custom browser path for Safari Technology Preview is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/safari-technology-preview';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              "Safari Technology Preview": customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        safariTP = findBrowser(browsers, 'Safari Technology Preview');
+
+        expect(safariTP.possiblePath).to.be.a('string');
+        expect(safariTP.possiblePath).to.equal(customPath);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Safari Technology Preview');
@@ -350,6 +422,24 @@ describe('knownBrowsers', function() {
         expect(opera.args.call(launcher, config, url)).to.deep.eq([
           '--user-data-dir=' + browserTmpDir, '-pd', browserTmpDir, url
         ]);
+      });
+
+      it('a custom browser path for opera is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/opera';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              Opera: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        opera = findBrowser(browsers, 'Opera');
+
+        expect(opera.possiblePath).to.be.a('string');
+        expect(opera.possiblePath).to.equal(customPath);
       });
 
       describe('browser_args', function() {
@@ -425,6 +515,24 @@ describe('knownBrowsers', function() {
         expect(phantomJS.args.call(launcher, config, url)).to.deep.eq([
           'arg1', 'arg2', scriptPath, url
         ]);
+      });
+
+      it('a custom browser path for phantomjs is listed as the possiblePath', function(){
+        var customPath = '/my/custom/path/to/phantomjs';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              PhantomJS: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        phantomJS = findBrowser(browsers, 'PhantomJS');
+
+        expect(phantomJS.possiblePath).to.be.a('string');
+        expect(phantomJS.possiblePath).to.equal(customPath);
       });
 
       describe('browser_args', function() {
@@ -518,6 +626,24 @@ describe('knownBrowsers', function() {
 
       it('exists', function() {
         expect(internetExplorer).to.exist();
+      });
+
+      it('a custom browser path for IE is listed as the possiblePath', function(){
+        var customPath = 'c:\\my\\custom\\path\\to\\IE';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              IE: customPath
+            }
+          }
+        };
+
+        browsers = knownBrowsers('win32', config);
+        internetExplorer = findBrowser(browsers, 'IE');
+
+        expect(internetExplorer.possiblePath).to.be.a('string');
+        expect(internetExplorer.possiblePath).to.equal(customPath);
       });
 
       describe('browser_args', function() {
