@@ -122,14 +122,14 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('allows a custom path to be used as the possiblePath for firefox ', function(){
+      it('allows a custom path to be used as the possiblePath for firefox ', function() {
         var customPath = '/my/custom/path/to/firefox';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               Firefox: customPath
-            }
+            };
           }
         };
 
@@ -204,14 +204,14 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('allows a custom path to be used as the possiblePath for chrome ', function(){
+      it('allows a custom path to be used as the possiblePath for chrome ', function() {
         var customPath = '/my/custom/path/to/chrome';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               Chrome: customPath
-            }
+            };
           }
         };
 
@@ -286,14 +286,14 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('allows a custom path to be used as the possiblePath for safari ', function(){
+      it('allows a custom path to be used as the possiblePath for safari ', function() {
         var customPath = '/my/custom/path/to/safari';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               Safari: customPath
-            }
+            };
           }
         };
 
@@ -360,14 +360,14 @@ describe('knownBrowsers', function() {
         });
       });
 
-      it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function(){
+      it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function() {
         var customPath = '/my/custom/path/to/safari-technology-preview';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
-              "Safari Technology Preview": customPath
-            }
+              'Safari Technology Preview': customPath
+            };
           }
         };
 
@@ -424,14 +424,14 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('allows a custom path to be used as the possiblePath for opera ', function(){
+      it('allows a custom path to be used as the possiblePath for opera ', function() {
         var customPath = '/my/custom/path/to/opera';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               Opera: customPath
-            }
+            };
           }
         };
 
@@ -517,14 +517,14 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('allows a custom path to be used as the possiblePath for phantomjs ', function(){
+      it('allows a custom path to be used as the possiblePath for phantomjs ', function() {
         var customPath = '/my/custom/path/to/phantomjs';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               PhantomJS: customPath
-            }
+            };
           }
         };
 
@@ -628,14 +628,14 @@ describe('knownBrowsers', function() {
         expect(internetExplorer).to.exist();
       });
 
-      it('allows a custom path to be used as the possiblePath for IE ', function(){
+      it('allows a custom path to be used as the possiblePath for IE ', function() {
         var customPath = 'c:\\my\\custom\\path\\to\\IE';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
             return {
               IE: customPath
-            }
+            };
           }
         };
 
