@@ -140,6 +140,24 @@ describe('knownBrowsers', function() {
         expect(firefox.possiblePath).to.equal(customPath);
       });
 
+      it('allows a custom exe to be used as the possibleExe for firefox ', function() {
+        var customExe = 'firefox-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              Firefox: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        firefox = findBrowser(browsers, 'Firefox');
+
+        expect(firefox.possibleExe).to.be.a('string');
+        expect(firefox.possibleExe).to.equal(customExe);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Firefox');
@@ -220,6 +238,24 @@ describe('knownBrowsers', function() {
 
         expect(chrome.possiblePath).to.be.a('string');
         expect(chrome.possiblePath).to.equal(customPath);
+      });
+
+      it('allows a custom exe to be used as the possibleExe for chrome ', function() {
+        var customExe = 'chrome-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              Chrome: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        chrome = findBrowser(browsers, 'Chrome');
+
+        expect(chrome.possibleExe).to.be.a('string');
+        expect(chrome.possibleExe).to.equal(customExe);
       });
 
       describe('browser_args', function() {
@@ -304,6 +340,24 @@ describe('knownBrowsers', function() {
         expect(safari.possiblePath).to.equal(customPath);
       });
 
+      it('allows a custom exe to be used as the possibleExe for safari ', function() {
+        var customExe = 'safari-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              Safari: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        safari = findBrowser(browsers, 'Safari');
+
+        expect(safari.possibleExe).to.be.a('string');
+        expect(safari.possibleExe).to.equal(customExe);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Safari');
@@ -378,6 +432,24 @@ describe('knownBrowsers', function() {
         expect(safariTP.possiblePath).to.equal(customPath);
       });
 
+      it('allows a custom exe to be used as the possibleExe for Safari Technology Preview ', function() {
+        var customExe = 'safari-technology-preview-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              'Safari Technology Preview': customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        safariTP = findBrowser(browsers, 'Safari Technology Preview');
+
+        expect(safariTP.possibleExe).to.be.a('string');
+        expect(safariTP.possibleExe).to.equal(customExe);
+      });
+
       describe('browser_args', function() {
         beforeEach(function() {
           setup('Safari Technology Preview');
@@ -440,6 +512,24 @@ describe('knownBrowsers', function() {
 
         expect(opera.possiblePath).to.be.a('string');
         expect(opera.possiblePath).to.equal(customPath);
+      });
+
+      it('allows a custom exe to be used as the possibleExe for opera ', function() {
+        var customExe = 'opera-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              Opera: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        opera = findBrowser(browsers, 'Opera');
+
+        expect(opera.possibleExe).to.be.a('string');
+        expect(opera.possibleExe).to.equal(customExe);
       });
 
       describe('browser_args', function() {
@@ -533,6 +623,24 @@ describe('knownBrowsers', function() {
 
         expect(phantomJS.possiblePath).to.be.a('string');
         expect(phantomJS.possiblePath).to.equal(customPath);
+      });
+
+      it('allows a custom exe to be used as the possibleExe for phantomjs ', function() {
+        var customExe = 'phantomjs-custom';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              PhantomJS: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        phantomJS = findBrowser(browsers, 'PhantomJS');
+
+        expect(phantomJS.possibleExe).to.be.a('string');
+        expect(phantomJS.possibleExe).to.equal(customExe);
       });
 
       describe('browser_args', function() {
@@ -644,6 +752,24 @@ describe('knownBrowsers', function() {
 
         expect(internetExplorer.possiblePath).to.be.a('string');
         expect(internetExplorer.possiblePath).to.equal(customPath);
+      });
+
+      it('allows a custom exe to be used as the possibleExe for IE ', function() {
+        var customExe = 'iexplore-custom.exe';
+
+        config.get = function(name) {
+          if (name === 'browser_exes') {
+            return {
+              IE: customExe
+            };
+          }
+        };
+
+        browsers = knownBrowsers('win32', config);
+        internetExplorer = findBrowser(browsers, 'IE');
+
+        expect(internetExplorer.possibleExe).to.be.a('string');
+        expect(internetExplorer.possibleExe).to.equal(customExe);
       });
 
       describe('browser_args', function() {
