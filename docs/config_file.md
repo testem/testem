@@ -92,6 +92,7 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     route or routes:             [Object]  overrides for assets paths
+    socket_heartbeat_timeout     [Number]  heartbeat timeout on browser socket in seconds (5s)
     src_files:                   [Array]   string or array list of files or file patterns to use
     src_files_ignore:            [Array]   string or array list of files or file patterns to exclude from usage
     serve_files:                 [Array]   string or array list of files or file patterns to inject into test playground (defaults to `src_files`)
