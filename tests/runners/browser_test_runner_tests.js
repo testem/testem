@@ -2,12 +2,12 @@
 
 var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
 var FakeReporter = require('../support/fake_reporter');
+var FakeSocket = require('../support/fake_socket');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var Bluebird = require('bluebird');
 var path = require('path');
 
-var EventEmitter = require('events').EventEmitter;
 var Config = require('../../lib/config');
 var Launcher = require('../../lib/launcher.js');
 
@@ -16,11 +16,11 @@ describe('browser test runner', function() {
     var ffRunner, chromeRunner, reporter, launcher;
     var ff = {
       name: 'Firefox 21.0',
-      socket: new EventEmitter()
+      socket: new FakeSocket()
     };
     var chrome = {
       name: 'Chrome 19.0',
-      socket: new EventEmitter()
+      socket: new FakeSocket()
     };
     var Reporter = function() {
       this.logsByRunner = {};
@@ -80,7 +80,7 @@ describe('browser test runner', function() {
       });
       var launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
 
-      socket = new EventEmitter();
+      socket = new FakeSocket();
 
       var runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       runner.tryAttach('browser', id, socket);
@@ -198,7 +198,7 @@ describe('browser test runner', function() {
       var config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
-      socket = new EventEmitter();
+      socket = new FakeSocket();
     });
 
     afterEach(function() {
@@ -320,7 +320,7 @@ describe('browser test runner', function() {
     it('does not start the launcher when already connected', function(done) {
       sandbox.spy(launcher, 'start');
 
-      runner.socket = new EventEmitter();
+      runner.socket = new FakeSocket();
       runner.socket.on('start-tests', function() {
         expect(launcher.start).not.to.have.been.called();
         done();
@@ -338,7 +338,7 @@ describe('browser test runner', function() {
       var config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
-      socket = new EventEmitter();
+      socket = new FakeSocket();
     });
 
     it('fails when the browser fails to reconnect', function(done) {

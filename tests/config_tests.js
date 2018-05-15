@@ -542,6 +542,12 @@ describe('Config', function() {
     });
   });
 
+  describe('socket_heartbeat_timeout', function() {
+    it('defaults to 5 seconds', function() {
+      expect(config.get('socket_heartbeat_timeout')).to.eq(5);
+    });
+  });
+
   describe('client_decycle_depth', function() {
     it('defaults to 5', function() {
       expect(config.get('client_decycle_depth')).to.eq(5);
