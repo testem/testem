@@ -24,6 +24,14 @@ function jasmineAdapter() {
   JasmineAdapterReporter.prototype.reportRunnerStarting = function() {
     emit('tests-start');
   };
+
+  JasmineAdapterReporter.prototype.reportSpecStarting = function(spec) {
+    var currentTest = {
+      name: spec.getFullName()
+    };
+    emit('tests-start', currentTest);
+  };
+
   JasmineAdapterReporter.prototype.reportSpecResults = function(spec) {
     if (spec.results().skipped) {
       return;

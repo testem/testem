@@ -101,6 +101,33 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('onTestsStart', function() {
+    var runner, reporter;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      var config = new Config('ci', {
+        parallel: 2,
+        reporter: reporter
+      });
+      var launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+    });
+
+    it('saves the currentTextContext if passed as parameter', function() {
+      runner.onTestsStart({
+        name: 'testname',
+      });
+      expect(runner.currentTestContext.name).to.equal('testname');
+      expect(runner.currentTestContext.state).to.equal('executing');
+    });
+
+    it('has empty currentTextContext if no testcontext passed', function() {
+      runner.onTestsStart();
+      expect(runner.currentTestContext).to.deep.eq({});
+    });
+  });
+
   describe('onTestResult', function() {
     var runner, reporter;
 
@@ -231,7 +258,8 @@ describe('browser test runner', function() {
             type: 'error'
           }],
           name: 'error',
-          passed: 0
+          passed: 0,
+          testContext: {}
         });
         done();
       });
@@ -248,7 +276,8 @@ describe('browser test runner', function() {
           logs: [{
             type: 'error'
           }],
-          passed: 0
+          passed: 0,
+          testContext: {}
         });
         expect(reporter.results[0].result.error.message).to.match(/ENOENT/);
         expect(reporter.results[0].result.logs[0].text).to.match(/ENOENT/);
@@ -271,7 +300,8 @@ describe('browser test runner', function() {
             type: 'error'
           }],
           name: 'error',
-          passed: 0
+          passed: 0,
+          testContext: {}
         });
         done();
       });
@@ -295,7 +325,8 @@ describe('browser test runner', function() {
             type: 'log'
           }],
           name: 'error',
-          passed: 0
+          passed: 0,
+          testContext: {}
         });
         done();
       });
@@ -356,7 +387,8 @@ describe('browser test runner', function() {
             type: 'error'
           }],
           name: 'error',
-          passed: 0
+          passed: 0,
+          testContext: {}
         });
         done();
       });

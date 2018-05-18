@@ -27,6 +27,13 @@ function jasmine2Adapter() {
       emit('tests-start');
     };
 
+    this.specStarted = function(spec) {
+      var currentTest = {
+        name: spec.fullName
+      };
+      emit('tests-start', currentTest);
+    };
+
     this.specDone = function(spec) {
 
       var test = {

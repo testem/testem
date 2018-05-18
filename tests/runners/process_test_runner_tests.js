@@ -64,7 +64,8 @@ describe('ProcessTestRunner', function() {
           }],
           name: 'error',
           failed: 0,
-          passed: 1
+          passed: 1,
+          testContext: {},
         }
       }]);
       done();
@@ -94,6 +95,7 @@ describe('ProcessTestRunner', function() {
           name: 'error',
           failed: 1,
           passed: 0,
+          testContext: {},
           error: {
             message: 'Non-zero exit code: 1\nStderr: \n foobar\n'
           }
@@ -136,6 +138,7 @@ describe('ProcessTestRunner', function() {
           name: 'error',
           failed: 1,
           passed: 0,
+          testContext: {},
           error: {
             message: expectedMessage
           }
