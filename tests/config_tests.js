@@ -543,8 +543,19 @@ describe('Config', function() {
   });
 
   describe('socket_heartbeat_timeout', function() {
-    it('defaults to 5 seconds', function() {
+    it('defaults to 5 seconds when browser_disconnect_timeout is not provided', function() {
       expect(config.get('socket_heartbeat_timeout')).to.eq(5);
+    });
+
+    it('defaults to browser_disconnect_timeout when value is not provided', function() {
+      config.set('browser_disconnect_timeout', 45);
+      expect(config.get('socket_heartbeat_timeout')).to.eq(45);
+    });
+
+    it('uses the provided value', function() {
+      config.set('socket_heartbeat_timeout', 45);
+      config.set('browser_disconnect_timeout', 60);
+      expect(config.get('socket_heartbeat_timeout')).to.eq(45);
     });
   });
 
