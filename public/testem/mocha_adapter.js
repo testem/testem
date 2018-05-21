@@ -49,7 +49,7 @@ function mochaAdapter() {
   Runner.prototype.emit = function(evt, test, err) {
     var name = getFullName(test);
     if (evt === 'start') {
-      emit('tests-start');
+      emit('tests-start', { name: name });
     } else if (evt === 'end') {
       if (waiting === 0) {
         emit('all-test-results');

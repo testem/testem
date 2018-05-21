@@ -84,7 +84,7 @@ function qunitAdapter() {
       name: (params.module ? params.module + ': ' : '') + params.name,
       items: []
     };
-    emit('tests-start');
+    emit('tests-start', currentTest);
   });
   QUnit.testDone(function(params) {
     currentTest.failed = params.failed;
