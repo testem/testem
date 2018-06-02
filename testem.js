@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-var program = require('commander');
-var progOptions = program;
-var Config = require('./lib/config');
-var Api = require('./lib/api');
-var appMode = 'dev';
+const program = require('commander');
+let progOptions = program;
+const Config = require('./lib/config');
+const Api = require('./lib/api');
+let appMode = 'dev';
 
 program
   .version(require(__dirname + '/package').version)
@@ -22,7 +22,7 @@ program
 program
   .command('launchers')
   .description('Print the list of available launchers (browsers & process launchers)')
-  .action(act(function(env) {
+  .action(act(env => {
     env.__proto__ = program;
     progOptions = env;
     appMode = 'launchers';
@@ -35,7 +35,7 @@ program
   .option('-P, --parallel [num]', 'number of browsers to run in parallel, defaults to 1', Number)
   .option('-b, --bail_on_uncaught_error', 'Bail on any uncaught errors')
   .option('-R, --reporter [reporter]', 'Test reporter to use [tap|dot|xunit|teamcity]')
-  .action(act(function(env) {
+  .action(act(env => {
     env.__proto__ = program;
     progOptions = env;
     appMode = 'ci';
@@ -44,13 +44,13 @@ program
 program
   .command('server')
   .description('Run just the server')
-  .action(act(function(env) {
+  .action(act(env => {
     env.__proto__ = program;
     progOptions = env;
     appMode = 'server';
   }));
 
-program.on('--help', function() {
+program.on('--help', () => {
   console.log('  Keyboard Controls (in dev mode):\n');
   console.log('    ENTER                  run the tests');
   console.log('    q                      quit');
@@ -70,13 +70,11 @@ main();
 function main() {
   program.parse(process.argv);
 
-  var config = new Config(appMode, progOptions);
+  let config = new Config(appMode, progOptions);
   if (appMode === 'launchers') {
-    config.read(function() {
-      config.printLauncherInfo();
-    });
+    config.read(() => config.printLauncherInfo());
   } else {
-    var api = new Api();
+    let api = new Api();
     if (appMode === 'ci') {
       api.startCI(progOptions);
     } else if (appMode === 'dev') {
@@ -93,7 +91,7 @@ function main() {
 // "action" callback, we don't want this
 function act(fun) {
   return function() {
-    var options = arguments[arguments.length - 1];
+    let options = arguments[arguments.length - 1];
     fun(options);
   };
 }
