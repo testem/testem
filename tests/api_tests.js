@@ -14,7 +14,7 @@ describe('Api', function() {
   let sandbox;
 
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(Config.prototype, 'read');
   });
 

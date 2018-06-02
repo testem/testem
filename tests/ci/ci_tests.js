@@ -25,7 +25,7 @@ describe('ci mode app', function() {
   var sandbox;
 
   beforeEach(function(done) {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     fs.unlink('tests/fixtures/tape/public/bundle.js', function() {
       done();
     });

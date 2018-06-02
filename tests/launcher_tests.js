@@ -15,7 +15,7 @@ describe('Launcher', function() {
     let settings, config, launcher, sandbox;
 
     beforeEach(function() {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       settings = {command: 'echo hello'};
       config = new Config(null, {port: '7357', url: 'http://blah.com/'});
       launcher = new Launcher('say hello', settings, config);

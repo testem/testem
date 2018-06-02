@@ -127,7 +127,7 @@ describe('ProcessCtl', function() {
     let processCtl, sandbox;
 
     beforeEach(function() {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       processCtl = new ProcessCtl('test', config);
     });
 

@@ -1,21 +1,21 @@
 'use strict';
 
-var expect = require('chai').expect;
-var Backbone = require('backbone');
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const Backbone = require('backbone');
+const sinon = require('sinon');
 
-var screen = require('./fake_screen');
-var SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
-var Chars = require('../../lib/chars');
-var TestResults = require('../../lib/reporters/dev/test_results');
-var isWin = /^win/.test(process.platform);
+const screen = require('./fake_screen');
+const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
+const Chars = require('../../lib/chars');
+const TestResults = require('../../lib/reporters/dev/test_results');
+const isWin = /^win/.test(process.platform);
 
 describe('SplitLogPanel', !isWin ? function() {
 
-  var runner, panel, appview, results, messages, sandbox;
+  let runner, panel, appview, results, messages, sandbox;
 
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     screen.$setSize(10, 20);
     results = new TestResults();
     messages = new Backbone.Collection();
@@ -48,12 +48,12 @@ describe('SplitLogPanel', !isWin ? function() {
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Top Level:\n    Shit happened.\n\n');
     });
     it('says "Please be patient" if not all results are in', function() {
-      var tests = new Backbone.Collection();
+      let tests = new Backbone.Collection();
       results.set('tests', tests);
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)');
     });
     it('says "No tests were run :(" when no tests but all is true', function() {
-      var tests = new Backbone.Collection();
+      let tests = new Backbone.Collection();
       results.set('tests', tests);
       results.set('all', true);
       expect(panel.getResultsDisplayText().unstyled()).to.equal('No tests were run :(');
@@ -61,7 +61,7 @@ describe('SplitLogPanel', !isWin ? function() {
     it('gives result when has results and all is true', function() {
       results.set('total', 1);
       results.set('pending', 0);
-      var tests = new Backbone.Collection([
+      let tests = new Backbone.Collection([
         new Backbone.Model({ name: 'blah', passed: true })
       ]);
       results.set('tests', tests);
@@ -71,18 +71,18 @@ describe('SplitLogPanel', !isWin ? function() {
     it('shows pending tests in yellow when has results, all is true, no tests failed and there are pending tests', function() {
       results.set('total', 1);
       results.set('pending', 1);
-      var tests = new Backbone.Collection([
+      let tests = new Backbone.Collection([
         new Backbone.Model({ name: 'blah', pending: true })
       ]);
       results.set('tests', tests);
       results.set('all', true);
 
-      var text = panel.getResultsDisplayText();
+      let text = panel.getResultsDisplayText();
 
       expect(text.children).to.have.length(2);
 
-      var resultText = text.children[0];
-      var pendingText = text.children[1];
+      let resultText = text.children[0];
+      let pendingText = text.children[1];
 
       expect(resultText.str).to.equal(Chars.success + ' 1 tests complete (1 pending).');
       expect(resultText.attrs.foreground).to.equal('cyan');
@@ -111,7 +111,7 @@ describe('SplitLogPanel', !isWin ? function() {
     });
     it('shows the error message', function() {
       results.set('total', 1);
-      var tests = new Backbone.Collection([
+      let tests = new Backbone.Collection([
         new Backbone.Model({
           name: 'blah', passed: false, failed: 1,
           items: [
@@ -125,7 +125,7 @@ describe('SplitLogPanel', !isWin ? function() {
     });
     it('shows the stacktrace', function() {
       results.set('total', 1);
-      var tests = new Backbone.Collection([
+      let tests = new Backbone.Collection([
         new Backbone.Model({
           name: 'blah', passed: false, failed: 1,
           items: [
@@ -146,7 +146,7 @@ describe('SplitLogPanel', !isWin ? function() {
     });
     it('says "Looking good..." if all is false but all passed so far', function() {
       results.set('total', 1);
-      var tests = new Backbone.Collection([
+      let tests = new Backbone.Collection([
         new Backbone.Model({
           name: 'blah', passed: true
         })
@@ -163,13 +163,13 @@ describe('SplitLogPanel', !isWin ? function() {
     });
 
     it('returns "" with empty collection', function() {
-      var messages = new Backbone.Collection();
+      let messages = new Backbone.Collection();
       runner.set('messages', messages);
       expect(panel.getMessagesText().unstyled()).to.equal('');
     });
 
     it('returns the messages', function() {
-      var messages = new Backbone.Collection([
+      let messages = new Backbone.Collection([
         new Backbone.Model({type: 'log', text: 'hello world'})
       ]);
       runner.set('messages', messages);
@@ -215,7 +215,7 @@ describe('SplitLogPanel', !isWin ? function() {
   describe('scrolling', function() {
     'scrollUp scrollDown pageUp pageDown halfPageUp halfPageDown'.split(' ').forEach(function(method) {
       it('delegates ' + method + ' to the target Panel', function() {
-        var targetPanel = {};
+        let targetPanel = {};
         targetPanel[method] = sandbox.spy();
         sandbox.stub(panel, 'targetPanel').returns(targetPanel);
         panel[method]();
