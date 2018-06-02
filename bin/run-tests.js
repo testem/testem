@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-var execa = require('execa');
-var command = 'npm';
+const execa = require('execa');
+const command = 'npm';
 
-var args;
+let args;
 if (process.env.BROWSER_TESTS) {
   args = ['run', 'browser-tests'];
 } else {
@@ -13,9 +13,9 @@ if (process.env.BROWSER_TESTS) {
 
 console.log('Running: ' + command + ' ' + args.join(' '));
 
-execa(command, args, { stdio: 'inherit' }).then(function(result) {
+execa(command, args, { stdio: 'inherit' }).then(result => {
   process.exit(result.code);
-}).catch(function(err) {
+}).catch(err => {
   console.error(err);
   process.exit(1);
 });
