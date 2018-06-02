@@ -1,18 +1,18 @@
 'use strict';
 
-var Launcher = require('../lib/launcher');
-var Config = require('../lib/config');
-var expect = require('chai').expect;
-var assert = require('chai').assert;
-var path = require('path');
-var sinon = require('sinon');
+const Launcher = require('../lib/launcher');
+const Config = require('../lib/config');
+const expect = require('chai').expect;
+const assert = require('chai').assert;
+const path = require('path');
+const sinon = require('sinon');
 
-var os = require('os');
-var isWin = require('../lib/utils/is-win')();
+const os = require('os');
+const isWin = require('../lib/utils/is-win')();
 
 describe('Launcher', function() {
   describe('via command', function() {
-    var settings, config, launcher, sandbox;
+    let settings, config, launcher, sandbox;
 
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
@@ -82,10 +82,10 @@ describe('Launcher', function() {
       assert.equal(launcher.commandLine(), '"echo hello"');
     });
     it('copies the current environment', function(done) {
-      var originalEnv = process.env;
+      let originalEnv = process.env;
       process.env.TESTEM_USER_CONFIG = 'copied';
 
-      var command = 'echo ';
+      let command = 'echo ';
       if (isWin) {
         command += '%TESTEM_USER_CONFIG%';
       } else {
@@ -105,7 +105,7 @@ describe('Launcher', function() {
     });
 
     it('adds the local node modules to the path', function(done) {
-      var command = 'echo ';
+      let command = 'echo ';
       if (isWin) {
         command += '%PATH%';
       } else {
@@ -126,8 +126,8 @@ describe('Launcher', function() {
   });
 
   describe('via exe', function() {
-    var echoArgs = 'console.log(process.argv.slice(1).join(\' \'))';
-    var config, settings, launcher;
+    let echoArgs = 'console.log(process.argv.slice(1).join(\' \'))';
+    let config, settings, launcher;
 
     beforeEach(function() {
       config = new Config(null, {port: '7357', url: 'http://blah.com/', cwd: '/foo/bar'});
@@ -219,7 +219,7 @@ describe('Launcher', function() {
     });
 
     it('copies the current environment', function(done) {
-      var originalEnv = process.env;
+      let originalEnv = process.env;
       process.env.TESTEM_USER_CONFIG = 'copied';
 
       settings.args = ['-e', 'console.log(process.env.TESTEM_USER_CONFIG)'];

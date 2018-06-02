@@ -1,17 +1,17 @@
 'use strict';
 
-var sinon = require('sinon');
-var expect = require('chai').expect;
-var Bluebird = require('bluebird');
+const sinon = require('sinon');
+const expect = require('chai').expect;
+const Bluebird = require('bluebird');
 
-var Api = require('../lib/api');
-var App = require('../lib/app');
-var Config = require('../lib/config');
+const Api = require('../lib/api');
+const App = require('../lib/app');
+const Config = require('../lib/config');
 
-var FakeReporter = require('./support/fake_reporter');
+const FakeReporter = require('./support/fake_reporter');
 
 describe('Api', function() {
-  var sandbox;
+  let sandbox;
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
@@ -24,7 +24,7 @@ describe('Api', function() {
 
   describe('new', function() {
     it('set defaults when using dev mode', function() {
-      var api = new Api();
+      let api = new Api();
       api.startDev({parallel: 5, on_exit: 'test'});
       expect(api.config.read.callCount).to.equal(1);
       expect(api.config.get('on_exit')).to.equal('test');
@@ -33,7 +33,7 @@ describe('Api', function() {
     });
 
     it('set defaults when using CI mode', function() {
-      var api = new Api();
+      let api = new Api();
       api.startCI({parallel: 5, on_exit: 'test'});
       expect(api.config.read.callCount).to.equal(1);
       expect(api.config.get('on_exit')).to.equal('test');
@@ -45,8 +45,8 @@ describe('Api', function() {
 
   describe('defaultOptions', function() {
     it('set in testem when using dev mode', function() {
-      var api = new Api();
-      var options = {
+      let api = new Api();
+      let options = {
         host: 'localhost',
         port: 7337,
         config_dir: process.cwd(),
@@ -60,8 +60,8 @@ describe('Api', function() {
     });
 
     it('set in testem when using CI mode', function() {
-      var api = new Api();
-      var options = {
+      let api = new Api();
+      let options = {
         host: 'localhost',
         port: 7337,
         config_dir: process.cwd(),
@@ -77,8 +77,8 @@ describe('Api', function() {
     });
 
     it('set in testem when startServer is called', function() {
-      var api = new Api();
-      var options = {
+      let api = new Api();
+      let options = {
         host: 'localhost',
         port: 7337,
         config_dir: process.cwd(),
@@ -96,7 +96,7 @@ describe('Api', function() {
   describe('restart', function() {
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
-      var api = new Api();
+      let api = new Api();
       api.startDev({ timeout: 20000 }, function() {});
       api.config.progOptions.reporter = new FakeReporter(); // TODO Find a better way
       api.app = new App(api.config, function() {
@@ -108,14 +108,14 @@ describe('Api', function() {
       });
       api.app.start(function() {
         setTimeout(function() {
-          var calledCookie;
+          let calledCookie;
 
-          var existingTimeout = api.app.timeoutID;
+          let existingTimeout = api.app.timeoutID;
 
           expect(calledCookie).to.be.undefined();
           expect(existingTimeout).to.not.be.undefined();
 
-          var originalTimeout = global.clearTimeout;
+          let originalTimeout = global.clearTimeout;
           sandbox.stub(global, 'clearTimeout').callsFake(function(cookie) {
             calledCookie = cookie;
             originalTimeout(cookie);

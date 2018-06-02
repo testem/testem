@@ -1,12 +1,12 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var Testem = require('../public/testem/testem_client');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const Testem = require('../public/testem/testem_client');
 
 describe('Testem Client', function() {
   it('passes new socket to each custom adapter', function() {
-    var socket1, socket2;
+    let socket1, socket2;
 
     Testem.useCustomAdapter(function(socket) {
       socket1 = socket;
@@ -20,7 +20,7 @@ describe('Testem Client', function() {
   });
 
   it('doesn\'t decycle build-in messages', function() {
-    var decycleDepth = 10;
+    let decycleDepth = 10;
 
     global.decycle = sinon.spy();
 
@@ -41,7 +41,7 @@ describe('Testem Client', function() {
   });
 
   it('emits message with custom decycle depth to iframe for user messages', function() {
-    var decycleDepth = 10;
+    let decycleDepth = 10;
 
     global.decycle = sinon.spy();
 
@@ -62,7 +62,7 @@ describe('Testem Client', function() {
   });
 
   it('drains message with custom decycle depth from queue', function() {
-    var decycleDepth = 10;
+    let decycleDepth = 10;
 
     global.decycle = sinon.spy();
 
@@ -88,8 +88,8 @@ describe('Testem Client', function() {
   });
 
   it('runs registered hooks after all tests finished', function(done) {
-    var firstCalled = false;
-    var secondCalled = false;
+    let firstCalled = false;
+    let secondCalled = false;
     Testem.afterTests(function(config, data, cb) {
       firstCalled = true;
       cb();

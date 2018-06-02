@@ -1,40 +1,40 @@
 'use strict';
 
-var expect = require('chai').expect;
-var styledString = require('styled_string');
-var strutils = require('../lib/strutils');
-var splitLines = strutils.splitLines;
-var indent = strutils.indent;
-var template = strutils.template;
-var assert = require('chai').assert;
+const expect = require('chai').expect;
+const styledString = require('styled_string');
+const strutils = require('../lib/strutils');
+const splitLines = strutils.splitLines;
+const indent = strutils.indent;
+const template = strutils.template;
+const assert = require('chai').assert;
 
-var isWin = /^win/.test(process.platform);
+const isWin = /^win/.test(process.platform);
 
 describe('splitLines', function() {
   it('splits on newline', function() {
-    var s = 'abc\ndef';
+    let s = 'abc\ndef';
     expect(splitLines(s, 10)).to.deep.equal(['abc', 'def']);
   });
   it('breaks a line', function() {
-    var s = 'abcdef';
+    let s = 'abcdef';
     expect(splitLines(s, 3)).to.deep.equal(['abc', 'def']);
   });
   it('splits and then breaks', function() {
-    var s = 'abcd\nefghijkl';
+    let s = 'abcd\nefghijkl';
     expect(splitLines(s, 5)).to.deep.equal(['abcd', 'efghi', 'jkl']);
   });
 
   describe('it also works on styled strings', !isWin ? function() {
     it('splits on newline', function() {
-      var s = styledString('abc\ndef', {foreground: 'red'});
-      var ss = splitLines(s, 10);
+      let s = styledString('abc\ndef', {foreground: 'red'});
+      let ss = splitLines(s, 10);
       expect(ss.length).to.equal(2);
       expect(ss[0].toString()).to.equal('\u001b[31mabc\u001b[0m');
       expect(ss[1].toString()).to.equal('\u001b[31mdef\u001b[0m');
     });
     it('splits and then breaks', function() {
-      var s = styledString('abcd\nefghijkl', {foreground: 'red'});
-      var ss = splitLines(s, 5);
+      let s = styledString('abcd\nefghijkl', {foreground: 'red'});
+      let ss = splitLines(s, 5);
       expect(ss.length).to.equal(3);
       expect(ss[0].toString()).to.equal('\u001b[31mabcd\u001b[0m');
       expect(ss[1].toString()).to.equal('\u001b[31mefghi\u001b[0m');
@@ -42,8 +42,8 @@ describe('splitLines', function() {
     });
 
     it('handles empty lines', function() {
-      var s = styledString('abc\n\ndef');
-      var lines = splitLines(s, 5);
+      let s = styledString('abc\n\ndef');
+      let lines = splitLines(s, 5);
       assert.equal(lines.length, 3);
       assert.equal(lines[0].toString(), 'abc');
       assert.equal(lines[1].toString(), '');
@@ -65,8 +65,8 @@ describe('indent', function() {
 
 describe('template', function() {
   it('should replace parameters with their values', function() {
-    var str = 'a<foo>c<bar>e<bar><baz>';
-    var params = {
+    let str = 'a<foo>c<bar>e<bar><baz>';
+    let params = {
       foo: 'b',
       bar: 'd'
     };

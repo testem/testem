@@ -1,20 +1,20 @@
 'use strict';
 
-var Bluebird = require('bluebird');
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var tmp = require('tmp');
-var fs = require('fs');
-var PassThrough = require('stream').PassThrough;
+const Bluebird = require('bluebird');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const tmp = require('tmp');
+const fs = require('fs');
+const PassThrough = require('stream').PassThrough;
 
-var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
+const tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 
-var Reporter = require('../../lib/utils/reporter');
-var FakeReporter = require('../support/fake_reporter');
-var TapReporter = require('../../lib/reporters/tap_reporter');
+const Reporter = require('../../lib/utils/reporter');
+const FakeReporter = require('../support/fake_reporter');
+const TapReporter = require('../../lib/reporters/tap_reporter');
 
-var fsReadFileAsync = Bluebird.promisify(fs.readFile);
-var fsUnlinkAsync = Bluebird.promisify(fs.unlink);
+const fsReadFileAsync = Bluebird.promisify(fs.readFile);
+const fsUnlinkAsync = Bluebird.promisify(fs.unlink);
 
 describe('Reporter', function() {
   function mockApp(reporter) {
@@ -32,7 +32,7 @@ describe('Reporter', function() {
     };
   }
 
-  var sandbox, stream;
+  let sandbox, stream;
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
@@ -45,7 +45,7 @@ describe('Reporter', function() {
 
   describe('"new"', function() {
     it('can report to a file', function() {
-      var close;
+      let close;
       tmpNameAsync().then(function(path) {
         return new Reporter(mockApp(), stream, path);
       }).then(function(reporter) {
@@ -61,8 +61,8 @@ describe('Reporter', function() {
 
     // Regresses https://github.com/testem/testem/issues/900
     it('uses file stream when reporting', function() {
-      var tapReporterSpy = sandbox.spy(require('../../lib/reporters'), 'tap');
-      var reporter = new Reporter(mockApp('tap'), stream, 'report.xml');
+      let tapReporterSpy = sandbox.spy(require('../../lib/reporters'), 'tap');
+      let reporter = new Reporter(mockApp('tap'), stream, 'report.xml');
 
       expect(reporter.reportFile).to.not.be.undefined();
 
@@ -79,7 +79,7 @@ describe('Reporter', function() {
   });
 
   describe('"with"', function() {
-    var app = mockApp();
+    let app = mockApp();
 
     it('can be used as a disposable which returns a reporter', function() {
       return Bluebird.using(Reporter.with(app, stream), function(reporter) {
@@ -88,7 +88,7 @@ describe('Reporter', function() {
     });
 
     it('closes the reporter when done', function() {
-      var close;
+      let close;
       return Bluebird.using(Reporter.with(app, stream), function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
@@ -97,11 +97,11 @@ describe('Reporter', function() {
     });
 
     it('closes the reporter when promise is rejected with error hidden from the reporter', function() {
-      var close;
+      let close;
       return Bluebird.using(Reporter.with(app, stream), function(reporter) {
         close = sandbox.spy(reporter, 'close');
 
-        var mockError = new Error('Not all tests passed.');
+        let mockError = new Error('Not all tests passed.');
         mockError.hideFromReporter = true;
         return Bluebird.reject(mockError);
       }).catch(function() {
@@ -110,7 +110,7 @@ describe('Reporter', function() {
     });
 
     it('logs an error when the wrapped promise was rejected', function() {
-      var report;
+      let report;
 
       return Bluebird.using(Reporter.with(app, stream), function(reporter) {
         report = sandbox.spy(reporter, 'report');
@@ -125,7 +125,7 @@ describe('Reporter', function() {
 
   describe('new', function() {
     it('creates a reporter and writes to stream', function() {
-      var reporter = new Reporter({
+      let reporter = new Reporter({
         config: {
           get: function(key) {
             switch (key) {
@@ -144,14 +144,14 @@ describe('Reporter', function() {
       });
       reporter.finish();
 
-      var output = stream.read().toString();
+      let output = stream.read().toString();
       expect(output).to.match(/tests 1/);
     });
 
     it('creates two reporters and writes to stream and path when path provided', function() {
       return tmpNameAsync().then(function(path) {
-        var stream = new PassThrough();
-        var reporter = new Reporter({
+        let stream = new PassThrough();
+        let reporter = new Reporter({
           config: {
             get: function(key) {
               switch (key) {
@@ -170,7 +170,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          var output = stream.read().toString();
+          let output = stream.read().toString();
           expect(output).to.match(/tests 1/);
 
           return fsReadFileAsync(path, 'utf-8');
@@ -184,11 +184,11 @@ describe('Reporter', function() {
       class CustomReporter extends TapReporter {
       }
 
-      var config = { get: sinon.stub() };
+      let config = { get: sinon.stub() };
       config.get.withArgs('reporter').returns(CustomReporter);
       config.get.withArgs('tap_quiet_logs').returns(true);
-      var app = { config: config };
-      var reporter = new Reporter(app, stream);
+      let app = { config: config };
+      let reporter = new Reporter(app, stream);
 
       expect(reporter).to.be.ok();
       expect(reporter.reporters.length).to.equal(1);
@@ -197,8 +197,8 @@ describe('Reporter', function() {
 
     it('writes xml to stream and file with xunit reporter and intermediate output is enabled', function() {
       return tmpNameAsync().then(function(path) {
-        var stream = new PassThrough();
-        var reporter = new Reporter({
+        let stream = new PassThrough();
+        let reporter = new Reporter({
           config: {
             get: function(key) {
               switch (key) {
@@ -218,7 +218,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          var output = stream.read().toString();
+          let output = stream.read().toString();
           expect(output).to.match(/<testsuite name/);
 
           return fsReadFileAsync(path, 'utf-8');
@@ -230,8 +230,8 @@ describe('Reporter', function() {
 
     it('writes tap to stream and xml to file with xunit reporter intermediate output is enabled', function() {
       return tmpNameAsync().then(function(path) {
-        var stream = new PassThrough();
-        var reporter = new Reporter({
+        let stream = new PassThrough();
+        let reporter = new Reporter({
           config: {
             get: function(key) {
               switch (key) {
@@ -251,7 +251,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          var output = stream.read().toString();
+          let output = stream.read().toString();
           expect(output).to.match(/tests 1/);
 
           return fsReadFileAsync(path, 'utf-8');
@@ -263,8 +263,8 @@ describe('Reporter', function() {
   });
 
   describe('hasPassed', function() {
-    var app = mockApp();
-    var reporter;
+    let app = mockApp();
+    let reporter;
 
     beforeEach(function() {
       reporter = new Reporter(app, stream);
@@ -277,7 +277,7 @@ describe('Reporter', function() {
     });
 
     it('returns true when all tests skipped', function() {
-      var reporter = new Reporter(app, stream);
+      let reporter = new Reporter(app, stream);
 
       reporter.report('test', { skipped: 1 });
 
@@ -285,7 +285,7 @@ describe('Reporter', function() {
     });
 
     it('returns true when all tests skipped or passed', function() {
-      var reporter = new Reporter(app, stream);
+      let reporter = new Reporter(app, stream);
 
       reporter.report('test', { passed: 1 });
       reporter.report('test', { skipped: 1 });
@@ -294,7 +294,7 @@ describe('Reporter', function() {
     });
 
     it('returns false when not all passed / skipped', function() {
-      var reporter = new Reporter(app, stream);
+      let reporter = new Reporter(app, stream);
 
       reporter.report('test', { passed: 1 });
       reporter.report('test', { skipped: 1 });
@@ -305,15 +305,15 @@ describe('Reporter', function() {
   });
 
   describe('hasTests', function() {
-    var app = mockApp();
-    var reporter;
+    let app = mockApp();
+    let reporter;
 
     beforeEach(function() {
       reporter = new Reporter(app, stream);
     });
 
     it('returns false without reported tests', function() {
-      var reporter = new Reporter(app, stream);
+      let reporter = new Reporter(app, stream);
 
       expect(reporter.hasTests()).to.be.false();
     });

@@ -1,18 +1,18 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var fireworm = require('fireworm');
-var Bluebird = require('bluebird');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const fireworm = require('fireworm');
+const Bluebird = require('bluebird');
 
-var Config = require('../lib/config');
-var App = require('../lib/app');
-var RunTimeout = require('../lib/utils/run-timeout');
+const Config = require('../lib/config');
+const App = require('../lib/app');
+const RunTimeout = require('../lib/utils/run-timeout');
 
-var FakeReporter = require('./support/fake_reporter');
+const FakeReporter = require('./support/fake_reporter');
 
 describe('App', function() {
-  var app, config, sandbox;
+  let app, config, sandbox;
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
@@ -23,7 +23,7 @@ describe('App', function() {
   });
 
   describe('triggerRun', function() {
-    var finish;
+    let finish;
     beforeEach(function(done) {
       config = new Config('dev', {}, {
         reporter: new FakeReporter()
@@ -60,7 +60,7 @@ describe('App', function() {
   });
 
   describe('singleRun', function() {
-    var runner;
+    let runner;
     beforeEach(function() {
       config = new Config('dev', {}, {
         reporter: new FakeReporter()
@@ -176,7 +176,7 @@ describe('App', function() {
 
     it('doesn\'t run tests when reset and paused', function() {
       app.paused = true;
-      var runHook = sandbox.spy(app, 'runHook');
+      let runHook = sandbox.spy(app, 'runHook');
 
       return app.runTests().then(function() {
         expect(runHook.called).to.be.false();
@@ -184,7 +184,7 @@ describe('App', function() {
     });
 
     it('runs tests when reset and not paused', function() {
-      var runHook = sandbox.spy(app, 'runHook');
+      let runHook = sandbox.spy(app, 'runHook');
 
       return app.runTests().then(function() {
         expect(runHook.called).to.be.true();
@@ -200,8 +200,8 @@ describe('App', function() {
     });
 
     it('adds a watch', function(done) {
-      var add = sandbox.spy(fireworm.prototype, 'add');
-      var srcFiles = ['test.js'];
+      let add = sandbox.spy(fireworm.prototype, 'add');
+      let srcFiles = ['test.js'];
       config = new Config('dev', {}, {
         src_files: srcFiles,
         reporter: new FakeReporter()
@@ -216,7 +216,7 @@ describe('App', function() {
     });
 
     it('triggers a test run on change', function(done) {
-      var srcFiles = ['test.js'];
+      let srcFiles = ['test.js'];
       config = new Config('dev', {}, {
         src_files: srcFiles,
         reporter: new FakeReporter()
@@ -249,9 +249,9 @@ describe('App', function() {
   });
 
   describe('start', function() {
-    var finish;
-    var onExitCb;
-    var onExitFinished;
+    let finish;
+    let onExitCb;
+    let onExitFinished;
 
     beforeEach(function() {
       onExitFinished = false;

@@ -1,20 +1,20 @@
 'use strict';
 
-var Bluebird = require('bluebird');
-var find = require('lodash.find');
-var tmp = require('tmp');
-var path = require('path');
+const Bluebird = require('bluebird');
+const find = require('lodash.find');
+const tmp = require('tmp');
+const path = require('path');
 
-var tmpDirAsync = Bluebird.promisify(tmp.dir);
+const tmpDirAsync = Bluebird.promisify(tmp.dir);
 
-var expect = require('chai').expect;
-var file = require('chai-files').file;
+const expect = require('chai').expect;
+const file = require('chai-files').file;
 
-var knownBrowsers = require('../../lib/utils/known-browsers');
+const knownBrowsers = require('../../lib/utils/known-browsers');
 
 function addBrowserArgsToConfig(config, browserName) {
   config.get = function(name) {
-    var args = {};
+    let args = {};
 
     if (name === 'browser_args') {
       args[browserName] = '--testem';
@@ -41,9 +41,9 @@ function findBrowser(browsers, browserName) {
 }
 
 describe('knownBrowsers', function() {
-  var browserTmpDir;
-  var url = 'http://localhost:7357';
-  var launcher = {
+  let browserTmpDir;
+  let url = 'http://localhost:7357';
+  let launcher = {
     browserTmpDir: function() {
       return browserTmpDir;
     },
@@ -51,7 +51,7 @@ describe('knownBrowsers', function() {
       return url;
     }
   };
-  var config;
+  let config;
 
   beforeEach(function() {
     config = createConfig();
@@ -63,8 +63,8 @@ describe('knownBrowsers', function() {
 
   describe('Any platform', function() {
     describe('Firefox', function() {
-      var browsers;
-      var firefox;
+      let browsers;
+      let firefox;
 
       function setup(browserName) {
         if (browserName) {
@@ -103,7 +103,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows to provide a custom user.js', function(done) {
-        var customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_user.js');
+        let customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_user.js');
 
         config.get = function(name) {
           if (name === 'firefox_user_js') {
@@ -123,7 +123,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for firefox ', function() {
-        var customPath = '/my/custom/path/to/firefox';
+        let customPath = '/my/custom/path/to/firefox';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -141,7 +141,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for firefox ', function() {
-        var customExe = 'firefox-custom';
+        let customExe = 'firefox-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -176,8 +176,8 @@ describe('knownBrowsers', function() {
     });
 
     describe('Chrome', function() {
-      var browsers;
-      var chrome;
+      let browsers;
+      let chrome;
 
       function setup(browserName) {
         if (browserName) {
@@ -223,7 +223,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for chrome ', function() {
-        var customPath = '/my/custom/path/to/chrome';
+        let customPath = '/my/custom/path/to/chrome';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -241,7 +241,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for chrome ', function() {
-        var customExe = 'chrome-custom';
+        let customExe = 'chrome-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -284,8 +284,8 @@ describe('knownBrowsers', function() {
     });
 
     describe('Safari', function() {
-      var browsers;
-      var safari;
+      let browsers;
+      let safari;
 
       function setup(browserName) {
         if (browserName) {
@@ -323,7 +323,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for safari ', function() {
-        var customPath = '/my/custom/path/to/safari';
+        let customPath = '/my/custom/path/to/safari';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -341,7 +341,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for safari ', function() {
-        var customExe = 'safari-custom';
+        let customExe = 'safari-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -376,8 +376,8 @@ describe('knownBrowsers', function() {
     });
 
     describe('Safari Technology Preview', function() {
-      var browsers;
-      var safariTP;
+      let browsers;
+      let safariTP;
 
       function setup(browserName) {
         if (browserName) {
@@ -415,7 +415,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function() {
-        var customPath = '/my/custom/path/to/safari-technology-preview';
+        let customPath = '/my/custom/path/to/safari-technology-preview';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -433,7 +433,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for Safari Technology Preview ', function() {
-        var customExe = 'safari-technology-preview-custom';
+        let customExe = 'safari-technology-preview-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -468,8 +468,8 @@ describe('knownBrowsers', function() {
     });
 
     describe('Opera', function() {
-      var browsers;
-      var opera;
+      let browsers;
+      let opera;
 
       function setup(browserName) {
         if (browserName) {
@@ -497,7 +497,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for opera ', function() {
-        var customPath = '/my/custom/path/to/opera';
+        let customPath = '/my/custom/path/to/opera';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -515,7 +515,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for opera ', function() {
-        var customExe = 'opera-custom';
+        let customExe = 'opera-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -550,9 +550,9 @@ describe('knownBrowsers', function() {
     });
 
     describe('PhantomJS', function() {
-      var browsers;
-      var phantomJS;
-      var scriptPath;
+      let browsers;
+      let phantomJS;
+      let scriptPath;
 
       function setup(browserName) {
         if (browserName) {
@@ -608,7 +608,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for phantomjs ', function() {
-        var customPath = '/my/custom/path/to/phantomjs';
+        let customPath = '/my/custom/path/to/phantomjs';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -626,7 +626,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for phantomjs ', function() {
-        var customExe = 'phantomjs-custom';
+        let customExe = 'phantomjs-custom';
 
         config.get = function(name) {
           if (name === 'browser_exes') {
@@ -696,7 +696,7 @@ describe('knownBrowsers', function() {
         });
 
         it('constructs correct args with custom launch script', function() {
-          var customScriptPath = './custom_phantom.js';
+          let customScriptPath = './custom_phantom.js';
 
           config.get = function(name) {
             if (name === 'phantomjs_launch_script') {
@@ -714,8 +714,8 @@ describe('knownBrowsers', function() {
 
   describe('Windows', function() {
     describe('Internet Explorer', function() {
-      var browsers;
-      var internetExplorer;
+      let browsers;
+      let internetExplorer;
 
       function setup(browserName) {
         if (browserName) {
@@ -737,7 +737,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom path to be used as the possiblePath for IE ', function() {
-        var customPath = 'c:\\my\\custom\\path\\to\\IE';
+        let customPath = 'c:\\my\\custom\\path\\to\\IE';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -755,7 +755,7 @@ describe('knownBrowsers', function() {
       });
 
       it('allows a custom exe to be used as the possibleExe for IE ', function() {
-        var customExe = 'iexplore-custom.exe';
+        let customExe = 'iexplore-custom.exe';
 
         config.get = function(name) {
           if (name === 'browser_exes') {

@@ -1,17 +1,17 @@
 'use strict';
 
-var Config = require('../lib/config.js');
-var chai = require('chai');
-var assert = chai.assert;
-var expect = chai.expect;
-var browserLauncher = require('../lib/browser_launcher');
-var path = require('path');
-var os = require('os');
+const Config = require('../lib/config.js');
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+const browserLauncher = require('../lib/browser_launcher');
+const path = require('path');
+const os = require('os');
 
-var sinon = require('sinon');
+const sinon = require('sinon');
 
 describe('Config', function() {
-  var config, appMode, progOptions, sandbox;
+  let config, appMode, progOptions, sandbox;
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
     appMode = 'ci';
@@ -40,7 +40,7 @@ describe('Config', function() {
   });
 
   it('gives defaultOptions properties when got', function() {
-    var defaultOptions = {
+    let defaultOptions = {
       host: 'localhost',
       port: 7337,
       config_dir: process.cwd(),
@@ -56,9 +56,9 @@ describe('Config', function() {
   });
 
   describe('accepts empty config file', function() {
-    var config;
+    let config;
     beforeEach(function(done) {
-      var progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty'};
+      let progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty'};
       config = new Config('dev', progOptions);
       config.read(done);
     });
@@ -85,26 +85,26 @@ describe('Config', function() {
   });
 
   it('calculates url for you', function() {
-    var config = new Config();
+    let config = new Config();
     assert.equal(config.get('url'), 'http://localhost:7357/');
   });
 
   it('allows to overwrite config values', function() {
-    var config = new Config('dev', { port: 8000 });
+    let config = new Config('dev', { port: 8000 });
     assert.equal(config.get('port'), 8000);
     config.set('port', 8080);
     assert.equal(config.get('port'), 8080);
   });
 
   it('returns undefined for undefined keys', function() {
-    var config = new Config();
+    let config = new Config();
     expect(config.get('undefined')).to.be.undefined();
   });
 
   describe('read json config file', function() {
-    var config;
+    let config;
     beforeEach(function(done) {
-      var progOptions = {
+      let progOptions = {
         file: __dirname + '/testem.json'
       };
       config = new Config('dev', progOptions);
@@ -117,9 +117,9 @@ describe('Config', function() {
   });
 
   describe('read js config file', function() {
-    var config;
+    let config;
     beforeEach(function(done) {
-      var progOptions = {
+      let progOptions = {
         file: __dirname + '/testem.js'
       };
       config = new Config('dev', progOptions);
@@ -132,9 +132,9 @@ describe('Config', function() {
   });
 
   describe('read js config file from custom path', function() {
-    var config;
+    let config;
     beforeEach(function(done) {
-      var progOptions = {
+      let progOptions = {
         config_dir: __dirname + '/custom_configs'
       };
       config = new Config('dev', progOptions);
@@ -148,7 +148,7 @@ describe('Config', function() {
 
   describe('getters system', function() {
     it('gives precendence to getters', function(done) {
-      var config = new Config('dev', {cwd: 'tests'});
+      let config = new Config('dev', {cwd: 'tests'});
       config.getters.cwd = 'cwdGetter';
       config.cwdGetter = function() { return 'setByGetter'; };
       config.read(function() {
@@ -160,7 +160,7 @@ describe('Config', function() {
 
   describe('get test_page', function() {
     it('defaults to config test_page', function(done) {
-      var config = new Config('dev', {test_page: 'default' });
+      let config = new Config('dev', {test_page: 'default' });
       config.read(function() {
         expect(config.get('test_page')[0]).to.equal('default');
         done();
@@ -168,7 +168,7 @@ describe('Config', function() {
     });
 
     it('adds query params if present', function(done) {
-      var config = new Config('dev', {
+      let config = new Config('dev', {
         test_page: 'http://my-url/path/',
         query_params: {
           library: 'testem',
@@ -183,7 +183,7 @@ describe('Config', function() {
     });
 
     it('will merge with existing params, with config params taking precedence', function(done) {
-      var config = new Config('dev', {
+      let config = new Config('dev', {
         test_page: 'http://my-url/path/?language=python&os=mac',
         query_params: {
           library: 'british',
@@ -197,7 +197,7 @@ describe('Config', function() {
     });
 
     it('handles string query param argument', function(done) {
-      var config = new Config('dev', {
+      let config = new Config('dev', {
         test_page: 'http://my-url/path/?language=python&os=mac',
         query_params: '?language=english&speak&library=british&flag'
       });
@@ -209,7 +209,7 @@ describe('Config', function() {
   });
 
   it('give precendence to json config file', function(done) {
-    var config = new Config('dev', {cwd: 'tests'});
+    let config = new Config('dev', {cwd: 'tests'});
     config.read(function() {
       expect(config.get('framework')).to.equal('mocha');
       done();
@@ -244,7 +244,7 @@ describe('Config', function() {
   });
 
   it('has fallbacks for host and port', function() {
-    var config = new Config();
+    let config = new Config();
     assert.equal(config.get('host'), 'localhost');
     assert.equal(config.get('port'), 7357);
   });
@@ -269,7 +269,7 @@ describe('Config', function() {
   });
 
   it('should customize user_data_dir when provided', function() {
-    var config = new Config();
+    let config = new Config();
     expect(config.getUserDataDir()).to.eq(os.tmpdir());
     config.set('user_data_dir', 'node_modules/customDirectory');
     expect(config.getUserDataDir()).to.eq(path.resolve(config.cwd(), 'node_modules/customDirectory'));
@@ -478,7 +478,7 @@ describe('Config', function() {
 
   describe('getServeFiles', function() {
     it('just delegates to getFileSet', function(done) {
-      var egg = [];
+      let egg = [];
       config.set('src_files', 'integration/*');
       config.set('src_files_ignore', '**/*.sh');
       config.getFileSet = function(want, dontWant, cb) {
@@ -492,7 +492,7 @@ describe('Config', function() {
       });
     });
     it('does not return duplicates when file matches multiple globs', function(done) {
-      var egg = [ {
+      let egg = [ {
         'attrs': [],
         'src': 'testem.yml'
       }];
@@ -574,14 +574,14 @@ describe('Config', function() {
   describe('debug', function() {
     describe('when unset', function() {
       it('is not defined', function() {
-        var config = new Config('dev', {});
+        let config = new Config('dev', {});
         expect(config.get('debug')).not.to.exist();
       });
     });
 
     describe('when set', function() {
       it('defaults to testem.log', function() {
-        var config = new Config('dev', {
+        let config = new Config('dev', {
           debug: true
         });
         expect(config.get('debug')).to.eq('testem.log');
@@ -590,7 +590,7 @@ describe('Config', function() {
 
     describe('when set and file name specified', function() {
       it('uses the provided file name', function() {
-        var config = new Config('dev', {
+        let config = new Config('dev', {
           debug: 'debug.log'
         });
         expect(config.get('debug')).to.eq('debug.log');
@@ -600,14 +600,14 @@ describe('Config', function() {
 });
 
 function mockTopLevelProgOptions() {
-  var options = [
+  let options = [
     { name: function() { return 'timeout'; } }
   ];
-  var commands = [
+  let commands = [
     { name: function() { return 'ci'; } },
     { name: function() { return 'launchers'; } }
   ];
-  var parentOptions = {
+  let parentOptions = {
     port: 8081,
     options: [
       {name: function() { return 'port'; }},
@@ -615,7 +615,7 @@ function mockTopLevelProgOptions() {
     ],
     cwd: 'tests'
   };
-  var progOptions = {
+  let progOptions = {
     timeout: 2,
     parent: parentOptions,
     __proto__: parentOptions,
@@ -628,13 +628,13 @@ function mockTopLevelProgOptions() {
 
 describe('getTemplateData', function() {
   it('should give templateData', function(done) {
-    var fileConfig = {
+    let fileConfig = {
       src_files: [
         'web/*.js'
       ]
     };
-    var progOptions = mockTopLevelProgOptions();
-    var config = new Config('dev', progOptions, fileConfig);
+    let progOptions = mockTopLevelProgOptions();
+    let config = new Config('dev', progOptions, fileConfig);
     config.getTemplateData(function(err, data) {
       expect(data.serve_files).to.deep.have.members([
         { src: 'web/hello.js', attrs: [] },

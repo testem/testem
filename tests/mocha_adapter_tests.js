@@ -1,8 +1,8 @@
 'use strict';
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var mochaAdapter = require('../public/testem/mocha_adapter');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const mochaAdapter = require('../public/testem/mocha_adapter');
 
 function Runner() {}
 Runner.prototype.emit = function() {};
@@ -11,20 +11,20 @@ function MochaRunner() {}
 MochaRunner.prototype.emit = function() {};
 
 function replaceGlobals(newGlobals, originalGlobals) {
-  for (var key in newGlobals) {
+  for (let key in newGlobals) {
     originalGlobals[key] = global[key];
     global[key] = newGlobals[key];
   }
 }
 
 function restoreGlobals(originalGlobals) {
-  for (var key in originalGlobals) {
+  for (let key in originalGlobals) {
     global[key] = originalGlobals[key];
   }
 }
 
 describe('mochaAdapter', function() {
-  var sandbox, originalEmit, globals, _mocha, _Mocha, _emit, _setTimeout;
+  let sandbox, originalEmit, globals, _mocha, _Mocha, _emit, _setTimeout;
 
   beforeEach(function() {
     globals = {};
@@ -71,7 +71,7 @@ describe('mochaAdapter', function() {
   });
 
   describe('when the Runner instance is used', function() {
-    var runner, evt, test, err;
+    let runner, evt, test, err;
     beforeEach(function() {
       mochaAdapter();
       runner = new Runner();
@@ -110,7 +110,7 @@ describe('mochaAdapter', function() {
       });
     });
 
-    var tests = {
+    let tests = {
       failed: {
         duration: 123,
         state: 'failed',
@@ -158,7 +158,7 @@ describe('mochaAdapter', function() {
 
       describe('after scheduled code runs', function() {
         beforeEach(function() {
-          var fn = _setTimeout.lastCall.args[0];
+          let fn = _setTimeout.lastCall.args[0];
           fn();
         });
 
@@ -203,7 +203,7 @@ describe('mochaAdapter', function() {
 
       describe('after scheduled code runs', function() {
         beforeEach(function() {
-          var fn = _setTimeout.lastCall.args[0];
+          let fn = _setTimeout.lastCall.args[0];
           fn();
         });
 
@@ -238,7 +238,7 @@ describe('mochaAdapter', function() {
 
       describe('after scheduled code runs', function() {
         beforeEach(function() {
-          var fn = _setTimeout.lastCall.args[0];
+          let fn = _setTimeout.lastCall.args[0];
           fn();
         });
 
@@ -278,7 +278,7 @@ describe('mochaAdapter', function() {
 
         describe('after scheduled code runs', function() {
           beforeEach(function() {
-            var fn = _setTimeout.lastCall.args[0];
+            let fn = _setTimeout.lastCall.args[0];
             fn();
           });
 
@@ -290,7 +290,7 @@ describe('mochaAdapter', function() {
     });
 
     describe('when multiple "test end" events are emitted and processed', function() {
-      var fn;
+      let fn;
       beforeEach(function() {
         evt = 'test end';
 

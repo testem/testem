@@ -1,11 +1,11 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
-var browserLauncher = require('../lib/browser_launcher');
-var Config = require('../lib/config');
+const browserLauncher = require('../lib/browser_launcher');
+const Config = require('../lib/config');
 
-var config = new Config('ci', {}, {});
+const config = new Config('ci', {}, {});
 
 describe('browserLauncher', function() {
   describe('with a defined path', function() {

@@ -1,20 +1,20 @@
 'use strict';
 
-var Server = require('../lib/server');
-var Config = require('../lib/config');
-var path = require('path');
-var request = require('request');
-var cheerio = require('cheerio');
-var fs = require('fs');
-var expect = require('chai').expect;
-var http = require('http');
-var https = require('https');
+const Server = require('../lib/server');
+const Config = require('../lib/config');
+const path = require('path');
+const request = require('request');
+const cheerio = require('cheerio');
+const fs = require('fs');
+const expect = require('chai').expect;
+const http = require('http');
+const https = require('https');
 
 describe('Server', function() {
   this.timeout(10000);
 
-  var baseUrl, server, config;
-  var port = 63571;
+  let baseUrl, server, config;
+  let port = 63571;
 
   describe('http', function() {
     before(function(done) {
@@ -80,8 +80,8 @@ describe('Server', function() {
 
     it('gets scripts for the home page', function(done) {
       request(baseUrl, function(err, req, text) {
-        var $ = cheerio.load(text);
-        var srcs = $('script').map(function() { return $(this).attr('src'); }).get();
+        let $ = cheerio.load(text);
+        let srcs = $('script').map(function() { return $(this).attr('src'); }).get();
         expect(srcs).to.deep.equal([
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
           '/testem.js',
@@ -180,8 +180,8 @@ describe('Server', function() {
       });
 
       it('allows fallback paths', function(done) {
-        var expectedCallbacks = 2;
-        var cb = function() {
+        let expectedCallbacks = 2;
+        let cb = function() {
           if (--expectedCallbacks === 0) {
             done();
           }
@@ -192,14 +192,14 @@ describe('Server', function() {
     });
 
     describe('proxies', function() {
-      var api1, api2, api3, api4;
+      let api1, api2, api3, api4;
 
       beforeEach(function(done) {
         api1 = http.createServer(function(req, res) {
           res.writeHead(200, {'Content-Type': 'text/plain'});
           res.end('API');
         });
-        var options = {
+        let options = {
           key: fs.readFileSync('tests/fixtures/certs/localhost.key'),
           cert: fs.readFileSync('tests/fixtures/certs/localhost.cert')
         };
@@ -253,7 +253,7 @@ describe('Server', function() {
       });
 
       it('proxies get request to api2', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api2/hello',
           headers: {
             'Content-Type': 'application/json'
@@ -266,7 +266,7 @@ describe('Server', function() {
       });
 
       it('proxies post request to api1', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api1/hello',
           headers: {
             Accept: 'application/json'
@@ -279,7 +279,7 @@ describe('Server', function() {
       });
 
       it('proxies get request to api3', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api3/test',
           headers: {
             Accept: 'application/json'
@@ -292,7 +292,7 @@ describe('Server', function() {
       });
 
       it('proxies post request to api3', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api3/test',
           headers: {
             Accept: 'application/json'
@@ -305,7 +305,7 @@ describe('Server', function() {
       });
 
       it('proxies post request to api4', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api4/test',
           headers: {
             Accept: 'application/json'
@@ -322,7 +322,7 @@ describe('Server', function() {
       });
 
       it('proxies get html request to api3', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api3/test',
           headers: {
             Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
@@ -335,7 +335,7 @@ describe('Server', function() {
       });
 
       it('returns an error when a requst can not be proxied', function(done) {
-        var options = {
+        let options = {
           url: baseUrl + 'api-error/test'
         };
         request.get(options, function(err, req, text) {
