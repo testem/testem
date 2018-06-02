@@ -96,7 +96,9 @@ describe('knownBrowsers', function() {
           expect(err).to.be.null();
           expect(file(path.join(browserTmpDir, 'user.js'))).to.equal(
             'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
-            'user_pref("browser.cache.disk.smart_size.first_run", false);'
+            'user_pref("browser.cache.disk.smart_size.first_run", false);\n' +
+            'user_pref("datareporting.policy.dataSubmissionEnabled", false);\n' +
+            'user_pref("datareporting.policy.dataSubmissionPolicyNotifiedTime", "1481830156314");'
           );
           done();
         });
