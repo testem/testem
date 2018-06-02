@@ -28,7 +28,7 @@ describe('mochaAdapter', function() {
 
   beforeEach(function() {
     globals = {};
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     _emit = sandbox.stub();
     _setTimeout = sandbox.stub();
     _mocha = {Runner: Runner};

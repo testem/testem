@@ -1,28 +1,28 @@
 'use strict';
 
-var BrowserTestRunner = require('../../lib/runners/browser_test_runner');
-var FakeReporter = require('../support/fake_reporter');
-var FakeSocket = require('../support/fake_socket');
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var Bluebird = require('bluebird');
-var path = require('path');
+const BrowserTestRunner = require('../../lib/runners/browser_test_runner');
+const FakeReporter = require('../support/fake_reporter');
+const FakeSocket = require('../support/fake_socket');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const Bluebird = require('bluebird');
+const path = require('path');
 
-var Config = require('../../lib/config');
-var Launcher = require('../../lib/launcher.js');
+const Config = require('../../lib/config');
+const Launcher = require('../../lib/launcher.js');
 
 describe('browser test runner', function() {
   describe('parallel runners', function() {
-    var ffRunner, chromeRunner, reporter, launcher;
-    var ff = {
+    let ffRunner, chromeRunner, reporter, launcher;
+    let ff = {
       name: 'Firefox 21.0',
       socket: new FakeSocket()
     };
-    var chrome = {
+    let chrome = {
       name: 'Chrome 19.0',
       socket: new FakeSocket()
     };
-    var Reporter = function() {
+    let Reporter = function() {
       this.logsByRunner = {};
       this.report = function(browser, msg) {
         this.logsByRunner[browser] = this.logsByRunner[browser] || [];
@@ -34,7 +34,7 @@ describe('browser test runner', function() {
 
     beforeEach(function() {
       reporter = new Reporter();
-      var config = new Config('ci', {
+      let config = new Config('ci', {
         parallel: 2,
         reporter: reporter
       });
@@ -67,22 +67,22 @@ describe('browser test runner', function() {
   });
 
   describe('receiving \'test-metadata\' event', function() {
-    var eventName = 'test-metadata';
-    var reporter, socket;
+    let eventName = 'test-metadata';
+    let reporter, socket;
 
     beforeEach(function() {
       reporter = new FakeReporter();
 
-      var id = 1;
-      var config = new Config('ci', {
+      let id = 1;
+      let config = new Config('ci', {
         parallel: 2,
         reporter: reporter
       });
-      var launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
+      let launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
 
       socket = new FakeSocket();
 
-      var runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+      let runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       runner.tryAttach('browser', id, socket);
     });
 
@@ -102,15 +102,15 @@ describe('browser test runner', function() {
   });
 
   describe('onTestsStart', function() {
-    var runner, reporter;
+    let runner, reporter;
 
     beforeEach(function() {
       reporter = new FakeReporter();
-      var config = new Config('ci', {
+      let config = new Config('ci', {
         parallel: 2,
         reporter: reporter
       });
-      var launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter);
     });
 
@@ -129,15 +129,15 @@ describe('browser test runner', function() {
   });
 
   describe('onTestResult', function() {
-    var runner, reporter;
+    let runner, reporter;
 
     beforeEach(function() {
       reporter = new FakeReporter();
-      var config = new Config('ci', {
+      let config = new Config('ci', {
         parallel: 2,
         reporter: reporter
       });
-      var launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter);
     });
 
@@ -202,7 +202,7 @@ describe('browser test runner', function() {
     });
 
     it('reports the first failed item as error', function() {
-      var failedItem = { name: 'failed', failed: 1 };
+      let failedItem = { name: 'failed', failed: 1 };
 
       runner.onTestResult({
         failed: 1,
@@ -217,12 +217,12 @@ describe('browser test runner', function() {
   });
 
   describe('start', function() {
-    var reporter, launcher, runner, socket, sandbox;
+    let reporter, launcher, runner, socket, sandbox;
 
     beforeEach(function() {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       reporter = new FakeReporter();
-      var config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
+      let config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       socket = new FakeSocket();
@@ -362,11 +362,11 @@ describe('browser test runner', function() {
   });
 
   describe('onDisconnect', function() {
-    var reporter, launcher, runner, socket;
+    let reporter, launcher, runner, socket;
 
     beforeEach(function() {
       reporter = new FakeReporter();
-      var config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
+      let config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       socket = new FakeSocket();
@@ -418,12 +418,12 @@ describe('browser test runner', function() {
   });
 
   describe('finish', function() {
-    var runner;
+    let runner;
 
     beforeEach(function() {
-      var reporter = new FakeReporter();
-      var config = new Config('ci', { reporter: reporter });
-      var launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      let reporter = new FakeReporter();
+      let config = new Config('ci', { reporter: reporter });
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, 1, true, config);
     });
 

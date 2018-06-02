@@ -1,15 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-var View = require('../../lib/reporters/dev/view');
-var Backbone = require('backbone');
-var sinon = require('sinon');
-var isWin = /^win/.test(process.platform);
+const expect = require('chai').expect;
+const View = require('../../lib/reporters/dev/view');
+const Backbone = require('backbone');
+const sinon = require('sinon');
+const isWin = /^win/.test(process.platform);
 
 describe('view', !isWin ? function() {
-  var view;
-  var MyView;
-  var model;
+  let view;
+  let MyView;
+  let model;
 
   before(function() {
     model = new Backbone.Model();
@@ -19,10 +19,10 @@ describe('view', !isWin ? function() {
     view = new MyView();
   });
 
-  var sandbox;
+  let sandbox;
 
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function() {
@@ -30,21 +30,21 @@ describe('view', !isWin ? function() {
   });
 
   it('can observe and then destroy', function() {
-    var onNameChange = sandbox.spy();
+    let onNameChange = sandbox.spy();
     view.observe(model, 'change:name', onNameChange);
     model.set('name', 'Bob');
     expect(onNameChange).to.have.been.called();
 
     // destroy and remove handlers
-    onNameChange.reset();
+    onNameChange.resetHistory();
     view.destroy();
     model.set('name', 'Alice');
     expect(onNameChange).not.to.have.been.called();
   });
 
   it('can use alternate observe syntax', function() {
-    var onNameChange = sandbox.spy();
-    var onAgeChange = sandbox.spy();
+    let onNameChange = sandbox.spy();
+    let onAgeChange = sandbox.spy();
     view.observe(model, {
       'change:name': onNameChange,
       'change:age': onAgeChange
@@ -53,8 +53,8 @@ describe('view', !isWin ? function() {
     expect(onNameChange).to.have.been.called();
     expect(onAgeChange).to.have.been.called();
     view.destroy();
-    onNameChange.reset();
-    onAgeChange.reset();
+    onNameChange.resetHistory();
+    onAgeChange.resetHistory();
     model.set({name: 'Alice', age: 12});
     expect(onNameChange).not.to.have.been.called();
     expect(onAgeChange).not.to.have.been.called();

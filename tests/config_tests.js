@@ -13,7 +13,7 @@ const sinon = require('sinon');
 describe('Config', function() {
   let config, appMode, progOptions, sandbox;
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     appMode = 'ci';
     progOptions = {
       file: __dirname + '/testem.yml',

@@ -43,7 +43,7 @@ describe('HookRunner', function() {
     var hookRunner, sandbox;
 
     beforeEach(function() {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       hookRunner = new HookRunner(config);
     });
 

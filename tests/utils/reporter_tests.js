@@ -35,7 +35,7 @@ describe('Reporter', function() {
   let sandbox, stream;
 
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     stream = new PassThrough();
   });
 

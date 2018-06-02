@@ -15,7 +15,7 @@ describe('App', function() {
   let app, config, sandbox;
 
   beforeEach(function() {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function() {
