@@ -1,27 +1,27 @@
 'use strict';
 
-var Bluebird = require('bluebird');
-var path = require('path');
-var sinon = require('sinon');
-var expect = require('chai').expect;
+const Bluebird = require('bluebird');
+const path = require('path');
+const sinon = require('sinon');
+const expect = require('chai').expect;
 
-var ProcessCtl = require('../lib/process-ctl');
-var Config = require('../lib/config');
+const ProcessCtl = require('../lib/process-ctl');
+const Config = require('../lib/config');
 
-var isWin = /^win/.test(process.platform);
-var isNodeLt012 = require('./support/is-node-lt-012');
-var config = new Config('ci', {}, {});
+const isWin = /^win/.test(process.platform);
+const isNodeLt012 = require('./support/is-node-lt-012');
+const config = new Config('ci', {}, {});
 
 describe('ProcessCtl', function() {
   describe('spawn', function() {
-    var processCtl;
+    let processCtl;
 
     beforeEach(function() {
       processCtl = new ProcessCtl('test', config);
     });
 
     it('emits a processStarted event', function() {
-      var processStartedEvent = false;
+      let processStartedEvent = false;
 
       processCtl.on('processStarted', function() {
         processStartedEvent = true;
@@ -38,7 +38,7 @@ describe('ProcessCtl', function() {
     });
 
     it('saves stdout', function() {
-      var inline = 'console.log(process.argv.slice(1).join(\' \'))';
+      let inline = 'console.log(process.argv.slice(1).join(\' \'))';
       return processCtl.spawn('node', ['-e', inline, 'out']).then(function(p) {
         return new Bluebird.Promise(function(resolve) {
           return p.on('processExit', function(exitCode, stdout, stderr) {
@@ -54,7 +54,7 @@ describe('ProcessCtl', function() {
     });
 
     it('saves stderr', function() {
-      var inline = 'console.error(process.argv.slice(1).join(\' \'))';
+      let inline = 'console.error(process.argv.slice(1).join(\' \'))';
       return processCtl.spawn('node', ['-e', inline, 'err']).then(function(p) {
         return new Bluebird.Promise(function(resolve) {
           return p.on('processExit', function(exitCode, stdout, stderr) {
@@ -124,7 +124,7 @@ describe('ProcessCtl', function() {
   });
 
   describe('exec', function() {
-    var processCtl, sandbox;
+    let processCtl, sandbox;
 
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
@@ -156,14 +156,14 @@ describe('ProcessCtl', function() {
   });
 
   describe('kill', function() {
-    var processCtl;
+    let processCtl;
 
     beforeEach(function() {
       processCtl = new ProcessCtl('test', config, { killTimeout: 50 });
     });
 
     it('kills regular processes', function() {
-      var fixture = [path.join(__dirname, 'fixtures/processes/echo.js')];
+      let fixture = [path.join(__dirname, 'fixtures/processes/echo.js')];
       return processCtl.spawn('node', fixture).delay(500).then(function(p) {
         return p.kill().then(function(exitCode) {
           if (isNodeLt012()) {
@@ -179,7 +179,7 @@ describe('ProcessCtl', function() {
     });
 
     it('kills processes ignoring sigterm', function() {
-      var fixture = [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')];
+      let fixture = [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')];
       return processCtl.spawn('node', fixture).delay(500).then(function(p) {
         return p.kill().then(function(exitCode) {
           if (isWin) {

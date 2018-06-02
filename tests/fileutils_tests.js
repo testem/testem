@@ -1,15 +1,15 @@
 'use strict';
 
-var path = require('path');
+const path = require('path');
 
-var expect = require('chai').expect;
-var sinon = require('sinon');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
-var fileutils = require('../lib/fileutils');
-var addToPATH = require('../lib/add-to-PATH');
+const fileutils = require('../lib/fileutils');
+const addToPATH = require('../lib/add-to-PATH');
 
 describe('fileutils', function() {
-  var sandbox;
+  let sandbox;
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
@@ -47,7 +47,7 @@ describe('fileutils', function() {
     });
 
     it('allows to define custom options', function() {
-      var options = {
+      let options = {
         env: addToPATH(path.join(process.cwd(), 'tests/fixtures/processes'))
       };
 

@@ -1,11 +1,11 @@
 'use strict';
 
-var browserArgs = require('../../lib/utils/browser-args');
-var expect = require('chai').expect;
-var log = require('npmlog');
+const browserArgs = require('../../lib/utils/browser-args');
+const expect = require('chai').expect;
+const log = require('npmlog');
 
-var EventEmitter = require('events').EventEmitter;
-var fakeStream = new EventEmitter();
+const EventEmitter = require('events').EventEmitter;
+const fakeStream = new EventEmitter();
 
 fakeStream.write = function() {};
 log.stream = fakeStream;
@@ -29,12 +29,12 @@ function createKnownBrowsers() {
 }
 
 describe('browserArgs', function() {
-  var config = {
+  let config = {
     get: function() {
       return this.browser_args;
     }
   };
-  var knownBrowsers;
+  let knownBrowsers;
 
   describe('methods', function() {
     describe('addCustomArgs', function() {
@@ -89,7 +89,7 @@ describe('browserArgs', function() {
 
       it('ignores args that specify a mode different from the current mode', function() {
         // Get Chrome's default args
-        var defaultArgs = createKnownBrowsers()[0].args();
+        let defaultArgs = createKnownBrowsers()[0].args();
 
         knownBrowsers = createKnownBrowsers();
 
@@ -111,7 +111,7 @@ describe('browserArgs', function() {
 
       it('adds args in object form when specifying a matching mode and args fields', function() {
         // Get Chrome's default args
-        var defaultArgs = createKnownBrowsers()[0].args();
+        let defaultArgs = createKnownBrowsers()[0].args();
 
         knownBrowsers = createKnownBrowsers();
 
@@ -157,7 +157,7 @@ describe('browserArgs', function() {
       // NOTE: knownBrowsers[0] is Chrome
       it('adds args to browser regardless of key capitalization', function() {
         // Get Chrome's default args
-        var defaultArgs = createKnownBrowsers()[0].args();
+        let defaultArgs = createKnownBrowsers()[0].args();
 
         knownBrowsers = createKnownBrowsers();
 
@@ -177,7 +177,7 @@ describe('browserArgs', function() {
       describe('object form with mode as key', function() {
         it('adds args for matching appMode', function() {
           // Get Chrome's default args
-          var defaultArgs = createKnownBrowsers()[0].args();
+          let defaultArgs = createKnownBrowsers()[0].args();
 
           knownBrowsers = createKnownBrowsers();
 
@@ -199,7 +199,7 @@ describe('browserArgs', function() {
 
         it('adds args with "all" merged in', function() {
           // Get Chrome's default args
-          var defaultArgs = createKnownBrowsers()[0].args();
+          let defaultArgs = createKnownBrowsers()[0].args();
 
           knownBrowsers = createKnownBrowsers();
 
@@ -222,7 +222,7 @@ describe('browserArgs', function() {
 
         it('adds "all" args if arguments for the appMode are not set', function() {
           // Get Chrome's default args
-          var defaultArgs = createKnownBrowsers()[0].args();
+          let defaultArgs = createKnownBrowsers()[0].args();
 
           knownBrowsers = createKnownBrowsers();
 
@@ -246,7 +246,7 @@ describe('browserArgs', function() {
 
     describe('createValidation', function() {
       it('creates an instance of Validation', function() {
-        var validation = browserArgs.createValidation();
+        let validation = browserArgs.createValidation();
 
         expect(validation).to.have.property('knownBrowser', null);
         expect(validation.messages).to.deep.equal([]);
@@ -260,7 +260,7 @@ describe('browserArgs', function() {
       });
 
       it('dedupes args', function(done) {
-        var args;
+        let args;
 
         log.once('log.warn', function(warning) {
           expect(warning.message).to.equal('Removed duplicate arg for Chrome: -b');
@@ -273,8 +273,8 @@ describe('browserArgs', function() {
       });
 
       it('returns in tact args if no dupes', function() {
-        var argsIn = [ '-a', '-b', '-c' ];
-        var argsOut = browserArgs.dedupeBrowserArgs('Chrome', argsIn);
+        let argsIn = [ '-a', '-b', '-c' ];
+        let argsOut = browserArgs.dedupeBrowserArgs('Chrome', argsIn);
 
         expect(argsOut).to.deep.equal(argsIn);
       });
@@ -292,7 +292,7 @@ describe('browserArgs', function() {
       // NOTE: knownBrowsers[0] is Chrome
       it('adds string args to browser with args method', function() {
         // Get Chrome's default args
-        var defaultArgs = createKnownBrowsers()[0].args();
+        let defaultArgs = createKnownBrowsers()[0].args();
 
         browserArgs.parseArgs('Chrome', '--fake', knownBrowsers);
 
@@ -302,7 +302,7 @@ describe('browserArgs', function() {
       // NOTE: knownBrowsers[0] is Chrome
       it('adds array args to browser with args method', function() {
         // Get Chrome's default args
-        var defaultArgs = createKnownBrowsers()[0].args();
+        let defaultArgs = createKnownBrowsers()[0].args();
 
         browserArgs.parseArgs('Chrome', [ '--fake' ], knownBrowsers);
 
@@ -312,7 +312,7 @@ describe('browserArgs', function() {
       // NOTE: knownBrowsers[1] is Firefox
       it('adds string args to browser with args array', function() {
         // Get Firefox's default args
-        var defaultArgs = createKnownBrowsers()[1].args;
+        let defaultArgs = createKnownBrowsers()[1].args;
 
         browserArgs.parseArgs('Firefox', '--fake', knownBrowsers);
 
@@ -322,7 +322,7 @@ describe('browserArgs', function() {
       // NOTE: knownBrowsers[1] is Firefox
       it('adds array args to browser with args array', function() {
         // Get Firefox's default args
-        var defaultArgs = createKnownBrowsers()[1].args;
+        let defaultArgs = createKnownBrowsers()[1].args;
 
         browserArgs.parseArgs('Firefox', [ '--fake' ], knownBrowsers);
 
@@ -332,7 +332,7 @@ describe('browserArgs', function() {
 
     describe('validate', function() {
       it('ignores invalid arguments', function() {
-        var badInputs = [
+        let badInputs = [
           [],
           [ 'Chrome' ],
           [ 'Chrome', '--flag' ],
@@ -345,7 +345,7 @@ describe('browserArgs', function() {
       });
 
       it('returns a validation object', function() {
-        var validation = browserArgs.validate('Fake', '--flag', knownBrowsers);
+        let validation = browserArgs.validate('Fake', '--flag', knownBrowsers);
 
         expect(validation).to.have.property('knownBrowser', null);
         expect(validation.messages).to.be.an.instanceof(Array);
@@ -353,21 +353,21 @@ describe('browserArgs', function() {
       });
 
       it('warns if unknown browser in args', function() {
-        var validation = browserArgs.validate('Fake', '--flag', knownBrowsers);
+        let validation = browserArgs.validate('Fake', '--flag', knownBrowsers);
 
         expect(validation.messages[0]).to.equal('Could not find "Fake" in known browsers');
       });
     });
 
     describe('validateBrowserArgs', function() {
-      var validation;
+      let validation;
 
       beforeEach(function() {
         validation = browserArgs.createValidation();
       });
 
       it('ignores invalid arguments', function() {
-        var badInputs = [
+        let badInputs = [
           [],
           [ 'Chrome' ],
           [ 'Chrome', '--flag' ]
@@ -416,8 +416,8 @@ describe('browserArgs', function() {
     });
 
     it('can log multiple validation warnings', function(done) {
-      var count = 1;
-      var warnHandler = function(warning) {
+      let count = 1;
+      let warnHandler = function(warning) {
         if (count === 1) {
           expect(warning.message).to.equal('Could not find "Fake" in known browsers');
         }

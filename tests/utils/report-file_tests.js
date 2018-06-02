@@ -1,24 +1,24 @@
 'use strict';
 
-var Bluebird = require('bluebird');
-var expect = require('chai').expect;
-var tmp = require('tmp');
-var Writable = require('stream').Writable;
+const Bluebird = require('bluebird');
+const expect = require('chai').expect;
+const tmp = require('tmp');
+const Writable = require('stream').Writable;
 
-var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
+const tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 
-var ReportFile = require('../../lib/utils/report-file');
+const ReportFile = require('../../lib/utils/report-file');
 
 describe('ReportFile', function() {
   describe('close', function() {
     it('resolves when all data has been written', function() {
 
-      var noopStream = new Writable();
+      let noopStream = new Writable();
       noopStream._write = function(chunk, encoding, done) {
         done();
       };
 
-      var finished = false;
+      let finished = false;
 
       return tmpNameAsync().then(function(path) {
         return new ReportFile(path, noopStream);

@@ -1,18 +1,18 @@
 'use strict';
 
-var chai = require('chai');
-var sinonChai = require('sinon-chai');
-var chaiFiles = require('chai-files');
-var chaiShallowDeepEqual = require('chai-shallow-deep-equal');
-var dirtyChai = require('dirty-chai');
+const chai = require('chai');
+const sinonChai = require('sinon-chai');
+const chaiFiles = require('chai-files');
+const chaiShallowDeepEqual = require('chai-shallow-deep-equal');
+const dirtyChai = require('dirty-chai');
 
 chai.use(sinonChai);
 chai.use(chaiFiles);
 chai.use(chaiShallowDeepEqual);
 chai.use(dirtyChai);
 
-var path = require('path');
-var PATH = 'PATH';
+const path = require('path');
+let PATH = 'PATH';
 
 // windows calls it's path 'Path' usually, but this is not guaranteed.
 if (process.platform === 'win32') {
@@ -24,7 +24,7 @@ if (process.platform === 'win32') {
   });
 }
 
-var modulesPath = path.join(process.cwd(), 'node_modules', '.bin');
+const modulesPath = path.join(process.cwd(), 'node_modules', '.bin');
 
 function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
