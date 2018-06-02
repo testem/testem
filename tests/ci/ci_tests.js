@@ -48,6 +48,7 @@ describe('ci mode app', function() {
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
         port: 0,
+        host: 'localhost',
         cwd: dir,
         reporter: reporter,
         launch_in_ci: ['node', 'nodeplain', 'phantomjs']
@@ -101,6 +102,7 @@ describe('ci mode app', function() {
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
         port: 0,
+        host: 'localhost',
         cwd: dir,
         launch_in_ci: ['phantomjs'],
         reporter: makeTestReporter()
@@ -191,6 +193,7 @@ describe('ci mode app', function() {
       var config = new Config('ci', {
         file: path.join(dir, 'testem.json'),
         port: 0,
+        host: 'localhost',
         cwd: dir,
         launch_in_ci: ['phantomjs'],
         reporter: reporter
@@ -286,7 +289,7 @@ describe('ci mode app', function() {
   });
 
   it('does not shadow EADDRINUSE errors', function(done) {
-    var server = http.createServer().listen(7357, function(err) {
+    var server = http.createServer().listen({port: 7357, host: '0.0.0.0'}, function(err) {
       if (err) {
         return done(err);
       }
@@ -473,6 +476,7 @@ describe('ci mode app', function() {
     var config = new Config('ci', {
       file: 'tests/fixtures/multiple_pages/testem.json',
       port: 0,
+      host: 'localhost',
       cwd: path.join('tests/fixtures/multiple_pages'),
       launch_in_ci: ['phantomjs'],
       reporter: reporter
