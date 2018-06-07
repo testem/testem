@@ -1,30 +1,30 @@
 'use strict';
 
-var fs = require('fs');
-var App = require('../../lib/app');
-var Config = require('../../lib/config');
-var Bluebird = require('bluebird');
-var expect = require('chai').expect;
-var rimraf = require('rimraf');
-var path = require('path');
-var PassThrough = require('stream').PassThrough;
-var ReportFile = require('../../lib/utils/report-file');
-var tmp = require('tmp');
+const fs = require('fs');
+const App = require('../../lib/app');
+const Config = require('../../lib/config');
+const Bluebird = require('bluebird');
+const expect = require('chai').expect;
+const rimraf = require('rimraf');
+const path = require('path');
+const PassThrough = require('stream').PassThrough;
+const ReportFile = require('../../lib/utils/report-file');
+const tmp = require('tmp');
 
-var FakeReporter = require('../support/fake_reporter');
+const FakeReporter = require('../support/fake_reporter');
 
-var tmpDirAsync = Bluebird.promisify(tmp.dir);
-var tmpFileAsync = Bluebird.promisify(tmp.file);
-var rimrafAsync = Bluebird.promisify(rimraf);
+const tmpDirAsync = Bluebird.promisify(tmp.dir);
+const tmpFileAsync = Bluebird.promisify(tmp.file);
+const rimrafAsync = Bluebird.promisify(rimraf);
 
 describe('report file output', function() {
   this.timeout(30000);
 
-  var reportDir, filename;
+  let reportDir, filename;
   beforeEach(function() {
     return tmpDirAsync({
       keep: true
-    }).then(function(dir) {
+    }).then(dir => {
       reportDir = dir;
 
       return tmpFileAsync({
@@ -33,7 +33,7 @@ describe('report file output', function() {
         keep: true,
         discardDescriptor: true
       });
-    }).then(function(filePath) {
+    }).then(filePath => {
       filename = filePath;
     });
   });
@@ -43,9 +43,9 @@ describe('report file output', function() {
   });
 
   it('allows passing in report_file from config', function(done) {
-    var dir = path.join('tests/fixtures/success-skipped');
+    let dir = path.join('tests/fixtures/success-skipped');
 
-    var config = new Config('ci', {
+    let config = new Config('ci', {
       file: path.join(dir, 'testem.json'),
       port: 0,
       cwd: dir,
@@ -55,7 +55,7 @@ describe('report file output', function() {
       launch_in_ci: ['phantomjs']
     });
 
-    var app = new App(config, function() {
+    let app = new App(config, () => {
       expect(app.reportFileName).to.eq(filename);
 
       // fileStream already closed
@@ -65,20 +65,25 @@ describe('report file output', function() {
   });
 
   it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
-    tmp.tmpName(function(err, filename) {
+    tmp.tmpName((err, filename) => {
       if (err) {
         return done(err);
       }
 
-      var config = new Config('ci', {
+      let config = new Config('ci', {
         reporter: new FakeReporter(),
         stdout_stream: new PassThrough()
       });
-      var app = new App(config, function() {
-        fs.stat(filename, function(err) {
-          expect(err).not.to.be.null();
-          expect(err.code).to.eq('ENOENT');
-          done();
+      let app = new App(config, () => {
+        fs.stat(filename, err => {
+          try {
+            expect(err).not.eql(null);
+            expect(err.code).to.eq('ENOENT');
+          } catch (e) {
+            done(e);
+          } finally {
+            done();
+          }
         });
       });
       app.start();
@@ -87,11 +92,11 @@ describe('report file output', function() {
   });
 
   it('writes out results to the file', function(done) {
-    var reportFile = new ReportFile(filename);
-    var reportStream = reportFile.outputStream;
+    let reportFile = new ReportFile(filename);
+    let reportStream = reportFile.outputStream;
 
     reportFile.outputStream.on('finish', function() {
-      fs.readFile(filename, function(err, data) {
+      fs.readFile(filename, (err, data) => {
         if (err) {
           return done(err);
         }
@@ -105,15 +110,19 @@ describe('report file output', function() {
   });
 
   it('creates folders in the path if they don\'t exist', function(done) {
-    var name = 'nested/test/folders/test-reports.xml';
+    let name = 'nested/test/folders/test-reports.xml';
 
-    tmp.tmpName({dir: reportDir, name: name}, function(err, nestedFilename) {
+    tmp.tmpName({
+      dir: reportDir,
+      name: name
+    }, (err, nestedFilename) => {
+
       if (err) {
         return done(err);
       }
 
-      var reportFile = new ReportFile(nestedFilename);
-      reportFile.outputStream.on('finish', function() {
+      let reportFile = new ReportFile(nestedFilename);
+      reportFile.outputStream.on('finish', () => {
         fs.stat(nestedFilename, done);
       });
       reportFile.outputStream.end();
