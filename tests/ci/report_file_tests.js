@@ -76,9 +76,14 @@ describe('report file output', function() {
       });
       var app = new App(config, function() {
         fs.stat(filename, function(err) {
-          expect(err).not.to.be.null();
-          expect(err.code).to.eq('ENOENT');
-          done();
+          try {
+            expect(err).not.eql(null);
+            expect(err.code).to.eq('ENOENT');
+          } catch (e) {
+            done(e);
+          } finally {
+            done();
+          }
         });
       });
       app.start();
