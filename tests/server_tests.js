@@ -20,6 +20,7 @@ describe('Server', function() {
     before(function(done) {
       config = new Config('dev', {
         port: port,
+        socket_heartbeat_timeout: 10,
         src_files: [
           'web/hello.js',
           {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
@@ -172,6 +173,11 @@ describe('Server', function() {
         expect(res.statusCode).to.eq(200);
         done();
       });
+    });
+
+    it('sets heartbeat_timeout on socket.io server', function(done){
+      expect(server.io.eio['pingTimeout']).to.eq(10000);
+      done();
     });
 
     describe('route', function() {
