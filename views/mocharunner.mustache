@@ -11,6 +11,7 @@
 </head>
 <body>
 <div id="mocha"></div>
+{{#footer_scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/footer_scripts}}
 <script>
 mocha.run()
 </script>
