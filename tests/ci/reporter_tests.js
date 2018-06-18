@@ -537,14 +537,12 @@ describe('test reporters', function() {
       assert.match(output, /##teamcity\[testFailed name='firefox - it handles failures' message='' details='' type='comparisonFailure' expected='foo' actual='bar']/);
     });
 
-    it('generates teamcity lines', function () {
-      var reporter = new TeamcityReporter(false, stream);
-
+    it('generates teamcity lines', function() {
       [
-        ['testStarted', {bar: 'baz'}, "##teamcity[testStarted bar='baz']\n"],
-        ['testIgnored', {bar: 'baz', runDuration: 42}, "##teamcity[testIgnored bar='baz' runDuration='42']\n"],
+        ['testStarted', {bar: 'baz'}, `##teamcity[testStarted bar='baz']\n`],
+        ['testIgnored', {bar: 'baz', runDuration: 42}, `##teamcity[testIgnored bar='baz' runDuration='42']\n`],
       ].forEach(([type, options, expected]) =>
-        assert.equal(reporter._teamcityLine(type, options), expected));
+        assert.equal(TeamcityReporter.teamcityLine(type, options), expected));
     });
   });
 });
