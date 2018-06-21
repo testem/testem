@@ -409,5 +409,15 @@ function emit() {
 
 if (typeof window !== 'undefined') {
   window.Testem = Testem;
+
+  // stub window.alert and window.confirm to return error so alert and confirm does not get used in tests
+  // this will prevent browser disconnect failures
+  window.alert = function() {
+    throw new Error('[Testem] Calling window.alert() in tests is disabled, because it causes testem to fail with browser disconnect error.');
+  }
+
+  window.confirm = function() {
+    throw new Error('[Testem] Calling window.confirm() in tests is disabled, because it causes testem to fail with browser disconnect error.');
+  }
   init();
 }
