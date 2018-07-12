@@ -518,7 +518,7 @@ describe('test reporters', function() {
       assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors' duration='42']/);
     });
 
-    it('uses comparisonFailure type for comparison errors', function () {
+    it('uses comparisonFailure type for comparison errors', function() {
       var reporter = new TeamcityReporter(false, stream);
 
       reporter.report('firefox', {
@@ -539,8 +539,8 @@ describe('test reporters', function() {
 
     it('generates teamcity lines', function() {
       [
-        ['testStarted', {bar: 'baz'}, `##teamcity[testStarted bar='baz']\n`],
-        ['testIgnored', {bar: 'baz', runDuration: 42}, `##teamcity[testIgnored bar='baz' runDuration='42']\n`],
+        ['testStarted', {bar: 'baz'}, '##teamcity[testStarted bar=\'baz\']\n'],
+        ['testIgnored', {bar: 'baz', runDuration: 42}, '##teamcity[testIgnored bar=\'baz\' runDuration=\'42\']\n'],
       ].forEach(([type, options, expected]) =>
         assert.equal(TeamcityReporter.teamcityLine(type, options), expected));
     });

@@ -414,10 +414,10 @@ if (typeof window !== 'undefined') {
   // this will prevent browser disconnect failures
   window.alert = function() {
     throw new Error('[Testem] Calling window.alert() in tests is disabled, because it causes testem to fail with browser disconnect error.');
-  }
+  };
 
   window.confirm = function() {
     throw new Error('[Testem] Calling window.confirm() in tests is disabled, because it causes testem to fail with browser disconnect error.');
-  }
+  };
   init();
 }

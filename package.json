@@ -59,8 +59,8 @@
     "views"
   ],
   "scripts": {
-    "install:all": "npm install && npm install phantomjs-prebuilt",
-    "test": "./bin/run-tests.js",
+    "install:all": "yarn install && yarn add phantomjs-prebuilt",
+    "test": "eslint . && ./bin/run-tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js",
     "testem-tests": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
