@@ -291,6 +291,41 @@ describe('test reporters', function() {
         assert.match(output, /1 tests complete \([0-9]+ ms\)/);
       });
     });
+
+    context('with errored negative assertion', function() {
+      it('writes out summary with negated expected in failure info', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it fails',
+          passed: false,
+          error: {
+            actual: 'foo',
+            expected: 'foo',
+            message: 'This should not be foo',
+            stack: 'trace',
+            negative: true
+          }
+        });
+        reporter.finish();
+        var output = stream.read().toString().split('\n');
+
+        output.shift();
+        assert.match(output.shift(), / {2}F/);
+        output.shift();
+        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\)/);
+        output.shift();
+        assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
+        assert.match(output.shift(), / {5}This should not be foo/);
+        output.shift();
+        assert.match(output.shift(), / {5}expected: NOT 'foo'/);
+        assert.match(output.shift(), / {7}actual: 'foo'/);
+        output.shift();
+        assert.match(output.shift(), / {5}trace/);
+        output.shift();
+        assert.equal(output, '');
+      });
+    });
   });
 
   describe('xunit reporter', function() {
@@ -544,5 +579,26 @@ describe('test reporters', function() {
       ].forEach(([type, options, expected]) =>
         assert.equal(TeamcityReporter.teamcityLine(type, options), expected));
     });
+
+    it('negates expected for negative assertions', function () {
+      var reporter = new TeamcityReporter(false, stream);
+
+      reporter.report('firefox', {
+        name: 'it negates',
+        passed: false,
+        error: {
+          passed: false,
+          expected: 'foo',
+          actual: 'foo',
+          negative: true
+        }
+      });
+
+      reporter.finish();
+      var output = stream.read().toString();
+
+      assert.match(output, /##teamcity\[testFailed name='firefox - it negates' message='' details='' type='comparisonFailure' expected='NOT foo' actual='foo']/);
+    });
+
   });
 });
