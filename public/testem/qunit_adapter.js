@@ -71,7 +71,8 @@ function qunitAdapter() {
           actual: params.actual,
           expected: params.expected,
           stack: params.source,
-          message: params.message
+          message: params.message,
+          negative: params.negative
         });
       }
 
