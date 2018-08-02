@@ -1,5 +1,6 @@
 'use strict';
 
+const CurrentTime = require('../../lib/utils/current-time');
 var TapReporter = require('../../lib/reporters/tap_reporter');
 var DotReporter = require('../../lib/reporters/dot_reporter');
 var XUnitReporter = require('../../lib/reporters/xunit_reporter');
@@ -32,9 +33,25 @@ describe('test reporters', function() {
 
   describe('tap reporter', function() {
     var config, stream;
+    let originalTimeFn;
+    let expectedTimeStrings;
 
     beforeEach(function() {
       stream = new PassThrough();
+      originalTimeFn = CurrentTime.asLocaleTimeString;
+      expectedTimeStrings = [];
+
+      CurrentTime.asLocaleTimeString = () => {
+        let timeString = originalTimeFn();
+
+        expectedTimeStrings.push(timeString);
+
+        return timeString;
+      };
+    });
+
+    afterEach(function() {
+      CurrentTime.asLocaleTimeString = originalTimeFn;
     });
 
     context('with default configuration', function() {
@@ -48,21 +65,23 @@ describe('test reporters', function() {
           reporter.report('phantomjs', {
             name: 'it does stuff',
             passed: true,
-            logs: ['some log']
+            logs: ['some log'],
+            runDuration: 3,
           });
           reporter.report('phantomjs', {
             name: 'it is skipped',
             skipped: true,
-            logs: []
+            logs: [],
+            runDuration: 0,
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            'ok 1 phantomjs - it does stuff',
+            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
             '    ---',
             '        Log: |',
             '            \'some log\'',
             '    ...',
-            'skip 2 phantomjs - it is skipped',
+            `[${expectedTimeStrings.shift()}] skip 2 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..2',
             '# tests 2',
@@ -82,27 +101,30 @@ describe('test reporters', function() {
           reporter.report('phantomjs', {
             name: 'it does stuff',
             passed: true,
-            logs: ['some log']
+            logs: ['some log'],
+            runDuration: 3,
           });
           reporter.report('phantomjs', {
             name: 'it fails',
             passed: false,
             error: { message: 'it crapped out' },
-            logs: ['I am a log', 'Useful information']
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
           });
           reporter.report('phantomjs', {
             name: 'it is skipped',
             skipped: true,
-            logs: []
+            logs: [],
+            runDuration: 0,
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            'ok 1 phantomjs - it does stuff',
+            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
             '    ---',
             '        Log: |',
             '            \'some log\'',
             '    ...',
-            'not ok 2 phantomjs - it fails',
+            `[${expectedTimeStrings.shift()}] not ok 2 phantomjs - [5 ms] - it fails`,
             '    ---',
             '        message: >',
             '            it crapped out',
@@ -110,7 +132,7 @@ describe('test reporters', function() {
             '            \'I am a log\'',
             '            \'Useful information\'',
             '    ...',
-            'skip 3 phantomjs - it is skipped',
+            `[${expectedTimeStrings.shift()}] skip 3 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..3',
             '# tests 3',
@@ -134,17 +156,19 @@ describe('test reporters', function() {
           reporter.report('phantomjs', {
             name: 'it does stuff',
             passed: true,
-            logs: ['some log']
+            logs: ['some log'],
+            runDuration: 3,
           });
           reporter.report('phantomjs', {
             name: 'it is skipped',
             skipped: true,
-            logs: []
+            logs: [],
+            runDuration: 0,
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            'ok 1 phantomjs - it does stuff',
-            'skip 2 phantomjs - it is skipped',
+            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
+            `[${expectedTimeStrings.shift()}] skip 2 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..2',
             '# tests 2',
@@ -164,23 +188,26 @@ describe('test reporters', function() {
           reporter.report('phantomjs', {
             name: 'it does stuff',
             passed: true,
-            logs: ['some log']
+            logs: ['some log'],
+            runDuration: 50,
           });
           reporter.report('phantomjs', {
             name: 'it fails',
             passed: false,
             error: { message: 'it crapped out' },
-            logs: ['I am a log', 'Useful information']
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
           });
           reporter.report('phantomjs', {
             name: 'it is skipped',
             skipped: true,
-            logs: []
+            logs: [],
+            runDuration: 0,
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            'ok 1 phantomjs - it does stuff',
-            'not ok 2 phantomjs - it fails',
+            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [50 ms] - it does stuff`,
+            `[${expectedTimeStrings.shift()}] not ok 2 phantomjs - [5 ms] - it fails`,
             '    ---',
             '        message: >',
             '            it crapped out',
@@ -188,7 +215,7 @@ describe('test reporters', function() {
             '            \'I am a log\'',
             '            \'Useful information\'',
             '    ...',
-            'skip 3 phantomjs - it is skipped',
+            `[${expectedTimeStrings.shift()}] skip 3 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..3',
             '# tests 3',
@@ -206,11 +233,12 @@ describe('test reporters', function() {
         var reporter = new TapReporter(false, stream, config);
         reporter.report('phantomjs', {
           passed: true,
-          logs: []
+          logs: [],
+          runDuration: 1,
         });
         reporter.finish();
         assert.deepEqual(stream.read().toString().split('\n'), [
-          'ok 1 phantomjs',
+          `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [1 ms]`,
           '',
           '1..1',
           '# tests 1',
