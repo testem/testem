@@ -76,12 +76,12 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
+            `ok 1 phantomjs - [3 ms] - it does stuff`,
             '    ---',
             '        Log: |',
             '            \'some log\'',
             '    ...',
-            `[${expectedTimeStrings.shift()}] skip 2 phantomjs - [0 ms] - it is skipped`,
+            `skip 2 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..2',
             '# tests 2',
@@ -119,12 +119,12 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
+            `ok 1 phantomjs - [3 ms] - it does stuff`,
             '    ---',
             '        Log: |',
             '            \'some log\'',
             '    ...',
-            `[${expectedTimeStrings.shift()}] not ok 2 phantomjs - [5 ms] - it fails`,
+            `not ok 2 phantomjs - [5 ms] - it fails`,
             '    ---',
             '        message: >',
             '            it crapped out',
@@ -132,7 +132,7 @@ describe('test reporters', function() {
             '            \'I am a log\'',
             '            \'Useful information\'',
             '    ...',
-            `[${expectedTimeStrings.shift()}] skip 3 phantomjs - [0 ms] - it is skipped`,
+            `skip 3 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..3',
             '# tests 3',
@@ -167,8 +167,8 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [3 ms] - it does stuff`,
-            `[${expectedTimeStrings.shift()}] skip 2 phantomjs - [0 ms] - it is skipped`,
+            `ok 1 phantomjs - [3 ms] - it does stuff`,
+            `skip 2 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..2',
             '# tests 2',
@@ -206,8 +206,8 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [50 ms] - it does stuff`,
-            `[${expectedTimeStrings.shift()}] not ok 2 phantomjs - [5 ms] - it fails`,
+            `ok 1 phantomjs - [50 ms] - it does stuff`,
+            `not ok 2 phantomjs - [5 ms] - it fails`,
             '    ---',
             '        message: >',
             '            it crapped out',
@@ -215,7 +215,7 @@ describe('test reporters', function() {
             '            \'I am a log\'',
             '            \'Useful information\'',
             '    ...',
-            `[${expectedTimeStrings.shift()}] skip 3 phantomjs - [0 ms] - it is skipped`,
+            `skip 3 phantomjs - [0 ms] - it is skipped`,
             '',
             '1..3',
             '# tests 3',
@@ -238,7 +238,7 @@ describe('test reporters', function() {
         });
         reporter.finish();
         assert.deepEqual(stream.read().toString().split('\n'), [
-          `[${expectedTimeStrings.shift()}] ok 1 phantomjs - [1 ms]`,
+          `ok 1 phantomjs - [1 ms]`,
           '',
           '1..1',
           '# tests 1',
