@@ -405,6 +405,48 @@ describe('Server', function() {
       expect(config.get('port')).to.eq(server.server.address().port);
     });
   });
+
+  describe('unsafe directory handling', function() {
+    before(function(done) {
+      // Intentionally construct a path with forward slashes so that we can guard
+      // against a regression on this issue: https://github.com/testem/testem/issues/1286
+      var forwardSlashCwd = __dirname.split(path.sep).join('/');
+      config = new Config('dev', {
+        port: port,
+        unsafe_file_serving: false,
+        socket_heartbeat_timeout: 6,
+        serve_files: [
+          'web/hello.js',
+          '../public/.eslintrc.js'
+        ],
+        cwd: forwardSlashCwd
+      });
+      baseUrl = 'http://localhost:' + port + '/';
+
+      server = new Server(config);
+      server.start();
+      server.once('server-start', function() {
+        done();
+      });
+    });
+    after(function(done) {
+      server.stop(done);
+    });
+
+    it('handles a request for safe content', function(done) {
+      request(baseUrl + 'web/hello.js', function(err, res) {
+        expect(res.statusCode).to.eq(200);
+        done();
+      });
+    });
+
+    it('rejects a request for unsafe content', function(done) {
+      request(baseUrl + '../public/.eslintrc.js', function(err, res) {
+        expect(res.statusCode).to.eq(403);
+        done();
+      });
+    });
+  });
 });
 
 function assertUrlReturnsFileContents(url, file, done) {
