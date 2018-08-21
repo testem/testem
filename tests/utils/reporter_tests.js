@@ -180,6 +180,32 @@ describe('Reporter', function() {
       });
     });
 
+    it('creates two reporters in dev mode if path is present and 2nd reporter is tap', function() {
+      return tmpNameAsync().then(function(path) {
+        let stream = new PassThrough();
+        let reporter = new Reporter({
+          config: {
+            appMode: 'dev',
+            get: function(key) {
+              switch (key) {
+                case 'reporter':
+                  return FakeReporter;
+                case 'path':
+                  return 'dev';
+                case 'url':
+                  return 'abc';
+              }
+            }
+          },
+          on: () => {},
+        }, stream, path);
+
+        expect(reporter.reporters).to.have.lengthOf(2);
+        expect(reporter.reporters[0]).to.be.an.instanceof(FakeReporter);
+        expect(reporter.reporters[1]).to.be.an.instanceof(TapReporter);
+      });
+    });
+
     it('creates a reporter when custom reporter dependent on configs is provided', function() {
       class CustomReporter extends TapReporter {
       }
