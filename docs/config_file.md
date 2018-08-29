@@ -75,6 +75,7 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     css_files:                   [Array]   string or array of additional stylesheets to include
     cwd:                         [Path]    directory to use as root
+    dev_mode_file_reporter:      [String]  in dev mode the default reporter is 'dev' for the standard output. It is possible to specify a custom reporter which will report to report_file ('tap' reporter is used otherwise)
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
