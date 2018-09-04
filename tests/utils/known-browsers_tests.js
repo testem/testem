@@ -189,7 +189,7 @@ describe('knownBrowsers', function() {
         }
 
         browsers = knownBrowsers('any', config);
-        chrome = findBrowser(browsers, 'Chrome');
+        chrome = findBrowser(browsers, browserName || 'Chrome');
       }
 
       beforeEach(function() {
@@ -272,6 +272,36 @@ describe('knownBrowsers', function() {
         it('constructs correct args with browser_args', function() {
           expect(chrome.args.call(launcher, config, url)).to.deep.eq([
             '--testem',
+            '--user-data-dir=' + browserTmpDir,
+            '--no-default-browser-check',
+            '--no-first-run',
+            '--ignore-certificate-errors',
+            '--test-type',
+            '--disable-renderer-backgrounding',
+            '--disable-background-timer-throttling',
+            url
+          ]);
+        });
+      });
+
+      describe('headless browser_args', function() {
+        beforeEach(function() {
+          setup('Headless Chrome');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(chrome.args.call(launcher, config, url)).to.deep.eq([
+            '--testem',
+            '--headless',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--mute-audio',
+            '--remote-debugging-port=0',
+            '--window-size=1440,900',
             '--user-data-dir=' + browserTmpDir,
             '--no-default-browser-check',
             '--no-first-run',
