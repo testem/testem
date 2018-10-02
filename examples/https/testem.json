@@ -1,0 +1,10 @@
+{
+  "framework": "mocha",
+  "test_page": "test.html",
+  "src_files": [
+    "*.js"
+  ],
+  "key": "server.key",
+  "cert": "server.crt",
+  "rejectUnauthorized": false
+}

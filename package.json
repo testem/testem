@@ -37,6 +37,7 @@
     "lodash.clonedeep": "^4.4.1",
     "lodash.find": "^4.5.1",
     "lodash.uniqby": "^4.7.0",
+    "mime-types": "^2.1.20",
     "mkdirp": "^0.5.1",
     "mustache": "^3.0.0",
     "node-notifier": "^5.0.1",
@@ -45,6 +46,7 @@
     "rimraf": "^2.4.4",
     "socket.io": "^2.1.0",
     "spawn-args": "^0.2.0",
+    "spdy": "^3.4.7",
     "styled_string": "0.0.1",
     "tap-parser": "^7.0.0",
     "xmldom": "^0.1.19"
