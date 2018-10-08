@@ -158,8 +158,21 @@ function init() {
   });
 }
 
+function patchEmitterForWildcard(socket) {
+  var emit = io.Manager.prototype.emit;
+
+  function onevent (packet) {
+    var args = packet.data || [];
+    emit.call(this, '*', packet);
+    return emit.apply(this, args);
+  }
+  socket.onevent = onevent;
+}
+
 function initSocket(id) {
   socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
+  patchEmitterForWildcard(socket);
+
   socket.emit('browser-login', getBrowserName(navigator.userAgent), id);
   socket.on('connect', function() {
     connectStatus = 'connected';
@@ -175,6 +188,13 @@ function initSocket(id) {
   });
   socket.on('stop-run', function() {
     sendMessageToParent('stop-run');
+  });
+  socket.on('*', function(event) {
+    if (event.data) {
+      var eventName = event.data[0];
+      var eventData = event.data[1];
+      sendMessageToParent(eventName, eventData);
+    }
   });
 }
 

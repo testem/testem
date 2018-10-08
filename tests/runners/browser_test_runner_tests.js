@@ -417,6 +417,27 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('additionalBrowserSocketEvents', function() {
+    it('binds additional browser socket events', function() {
+      let eventName = 'testEvent';
+      let eventFn = function() {
+        return 'testing additionalBrowserSocketEvents.';
+      }
+      let additional_browser_socket_events = {};
+      additional_browser_socket_events[eventName] = eventFn;
+
+      let socket = new FakeSocket();
+      let reporter = new FakeReporter();
+      let config = new Config('ci', { additional_browser_socket_events, reporter: reporter });
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      let runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+
+      runner.tryAttach('browser', launcher.id, socket);
+
+      expect(eventFn()).to.deep.equal(socket.listeners(eventName)[0]());
+    });
+  });
+
   describe('finish', function() {
     let runner;
 
