@@ -47,6 +47,7 @@
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
     "tap-parser": "^7.0.0",
+    "tmp": "0.0.33",
     "xmldom": "^0.1.19"
   },
   "files": [
@@ -84,8 +85,7 @@
     "shelljs": "^0.8.2",
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
-    "tape": "^4.9.1",
-    "tmp": "0.0.33"
+    "tape": "^4.9.1"
   },
   "bin": {
     "testem": "./testem.js"
