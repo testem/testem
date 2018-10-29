@@ -268,7 +268,9 @@ var Testem = {
           self.emit('after-tests-complete');
           break;
         default:
-          self.emit(type, message.data);
+          if (type.indexOf('testem:') == 0) {
+            self.emit(type, message.data);
+          }
           break;
       }
     });

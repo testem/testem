@@ -190,7 +190,7 @@ function initSocket(id) {
     sendMessageToParent('stop-run');
   });
   socket.on('*', function(event) {
-    if (event.data) {
+    if (event.data && event.data[0].indexOf('testem:') == 0 ) {
       var eventName = event.data[0];
       var eventData = event.data[1];
       sendMessageToParent(eventName, eventData);

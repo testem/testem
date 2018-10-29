@@ -423,12 +423,12 @@ describe('browser test runner', function() {
       let eventFn = function() {
         return 'testing additionalBrowserSocketEvents.';
       }
-      let additional_browser_socket_events = {};
-      additional_browser_socket_events[eventName] = eventFn;
+      let custom_browser_socket_events = {};
+      custom_browser_socket_events[eventName] = eventFn;
 
       let socket = new FakeSocket();
       let reporter = new FakeReporter();
-      let config = new Config('ci', { additional_browser_socket_events, reporter: reporter });
+      let config = new Config('ci', { custom_browser_socket_events, reporter: reporter });
       let launcher = new Launcher('ci', { protocol: 'browser' }, config);
       let runner = new BrowserTestRunner(launcher, reporter, null, null, config);
 
