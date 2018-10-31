@@ -268,7 +268,7 @@ var Testem = {
           self.emit('after-tests-complete');
           break;
         default:
-          if (type.indexOf('testem:') == 0) {
+          if (type.indexOf('testem:') === 0) {
             self.emit(type, message.data);
           }
           break;

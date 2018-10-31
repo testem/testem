@@ -1,4 +1,5 @@
-/* globals document, parent, window, io, navigator */
+/* globals document, parent, io, window, navigator */
+/* globals module */
 'use strict';
 
 var socket;
@@ -37,11 +38,13 @@ function sendMessageToParent(type, data) {
   parent.postMessage(message, '*');
 }
 
-var addListener = window.addEventListener ?
-  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-
-addListener(window, 'message', handleMessage);
+var addListener;
+if (typeof window !== 'undefined') {
+  addListener = window.addEventListener ?
+    function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
+    function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+    addListener(window, 'message', handleMessage);
+}
 
 var messageListeners = {};
 function handleMessage(event) {
@@ -190,7 +193,7 @@ function initSocket(id) {
     sendMessageToParent('stop-run');
   });
   socket.on('*', function(event) {
-    if (event.data && event.data[0].indexOf('testem:') == 0 ) {
+    if (event.data && event.data[0].indexOf('testem:') === 0 ) {
       var eventName = event.data[0];
       var eventData = event.data[1];
       sendMessageToParent(eventName, eventData);
@@ -198,4 +201,12 @@ function initSocket(id) {
   });
 }
 
-init();
+// We should only call init() if it ran in browser.
+if (typeof window !== 'undefined') {
+  init();
+}
+
+// Exporting this as a module so that it can be unit tested in Node.
+if (typeof module !== 'undefined') {
+  module.exports = patchEmitterForWildcard;
+}
