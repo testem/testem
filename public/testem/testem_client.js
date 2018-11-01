@@ -295,6 +295,9 @@ var Testem = {
   removeEventCallbacks: function(evt, callback) {
     var handlers = this.evtHandlers[evt];
     var removeIdx = [];
+    if (typeof handlers === "undefined") {
+      return;
+    }
     for (var i = 0; i < handlers.length; i++) {
       if (handlers[i] === callback) {
         removeIdx.push(i);
