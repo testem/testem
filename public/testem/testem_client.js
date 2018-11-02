@@ -175,6 +175,7 @@ var Testem = {
         handler.apply(this, argsWithoutFirst);
       }
     }
+
     this.emitMessage.apply(this, arguments);
   },
   on: function(evt, callback) {
@@ -266,6 +267,11 @@ var Testem = {
         case 'stop-run':
           self.emit('after-tests-complete');
           break;
+        default:
+          if (type.indexOf('testem:') === 0) {
+            self.emit(type, message.data);
+          }
+          break;
       }
     });
   },
@@ -285,6 +291,21 @@ var Testem = {
     }
     // stringify for clients that only can handle string postMessages (IE <= 10)
     return JSON.stringify(message);
+  },
+  removeEventCallbacks: function(evt, callback) {
+    var handlers = this.evtHandlers[evt];
+    var removeIdx = [];
+    if (typeof handlers === "undefined") {
+      return;
+    }
+    for (var i = 0; i < handlers.length; i++) {
+      if (handlers[i] === callback) {
+        removeIdx.push(i);
+      }
+    }
+    for (var j = 0; j < removeIdx.length; j++) {
+      handlers.splice(j, 1);
+    }
   },
   runAfterTests: function() {
     if (Testem.afterTestsQueue.length) {
