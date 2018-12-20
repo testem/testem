@@ -251,6 +251,85 @@ describe('test reporters', function() {
         ]);
       });
     });
+
+    context('with error-only output', function() {
+      beforeEach(function() {
+        config = new Config('ci', { tap_errors_only: true });
+      });
+
+      context('without errors', function() {
+        it('writes out no TAP', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log'],
+            runDuration: 3,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: [],
+            runDuration: 0,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  1',
+            '# skip  1',
+            '# fail  0',
+            '',
+            '# ok',
+            ''
+          ]);
+        });
+      });
+
+      context('with errors', function() {
+        it('writes out TAP with failure info, only for negative tests', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log'],
+            runDuration: 50,
+          });
+          reporter.report('phantomjs', {
+            name: 'it fails',
+            passed: false,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: [],
+            runDuration: 0,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            `not ok 1 phantomjs - [5 ms] - it fails`,
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        Log: |',
+            '            \'I am a log\'',
+            '            \'Useful information\'',
+            '    ...',
+            '',
+            '1..3',
+            '# tests 3',
+            '# pass  1',
+            '# skip  1',
+            '# fail  1',
+            ''
+          ]);
+        });
+      });
+    });
   });
 
   describe('dot reporter', function() {
