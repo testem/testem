@@ -42,7 +42,7 @@ Then, in a separate terminal you can tail the log and monitor debug messages
 Tests and Examples
 ------------------
 
-To maximize the chances of your pull request getting merge, you should go with a test-first approach. That means:
+To maximize the chances of your pull request getting merged, you should go with a test-first approach. That means:
 
 1. write a failing test that demonstrates the bug or lack of feature
 2. fix bug or implement feature, getting the test to pass
