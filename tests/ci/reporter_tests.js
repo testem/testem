@@ -411,7 +411,51 @@ describe('test reporters', function() {
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out">/);
-      assert.match(output, /CDATA\[Error: it crapped out/);
+      assert.match(output, /CDATA\[Source:\nError: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs assertion error', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        error: {
+          message: undefined,
+          actual: 'foo',
+          expected: 'bar',
+          negative: false,
+          stack: (new Error('it crapped out')).stack
+        }
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /it didnt work/);
+      assert.match(output, /<error message="Assertion Failed">/);
+      assert.match(output, /CDATA\[Expected:\n    bar\n\nResult:\n    foo\n\nSource:\nError: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs negative assertion error', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        error: {
+          message: undefined,
+          actual: 'foo',
+          expected: 'bar',
+          negative: true,
+          stack: (new Error('it crapped out')).stack
+        }
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /it didnt work/);
+      assert.match(output, /<error message="Assertion Failed">/);
+      assert.match(output, /CDATA\[Expected:\n    bar\n\nResult:\n    NOT foo\n\nSource:\nError: it crapped out/);
 
       assertXmlIsValid(output);
     });
