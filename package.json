@@ -79,7 +79,7 @@
     "eslint": "^5.0.0",
     "eslint-plugin-chai-expect": "^1.1.1",
     "eslint-plugin-mocha": "^5.0.0",
-    "mocha": "^3.0.0",
+    "mocha": "^6.0.0",
     "request": "^2.51.0",
     "saucie": "^3.3.2",
     "shelljs": "^0.8.2",
