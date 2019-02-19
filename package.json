@@ -46,7 +46,7 @@
     "socket.io": "^2.1.0",
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
-    "tap-parser": "^7.0.0",
+    "tap-parser": "^8.0.0",
     "tmp": "0.0.33",
     "xmldom": "^0.1.19"
   },
