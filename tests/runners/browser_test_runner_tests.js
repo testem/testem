@@ -422,7 +422,7 @@ describe('browser test runner', function() {
       let eventName = 'testEvent';
       let eventFn = function() {
         return 'testing additionalBrowserSocketEvents.';
-      }
+      };
       let custom_browser_socket_events = {};
       custom_browser_socket_events[eventName] = eventFn;
 

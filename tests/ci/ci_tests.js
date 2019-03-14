@@ -200,10 +200,10 @@ describe('ci mode app', function() {
         var app = new App(config, function(exitCode) {
           expect(exitCode).to.eq(0);
           expect(reporter.results[0].result.logs).to.deep.eq([
-            { type: 'log', text: '\'log - test\'\n' },
-            { type: 'warn', text: '\'warn - test\'\n' },
-            { type: 'error', text: '\'error - test\'\n' },
-            { type: 'info', text: '\'info - test\'\n' }
+            { type: 'log', text: 'log - test' },
+            { type: 'warn', text: 'warn - test' },
+            { type: 'error', text: 'error - test' },
+            { type: 'info', text: 'info - test' }
           ]);
 
           done();

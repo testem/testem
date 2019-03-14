@@ -43,7 +43,7 @@ if (typeof window !== 'undefined') {
   addListener = window.addEventListener ?
     function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
     function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-    addListener(window, 'message', handleMessage);
+  addListener(window, 'message', handleMessage);
 }
 
 var messageListeners = {};
@@ -164,7 +164,7 @@ function init() {
 function patchEmitterForWildcard(socket) {
   var emit = io.Manager.prototype.emit;
 
-  function onevent (packet) {
+  function onevent(packet) {
     var args = packet.data || [];
     emit.call(this, '*', packet);
     return emit.apply(this, args);
@@ -193,7 +193,7 @@ function initSocket(id) {
     sendMessageToParent('stop-run');
   });
   socket.on('*', function(event) {
-    if (event.data && event.data[0].indexOf('testem:') === 0 ) {
+    if (event.data && event.data[0].indexOf('testem:') === 0) {
       var eventName = event.data[0];
       var eventData = event.data[1];
       sendMessageToParent(eventName, eventData);

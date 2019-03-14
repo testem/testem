@@ -268,7 +268,7 @@ var Testem = {
           self.emit('after-tests-complete');
           break;
         default:
-          if (type.indexOf('testem:') === 0) {
+          if (type && type.indexOf('testem:') === 0) {
             self.emit(type, message.data);
           }
           break;
@@ -295,7 +295,7 @@ var Testem = {
   removeEventCallbacks: function(evt, callback) {
     var handlers = this.evtHandlers[evt];
     var removeIdx = [];
-    if (typeof handlers === "undefined") {
+    if (typeof handlers === 'undefined') {
       return;
     }
     for (var i = 0; i < handlers.length; i++) {
@@ -404,7 +404,7 @@ function takeOverConsole() {
       }
     };
   }
-  var methods = ['log', 'warn', 'error', 'info'];
+  var methods = ['log', 'warn', 'error', 'info', 'group'];
   for (var i = 0; i < methods.length; i++) {
     if (window.console && console[methods[i]]) {
       intercept(methods[i]);
@@ -435,10 +435,10 @@ if (typeof window !== 'undefined') {
   // this will prevent browser disconnect failures
   window.alert = function() {
     throw new Error('[Testem] Calling window.alert() in tests is disabled, because it causes testem to fail with browser disconnect error.');
-  }
+  };
 
   window.confirm = function() {
     throw new Error('[Testem] Calling window.confirm() in tests is disabled, because it causes testem to fail with browser disconnect error.');
-  }
+  };
   init();
 }
