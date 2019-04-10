@@ -437,6 +437,28 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
+    it('outputs assertion error with non string expected', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        error: {
+          message: undefined,
+          actual: 'foo',
+          expected: false,
+          negative: false,
+          stack: (new Error('it crapped out')).stack
+        }
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /it didnt work/);
+      assert.match(output, /<error message="Assertion Failed">/);
+      assert.match(output, /CDATA\[Expected:\n {4}false\n\nResult:\n {4}foo\n\nSource:\nError: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
     it('outputs negative assertion error', function() {
       var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
