@@ -76,12 +76,12 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `ok 1 phantomjs - [3 ms] - it does stuff`,
+            'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
-            '        Log: |',
-            '            \'some log\'',
+            '        browser log: |',
+            '            some log',
             '    ...',
-            `skip 2 phantomjs - [0 ms] - it is skipped`,
+            'skip 2 phantomjs - [0 ms] - it is skipped',
             '',
             '1..2',
             '# tests 2',
@@ -119,20 +119,20 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `ok 1 phantomjs - [3 ms] - it does stuff`,
+            'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
-            '        Log: |',
-            '            \'some log\'',
+            '        browser log: |',
+            '            some log',
             '    ...',
-            `not ok 2 phantomjs - [5 ms] - it fails`,
+            'not ok 2 phantomjs - [5 ms] - it fails',
             '    ---',
             '        message: >',
             '            it crapped out',
-            '        Log: |',
-            '            \'I am a log\'',
-            '            \'Useful information\'',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
             '    ...',
-            `skip 3 phantomjs - [0 ms] - it is skipped`,
+            'skip 3 phantomjs - [0 ms] - it is skipped',
             '',
             '1..3',
             '# tests 3',
@@ -167,8 +167,8 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `ok 1 phantomjs - [3 ms] - it does stuff`,
-            `skip 2 phantomjs - [0 ms] - it is skipped`,
+            'ok 1 phantomjs - [3 ms] - it does stuff',
+            'skip 2 phantomjs - [0 ms] - it is skipped',
             '',
             '1..2',
             '# tests 2',
@@ -206,16 +206,16 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `ok 1 phantomjs - [50 ms] - it does stuff`,
-            `not ok 2 phantomjs - [5 ms] - it fails`,
+            'ok 1 phantomjs - [50 ms] - it does stuff',
+            'not ok 2 phantomjs - [5 ms] - it fails',
             '    ---',
             '        message: >',
             '            it crapped out',
-            '        Log: |',
-            '            \'I am a log\'',
-            '            \'Useful information\'',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
             '    ...',
-            `skip 3 phantomjs - [0 ms] - it is skipped`,
+            'skip 3 phantomjs - [0 ms] - it is skipped',
             '',
             '1..3',
             '# tests 3',
@@ -238,7 +238,7 @@ describe('test reporters', function() {
         });
         reporter.finish();
         assert.deepEqual(stream.read().toString().split('\n'), [
-          `ok 1 phantomjs - [1 ms]`,
+          'ok 1 phantomjs - [1 ms]',
           '',
           '1..1',
           '# tests 1',
@@ -412,7 +412,6 @@ describe('test reporters', function() {
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out">/);
       assert.match(output, /CDATA\[Source:\nError: it crapped out/);
-
       assertXmlIsValid(output);
     });
 
@@ -433,7 +432,7 @@ describe('test reporters', function() {
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
-      assert.match(output, /CDATA\[Expected:\n    bar\n\nResult:\n    foo\n\nSource:\nError: it crapped out/);
+      assert.match(output, /CDATA\[Expected:\n {4}bar\n\nResult:\n {4}foo\n\nSource:\nError: it crapped out/);
 
       assertXmlIsValid(output);
     });
@@ -455,7 +454,7 @@ describe('test reporters', function() {
       var output = stream.read().toString();
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
-      assert.match(output, /CDATA\[Expected:\n    bar\n\nResult:\n    NOT foo\n\nSource:\nError: it crapped out/);
+      assert.match(output, /CDATA\[Expected:\n {4}bar\n\nResult:\n {4}NOT foo\n\nSource:\nError: it crapped out/);
 
       assertXmlIsValid(output);
     });
@@ -625,7 +624,7 @@ describe('test reporters', function() {
       assert.match(output, /##teamcity\[testFinished name='phantomjs - it handles undefined errors' duration='42']/);
     });
 
-    it('uses comparisonFailure type for comparison errors', function () {
+    it('uses comparisonFailure type for comparison errors', function() {
       var reporter = new TeamcityReporter(false, stream);
 
       reporter.report('firefox', {
@@ -646,13 +645,13 @@ describe('test reporters', function() {
 
     it('generates teamcity lines', function() {
       [
-        ['testStarted', {bar: 'baz'}, `##teamcity[testStarted bar='baz']\n`],
-        ['testIgnored', {bar: 'baz', runDuration: 42}, `##teamcity[testIgnored bar='baz' runDuration='42']\n`],
+        ['testStarted', {bar: 'baz'}, '##teamcity[testStarted bar=\'baz\']\n'],
+        ['testIgnored', {bar: 'baz', runDuration: 42}, '##teamcity[testIgnored bar=\'baz\' runDuration=\'42\']\n'],
       ].forEach(([type, options, expected]) =>
         assert.equal(TeamcityReporter.teamcityLine(type, options), expected));
     });
 
-    it('negates expected for negative assertions', function () {
+    it('negates expected for negative assertions', function() {
       var reporter = new TeamcityReporter(false, stream);
 
       reporter.report('firefox', {
