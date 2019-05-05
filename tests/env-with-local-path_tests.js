@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const expect = require('chai').expect;
 
-const envWithLocalPath = require('../lib/env-with-local-path');
+const envWithLocalPath = require('../lib/utils/env-with-local-path');
 const Config = require('../lib/config');
 
 describe('envWithLocalPath', function() {

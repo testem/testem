@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const screen = require('./fake_screen');
 const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
-const Chars = require('../../lib/chars');
+const Chars = require('../../lib/utils/chars');
 const TestResults = require('../../lib/reporters/dev/test_results');
 const isWin = /^win/.test(process.platform);
 

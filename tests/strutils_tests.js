@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect;
 const styledString = require('styled_string');
-const strutils = require('../lib/strutils');
+const strutils = require('../lib/utils/strutils');
 const splitLines = strutils.splitLines;
 const indent = strutils.indent;
 const template = strutils.template;
