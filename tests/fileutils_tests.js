@@ -5,8 +5,8 @@ const path = require('path');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-const fileutils = require('../lib/fileutils');
-const addToPATH = require('../lib/add-to-PATH');
+const fileutils = require('../lib/utils/fileutils');
+const addToPATH = require('../lib/utils/add-to-PATH');
 
 describe('fileutils', function() {
   let sandbox;
