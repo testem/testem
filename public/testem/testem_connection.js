@@ -181,6 +181,9 @@ function initSocket(id) {
     connectStatus = 'connected';
     syncConnectStatus();
   });
+  socket.on('reconnect', function() {
+    this.emit('browser-login', getBrowserName(navigator.userAgent), id);
+  });
   socket.on('disconnect', function() {
     connectStatus = 'disconnected';
     syncConnectStatus();
