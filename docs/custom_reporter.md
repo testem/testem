@@ -33,43 +33,49 @@ tests. To find out more, check out
 
 ## Example
 
-The constructor should take an (optional) output stream and initialize properties:
+The constructor should take an (optional) output stream and initialize properties.
+The `report` method should increment counters and output results as needed.
+The `finish` method should output summary information.
 
-    function MyReporter(out) {
-        this.out = out || process.stdout;
-        this.total = 0;
-        this.pass = 0;
+```js
+class MyReporter {
+  constructor(out) {
+    this.out = out || process.stdout;
+    this.total = 0;
+    this.pass = 0;
+  }
+  
+  report(prefix, data) {
+    // increment counters
+    this.total++;
+    if (!data.failed) {
+        this.pass++;
     }
 
-The `report` method should increment counters and output results as needed; the `finish`
-method should output summary information:
-
-    MyReporter.prototype = {
-        report: function(prefix, data) {
-            // increment counters
-            this.total++;
-            if (data.passed) {
-                this.pass++;
-            }
-            // output results
-            var status = data.passed ? 'ok' : 'failed';
-            this.out.write(prefix+'\t'+status+'\t'+data.name.trim()+'\n');
-        },
-        finish: function() {
-            this.out.write(this.passed+'/'+this.total+' tests passed\n')
-        }
-    }
+    // output results
+    var status = data.failed ? 'failed' :  'ok';
+    this.out.write(`${prefix}\t${status}\t${data.name.trim()}\n`);
+  }
+  
+  finish() {
+    this.out.write(`${this.pass}/${this.total} tests passed\n`)
+  }
+}
+```
 
 ## Configuration
 
 To use your custom reporter, set `reporter` in your `testem.js` config file:
 
-    var MyReporter = require('./my-reporter');
-    module.exports = {
-        "framework": "mocha",
-        "src_files": [
-            "src/*.js",
-            "tests/*_tests.js"
-        ]
-        "reporter": MyReporter
-    };
+```js
+const MyReporter = require('./my-reporter');
+
+module.exports = {
+  framework: 'mocha',
+  src_files: [
+    'src/*.js',
+    'tests/*_tests.js',
+  ],
+  reporter: MyReporter,
+};
+```
