@@ -55,7 +55,6 @@ describe('dev mode app', function() {
       var config = new Config('dev', {}, {
         file: path.join(dir, 'testem.json'),
         port: 0,
-        host: 'localhost',
         cwd: dir,
         reporter: reporter,
         // For some reason the file watcher fires change events for

@@ -48,7 +48,6 @@ describe('report file output', function() {
     let config = new Config('ci', {
       file: path.join(dir, 'testem.json'),
       port: 0,
-      host: 'localhost',
       cwd: dir,
       reporter: new FakeReporter(),
       stdout_stream: new PassThrough(),
