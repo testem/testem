@@ -1,4 +1,5 @@
-/* globals document, parent, window, io, navigator */
+/* globals document, parent, io, window, navigator */
+/* globals module */
 'use strict';
 
 var socket;
@@ -37,11 +38,13 @@ function sendMessageToParent(type, data) {
   parent.postMessage(message, '*');
 }
 
-var addListener = window.addEventListener ?
-  function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-  function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-
-addListener(window, 'message', handleMessage);
+var addListener;
+if (typeof window !== 'undefined') {
+  addListener = window.addEventListener ?
+    function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
+    function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+  addListener(window, 'message', handleMessage);
+}
 
 var messageListeners = {};
 function handleMessage(event) {
@@ -158,12 +161,28 @@ function init() {
   });
 }
 
+function patchEmitterForWildcard(socket) {
+  var emit = io.Manager.prototype.emit;
+
+  function onevent(packet) {
+    var args = packet.data || [];
+    emit.call(this, '*', packet);
+    return emit.apply(this, args);
+  }
+  socket.onevent = onevent;
+}
+
 function initSocket(id) {
   socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
+  patchEmitterForWildcard(socket);
+
   socket.emit('browser-login', getBrowserName(navigator.userAgent), id);
   socket.on('connect', function() {
     connectStatus = 'connected';
     syncConnectStatus();
+  });
+  socket.on('reconnect', function() {
+    this.emit('browser-login', getBrowserName(navigator.userAgent), id);
   });
   socket.on('disconnect', function() {
     connectStatus = 'disconnected';
@@ -176,6 +195,21 @@ function initSocket(id) {
   socket.on('stop-run', function() {
     sendMessageToParent('stop-run');
   });
+  socket.on('*', function(event) {
+    if (event.data && event.data[0].indexOf('testem:') === 0) {
+      var eventName = event.data[0];
+      var eventData = event.data[1];
+      sendMessageToParent(eventName, eventData);
+    }
+  });
 }
 
-init();
+// We should only call init() if it ran in browser.
+if (typeof window !== 'undefined') {
+  init();
+}
+
+// Exporting this as a module so that it can be unit tested in Node.
+if (typeof module !== 'undefined') {
+  module.exports = patchEmitterForWildcard;
+}

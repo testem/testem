@@ -71,7 +71,8 @@ function qunitAdapter() {
           actual: params.actual,
           expected: params.expected,
           stack: params.source,
-          message: params.message
+          message: params.message,
+          negative: params.negative
         });
       }
 
@@ -92,6 +93,7 @@ function qunitAdapter() {
     currentTest.skipped = params.skipped;
     currentTest.total = params.total;
     currentTest.runDuration = params.runtime;
+    currentTest.testId = params.testId;
 
     results.total++;
 

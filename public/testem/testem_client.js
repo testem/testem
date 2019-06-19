@@ -175,6 +175,7 @@ var Testem = {
         handler.apply(this, argsWithoutFirst);
       }
     }
+
     this.emitMessage.apply(this, arguments);
   },
   on: function(evt, callback) {
@@ -266,6 +267,11 @@ var Testem = {
         case 'stop-run':
           self.emit('after-tests-complete');
           break;
+        default:
+          if (type && type.indexOf('testem:') === 0) {
+            self.emit(type, message.data);
+          }
+          break;
       }
     });
   },
@@ -285,6 +291,21 @@ var Testem = {
     }
     // stringify for clients that only can handle string postMessages (IE <= 10)
     return JSON.stringify(message);
+  },
+  removeEventCallbacks: function(evt, callback) {
+    var handlers = this.evtHandlers[evt];
+    var removeIdx = [];
+    if (typeof handlers === 'undefined') {
+      return;
+    }
+    for (var i = 0; i < handlers.length; i++) {
+      if (handlers[i] === callback) {
+        removeIdx.push(i);
+      }
+    }
+    for (var j = 0; j < removeIdx.length; j++) {
+      handlers.splice(j, 1);
+    }
   },
   runAfterTests: function() {
     if (Testem.afterTestsQueue.length) {
@@ -383,7 +404,7 @@ function takeOverConsole() {
       }
     };
   }
-  var methods = ['log', 'warn', 'error', 'info'];
+  var methods = ['log', 'warn', 'error', 'info', 'group'];
   for (var i = 0; i < methods.length; i++) {
     if (window.console && console[methods[i]]) {
       intercept(methods[i]);
@@ -409,5 +430,15 @@ function emit() {
 
 if (typeof window !== 'undefined') {
   window.Testem = Testem;
+
+  // Stub window.alert and window.confirm to throw error so alert and confirm does not get used in tests
+  // this will prevent browser disconnect failures
+  window.alert = function() {
+    throw new Error('[Testem] Calling window.alert() in tests is disabled, because it causes testem to fail with browser disconnect error.');
+  };
+
+  window.confirm = function() {
+    throw new Error('[Testem] Calling window.confirm() in tests is disabled, because it causes testem to fail with browser disconnect error.');
+  };
   init();
 }

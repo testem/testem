@@ -66,7 +66,9 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
 
 ### Config-level options:
 
+    custom_browser_socket_events    [Object]  an object containing keys corresponding to event names that point to handler functions, which are to be added to the browser socket
     browser_disconnect_timeout   [Number]  timeout to error after disconnect in seconds (10s)
+    browser_reconnect_limit      [Number]  number of browser reconnects to allow (3)
     browser_start_timeout        [Number]  timeout to error after browser start in seconds (30s)
     browser_paths:               [Object]  hash of browsers (keys) to an string of their binary paths (values)
     browser_exes:                [Object]  hash of browsers (keys) to an string of their binary names (values)
@@ -75,6 +77,7 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     css_files:                   [Array]   string or array of additional stylesheets to include
     cwd:                         [Path]    directory to use as root
+    dev_mode_file_reporter:      [String]  in dev mode the default reporter is 'dev' for the standard output. It is possible to specify a custom reporter which will report to report_file ('tap' reporter is used otherwise)
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
     firefox_user_js:             [String]  path to firefox custom user.js file to be used

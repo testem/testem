@@ -361,12 +361,45 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('tryAttach', function() {
+    let reporter, launcher, runner, socket;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      let config = new Config('ci', {
+        reporter: reporter,
+        browser_disconnect_timeout: 0.1,
+        browser_reconnect_limit: 0
+      });
+      launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+      socket = new FakeSocket();
+    });
+
+    it('exceeding browser reconnect limit should not allow browser reconnect', function(done) {
+      let didReattach = true;
+      launcher.settings.exe = 'node';
+      launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
+      runner.start(function() {
+        expect(didReattach).to.eq(false);
+        done();
+      });
+
+      runner.tryAttach('browser', launcher.id, socket);
+      runner.onDisconnect();
+      didReattach = runner.tryAttach('browser', launcher.id, socket);
+    });
+  });
+
   describe('onDisconnect', function() {
     let reporter, launcher, runner, socket;
 
     beforeEach(function() {
       reporter = new FakeReporter();
-      let config = new Config('ci', { reporter: reporter, browser_disconnect_timeout: 0.1 });
+      let config = new Config('ci', {
+        reporter: reporter,
+        browser_disconnect_timeout: 0.1
+      });
       launcher = new Launcher('ci', { protocol: 'browser' }, config);
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
       socket = new FakeSocket();
@@ -414,6 +447,27 @@ describe('browser test runner', function() {
           runner.finish();
         }, 100);
       }, 50);
+    });
+  });
+
+  describe('additionalBrowserSocketEvents', function() {
+    it('binds additional browser socket events', function() {
+      let eventName = 'testEvent';
+      let eventFn = function() {
+        return 'testing additionalBrowserSocketEvents.';
+      };
+      let custom_browser_socket_events = {};
+      custom_browser_socket_events[eventName] = eventFn;
+
+      let socket = new FakeSocket();
+      let reporter = new FakeReporter();
+      let config = new Config('ci', { custom_browser_socket_events, reporter: reporter });
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      let runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+
+      runner.tryAttach('browser', launcher.id, socket);
+
+      expect(eventFn()).to.deep.equal(socket.listeners(eventName)[0]());
     });
   });
 

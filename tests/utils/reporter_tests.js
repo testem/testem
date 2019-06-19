@@ -12,6 +12,7 @@ const tmpNameAsync = Bluebird.promisify(tmp.tmpName);
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');
 const TapReporter = require('../../lib/reporters/tap_reporter');
+const XUnitReporter = require('../../lib/reporters/xunit_reporter');
 
 const fsReadFileAsync = Bluebird.promisify(fs.readFile);
 const fsUnlinkAsync = Bluebird.promisify(fs.unlink);
@@ -177,6 +178,60 @@ describe('Reporter', function() {
         }).then(function(output) {
           expect(output).to.match(/tests 1/);
         });
+      });
+    });
+
+    it('creates two reporters in dev mode if path is present and 2nd reporter is tap', function() {
+      return tmpNameAsync().then(function(path) {
+        let stream = new PassThrough();
+        let reporter = new Reporter({
+          config: {
+            appMode: 'dev',
+            get: function(key) {
+              switch (key) {
+                case 'reporter':
+                  return FakeReporter;
+                case 'path':
+                  return 'dev';
+                case 'url':
+                  return 'abc';
+              }
+            }
+          },
+          on: () => {},
+        }, stream, path);
+
+        expect(reporter.reporters).to.have.lengthOf(2);
+        expect(reporter.reporters[0]).to.be.an.instanceof(FakeReporter);
+        expect(reporter.reporters[1]).to.be.an.instanceof(TapReporter);
+      });
+    });
+
+    it('creates two reporters in dev mode if path is present and 2nd reporter is dev_mode_file_reporter', function() {
+      return tmpNameAsync().then(function(path) {
+        let stream = new PassThrough();
+        let reporter = new Reporter({
+          config: {
+            appMode: 'dev',
+            get: function(key) {
+              switch (key) {
+                case 'reporter':
+                  return FakeReporter;
+                case 'path':
+                  return 'dev';
+                case 'dev_mode_file_reporter':
+                  return 'xunit';
+                case 'url':
+                  return 'abc';
+              }
+            }
+          },
+          on: () => {},
+        }, stream, path);
+
+        expect(reporter.reporters).to.have.lengthOf(2);
+        expect(reporter.reporters[0]).to.be.an.instanceof(FakeReporter);
+        expect(reporter.reporters[1]).to.be.an.instanceof(XUnitReporter);
       });
     });
 

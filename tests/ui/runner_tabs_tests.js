@@ -5,7 +5,7 @@ var screen = require('./fake_screen');
 var Backbone = require('backbone');
 var runnertabs = require('../../lib/reporters/dev/runner_tabs');
 var Config = require('../../lib/config');
-var Chars = require('../../lib/chars');
+var Chars = require('../../lib/utils/chars');
 var RunnerTab = runnertabs.RunnerTab;
 var RunnerTabs = runnertabs.RunnerTabs;
 

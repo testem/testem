@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const screen = require('./fake_screen');
 const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
-const Chars = require('../../lib/chars');
+const Chars = require('../../lib/utils/chars');
 const TestResults = require('../../lib/reporters/dev/test_results');
 const isWin = /^win/.test(process.platform);
 
@@ -153,6 +153,22 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Looking good...');
+    });
+    it('prepends NOT to expected for negative assertions', function() {
+      results.set('total', 1);
+      let tests = new Backbone.Collection([
+        new Backbone.Model({
+          name: 'blah', passed: false, failed: 1,
+          items: [
+            {
+              message: 'should not be foo', passed: false, expected: 'foo', negative: true
+            }
+          ]
+        })
+      ]);
+      results.set('tests', tests);
+      results.set('all', true);
+      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] should not be foo\n {9}expected NOT foo/);
     });
   });
 
