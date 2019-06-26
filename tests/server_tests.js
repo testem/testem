@@ -339,6 +339,10 @@ describe('Server', function() {
         });
       });
 
+      it('it tries to get the static file before trying the proxy', function(done) {
+        assertUrlReturnsFileContents(baseUrl + 'api4/hello.js', 'tests/api4/hello.js', done);
+      });
+
       it('returns an error when a requst can not be proxied', function(done) {
         let options = {
           url: baseUrl + 'api-error/test'
