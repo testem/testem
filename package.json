@@ -79,7 +79,7 @@
     "dirty-chai": "^2.0.0",
     "eslint": "^5.0.0",
     "eslint-plugin-chai-expect": "^1.1.1",
-    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-mocha": "^6.0.0",
     "mocha": "^3.0.0",
     "phantomjs": "^2.1.7",
     "request": "^2.51.0",
