@@ -285,4 +285,58 @@ describe('App', function() {
       app.start();
     });
   });
+
+  describe('onBrowserRelogin', function() {
+    let tryAttachCalled;
+
+    beforeEach(function() {
+      config = new Config('dev', {}, {
+        reporter: new FakeReporter()
+      });
+      app = new App(config);
+      tryAttachCalled = false;
+      app.runners = [
+        {
+          launcherId: 1,
+          socket: {},
+          tryAttach: () => {
+            tryAttachCalled = true;
+          }
+        },
+        {
+          launcherId: 2,
+          socket: null,
+          tryAttach: () => {
+            tryAttachCalled = true;
+          }
+        },
+        {
+          launcherId: 3,
+          tryAttach: () => {
+            tryAttachCalled = true;
+          }
+        }
+      ];
+    });
+
+    it('calls tryAttach for an existing browser with existing socket', function() {
+      app.onBrowserRelogin('fakeBrowser', 1, {});
+      expect(tryAttachCalled).to.be.true();
+    });
+
+    it('calls tryAttach for an existing browser with null socket', function() {
+      app.onBrowserRelogin('fakeBrowser', 2, {});
+      expect(tryAttachCalled).to.be.true();
+    });
+
+    it('throws error for an existing browser with undefined socket', function() {
+      expect(() => app.onBrowserRelogin('fakeBrowser', 3, {})).to.throw('Relogin from an unknown browser fakeBrowser with id 3');
+      expect(tryAttachCalled).to.be.false();
+    });
+
+    it('throws error for an non-existent browser id', function() {
+      expect(() => app.onBrowserRelogin('fakeBrowser', 4, {})).to.throw('Relogin from an unknown browser fakeBrowser with id 4');
+      expect(tryAttachCalled).to.be.false();
+    });
+  });
 });
