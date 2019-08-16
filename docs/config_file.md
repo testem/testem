@@ -101,6 +101,7 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     serve_files:                 [Array]   string or array list of files or file patterns to inject into test playground (defaults to `src_files`)
     serve_files_ignore:          [Array]   string or array list of files or file patterns to exclude from test playground (defaults to `src_files_ignore`)
     single_run                   [Boolean] whether or not test is to be single-run
+    socket_server_options        [Object]  options to start socketio and engineio within testem's server. Options can be found here: https://socket.io/docs/server-api/
     stdout_stream                [Stream]  the stdout stream to use (defaults to `process.stdout`)
     tap_quiet_logs               [Boolean] whether to suppress non-failing logs in TAP reporting
     timeout:                     [Number]  timeout for a browser
