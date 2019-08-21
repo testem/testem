@@ -12,7 +12,6 @@ Features
     - [Jasmine](http://jasmine.github.io/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://mochajs.org/)
-    - [Buster.js](http://docs.busterjs.org/)
     - Others, through custom test framework adapters.
 * Run tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
 * Two distinct use-cases:
@@ -277,7 +276,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` or `buster.js` scripts to enable *Testem* with your test page.
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page.
 
 ```html
 <script src="/testem.js"></script>
@@ -562,7 +561,6 @@ I've created [examples](https://github.com/testem/testem/tree/master/examples/) 
 * [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
 * [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Buster.js Project](https://github.com/testem/testem/tree/master/examples/buster)
 * [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
 * [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
 * [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)

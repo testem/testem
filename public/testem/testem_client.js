@@ -10,7 +10,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 /* globals document, window */
 /* globals module */
 /* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
-/* globals qunitAdapter, busterAdapter, decycle, TestemConfig */
+/* globals qunitAdapter, decycle, TestemConfig */
 /* exported Testem */
 'use strict';
 
@@ -93,8 +93,6 @@ function hookIntoTestFramework(socket) {
     mochaAdapter(socket);
   } else if (typeof QUnit === 'object') {
     qunitAdapter(socket);
-  } else if (typeof buster !== 'undefined') {
-    busterAdapter(socket);
   } else {
     found = false;
   }

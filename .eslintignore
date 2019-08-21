@@ -1,7 +1,6 @@
 node_modules/*
 examples/*
 testcases/*
-public/testem/buster-test.js
 public/testem/chai.js
 public/testem/jasmine-html.js
 public/testem/jasmine.js
