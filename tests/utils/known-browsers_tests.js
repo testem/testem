@@ -315,6 +315,68 @@ describe('knownBrowsers', function() {
       });
     });
 
+    describe('Edge beta', function() {
+      let browsers;
+      let edgeBeta;
+
+      function setup(browserName) {
+        if (browserName) {
+          addBrowserArgsToConfig(config, browserName);
+        } else {
+          config = createConfig();
+        }
+
+        browsers = knownBrowsers('any', config);
+        edgeBeta = findBrowser(browsers, browserName || 'Edge Beta');
+      }
+
+      beforeEach(function() {
+        setup();
+      });
+
+      it('exists', function() {
+        expect(edgeBeta).to.exist();
+      });
+
+      it('constructs correct args', function() {
+        expect(edgeBeta.args.call(launcher, config, url)).to.deep.eq([
+          '--user-data-dir=' + browserTmpDir,
+          '--no-default-browser-check',
+          '--no-first-run',
+          '--ignore-certificate-errors',
+          '--test-type',
+          '--disable-renderer-backgrounding',
+          '--disable-background-timer-throttling',
+          url
+        ]);
+      });
+
+      it('checks correct paths', function() {
+        expect(edgeBeta.possiblePath).to.deep.eq([
+          process.env.HOME + '/Applications/Microsoft Edge Beta.app/Contents/MacOS/Microsoft Edge Beta',
+          '/Applications/Microsoft Edge Beta.app/Contents/MacOS/Microsoft Edge Beta'
+        ]);
+      });
+
+      it('allows a custom path to be used as the possiblePath for chrome ', function() {
+        let customPath = '/my/custom/path/to/edge/beta';
+
+        config.get = function(name) {
+          if (name === 'browser_paths') {
+            return {
+              'Edge Beta': customPath
+            };
+          }
+        };
+
+        browsers = knownBrowsers('any', config);
+        edgeBeta = findBrowser(browsers, 'Edge Beta');
+
+        expect(edgeBeta.possiblePath).to.be.a('string');
+        expect(edgeBeta.possiblePath).to.equal(customPath);
+      });
+    });
+
     describe('Safari', function() {
       let browsers;
       let safari;
