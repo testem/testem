@@ -103,8 +103,8 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     single_run                   [Boolean] whether or not test is to be single-run
     socket_server_options        [Object]  options to start socketio and engineio within testem's server. Options can be found here: https://socket.io/docs/server-api/
     stdout_stream                [Stream]  the stdout stream to use (defaults to `process.stdout`)
-    tap_errors_only              [Boolean] log only errors (`not ok`) in TAP reporting
-    tap_quiet_logs               [Boolean] whether to suppress non-failing logs in TAP reporting
+    tap_failed_tests_only        [Boolean] log only failed tests (`not ok`) in TAP reporting
+    tap_quiet_logs               [Boolean] whether to suppress non-failing console logs (_not_ pass/fail info) in TAP reporting
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)

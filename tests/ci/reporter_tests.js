@@ -254,7 +254,7 @@ describe('test reporters', function() {
 
     context('with error-only output', function() {
       beforeEach(function() {
-        config = new Config('ci', { tap_errors_only: true });
+        config = new Config('ci', { tap_failed_tests_only: true });
       });
 
       context('without errors', function() {
@@ -315,9 +315,9 @@ describe('test reporters', function() {
             '    ---',
             '        message: >',
             '            it crapped out',
-            '        Log: |',
-            '            \'I am a log\'',
-            '            \'Useful information\'',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
             '    ...',
             '',
             '1..3',
