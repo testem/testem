@@ -163,7 +163,15 @@ TAP is a human-readable and language-agnostic test result format. TAP plugins ex
 
 ## TAP Options
 
-By default, the TAP reporter outputs logs from all tests that emit logs. You can disable this behavior and only emit logs for failed tests using:
+By default, the TAP reporter outputs all test results to the console, whether pass or fail. You can disable this behavior in order to make it easier to see which tests fail (i.e. only output failing tests) using:
+
+```json
+{
+  "tap_failed_tests_only": true
+}
+```
+
+By default, the TAP reporter outputs _console logs_ (distinct from pass/fail information) from all tests that emit logs to the console. You can disable this behavior and _only_ emit logs for failed tests using:
 
 ```json
 {
