@@ -330,6 +330,44 @@ describe('test reporters', function() {
         });
       });
     });
+
+    context('willDisplay', function() {
+      it.only('silent only, no result', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(true, stream, config);
+        assert.equal(reporter.willDisplay(), false);
+      });
+      it.only('silent only, has result with no error', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(true, stream, config);
+        assert.equal(reporter.willDisplay({}), false);
+      });
+      it.only('silent only, has result with error', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(true, stream, config);
+        assert.equal(reporter.willDisplay({error: true}), false);
+      });
+      it.only('not silent, no result', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(false, stream, config);
+        assert.equal(reporter.willDisplay(), false);
+      });
+      it.only('not silent, result w/error', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(false, stream, config);
+        assert.equal(reporter.willDisplay(), false);
+      });
+      it.only('not silent, tap_failed_tests_only, no error', function() {
+        config = new Config('ci', { tap_failed_tests_only: true });
+        var reporter = new TapReporter(false, stream, config);
+        assert.equal(reporter.willDisplay({error: false}), false);
+      });
+      it.only('not silent, tap_failed_tests_only, has error', function() {
+        config = new Config('ci', { tap_failed_tests_only: true });
+        var reporter = new TapReporter(false, stream, config);
+        assert.equal(reporter.willDisplay({error: true}), true);
+      });
+    });
   });
 
   describe('dot reporter', function() {
