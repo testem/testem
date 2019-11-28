@@ -319,13 +319,13 @@ describe('App', function() {
       ];
     });
 
-    it('calls tryAttach for an existing browser with existing socket', function() {
-      app.onBrowserRelogin('fakeBrowser', 1, {});
-      expect(tryAttachCalled).to.be.true();
+    it('does not call tryAttach for an existing browser with existing socket', function() {
+      app.onBrowserRelogin('fakeBrowser', 2, {});
+      expect(tryAttachCalled).to.be.false();
     });
 
     it('calls tryAttach for an existing browser with null socket', function() {
-      app.onBrowserRelogin('fakeBrowser', 2, {});
+      app.onBrowserRelogin('fakeBrowser', 1, {});
       expect(tryAttachCalled).to.be.true();
     });
   });
