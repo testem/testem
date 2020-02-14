@@ -87,6 +87,7 @@ describe('test reporters', function() {
             '# tests 2',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
             '# fail  0',
             '',
             '# ok',
@@ -138,6 +139,7 @@ describe('test reporters', function() {
             '# tests 3',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
             '# fail  1',
             ''
           ]);
@@ -174,6 +176,7 @@ describe('test reporters', function() {
             '# tests 2',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
             '# fail  0',
             '',
             '# ok',
@@ -221,6 +224,56 @@ describe('test reporters', function() {
             '# tests 3',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
+            '# fail  1',
+            ''
+          ]);
+        });
+      });
+
+      context('with todos', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it is a failing todo',
+            passed: false,
+            todo: true,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is a passing todo',
+            passed: true,
+            todo: true,
+            error: { message: 'expected todo to not pass' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'todo 1 phantomjs - [5 ms] - it is a failing todo',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            'not ok 2 phantomjs - [5 ms] - it is a passing todo',
+            '    ---',
+            '        message: >',
+            '            expected todo to not pass',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  0',
+            '# skip  0',
+            '# todo  1',
             '# fail  1',
             ''
           ]);
@@ -244,6 +297,7 @@ describe('test reporters', function() {
           '# tests 1',
           '# pass  1',
           '# skip  0',
+          '# todo  0',
           '# fail  0',
           '',
           '# ok',
@@ -279,6 +333,7 @@ describe('test reporters', function() {
             '# tests 2',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
             '# fail  0',
             '',
             '# ok',
@@ -324,6 +379,56 @@ describe('test reporters', function() {
             '# tests 3',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
+            '# fail  1',
+            ''
+          ]);
+        });
+      });
+
+      context('with todos', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it is a failing todo',
+            passed: false,
+            todo: true,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is a passing todo',
+            passed: true,
+            todo: true,
+            error: { message: 'expected todo to not pass' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'todo 1 phantomjs - [5 ms] - it is a failing todo',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            'not ok 2 phantomjs - [5 ms] - it is a passing todo',
+            '    ---',
+            '        message: >',
+            '            expected todo to not pass',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  0',
+            '# skip  0',
+            '# todo  1',
             '# fail  1',
             ''
           ]);
@@ -364,6 +469,7 @@ describe('test reporters', function() {
             '# tests 2',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
             '# fail  0',
             '',
             '# ok',
@@ -415,6 +521,56 @@ describe('test reporters', function() {
             '# tests 3',
             '# pass  1',
             '# skip  1',
+            '# todo  0',
+            '# fail  1',
+            ''
+          ]);
+        });
+      });
+
+      context('with todos', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it is a failing todo',
+            passed: false,
+            todo: true,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is a passing todo',
+            passed: true,
+            todo: true,
+            error: { message: 'expected todo to not pass' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'not ok 1 phantomjs - [5 ms] - it is a failing todo # todo',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            'ok 2 phantomjs - [5 ms] - it is a passing todo # bonus',
+            '    ---',
+            '        message: >',
+            '            expected todo to not pass',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  0',
+            '# skip  0',
+            '# todo  1',
             '# fail  1',
             ''
           ]);
@@ -525,6 +681,35 @@ describe('test reporters', function() {
         var output = stream.read().toString();
         assert.match(output, / {2}\*/);
         assert.match(output, /1 tests complete \([0-9]+ ms\)/);
+      });
+    });
+
+    context('with todo', function() {
+      it('writes out summary', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        reporter.report('phantomjs', {
+          name: 'it is a failing todo',
+          passed: false,
+          todo: true,
+          error: {
+            actual: 'Seven',
+            expected: 7,
+            message: 'This should be a number',
+            stack: 'trace'
+          }
+        });
+        reporter.report('phantomjs', {
+          name: 'it is a passing todo',
+          passed: true,
+          todo: true,
+          error: { message: 'expected todo to not pass' },
+          logs: []
+        });
+        reporter.finish();
+        var output = stream.read().toString();
+        assert.match(output, / {2}TF/);
+        assert.match(output, /2 tests complete \([0-9]+ ms\)/);
       });
     });
 
