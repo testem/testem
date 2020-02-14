@@ -331,6 +331,97 @@ describe('test reporters', function() {
       });
     });
 
+    context('with strict spec compliance', function() {
+      beforeEach(function() {
+        config = new Config('ci', { tap_strict_spec_compliance: true });
+      });
+
+      context('without errors', function() {
+        it('writes out TAP', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log'],
+            runDuration: 3,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: [],
+            runDuration: 0,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - [3 ms] - it does stuff',
+            '    ---',
+            '        browser log: |',
+            '            some log',
+            '    ...',
+            'ok 2 phantomjs - [0 ms] - it is skipped # skip',
+            '',
+            '1..2',
+            '# tests 2',
+            '# pass  1',
+            '# skip  1',
+            '# fail  0',
+            '',
+            '# ok',
+            ''
+          ]);
+        });
+      });
+
+      context('with errors', function() {
+        it('writes out TAP with failure info', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('phantomjs', {
+            name: 'it does stuff',
+            passed: true,
+            logs: ['some log'],
+            runDuration: 3,
+          });
+          reporter.report('phantomjs', {
+            name: 'it fails',
+            passed: false,
+            error: { message: 'it crapped out' },
+            logs: ['I am a log', 'Useful information'],
+            runDuration: 5,
+          });
+          reporter.report('phantomjs', {
+            name: 'it is skipped',
+            skipped: true,
+            logs: [],
+            runDuration: 0,
+          });
+          reporter.finish();
+          assert.deepEqual(stream.read().toString().split('\n'), [
+            'ok 1 phantomjs - [3 ms] - it does stuff',
+            '    ---',
+            '        browser log: |',
+            '            some log',
+            '    ...',
+            'not ok 2 phantomjs - [5 ms] - it fails',
+            '    ---',
+            '        message: >',
+            '            it crapped out',
+            '        browser log: |',
+            '            I am a log',
+            '            Useful information',
+            '    ...',
+            'ok 3 phantomjs - [0 ms] - it is skipped # skip',
+            '',
+            '1..3',
+            '# tests 3',
+            '# pass  1',
+            '# skip  1',
+            '# fail  1',
+            ''
+          ]);
+        });
+      });
+    });
+
     context('willDisplay', function() {
       it('silent only, no result', function() {
         config = new Config('ci', {});
