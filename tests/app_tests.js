@@ -301,31 +301,34 @@ describe('App', function() {
           socket: {},
           tryAttach: () => {
             tryAttachCalled = true;
-          }
+          },
+          clearTimeouts: () => { }
         },
         {
           launcherId: 2,
           socket: null,
           tryAttach: () => {
             tryAttachCalled = true;
-          }
+          },
+          clearTimeouts: () => { }
         },
         {
           launcherId: 3,
           tryAttach: () => {
             tryAttachCalled = true;
-          }
+          },
+          clearTimeouts: () => { }
         }
       ];
     });
 
     it('does not call tryAttach for an existing browser with existing socket', function() {
-      app.onBrowserRelogin('fakeBrowser', 2, {});
+      app.onBrowserRelogin('fakeBrowser', 1, {});
       expect(tryAttachCalled).to.be.false();
     });
 
     it('calls tryAttach for an existing browser with null socket', function() {
-      app.onBrowserRelogin('fakeBrowser', 1, {});
+      app.onBrowserRelogin('fakeBrowser', 2, {});
       expect(tryAttachCalled).to.be.true();
     });
   });

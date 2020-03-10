@@ -468,6 +468,48 @@ describe('ci mode app', function() {
     });
   });
 
+  it('handles todos correctly', function(done) {
+    var reporter = makeTestReporter();
+    var config = new Config('ci', {
+      file: 'tests/fixtures/todo/testem.json',
+      port: 0,
+      cwd: path.join('tests/fixtures/todo'),
+      launch_in_ci: ['phantomjs'],
+      reporter: reporter
+    });
+    config.read(function() {
+      var app = new App(config, function(exitCode) {
+        assert.equal(reporter.total, 2, '2 total test');
+        assert.equal(reporter.pass, 0, 'none passing (todos won\'t be passing)');
+        assert.equal(reporter.todo, 1, '1 todo (other is failing)');
+
+        var failingTodo = reporter.results.find(function(r) {
+          return r.result.name.match(/failing todo/);
+        });
+
+        var passingTodo = reporter.results.find(function(r) {
+          return r.result.name.match(/passing todo/);
+        });
+
+        assert.equal(failingTodo.result.passed, false, 'failing todo is not marked as passing');
+        assert.equal(failingTodo.result.todo, true, 'failing todo is marked as todo');
+
+        assert.equal(passingTodo.result.passed, true, 'passing todo is marked as passing');
+        assert.equal(passingTodo.result.todo, true, 'passing todo is marked as todo');
+        assert.deepEqual(
+          passingTodo.result.error,
+          { message: 'expected todo to not pass'},
+          'passing todo has error message'
+        );
+
+        assert.equal(exitCode, 1, 'exits with a non-zero code');
+
+        done();
+      });
+      app.start();
+    });
+  });
+
   it('runs two browser instances in parallel with different test pages', function(done) {
     var reporter = makeTestReporter();
     var config = new Config('ci', {

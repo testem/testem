@@ -179,6 +179,14 @@ By default, the TAP reporter outputs _console logs_ (distinct from pass/fail inf
 }
 ```
 
+For improved ergonomics, TAP reporter does not actually strictly adhere to the SPEC by default, reporting 'skip' as a possible status instead of as a directive. To strictly follow the spec use:
+
+```json
+{
+  "tap_strict_spec_compliance": true
+}
+```
+
 ## Other Test Reporters
 
 Testem has other test reporters besides TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
