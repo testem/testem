@@ -73,6 +73,7 @@ Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari T
     browser_paths:               [Object]  hash of browsers (keys) to an string of their binary paths (values)
     browser_exes:                [Object]  hash of browsers (keys) to an string of their binary names (values)
     browser_args:                [Object]  hash of browsers (keys) to an array of their custom arguments (values) or an object with a mode and arguments
+    chrome_stderr_info_only:     [Boolean] only display console logs from Chrome's stderr when true
     client_decycle_depth         [Number]  number of times to recurse while decycling objects within the client (5)
     config_dir:                  [Path]    directory to use as root for resolving configs, if different than cwd
     css_files:                   [Array]   string or array of additional stylesheets to include
