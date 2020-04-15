@@ -25,7 +25,7 @@ const infoOnlyChromeStderr = `
     at Class._normalizeProjections (https://localhost:4444/assets/vendor.js:120:14)
 `;
 
-describe.only('toResult', function() {
+describe('toResult', function() {
   describe('for Chrome', function() {
     it('only info logs are displayed when chrome_stderr_info_only is true', function() {
       const config = new Config('ci', {
