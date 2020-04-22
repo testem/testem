@@ -7,12 +7,17 @@ Getting Started
 ---------------
 
 * Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
-* Run `npm install` and `npm test` to make sure you're off to a good start
+* To make sure you're off to a good start:
+
+```
+yarn install
+yarn test
+```
 
 > Testem expects `PhantomJS` to be in the PATH, if you don't have one,
-> either install it globally via `npm install -g phantomjs-prebuilt`
+> either install it globally via `yarn global add phantomjs-prebuilt`
 > (*you might need to use `sudo` for global installiation*)
-> or run `npm run install:all` instead of `npm install` during the second step
+> or run `yarn install:all` instead of `yarn install` during the second step
 
 Brief Code Walk Through
 -----------------------
@@ -49,7 +54,7 @@ To maximize the chances of your pull request getting merged, you should go with 
 
 To run the tests:
 
-    npm test
+    yarn test
 
 Or in the spirit of eating our own dog food:
 
@@ -57,7 +62,7 @@ Or in the spirit of eating our own dog food:
 
 To lint your code:
 
-    npm run lint
+    yarn lint
 
 If it isn't practical to write a test first, it might be my fault, feel free to chat.
 
@@ -70,4 +75,4 @@ There are also some integrations tests that test running all the examples in the
 
 Node + PhantomJS
 
-    npm run integration
+    yarn integration
