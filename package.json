@@ -62,10 +62,9 @@
   ],
   "scripts": {
     "install:all": "npm install && npm install phantomjs-prebuilt",
-    "test": "./bin/run-tests.js",
+    "test": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js",
-    "testem-tests": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "eslint ."
   },
