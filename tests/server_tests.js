@@ -9,6 +9,7 @@ const fs = require('fs');
 const expect = require('chai').expect;
 const http = require('http');
 const https = require('https');
+const os = require('os');
 
 describe('Server', function() {
   this.timeout(10000);
@@ -123,7 +124,7 @@ describe('Server', function() {
             '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
             '</head>',
             ''
-          ].join('\n'));
+          ].join(os.EOL));
         done();
       });
     });
@@ -140,7 +141,7 @@ describe('Server', function() {
             '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
             '</head>',
             ''
-          ].join('\n'));
+          ].join(os.EOL));
         done();
       });
     });
@@ -175,7 +176,7 @@ describe('Server', function() {
       });
     });
 
-    it('sets heartbeat_timeout on socket.io server', function(){
+    it('sets heartbeat_timeout on socket.io server', function() {
       expect(server.io.eio['pingTimeout']).to.eq(6000);
     });
 

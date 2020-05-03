@@ -4,6 +4,7 @@ const Bluebird = require('bluebird');
 const find = require('lodash.find');
 const tmp = require('tmp');
 const path = require('path');
+const os = require('os');
 
 const tmpDirAsync = Bluebird.promisify(tmp.dir);
 
@@ -94,12 +95,12 @@ describe('knownBrowsers', function() {
       it('creates a config file on setup', function(done) {
         firefox.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal(
-            'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
-            'user_pref("browser.cache.disk.smart_size.first_run", false);\n' +
-            'user_pref("datareporting.policy.dataSubmissionEnabled", false);\n' +
+          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
+            'user_pref("browser.shell.checkDefaultBrowser", false);',
+            'user_pref("browser.cache.disk.smart_size.first_run", false);',
+            'user_pref("datareporting.policy.dataSubmissionEnabled", false);',
             'user_pref("datareporting.policy.dataSubmissionPolicyNotifiedTime", "1481830156314");'
-          );
+          ].join(os.EOL));
           done();
         });
       });
@@ -115,11 +116,11 @@ describe('knownBrowsers', function() {
 
         firefox.setup.call(launcher, config, function(err) {
           expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal(
-            'user_pref("browser.shell.checkDefaultBrowser", false);\n' +
-            'user_pref("browser.cache.disk.smart_size.first_run", false);\n' +
-            'user_pref("dom.max_script_run_time", 0);\n'
-          );
+          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
+            'user_pref("browser.shell.checkDefaultBrowser", false);',
+            'user_pref("browser.cache.disk.smart_size.first_run", false);',
+            'user_pref("dom.max_script_run_time", 0);'
+          ].join(os.EOL) + os.EOL);
           done();
         });
       });

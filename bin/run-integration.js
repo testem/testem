@@ -32,7 +32,7 @@ var skipDefiningReporter = [
   'electron'
 ];
 var examplesPath = path.join(__dirname, '../examples');
-var DEFAULT_CONCURRENY = 10;
+var DEFAULT_CONCURRENY = 5;
 var TIMEOUT = 180000; // npm install is sometimes really slow...
 var RETRIES = 3;
 var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);

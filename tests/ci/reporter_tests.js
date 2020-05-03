@@ -366,7 +366,7 @@ describe('test reporters', function() {
           });
           reporter.finish();
           assert.deepEqual(stream.read().toString().split('\n'), [
-            `not ok 1 phantomjs - [5 ms] - it fails`,
+            'not ok 1 phantomjs - [5 ms] - it fails',
             '    ---',
             '        message: >',
             '            it crapped out',
