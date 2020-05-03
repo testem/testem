@@ -2,11 +2,11 @@
 
 const patchEmitterForWildcard = require('../public/testem/testem_connection');
 const expect = require('chai').expect;
-const ServerIO = require('socket.io');
-const ClientIO = require('socket.io-client');
+const createServer = require('socket.io');
+const createClient = require('socket.io-client');
 
 describe('Testem Connection', function() {
-  var serverIo, client;
+  var server, client;
   var globals = {};
 
   function replaceGlobals(newGlobals, originalGlobals) {
@@ -15,38 +15,38 @@ describe('Testem Connection', function() {
       global[key] = newGlobals[key];
     }
   }
-  
+
   before(function() {
-    serverIo = ServerIO();
-    serverIo.listen(8000);
-  
+    server = createServer();
+    server.listen(8000);
+
     replaceGlobals({
-      io: ClientIO
+      io: createClient
     }, globals);
 
-    serverIo.on('connection', function (socket) {
-      socket.emit('foo', { bar: 'baz' })
+    server.on('connection', function(socket) {
+      socket.emit('foo', { bar: 'baz' });
     });
   });
 
   after(function() {
-    serverIo.close();
+    server.close();
     globals = {};
   });
 
   afterEach(function() {
     client.close();
   });
-  
+
   it('patches emitter for wildcard', function(done) {
-    client = ClientIO('http://localhost:8000');
+    client = createClient('http://localhost:8000');
     patchEmitterForWildcard(client);
 
     var eventNameArr = [];
 
     function check(eventName) {
       eventNameArr.push(eventName);
-      if(eventNameArr.length === 2) {
+      if (eventNameArr.length === 2) {
         expect(eventNameArr).to.deep.equal(['*', 'foo']);
         done();
       }

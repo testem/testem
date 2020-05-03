@@ -175,7 +175,7 @@ describe('Server', function() {
       });
     });
 
-    it('sets heartbeat_timeout on socket.io server', function(){
+    it('sets heartbeat_timeout on socket.io server', function() {
       expect(server.io.eio['pingTimeout']).to.eq(6000);
     });
 
