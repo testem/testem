@@ -75,7 +75,7 @@ describe('knownBrowsers', function() {
         }
 
         browsers = knownBrowsers('any', config);
-        firefox = findBrowser(browsers, 'Firefox');
+        firefox = findBrowser(browsers, browserName || 'Firefox');
       }
 
       beforeEach(function() {
@@ -173,6 +173,22 @@ describe('knownBrowsers', function() {
         it('constructs correct args with browser_args', function() {
           expect(firefox.args.call(launcher, config, url)).to.deep.eq([
             '--testem', '-profile', browserTmpDir, url
+          ]);
+        });
+      });
+
+      describe('headless browser_args', function() {
+        beforeEach(function() {
+          setup('Headless Firefox');
+        });
+
+        afterEach(function() {
+          setup();
+        });
+
+        it('constructs correct args with browser_args', function() {
+          expect(firefox.args.call(launcher, config, url)).to.deep.eq([
+            '--testem', '-profile', '--headless', browserTmpDir, url
           ]);
         });
       });
