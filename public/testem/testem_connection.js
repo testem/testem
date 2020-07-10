@@ -101,7 +101,9 @@ function getBrowserName(userAgent) {
       return ['Opera', m[2]].join(' ');
     }],
     /(Opera).*Version\/([0-9]+\.[0-9]+)/,
-    /(Edge)\/([0-9]+\.[0-9]+)/,
+    [/(Edg)\/([0-9]+\.[0-9]+)/, function(m) {
+      return ['Edge', m[2]].join(' ');
+    }],
     /(Chrome)\/([0-9]+\.[0-9]+)/,
     /(Firefox)\/([0-9a-z]+\.[0-9a-z]+)/,
     /(PhantomJS)\/([0-9]+\.[0-9]+)/,
