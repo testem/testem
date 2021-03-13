@@ -654,7 +654,7 @@ describe('test reporters', function() {
         output.shift();
         assert.match(output.shift(), / {2}F/);
         output.shift();
-        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\)/);
+        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\) \(failed: 1\)/);
         output.shift();
         assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
         assert.match(output.shift(), / {5}This should be a number/);
@@ -680,7 +680,7 @@ describe('test reporters', function() {
         reporter.finish();
         var output = stream.read().toString();
         assert.match(output, / {2}\*/);
-        assert.match(output, /1 tests complete \([0-9]+ ms\)/);
+        assert.match(output, /1 tests complete \([0-9]+ ms\) \(failed: 0\)/);
       });
     });
 
@@ -709,7 +709,7 @@ describe('test reporters', function() {
         reporter.finish();
         var output = stream.read().toString();
         assert.match(output, / {2}TF/);
-        assert.match(output, /2 tests complete \([0-9]+ ms\)/);
+        assert.match(output, /2 tests complete \([0-9]+ ms\) \(failed: 1\)/);
       });
     });
 
@@ -734,7 +734,7 @@ describe('test reporters', function() {
         output.shift();
         assert.match(output.shift(), / {2}F/);
         output.shift();
-        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\)/);
+        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\) \(failed: 1\)/);
         output.shift();
         assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
         assert.match(output.shift(), / {5}This should not be foo/);
