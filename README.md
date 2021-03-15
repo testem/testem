@@ -1,7 +1,7 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://travis-ci.org/testem/testem.svg?branch=master)](https://travis-ci.org/testem/testem) [![Dependency Status](https://david-dm.org/testem/testem.svg)](https://david-dm.org/testem/testem) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem) [![Windows build status](https://ci.appveyor.com/api/projects/status/l948rc4rv391ayge/branch/master?svg=true)](https://ci.appveyor.com/project/johanneswuerbach/testem/branch/master)
+[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem)
 
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
