@@ -630,7 +630,14 @@ describe('test reporters', function() {
         reporter.finish();
         var output = stream.read().toString();
         assert.match(output, / {2}\.\n\n/);
-        assert.match(output, /1 tests complete \([0-9]+ ms\)/);
+        assert.match(output, /\[duration - [0-9]+ ms\]\n/);
+        assert.match(output, /1\.\.1/);
+        assert.match(output, /# tests 1\n/);
+        assert.match(output, /# pass {2}1\n/);
+        assert.match(output, /# skip {2}0\n/);
+        assert.match(output, /# todo {2}0\n/);
+        assert.match(output, /# fail {2}0\n/);
+        assert.match(output, /# ok\n/);
       });
     });
 
@@ -654,8 +661,14 @@ describe('test reporters', function() {
         output.shift();
         assert.match(output.shift(), / {2}F/);
         output.shift();
-        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\) \(failed: 1\)/);
-        output.shift();
+        assert.match(output.shift(), /\[duration - [0-9]+ ms\]/);
+        assert.match(output.shift(), /1\.\.1/);
+        assert.match(output.shift(), /# tests 1/);
+        assert.match(output.shift(), /# pass {2}0/);
+        assert.match(output.shift(), /# skip {2}0/);
+        assert.match(output.shift(), /# todo {2}0/);
+        assert.match(output.shift(), /# fail {2}1/);
+        assert.notMatch(output.shift(), /# ok\n/);
         assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
         assert.match(output.shift(), / {5}This should be a number/);
         output.shift();
@@ -680,7 +693,13 @@ describe('test reporters', function() {
         reporter.finish();
         var output = stream.read().toString();
         assert.match(output, / {2}\*/);
-        assert.match(output, /1 tests complete \([0-9]+ ms\) \(failed: 0\)/);
+        assert.match(output, /\[duration - [0-9]+ ms\]\n/);
+        assert.match(output, /# tests 1\n/);
+        assert.match(output, /# pass {2}0\n/);
+        assert.match(output, /# skip {2}1\n/);
+        assert.match(output, /# todo {2}0\n/);
+        assert.match(output, /# fail {2}0\n/);
+        assert.match(output, /# ok\n/);
       });
     });
 
@@ -709,7 +728,13 @@ describe('test reporters', function() {
         reporter.finish();
         var output = stream.read().toString();
         assert.match(output, / {2}TF/);
-        assert.match(output, /2 tests complete \([0-9]+ ms\) \(failed: 1\)/);
+        assert.match(output, /\[duration - [0-9]+ ms\]\n/);
+        assert.match(output, /# tests 2\n/);
+        assert.match(output, /# pass {2}0\n/);
+        assert.match(output, /# skip {2}0\n/);
+        assert.match(output, /# todo {2}1\n/);
+        assert.match(output, /# fail {2}1\n/);
+        assert.notMatch(output, /# ok\n/);
       });
     });
 
@@ -734,8 +759,14 @@ describe('test reporters', function() {
         output.shift();
         assert.match(output.shift(), / {2}F/);
         output.shift();
-        assert.match(output.shift(), / {2}1 tests complete \(\d+ ms\) \(failed: 1\)/);
-        output.shift();
+        assert.match(output.shift(), /\[duration - [0-9]+ ms\]/);
+        assert.match(output.shift(), /1\.\.1/);
+        assert.match(output.shift(), /# tests 1/);
+        assert.match(output.shift(), /# pass {2}0/);
+        assert.match(output.shift(), /# skip {2}0/);
+        assert.match(output.shift(), /# todo {2}0/);
+        assert.match(output.shift(), /# fail {2}1/);
+        assert.notMatch(output.shift(), /# ok\n/);
         assert.match(output.shift(), / {2}1\) \[phantomjs\] it fails/);
         assert.match(output.shift(), / {5}This should not be foo/);
         output.shift();
