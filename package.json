@@ -62,7 +62,7 @@
   ],
   "scripts": {
     "install:all": "npm install && npm install phantomjs-prebuilt",
-    "test": "mocha --opts tests/mocha.opts tests/*_tests.js tests/**/*_tests.js",
+    "test": "mocha tests/*_tests.js tests/**/*_tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
@@ -79,7 +79,7 @@
     "eslint": "^5.0.0",
     "eslint-plugin-chai-expect": "^2.2.0",
     "eslint-plugin-mocha": "^5.0.0",
-    "mocha": "^3.0.0",
+    "mocha": "^8.3.2",
     "phantomjs": "^2.1.7",
     "request": "^2.51.0",
     "saucie": "^3.3.3",
