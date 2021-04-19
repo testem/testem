@@ -50,7 +50,7 @@ jobs:
       - run: sudo apt-get install -y libgtk2.0-0
         if: runner.os == 'Linux'
       - name: npm run integration
-        uses: GabrielBB/xvfb-action@v1.4
+        uses: GabrielBB/xvfb-action@v1.5
         with:
           run: npm run integration
 
