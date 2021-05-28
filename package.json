@@ -44,7 +44,7 @@
     "npmlog": "^4.0.0",
     "printf": "^0.6.1",
     "rimraf": "^2.4.4",
-    "socket.io": "^2.1.0",
+    "socket.io": "^4.1.2",
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
     "tap-parser": "^7.0.0",
@@ -86,6 +86,7 @@
     "shelljs": "^0.8.2",
     "sinon": "^10.0.0",
     "sinon-chai": "^3.2.0",
+    "socket.io-client": "^4.1.2",
     "tape": "^5.2.2"
   },
   "bin": {
