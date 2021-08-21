@@ -216,6 +216,47 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('onGlobalError with bail_on_uncaught_error===true', function() {
+    let runner, reporter;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      let config = new Config('ci', {
+        parallel: 2,
+        reporter: reporter,
+        bail_on_uncaught_error: true
+      });
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+    });
+
+    it('causes immediate finish', function() {
+      runner.onGlobalError('something went wrong', 'http://example.com', 123);
+      expect(runner.finished).to.equal(true);
+    });
+  });
+
+  describe('onGlobalError with bail_on_uncaught_error===false', function() {
+    let runner, reporter;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      let config = new Config('ci', {
+        parallel: 2,
+        reporter: reporter,
+        bail_on_uncaught_error: false
+      });
+      let launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter);
+    });
+
+    it('is still running', function() {
+      runner.onGlobalError('something went wrong', 'http://example.com', 123);
+      expect(runner.finished).to.not.equal(true);
+    });
+  });
+
+
   describe('start', function() {
     let reporter, launcher, runner, socket, sandbox;
 
