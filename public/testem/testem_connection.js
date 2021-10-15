@@ -175,7 +175,7 @@ function patchEmitterForWildcard(socket) {
 }
 
 function initSocket(id) {
-  socket = io().connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
+  socket = io({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
   patchEmitterForWildcard(socket);
 
   socket.emit('browser-login', getBrowserName(navigator.userAgent), id);
