@@ -164,7 +164,7 @@ function init() {
 }
 
 function patchEmitterForWildcard(socket) {
-  var emit = io.Manager.prototype.emit;
+  var emit = Object.getPrototypeOf(socket).emit;
 
   function onevent(packet) {
     var args = packet.data || [];
@@ -175,7 +175,7 @@ function patchEmitterForWildcard(socket) {
 }
 
 function initSocket(id) {
-  socket = io.connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
+  socket = io().connect({ reconnectionDelayMax: 1000, randomizationFactor: 0 });
   patchEmitterForWildcard(socket);
 
   socket.emit('browser-login', getBrowserName(navigator.userAgent), id);
