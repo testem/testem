@@ -164,7 +164,7 @@ function init() {
 }
 
 function patchEmitterForWildcard(socket) {
-  var emit = Object.getPrototypeOf(socket).emit;
+  var emit = Object.getPrototypeOf(socket.io).emit;
 
   function onevent(packet) {
     var args = packet.data || [];
