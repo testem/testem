@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.4.1
+      - uses: actions/setup-node@v2.5.1
         with:
           node-version: 14
       - run: npm ci
@@ -42,11 +42,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.4.1
+      - uses: actions/setup-node@v2.5.1
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
-      - run: npm test
+      - uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_on: error
+          command: npm test
       - run: sudo apt-get install -y libgtk2.0-0
         if: runner.os == 'Linux'
       - name: npm run integration
@@ -61,7 +66,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.4.1
+      - uses: actions/setup-node@v2.5.1
         with:
           node-version: 14
       - run: npm ci
