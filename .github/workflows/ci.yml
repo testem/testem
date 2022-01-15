@@ -46,7 +46,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
-      - run: npm test
+      - uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_on: error
+          command: npm test
       - run: sudo apt-get install -y libgtk2.0-0
         if: runner.os == 'Linux'
       - name: npm run integration
