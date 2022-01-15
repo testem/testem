@@ -41,7 +41,7 @@
     "lodash.uniqby": "^4.7.0",
     "mkdirp": "^0.5.1",
     "mustache": "^3.0.0",
-    "node-notifier": "^9.0.1",
+    "node-notifier": "^10.0.0",
     "npmlog": "^4.0.0",
     "printf": "^0.6.1",
     "rimraf": "^2.4.4",
