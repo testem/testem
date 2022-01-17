@@ -2,8 +2,10 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const fireworm = require('fireworm');
 const Bluebird = require('bluebird');
+const fs = require('fs');
+const tmp = require('tmp');
+const path = require('path');
 
 const Config = require('../lib/config');
 const App = require('../lib/app');
@@ -200,17 +202,16 @@ describe('App', function() {
     });
 
     it('adds a watch', function(done) {
-      let add = sandbox.spy(fireworm.prototype, 'add');
       let srcFiles = ['test.js'];
       config = new Config('dev', {}, {
         src_files: srcFiles,
         reporter: new FakeReporter()
       });
       app = new App(config, function() {
+        expect(app.fileWatcher.fileWatcher.globs).to.deep.eq(srcFiles);
         done();
       });
       app.start(function() {
-        expect(add.getCall(0).args[0]).to.eq(srcFiles);
         app.exit();
       });
     });
@@ -222,13 +223,69 @@ describe('App', function() {
         reporter: new FakeReporter()
       });
       app = new App(config, function() {
+        expect(app.triggerRun.calledWith('File changed: test.js')).to.be.true();
         done();
       });
       app.start(function() {
         sandbox.spy(app, 'triggerRun');
         app.fileWatcher.onFileChanged.call(app.fileWatcher, 'test.js');
-        expect(app.triggerRun.calledWith('File changed: test.js')).to.be.true();
         app.exit();
+      });
+    });
+
+    it('triggers a test run when a file is changed', function(done) {
+      let fileName = 'test-watched-file.js';
+
+      let tmpDir = tmp.dirSync().name;
+      fs.writeFileSync(path.join(tmpDir, fileName), 'test-content', 'utf-8');
+
+      let srcFiles = [fileName];
+      config = new Config('dev', {}, {
+        cwd: tmpDir,
+        src_files: srcFiles,
+        reporter: new FakeReporter()
+      });
+      app = new App(config, function() {
+        expect(app.triggerRun.calledWith(`File changed: ${fileName}`)).to.be.true();
+        expect(app.triggerRun.calledWith('File changed: other-file-name.js')).to.be.false();
+        done();
+      });
+      app.start(function() {
+        sandbox.spy(app, 'triggerRun');
+
+        fs.writeFileSync(path.join(tmpDir, fileName), 'test-content-new', 'utf-8');
+        fs.writeFileSync(path.join(tmpDir, 'other-file-name.js'), 'new-file', 'utf-8');
+
+        setTimeout(() => app.exit(), 1000);
+      });
+    });
+
+    it('skips ignored files', function(done) {
+      let tmpDir = tmp.dirSync().name;
+      fs.writeFileSync(path.join(tmpDir, 'file1.js'), 'test-content', 'utf-8');
+      fs.writeFileSync(path.join(tmpDir, 'ignored-file.js'), 'test-content', 'utf-8');
+
+      let srcFiles = ['*.js'];
+      config = new Config('dev', {}, {
+        cwd: tmpDir,
+        src_files: srcFiles,
+        src_files_ignore: 'ignored-file.js',
+        reporter: new FakeReporter()
+      });
+      app = new App(config, function() {
+        expect(app.triggerRun.calledWith('File changed: file1.js')).to.be.true();
+        expect(app.triggerRun.calledWith('File changed: file2.js')).to.be.true();
+        expect(app.triggerRun.calledWith('File changed: ignored-file.js')).to.be.false();
+        done();
+      });
+      app.start(function() {
+        sandbox.spy(app, 'triggerRun');
+
+        fs.writeFileSync(path.join(tmpDir, 'file1.js'), 'test-content-new', 'utf-8');
+        fs.writeFileSync(path.join(tmpDir, 'file2.js'), 'test-content-new', 'utf-8');
+        fs.writeFileSync(path.join(tmpDir, 'ignored-file.js'), 'test-content-new', 'utf-8');
+
+        setTimeout(() => app.exit(), 1000);
       });
     });
 
