@@ -39,7 +39,7 @@
     "lodash.clonedeep": "^4.4.1",
     "lodash.find": "^4.5.1",
     "lodash.uniqby": "^4.7.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.4",
     "mustache": "^3.0.0",
     "node-notifier": "^10.0.0",
     "npmlog": "^4.0.0",
