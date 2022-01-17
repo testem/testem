@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
-      - uses: nick-invision/retry@v2.4.0
+      - uses: nick-invision/retry@v2.6.0
         with:
           timeout_minutes: 10
           max_attempts: 3
