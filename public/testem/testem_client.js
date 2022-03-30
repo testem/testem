@@ -7,10 +7,9 @@ The client-side script that reports results back to the Testem server via Socket
 It also restarts the tests by refreshing the page when instructed by the server to do so.
 
 */
-/* globals document, window */
 /* globals module */
 /* globals jasmineAdapter, jasmine2Adapter, mochaAdapter */
-/* globals qunitAdapter, decycle, TestemConfig */
+/* globals qunitAdapter, decycle */
 /* exported Testem */
 'use strict';
 

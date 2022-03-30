@@ -1,4 +1,4 @@
-/* globals document, parent, io, window, navigator */
+/* globals io */
 /* globals module */
 'use strict';
 
