@@ -146,6 +146,20 @@ describe('Config', function() {
     });
   });
 
+  describe('resolve promise from js config', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: __dirname + '/custom_configs/testem-promise.js'
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('qunit');
+    });
+  });
+
   describe('getters system', function() {
     it('gives precendence to getters', function(done) {
       let config = new Config('dev', {cwd: 'tests'});
