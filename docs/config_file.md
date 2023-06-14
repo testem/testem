@@ -131,3 +131,23 @@ Hooks can be defined as a string in which case they run as a shell command or as
     before_tests:         Runs before every run of tests
     after_tests:          Runs after every run of tests
     on_exit:              Runs before suite exits
+
+### Returning a Promise from `testem.js`
+
+If you need to resolve some async values in your configuration you can return a promise from `testem.js`. The resolved value of
+the promise will be passed to testem as configuration.
+
+```javascript 
+'use strict';
+
+async function getFramework() {
+  //do something async here, like generating a list of launchers based on configuration
+  return 'qunit';
+}
+
+module.exports = async function() {
+  return {
+    framework: await getFramework(),
+  }
+};
+```

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   root: true,
   plugins: [
@@ -111,7 +113,7 @@ module.exports = {
     'space-in-parens': 2,
     'space-infix-ops': 2,
     'space-unary-ops': 2,
-    'space-before-function-paren': ["error", { "anonymous": "never", "named": "never" }],
+    'space-before-function-paren': ['error', { 'anonymous': 'never', 'named': 'never' }],
 
     // JSHint "quotmark"
     quotes: [2, 'single'],

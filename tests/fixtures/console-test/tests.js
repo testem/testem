@@ -1,4 +1,4 @@
-/* globals QUnit, console */
+/* globals QUnit */
 'use strict';
 
 QUnit.test('says hello world', function(assert) {

@@ -43,7 +43,7 @@ tmpFileObj.query = testPageObj.query;
 tmpFileObj.query.testemId = id;
 var testUrl = url.format(tmpFileObj);
 
-var child = execFile(electronPath, [testUrl], function(error) {
+var child = execFile(electronPath, ['--no-sandbox', testUrl], function(error) {
   if (error) {
     throw error;
   }
