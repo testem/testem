@@ -798,7 +798,7 @@ describe('test reporters', function() {
       });
       reporter.finish();
       var output = stream.read().toString();
-      assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
+      assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" todo="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
       assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; 'cool' stuff"/);
 
       assertXmlIsValid(output);
@@ -942,12 +942,40 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
+    it('outputs todo tests', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: false,
+        todo: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.match(output, /<todo\/>/);
+
+      assertXmlIsValid(output);
+    });
+
     it('skipped tests are not considered failures', function() {
       var reporter = new XUnitReporter(false, stream, config);
       reporter.report('phantomjs', {
         name: 'it didnt work',
         passed: false,
         skipped: true
+      });
+      reporter.finish();
+      var output = stream.read().toString();
+      assert.notMatch(output, /<failure/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('passing todo tests are considered failures', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('phantomjs', {
+        name: 'it didnt work',
+        passed: true,
+        todo: true
       });
       reporter.finish();
       var output = stream.read().toString();
