@@ -9,6 +9,7 @@ const fs = require('fs');
 const expect = require('chai').expect;
 const http = require('http');
 const https = require('https');
+const ws = require('ws');
 const os = require('os');
 
 describe('Server', function() {
@@ -46,9 +47,18 @@ describe('Server', function() {
           '/api4': {
             target: 'http://localhost:13375'
           },
+          '/wsapi': {
+            target: 'ws://localhost:13376',
+            ws: true
+          },
+          '/wssapi': {
+            target: 'wss://localhost:13377',
+            ws: true,
+            secure: false
+          },
           '/api-error': {
-            target: 'http://localhost:13376'
-          }
+            target: 'http://localhost:13378'
+          },
         }
       });
       baseUrl = 'http://localhost:' + port + '/';
@@ -198,7 +208,7 @@ describe('Server', function() {
     });
 
     describe('proxies', function() {
-      let api1, api2, api3, api4;
+      let api1, api2, api3, api4, wsapi_server, wssapi_server;
 
       beforeEach(function(done) {
         api1 = http.createServer(function(req, res) {
@@ -228,11 +238,18 @@ describe('Server', function() {
           });
         });
 
+        wsapi_server = http.createServer();
+        wssapi_server = https.createServer(options);
+
         api1.listen(13372, function() {
           api2.listen(13373, function() {
             api3.listen(13374, function() {
               api4.listen(13375, function() {
-                done();
+                wsapi_server.listen(13376, function() {
+                  wssapi_server.listen(13377, function() {
+                    done();
+                  });
+                });
               });
             });
           });
@@ -244,7 +261,11 @@ describe('Server', function() {
           api2.close(function() {
             api3.close(function() {
               api4.close(function() {
-                done();
+                wsapi_server.close(function() {
+                  wssapi_server.close(function() {
+                    done();
+                  });
+                });
               });
             });
           });
@@ -347,6 +368,57 @@ describe('Server', function() {
         request.get(options, function(err, req, text) {
           expect(text).to.match(/ECONNREFUSED/);
           done();
+        });
+      });
+
+      it('proxies WebSocket to wsapi (ws → ws)', function(done) {
+        const wsMsg = 'Hello over wsapi: 341bcb0e-db49-468d-924b-135645cafb90';
+        const wsPingMsg = 'Ping over wsapi: bb161729-414d-4861-8090-db3bbbe728d3';
+        const wsapi = new ws.Server({ server: wsapi_server });
+        wsapi.on('connection', function(socket) {
+          socket.on('message', function(message) {
+            expect(message.toString()).to.equal(wsMsg);
+            done();
+          });
+          socket.on('ping', function(data) {
+            expect(data.toString()).to.equal(wsPingMsg);
+          }); // + autoPong by server
+        });
+        const wsClient = new ws.WebSocket('ws://localhost:' + port + '/wsapi');
+
+        wsClient.on('open', function() {
+          wsClient.on('pong', function(data) {
+            expect(data.toString()).to.equal(wsPingMsg);
+            wsClient.send(wsMsg, { binary: false }, function() {
+              wsClient.close();
+            });
+          });
+          wsClient.ping(wsPingMsg);
+        });
+      });
+
+      it('proxies WebSocket to wssapi (ws → wss)', function(done) {
+        const wssMsg = 'Hello over wssapi: 5a120d3f-be82-408f-99ec-be92e7cd8ab7';
+        const wssPingMsg = 'Ping over wssapi: 19c0c2eb-52a3-4be3-83d1-f93eb35479ca';
+        const wssapi = new ws.Server({ server: wssapi_server });
+        wssapi.on('connection', function(socket) {
+          socket.on('message', function(message) {
+            expect(message.toString()).to.equal(wssMsg);
+            done();
+          });
+          socket.on('ping', function(data) {
+            expect(data.toString()).to.equal(wssPingMsg);
+          }); // + autoPong by server
+        });
+        const wssClient = new ws.WebSocket('ws://localhost:' + port + '/wssapi'); // ws → wss !
+        wssClient.on('open', function() {
+          wssClient.on('pong', function(data) {
+            expect(data.toString()).to.equal(wssPingMsg);
+            wssClient.send(wssMsg, { binary: false }, function() {
+              wssClient.close();
+            });
+          });
+          wssClient.ping(wssPingMsg);
         });
       });
     });
