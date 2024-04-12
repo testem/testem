@@ -23,6 +23,7 @@ describe('Server', function() {
       config = new Config('dev', {
         port: port,
         socket_heartbeat_timeout: 6,
+        middleware: [middleware],
         src_files: [
           'web/hello.js',
           {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
@@ -78,6 +79,7 @@ describe('Server', function() {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(302);
         expect(res.headers.location).to.match(/^\/[0-9]+$/);
+        expectMiddlewareHeaders(res);
         done();
       });
     });
@@ -86,12 +88,13 @@ describe('Server', function() {
       request(baseUrl, { followRedirect: true }, function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(200);
+        expectMiddlewareHeaders(res);
         done();
       });
     });
 
     it('gets scripts for the home page', function(done) {
-      request(baseUrl, function(err, req, text) {
+      request(baseUrl, function(err, res, text) {
         let $ = cheerio.load(text);
         let srcs = $('script').map(function() { return $(this).attr('src'); }).get();
         expect(srcs).to.deep.equal([
@@ -101,6 +104,7 @@ describe('Server', function() {
           'web' + path.sep + 'hello.js',
           'web' + path.sep + 'hello_tst.js'
         ]);
+        expectMiddlewareHeaders(res);
         done();
       });
     });
@@ -124,7 +128,7 @@ describe('Server', function() {
 
     it('renders custom test page as template', function(done) {
       config.set('test_page', 'web/tests_template.mustache');
-      request(baseUrl, function(err, req, text) {
+      request(baseUrl, function(err, res, text) {
         expect(text).to.equal(
           [
             '<!doctype html>',
@@ -135,13 +139,14 @@ describe('Server', function() {
             '</head>',
             ''
           ].join(os.EOL));
+        expectMiddlewareHeaders(res);
         done();
       });
     });
 
     it('renders the first test page by default when multiple are provided', function(done) {
       config.set('test_page', ['web/tests_template.mustache', 'web/tests.html']);
-      request(baseUrl, function(err, req, text) {
+      request(baseUrl, function(err, res, text) {
         expect(text).to.equal(
           [
             '<!doctype html>',
@@ -152,20 +157,23 @@ describe('Server', function() {
             '</head>',
             ''
           ].join(os.EOL));
+        expectMiddlewareHeaders(res);
         done();
       });
     });
 
     it('gets a file using a POST request', function(done) {
-      request.post(baseUrl + 'web/hello.js', function(err, req, text) {
+      request.post(baseUrl + 'web/hello.js', function(err, res, text) {
         expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString());
+        expectMiddlewareHeaders(res);
         done();
       });
     });
 
     it('lists directories', function(done) {
-      request(baseUrl + 'data', function(err, req, text) {
+      request(baseUrl + 'data', function(err, res, text) {
         expect(text).to.match(/<a href="blah.txt">blah.txt<\/a>/);
+        expectMiddlewareHeaders(res);
         done();
       });
     });
@@ -182,6 +190,7 @@ describe('Server', function() {
       request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
         expect(err).to.be.null();
         expect(res.statusCode).to.eq(200);
+        expectMiddlewareHeaders(res);
         done();
       });
     });
@@ -273,8 +282,9 @@ describe('Server', function() {
       });
 
       it('proxies get request to api1', function(done) {
-        request.get(baseUrl + 'api1/hello', function(err, req, text) {
+        request.get(baseUrl + 'api1/hello', function(err, res, text) {
           expect(text).to.equal('API');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -286,8 +296,9 @@ describe('Server', function() {
             'Content-Type': 'application/json'
           }
         };
-        request.get(options, function(err, req, text) {
+        request.get(options, function(err, res, text) {
           expect(text).to.equal('API - 2');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -299,8 +310,9 @@ describe('Server', function() {
             Accept: 'application/json'
           }
         };
-        request.post(options, function(err, req, text) {
+        request.post(options, function(err, res, text) {
           expect(text).to.equal('API');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -312,8 +324,9 @@ describe('Server', function() {
             Accept: 'application/json'
           }
         };
-        request.get(options, function(err, req, text) {
+        request.get(options, function(err, res, text) {
           expect(text).to.equal('{"API":3}');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -325,8 +338,9 @@ describe('Server', function() {
             Accept: 'application/json'
           }
         };
-        request.post(options, function(err, req, text) {
+        request.post(options, function(err, res, text) {
           expect(text).to.equal('{"API":3}');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -339,11 +353,12 @@ describe('Server', function() {
           },
           body: '{test: \'some value\'}'
         };
-        request.post(options, function(err, req, text) {
+        request.post(options, function(err, res, text) {
           if (err) {
             return done(err);
           }
           expect(text).to.equal('{test: \'some value\'}');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -355,8 +370,9 @@ describe('Server', function() {
             Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
           }
         };
-        request.get(options, function(err, req, text) {
+        request.get(options, function(err, res, text) {
           expect(text).to.equal('Not found: /api3/test');
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -365,8 +381,9 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api-error/test'
         };
-        request.get(options, function(err, req, text) {
+        request.get(options, function(err, res, text) {
           expect(text).to.match(/ECONNREFUSED/);
+          expectMiddlewareHeaders(res);
           done();
         });
       });
@@ -522,10 +539,22 @@ describe('Server', function() {
   });
 });
 
+function middleware(app) {
+  app.use((_, res, next) => {
+    res.setHeader('x-testem-middleware', 'success');
+    next();
+  });
+}
+
+function expectMiddlewareHeaders(res) {
+  expect(res.headers['x-testem-middleware']).to.eq('success');
+}
+
 function assertUrlReturnsFileContents(url, file, done) {
   request(url, function(err, res, text) {
     expect(err).to.be.null();
     expect(res.statusCode).to.eq(200);
+    expectMiddlewareHeaders(res);
     expect(text).to.equal(fs.readFileSync(file).toString());
     done();
   });
