@@ -28,7 +28,7 @@ describe('dev mode app', function() {
         port: 0,
         cwd: dir,
         reporter: reporter,
-        launch_in_ci: ['Node', 'NodePlain', 'PhantomJS']
+        launch_in_ci: ['Node', 'NodePlain', 'Headless Firefox']
       });
       config.read(function() {
         var app = new App(config, function(code, err) {
@@ -61,7 +61,7 @@ describe('dev mode app', function() {
         // tests/fixtures/reload-test/testem.json which restarts our runner and
         // screws up our test, so we need to disable watching
         disable_watching: true,
-        launch_in_dev: ['PhantomJS']
+        launch_in_dev: ['Headless Firefox']
       });
       config.read(function() {
         var app = new App(config, function() {

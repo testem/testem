@@ -43,10 +43,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - uses: browser-actions/setup-firefox@v1
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+      - run: firefox --version
       - run: npm ci
       - uses: nick-invision/retry@v3.0.0
         with:

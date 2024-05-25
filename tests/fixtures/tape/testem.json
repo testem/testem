@@ -18,5 +18,5 @@
     "cwd": "tests/fixtures/tape/",
     "before_tests": "node before-tests.js",
     "test_page": "public/tests.html",
-    "launch_in_dev": ["Node", "PhantomJS", "NodePlain"]
+    "launch_in_dev": ["Node", "Headless Firefox", "NodePlain"]
 }

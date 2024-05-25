@@ -52,7 +52,7 @@ describe('report file output', function() {
       reporter: new FakeReporter(),
       stdout_stream: new PassThrough(),
       report_file: filename,
-      launch_in_ci: ['phantomjs']
+      launch_in_ci: ['Headless Firefox']
     });
 
     let app = new App(config, () => {
