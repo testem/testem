@@ -187,6 +187,14 @@ For improved ergonomics, TAP reporter does not actually strictly adhere to the S
 }
 ```
 
+By default, the TAP reporter outputs the result of `JSON.stringify()` for any log content that is not a `String`. You can override this behavior by specifying a function for `tap_log_processor`.
+
+```js
+{
+  "tap_log_processor": function(log) { return log.toString(); }
+}
+```
+
 ## Other Test Reporters
 
 Testem has other test reporters besides TAP: `dot`, `xunit` and `teamcity`. You can use the `-R` to specify them
