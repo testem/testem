@@ -14,5 +14,5 @@
     ],
     "serve_files_ignore": [],
     "before_tests": "browserify tests.js -o bundle.js",
-    "launch_in_dev": ["Node", "PhantomJS"]
+    "launch_in_dev": ["Node", "Headless Firefox"]
 }

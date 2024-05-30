@@ -50,7 +50,7 @@ describe('ci mode app', function() {
         port: 0,
         cwd: dir,
         reporter: reporter,
-        launch_in_ci: ['node', 'nodeplain', 'phantomjs']
+        launch_in_ci: ['node', 'nodeplain', 'Headless Firefox']
       });
       config.read(function() {
         var app = new App(config, function(code) {
@@ -82,7 +82,7 @@ describe('ci mode app', function() {
 
           assert.include(launchers, 'Node');
           assert.include(launchers, 'NodePlain');
-          assert(launchers.some(function(n) { return n.match(/^PhantomJS \d/); }), 'Launchers should include some version of PhantomJS');
+          assert(launchers.some(function(n) { return n.match(/^Firefox \d/); }), 'Launchers should include some version of Firefox');
 
           var globalLauncher = reporter.results.filter(function(r) {
             return r.launcher === null;
@@ -102,7 +102,7 @@ describe('ci mode app', function() {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: makeTestReporter()
       });
       config.read(function() {
@@ -120,7 +120,7 @@ describe('ci mode app', function() {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: makeTestReporter()
       });
       config.read(function() {
@@ -139,7 +139,7 @@ describe('ci mode app', function() {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: makeTestReporter(),
         on_start: function(config, data, callback) {
           var launcher = app.launchers()[0];
@@ -172,7 +172,7 @@ describe('ci mode app', function() {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: makeTestReporter(),
         browser_disconnect_timeout: 0.1
       });
@@ -192,7 +192,7 @@ describe('ci mode app', function() {
         file: path.join(dir, 'testem.json'),
         port: 0,
         cwd: dir,
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: reporter
       });
 
@@ -293,7 +293,7 @@ describe('ci mode app', function() {
       var reporter = new FakeReporter();
       var config = new Config('ci', {
         cwd: path.join('tests/fixtures/basic_test'),
-        launch_in_ci: ['phantomjs'],
+        launch_in_ci: ['Headless Firefox'],
         reporter: reporter
       });
       config.read(function() {
@@ -374,7 +374,7 @@ describe('ci mode app', function() {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),
       timeout: 2,
-      launch_in_ci: ['phantomjs'],
+      launch_in_ci: ['Headless Firefox'],
       reporter: makeTestReporter()
     });
     config.read(function() {
@@ -395,7 +395,7 @@ describe('ci mode app', function() {
       port: 0,
       cwd: path.join('tests/fixtures/basic_test'),
       before_tests: 'not-found',
-      launch_in_ci: ['phantomjs'],
+      launch_in_ci: ['Headless Firefox'],
       reporter: reporter
     });
     config.read(function() {
@@ -474,7 +474,7 @@ describe('ci mode app', function() {
       file: 'tests/fixtures/todo/testem.json',
       port: 0,
       cwd: path.join('tests/fixtures/todo'),
-      launch_in_ci: ['phantomjs'],
+      launch_in_ci: ['Headless Firefox'],
       reporter: reporter
     });
     config.read(function() {
@@ -516,7 +516,7 @@ describe('ci mode app', function() {
       file: 'tests/fixtures/multiple_pages/testem.json',
       port: 0,
       cwd: path.join('tests/fixtures/multiple_pages'),
-      launch_in_ci: ['phantomjs'],
+      launch_in_ci: ['Headless Firefox'],
       reporter: reporter
     });
     config.read(function() {
@@ -526,8 +526,8 @@ describe('ci mode app', function() {
         var firstLauncher = app.runners[0].launcher;
         var secondLauncher = app.runners[1].launcher;
 
-        assert.equal(firstLauncher.name, 'PhantomJS', 'first launcher is phantomjs');
-        assert.equal(secondLauncher.name, 'PhantomJS', 'second launcher is also phantomjs');
+        assert.equal(firstLauncher.name, 'Headless Firefox', 'first launcher is Firefox');
+        assert.equal(secondLauncher.name, 'Headless Firefox', 'second launcher is also Firefox');
 
         assert.notEqual(firstLauncher.getUrl(), secondLauncher.getUrl(), 'the launchers used different urls');
 

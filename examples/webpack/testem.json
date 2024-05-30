@@ -5,5 +5,5 @@
         "test-bundle.js"
     ],
     "before_tests": "webpack --config webpack.testem.config.js",
-    "launch_in_dev": ["PhantomJS", "Chrome"]
+    "launch_in_dev": ["Headless Firefox"]
 }
