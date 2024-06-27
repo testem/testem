@@ -864,8 +864,9 @@ describe('test reporters', function() {
       });
       reporter.finish();
       var output = stream.read().toString();
+
       assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" todo="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
-      assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool> &quot;cool&quot; 'cool' stuff"/);
+      assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool&gt; &quot;cool&quot; 'cool' stuff"/);
 
       assertXmlIsValid(output);
     });
@@ -1075,7 +1076,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = stream.read().toString();
       assert.match(output, /it failed with quotes"/);
-      assert.match(output, /&lt;it> &quot;crapped&quot; out/);
+      assert.match(output, /&lt;it&gt; &quot;crapped&quot; out/);
 
       assertXmlIsValid(output);
     });
