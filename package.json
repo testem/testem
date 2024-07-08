@@ -44,7 +44,7 @@
     "node-notifier": "^10.0.0",
     "npmlog": "^6.0.0",
     "printf": "^0.6.1",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.8",
     "socket.io": "^4.5.4",
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
