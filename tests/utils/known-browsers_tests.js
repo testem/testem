@@ -1,7 +1,7 @@
 'use strict';
 
 const Bluebird = require('bluebird');
-const find = require('lodash.find');
+const _ = require('lodash');
 const tmp = require('tmp');
 const path = require('path');
 const os = require('os');
@@ -36,7 +36,7 @@ function createConfig() {
 }
 
 function findBrowser(browsers, browserName) {
-  return find(browsers, function(browser) {
+  return _.find(browsers, function(browser) {
     return browser.name === browserName;
   });
 }
