@@ -223,12 +223,15 @@ describe('ci mode app', function() {
       reporter: new FakeReporter()
     });
     config.read(function() {
-      var app = new App(config, function(exitCode, err) {
-        expect(exitCode).to.eq(1);
-        expect(err.message).to.eq('Launcher ' + browser + ' not found. Not installed?');
-        done();
+      config.getAvailableLaunchers((err, launchers) => {
+        var app = new App(config, function(exitCode, err) {
+          expect(exitCode).to.eq(1);
+
+          expect(err.message).to.eq('Launcher ' + browser + ' not found. Not installed? Available: ' + Object.keys(launchers).join(', '));
+          done();
+        });
+        app.start();
       });
-      app.start();
     });
   });
 
