@@ -227,7 +227,13 @@ describe('ci mode app', function() {
         var app = new App(config, function(exitCode, err) {
           expect(exitCode).to.eq(1);
 
-          expect(err.message).to.eq('Launcher ' + browser + ' not found. Not installed? Available: ' + Object.keys(launchers).join(', '));
+          expect(err.message).to.eq(
+            'Launcher ' +
+            browser +
+            ' not found. Not installed? Available: ' +
+            Object.keys(launchers).map(elm => `"${elm}"`).join(', ') +
+            '.'
+          );
           done();
         });
         app.start();
