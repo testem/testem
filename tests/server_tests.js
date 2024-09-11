@@ -441,6 +441,55 @@ describe('Server', function() {
     });
   });
 
+  describe('a wildcard proxy', function() {
+    let api;
+
+    before(function(done) {
+      config = new Config('dev', {
+        port: port,
+        cwd: 'tests',
+        proxies: {
+          '/*/': {
+            target: 'http://localhost:13372',
+          }
+        }
+      });
+      baseUrl = 'http://localhost:' + port + '/';
+
+      api = http.createServer(function(req, res) {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('proxied');
+      });
+
+      server = new Server(config);
+      server.start();
+
+      server.once('server-start', function() {
+        api.listen(13372, function() {
+          done();
+        });
+      });
+    });
+    after(function(done) {
+      server.stop(function() {
+        api.close(function() {
+          done();
+        });
+      });
+    });
+
+    it('does not proxy testem files', function(done) {
+      request.get(baseUrl + 'foo/bar', function(err, res, text) {
+        expect(text).to.equal('proxied');
+
+        request.get(baseUrl + 'testem/connection.html', function(err, res, text) {
+          expect(text).to.not.equal('proxied');
+          done();
+        });
+      });
+    });
+  });
+
   describe('https', function() {
     before(function(done) {
       config = new Config('dev', {
