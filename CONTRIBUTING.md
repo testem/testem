@@ -11,7 +11,7 @@ Getting Started
 
 > Testem expects `PhantomJS` to be in the PATH, if you don't have one,
 > either install it globally via `npm install -g phantomjs-prebuilt`
-> (*you might need to use `sudo` for global installiation*)
+> (*you might need to use `sudo` for global installation*)
 > or run `npm run install:all` instead of `npm install` during the second step
 
 Brief Code Walk Through
