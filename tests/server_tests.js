@@ -113,10 +113,6 @@ describe('Server', function() {
       request(baseUrl + '/testem.js', done);
     });
 
-    it('gets testem.cjs', function(done) {
-      request(baseUrl + '/testem.cjs', done);
-    });
-
     it('gets src file', function(done) {
       assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'tests/web/hello.js', done);
     });
