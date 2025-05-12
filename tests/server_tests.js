@@ -26,7 +26,7 @@ describe('Server', function() {
         middleware: [middleware],
         src_files: [
           'web/hello.js',
-          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
         ],
         routes: {
           '/direct-test': 'web/direct',
@@ -221,7 +221,7 @@ describe('Server', function() {
 
       beforeEach(function(done) {
         api1 = http.createServer(function(req, res) {
-          res.writeHead(200, {'Content-Type': 'text/plain'});
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
           res.end('API');
         });
         let options = {
@@ -229,16 +229,16 @@ describe('Server', function() {
           cert: fs.readFileSync('tests/fixtures/certs/localhost.cert')
         };
         api2 = https.createServer(options, function(req, res) {
-          res.writeHead(200, {'Content-Type': 'text/plain'});
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
           res.end('API - 2');
         });
         api3 = http.createServer(function(req, res) {
-          res.writeHead(200, {'Content-Type': 'application/json'});
-          res.end(JSON.stringify({API: 3}));
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ API: 3 }));
         });
 
         api4 = http.createServer(function(req, res) {
-          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.writeHead(200, { 'Content-Type': 'application/json' });
           req.on('data', function(data) {
             res.write(data);
           });
@@ -498,7 +498,7 @@ describe('Server', function() {
         cert: 'tests/fixtures/certs/localhost.cert',
         src_files: [
           'web/hello.js',
-          {src:'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar']}
+          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
         ],
         cwd: 'tests'
       });

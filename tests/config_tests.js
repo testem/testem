@@ -58,7 +58,7 @@ describe('Config', function() {
   describe('accepts empty config file', function() {
     let config;
     beforeEach(function(done) {
-      let progOptions = {framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty'};
+      let progOptions = { framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty' };
       config = new Config('dev', progOptions);
       config.read(done);
     });
@@ -116,6 +116,21 @@ describe('Config', function() {
     });
   });
 
+  describe('read cjs config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: __dirname + '/testem.cjs'
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
   describe('read js config file', function() {
     let config;
     beforeEach(function(done) {
@@ -162,7 +177,7 @@ describe('Config', function() {
 
   describe('getters system', function() {
     it('gives precendence to getters', function(done) {
-      let config = new Config('dev', {cwd: 'tests'});
+      let config = new Config('dev', { cwd: 'tests' });
       config.getters.cwd = 'cwdGetter';
       config.cwdGetter = function() { return 'setByGetter'; };
       config.read(function() {
@@ -174,7 +189,7 @@ describe('Config', function() {
 
   describe('get test_page', function() {
     it('defaults to config test_page', function(done) {
-      let config = new Config('dev', {test_page: 'default' });
+      let config = new Config('dev', { test_page: 'default' });
       config.read(function() {
         expect(config.get('test_page')[0]).to.equal('default');
         done();
@@ -223,7 +238,7 @@ describe('Config', function() {
   });
 
   it('give precendence to json config file', function(done) {
-    let config = new Config('dev', {cwd: 'tests'});
+    let config = new Config('dev', { cwd: 'tests' });
     config.read(function() {
       expect(config.get('framework')).to.equal('mocha');
       done();
@@ -264,12 +279,12 @@ describe('Config', function() {
   });
 
   it('should getLaunchers should call getAvailable browsers', function(done) {
-    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) {return cb(null, n);});
+    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) { return cb(null, n); });
 
     sandbox.stub(browserLauncher, 'getAvailableBrowsers').callsFake(function(config, browsers, cb) {
       cb(null, [
-        {name: 'Chrome', exe: 'chrome.exe'},
-        {name: 'Firefox'}
+        { name: 'Chrome', exe: 'chrome.exe' },
+        { name: 'Firefox' }
       ]);
     });
 
@@ -290,7 +305,7 @@ describe('Config', function() {
   });
 
   it('should install custom launchers', function(done) {
-    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) {return cb(null, n);});
+    sandbox.stub(config, 'getWantedLaunchers').callsFake(function(n, cb) { return cb(null, n); });
     config.config = {
       launchers: {
         Node: {
@@ -331,11 +346,11 @@ describe('Config', function() {
     });
     it('adds "launch_in_dev" config', function() {
       config.appMode = 'dev';
-      config.config = {launch_in_dev: ['Chrome', 'Firefox']};
+      config.config = { launch_in_dev: ['Chrome', 'Firefox'] };
       expect(config.getWantedLauncherNames()).to.deep.equal(['Chrome', 'Firefox']);
     });
     it('adds "launch_in_ci" config', function() {
-      config.config = {launch_in_ci: ['Chrome', 'Firefox']};
+      config.config = { launch_in_ci: ['Chrome', 'Firefox'] };
       expect(config.getWantedLauncherNames()).to.deep.equal(['Chrome', 'Firefox']);
     });
     it('removes skip param', function() {
@@ -425,7 +440,7 @@ describe('Config', function() {
       });
     });
     it('populates attributes', function(done) {
-      config.set('src_files', [{src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']}]);
+      config.set('src_files', [{ src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar'] }]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
           fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
@@ -435,7 +450,7 @@ describe('Config', function() {
     });
     it('populates attributes for only the desired globs', function(done) {
       config.set('src_files', [
-        {src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar']},
+        { src: 'config_tests.js', attrs: ['data-foo="true"', 'data-bar'] },
         'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {
@@ -506,7 +521,7 @@ describe('Config', function() {
       });
     });
     it('does not return duplicates when file matches multiple globs', function(done) {
-      let egg = [ {
+      let egg = [{
         'attrs': [],
         'src': 'testem.yml'
       }];
@@ -624,8 +639,8 @@ function mockTopLevelProgOptions() {
   let parentOptions = {
     port: 8081,
     options: [
-      {name: function() { return 'port'; }},
-      {name: function() { return 'launcher'; }}
+      { name: function() { return 'port'; } },
+      { name: function() { return 'launcher'; } }
     ],
     cwd: 'tests'
   };

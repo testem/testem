@@ -8,6 +8,9 @@ This document will go into more detail about the Testem configuration file and l
 * `testem.yml`
 * `.testem.yml`
 * `testem.js`
+* `.testem.js`
+* `testem.cjs`
+* `.testem.cjs`
 
 The file is looked for in the user's current directory.
 
@@ -137,7 +140,7 @@ Hooks can be defined as a string in which case they run as a shell command or as
 If you need to resolve some async values in your configuration you can return a promise from `testem.js`. The resolved value of
 the promise will be passed to testem as configuration.
 
-```javascript 
+```javascript
 'use strict';
 
 async function getFramework() {
