@@ -35,6 +35,8 @@ program
   .option('-P, --parallel [num]', 'number of browsers to run in parallel, defaults to 1', Number)
   .option('-b, --bail_on_uncaught_error', 'Bail on any uncaught errors')
   .option('-R, --reporter [reporter]', 'Test reporter to use [tap|dot|xunit|teamcity]')
+  .option('--cwd [path]', 'directory to use as root')
+  .option('--config_dir [path]', 'directory to use as root for resolving configs, if different than cwd')
   .action(act(env => {
     env.__proto__ = program;
     progOptions = env;
