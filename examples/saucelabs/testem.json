@@ -28,12 +28,12 @@
     },
     "SL_Safari_Current": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "safari", "-v", "9", "--no-connect", "--attach", "-u"],
+      "args": ["-b", "safari", "-v", "17", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
     },
     "SL_Safari_Last": {
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "safari", "-v", "8", "--no-connect", "--attach", "-u"],
+      "args": ["-b", "safari", "-v", "16", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
     },
     "SL_MS_Edge": {
