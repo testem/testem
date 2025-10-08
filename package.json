@@ -45,7 +45,7 @@
     "spawn-args": "^0.2.0",
     "styled_string": "0.0.1",
     "tap-parser": "^7.0.0",
-    "tmp": "0.0.33"
+    "tmp": "0.2.4"
   },
   "files": [
     "lib",
