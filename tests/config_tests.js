@@ -10,6 +10,12 @@ const os = require('os');
 
 const sinon = require('sinon');
 
+const alphaSort = function(prop) {
+  return function(a, b) {
+    return a[prop].localeCompare(b[prop]);
+  };
+};
+
 describe('Config', function() {
   let config, appMode, progOptions, sandbox;
   beforeEach(function() {
@@ -394,6 +400,7 @@ describe('Config', function() {
       config.set('src_files', ['ci/*']);
       config.set('src_files_ignore', ['**/report*.js']);
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
           fileEntry(path.join('ci', 'ci_tests.js')),
           fileEntry(path.join('ci', 'dev_tests.js'))
@@ -404,6 +411,7 @@ describe('Config', function() {
     it('excludes using src_files', function(done) {
       config.set('src_files', ['ci/*', '!**/report*.js']);
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
           fileEntry(path.join('ci', 'ci_tests.js')),
           fileEntry(path.join('ci', 'dev_tests.js'))
@@ -415,6 +423,7 @@ describe('Config', function() {
       config.set('cwd', 'tests/space test/');
       config.set('src_files', 'test.js');
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([fileEntry('test.js')]);
         done();
       });
@@ -454,12 +463,13 @@ describe('Config', function() {
         'ci/*'
       ]);
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
-          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
           fileEntry(path.join('ci', 'ci_tests.js')),
           fileEntry(path.join('ci', 'dev_tests.js')),
           fileEntry(path.join('ci', 'report_file_tests.js')),
-          fileEntry(path.join('ci', 'reporter_tests.js'))
+          fileEntry(path.join('ci', 'reporter_tests.js')),
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
         ]);
         done();
       });
@@ -471,10 +481,11 @@ describe('Config', function() {
       ]);
       config.set('src_files_ignore', '**/report*.js');
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
-          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
           fileEntry(path.join('ci', 'ci_tests.js')),
-          fileEntry(path.join('ci', 'dev_tests.js'))
+          fileEntry(path.join('ci', 'dev_tests.js')),
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
         ]);
         done();
       });
@@ -484,6 +495,7 @@ describe('Config', function() {
         'file://ci/*', 'http://codeorigin.jquery.com/jquery-2.0.3.min.js'
       ]);
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
           fileEntry(path.join('ci', 'ci_tests.js')),
           fileEntry(path.join('ci', 'dev_tests.js')),
@@ -538,6 +550,7 @@ describe('Config', function() {
       config.set('cwd', 'tests');
       config.set('src_files', 'fixtures/styles/*.css');
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
           fileEntry(path.join('fixtures', 'styles', 'print.css')),
           fileEntry(path.join('fixtures', 'styles', 'screen.css'))
@@ -550,6 +563,7 @@ describe('Config', function() {
       config.set('cwd', 'tests');
       config.set('src_files', ['fixtures/styles/*.css', 'fixtures/styles/*.css']);
       config.getSrcFiles(function(err, files) {
+        files = files.toSorted(alphaSort('src'));
         expect(files).to.deep.equal([
           fileEntry(path.join('fixtures', 'styles', 'print.css')),
           fileEntry(path.join('fixtures', 'styles', 'screen.css'))
