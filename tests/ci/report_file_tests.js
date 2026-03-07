@@ -5,7 +5,7 @@ const App = require('../../lib/app');
 const Config = require('../../lib/config');
 const Bluebird = require('bluebird');
 const expect = require('chai').expect;
-const rimraf = require('rimraf');
+const rimraf = require('rimraf').rimraf;
 const path = require('path');
 const PassThrough = require('stream').PassThrough;
 const ReportFile = require('../../lib/utils/report-file');
@@ -15,7 +15,7 @@ const FakeReporter = require('../support/fake_reporter');
 
 const tmpDirAsync = Bluebird.promisify(tmp.dir);
 const tmpFileAsync = Bluebird.promisify(tmp.file);
-const rimrafAsync = Bluebird.promisify(rimraf);
+const rimrafAsync = rimraf;
 
 describe('report file output', function() {
   this.timeout(30000);
