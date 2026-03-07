@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('I fail', function() {
   it('failed', function() {

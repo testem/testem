@@ -1,4 +1,4 @@
-'use strict';
+
 
 const browserArgs = require('../../lib/utils/browser-args');
 const expect = require('chai').expect;

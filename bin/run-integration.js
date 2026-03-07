@@ -1,4 +1,4 @@
-'use strict';
+
 
 var os = require('os').type();
 var path = require('path');

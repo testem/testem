@@ -1,4 +1,4 @@
-'use strict';
+
 
 const LogEntry = require('../../lib/utils/log-entry');
 const expect = require('chai').expect;

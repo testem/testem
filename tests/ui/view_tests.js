@@ -1,4 +1,4 @@
-'use strict';
+
 
 const expect = require('chai').expect;
 const View = require('../../lib/reporters/dev/view');

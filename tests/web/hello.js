@@ -1,6 +1,6 @@
 /* exported hello */
-'use strict';
 
-function hello() {
+
+export function hello() {
   return 'hello world';
 }

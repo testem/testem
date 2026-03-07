@@ -1,4 +1,4 @@
-'use strict';
+
 
 const BrowserTestRunner = require('../../lib/runners/browser_test_runner');
 const FakeReporter = require('../support/fake_reporter');

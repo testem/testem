@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Launcher = require('../lib/launcher');
 const Config = require('../lib/config');

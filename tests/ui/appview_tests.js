@@ -1,4 +1,4 @@
-'use strict';
+
 
 var AppView = require('../../lib/reporters/dev');
 var Backbone = require('backbone');

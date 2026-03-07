@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Server = require('../lib/server');
 const Config = require('../lib/config');

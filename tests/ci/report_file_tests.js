@@ -1,4 +1,4 @@
-'use strict';
+
 
 const fs = require('fs');
 const App = require('../../lib/app');

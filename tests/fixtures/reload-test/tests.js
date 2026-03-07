@@ -1,5 +1,5 @@
 /* globals QUnit, window */
-'use strict';
+
 
 QUnit.test('says hello world', function(assert) {
   assert.ok(true);

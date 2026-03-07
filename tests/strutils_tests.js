@@ -1,4 +1,4 @@
-'use strict';
+
 
 const expect = require('chai').expect;
 const styledString = require('styled_string');

@@ -1,4 +1,4 @@
-'use strict';
+
 
 const patchEmitterForWildcard = require('../public/testem/testem_connection');
 const expect = require('chai').expect;

@@ -1,5 +1,5 @@
 /* globals expect, hello */
-'use strict';
+
 
 describe('hello', function() {
 

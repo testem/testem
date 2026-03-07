@@ -1,4 +1,4 @@
-'use strict';
+
 
 const toResult = require('../../lib/runners/to-result');
 const assert = require('chai').assert;
