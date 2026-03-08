@@ -4,6 +4,6 @@
     "serve_files": [
         "test-bundle.js"
     ],
-    "before_tests": "webpack --config webpack.testem.config.js",
+    "before_tests": "webpack",
     "launch_in_dev": ["Headless Firefox"]
 }

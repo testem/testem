@@ -20,8 +20,11 @@ var argv = process.argv.slice(2);
 var testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
 var testCmd = 'npm run test -- ' + testFlags;
 
-// special examples, require human intervention
-var skipExamples = ['browserstack', 'saucelabs'];
+var skipExamples = [
+  'browserstack', // requires credentials and doesn't work in CI
+  'saucelabs',  // requires credentials and doesn't work in CI
+  'template_stealjs', // not being maintained
+];
 var skipOnWindows = [
   'coffeescript', // File not found: C:\projects\testem\examples\coffeescript\*.coffee
   'webpack' // 'webpack' is not recognized as an internal or external command, operable program or batch file.
@@ -94,6 +97,10 @@ function testExample(example) {
     // output test results
     shell.echo('Testing ' + example);
     shell.echo(testOutput);
+  }).catch(function(err) {
+    // output error
+    shell.echo('Testing ' + example + ' failed');
+    throw err;
   });
 }
 
