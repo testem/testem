@@ -2,7 +2,7 @@
   "devDependencies": {
     "istanbul": "^0.4.2",
     "jasmine-core": "^2.4.1",
-    "rimraf": "^2.5.1"
+    "rimraf": "^6.1.3"
   },
   "scripts": {
     "pretest": "rimraf coverage instrumented coverage*.json",
