@@ -1,5 +1,5 @@
 /* global QUnit, window */
-'use strict';
+
 
 QUnit.module('Test Page #2');
 

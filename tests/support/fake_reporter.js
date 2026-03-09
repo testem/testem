@@ -1,4 +1,4 @@
-'use strict';
+
 
 function FakeReporter() {
   this.results = [];

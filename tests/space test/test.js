@@ -1,6 +1,6 @@
 /* exported testSpaces */
-'use strict';
 
-function testSpaces() {
+
+export function testSpaces() {
   return 'A test for spaces in the parent\'s directory name';
 }

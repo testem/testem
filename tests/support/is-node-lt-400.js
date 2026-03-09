@@ -1,4 +1,4 @@
-'use strict';
+
 
 var isNodeLt = require('../../lib/utils/is-node-lt');
 

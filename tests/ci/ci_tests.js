@@ -1,4 +1,4 @@
-'use strict';
+
 
 var fs = require('fs');
 var App = require('../../lib/app');

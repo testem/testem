@@ -3,4 +3,4 @@ module.exports = {
   require: 'tests/_prepare.js',
   reporter: 'spec',
   exit: true
-}
+};

@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Config = require('../lib/config.js');
 const chai = require('chai');

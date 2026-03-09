@@ -1,4 +1,4 @@
-'use strict';
+
 
 const LauncherFactory = require('../lib/launcher-factory');
 const Config = require('../lib/config');

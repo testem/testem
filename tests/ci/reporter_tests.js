@@ -1,4 +1,4 @@
-'use strict';
+
 
 const CurrentTime = require('../../lib/utils/current-time');
 var TapReporter = require('../../lib/reporters/tap_reporter');

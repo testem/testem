@@ -1,5 +1,5 @@
 /* globals QUnit */
-'use strict';
+
 
 QUnit.todo('failing todo', function(assert) {
   assert.ok(false, 'should be true');

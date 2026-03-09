@@ -1,4 +1,4 @@
-'use strict';
+
 
 const capitalize = require('../../lib/utils/capitalize');
 const expect = require('chai').expect;

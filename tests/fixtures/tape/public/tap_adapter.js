@@ -1,5 +1,5 @@
 /* globals Testem */
-'use strict';
+
 
 Testem.useCustomAdapter(tapAdapter);
 function tapAdapter(socket) {

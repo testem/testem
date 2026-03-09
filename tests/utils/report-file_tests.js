@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Bluebird = require('bluebird');
 const expect = require('chai').expect;
