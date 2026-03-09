@@ -109,23 +109,29 @@ describe('report file output', function() {
     reportStream.end();
   });
 
-  it('creates folders in the path if they don\'t exist', function(done) {
+  it('creates folders in the path if they don\'t exist', function() {
     let name = 'nested/test/folders/test-reports.xml';
+    let nestedFilename = path.join(reportDir, name);
+    let nestedDir = path.dirname(nestedFilename);
+    let filename = path.basename(nestedFilename);
 
-    tmp.tmpName({
-      dir: reportDir,
-      name: name
-    }, (err, nestedFilename) => {
-
-      if (err) {
-        return done(err);
-      }
-
-      let reportFile = new ReportFile(nestedFilename);
-      reportFile.outputStream.on('finish', () => {
-        fs.stat(nestedFilename, done);
+    // tmp.file no longer makes folders in the path for us,
+    // so we need to do it ourselves before creating the file
+    const mkdirAsync = Bluebird.promisify(fs.mkdir);
+    mkdirAsync(nestedDir, { recursive: true })
+      .then(function() {
+        return tmpFileAsync({
+          dir: nestedDir,
+          name: filename
+        });
+      }).then (function() {
+        return new Promise(resolve => {
+          let reportFile = new ReportFile(nestedFilename);
+          reportFile.outputStream.on('finish', () => {
+            fs.stat(nestedFilename, resolve);
+          });
+          reportFile.outputStream.end();
+        });
       });
-      reportFile.outputStream.end();
-    });
   });
 });
