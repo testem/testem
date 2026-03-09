@@ -1,6 +1,6 @@
 module.exports = {
   timeout: 5000,
-  require: 'tests/_prepare',
+  require: 'tests/_prepare.js',
   reporter: 'spec',
   exit: true
 }

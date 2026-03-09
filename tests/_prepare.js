@@ -1,10 +1,10 @@
 'use strict';
 
 const chai = require('chai');
-const sinonChai = require('sinon-chai');
+const sinonChai = require('sinon-chai').default;
 const chaiFiles = require('chai-files');
 const chaiShallowDeepEqual = require('chai-shallow-deep-equal');
-const dirtyChai = require('dirty-chai');
+const dirtyChai = require('dirty-chai').default;
 
 chai.use(sinonChai);
 chai.use(chaiFiles);
