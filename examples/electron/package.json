@@ -3,7 +3,7 @@
     "electron": "^12.0.1",
     "file-url": "^1.1.0",
     "qunitjs": "^1.20.0",
-    "tmp": "0.0.31"
+    "tmp": "0.2.4"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
