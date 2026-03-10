@@ -7,6 +7,7 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const Bluebird = require('bluebird');
 const path = require('path');
+const isWin = require('../../lib/utils/is-win')();
 
 const Config = require('../../lib/config');
 const Launcher = require('../../lib/launcher.js');
@@ -320,8 +321,13 @@ describe('browser test runner', function() {
           passed: 0,
           testContext: {}
         });
-        expect(reporter.results[0].result.error.message).to.match(/ENOENT/);
-        expect(reporter.results[0].result.logs[0].text).to.match(/ENOENT/);
+        if (isWin) {
+          expect(reporter.results[0].result.error.message).to.match(/is not recognized/);
+          expect(reporter.results[0].result.logs.at(-1).text).to.match(/is not recognized/);
+        } else {
+          expect(reporter.results[0].result.error.message).to.match(/ENOENT/);
+          expect(reporter.results[0].result.logs[0].text).to.match(/ENOENT/);
+        }
         done();
       });
     });

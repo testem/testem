@@ -8,7 +8,7 @@ const expect = require('chai').expect;
 const ProcessCtl = require('../lib/process-ctl');
 const Config = require('../lib/config');
 
-const isWin = /^win/.test(process.platform);
+const isWin = require('../lib/utils/is-win')();
 const isNodeLt012 = require('./support/is-node-lt-012');
 const config = new Config('ci', {}, {});
 

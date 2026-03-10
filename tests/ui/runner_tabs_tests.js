@@ -9,7 +9,7 @@ var Chars = require('../../lib/utils/chars');
 var RunnerTab = runnertabs.RunnerTab;
 var RunnerTabs = runnertabs.RunnerTabs;
 
-var isWin = /^win/.test(process.platform);
+var isWin = require('../../lib/utils/is-win')();
 
 describe('RunnerTab', !isWin ? function() {
   var tab, runner, appview, results;

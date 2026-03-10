@@ -6,7 +6,7 @@ var Config = require('../../lib/config');
 var screen = require('./fake_screen');
 var expect = require('chai').expect;
 
-var isWin = /^win/.test(process.platform);
+var isWin = require('../../lib/utils/is-win')();
 
 describe('AppView', !isWin ? function() {
 
