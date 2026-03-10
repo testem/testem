@@ -188,7 +188,7 @@ describe('knownBrowsers', function() {
 
         it('constructs correct args with browser_args', function() {
           expect(firefox.args.call(launcher, config, url)).to.deep.eq([
-            '--testem', '-profile', '--headless', browserTmpDir, url
+            '--testem', '-profile', '-headless', browserTmpDir, url
           ]);
         });
       });

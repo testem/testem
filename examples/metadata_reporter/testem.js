@@ -1,9 +1,11 @@
 var AjaxCountingReporter = require('./ajax_counting_reporter');
 var TapReporter = require('../../lib/reporters/tap_reporter');
+const stream = require('stream').PassThrough;
+var Config = require('../../lib/config');
 
 function Reporter() {
   this._ajaxCountingReporter = new AjaxCountingReporter();
-  this._tapReporter = new TapReporter();
+  this._tapReporter = new TapReporter(false, undefined, new Config('ci', {}));
 }
 
 Reporter.prototype = {

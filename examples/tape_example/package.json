@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "browserify": "^13.0.0",
-    "tape": "^4.4.0"
+    "tape": "^5.9.0"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
