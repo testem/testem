@@ -2,13 +2,6 @@
 
 const browserArgs = require('../../lib/utils/browser-args');
 const expect = require('chai').expect;
-const log = require('npmlog');
-
-const EventEmitter = require('events').EventEmitter;
-const fakeStream = new EventEmitter();
-
-fakeStream.write = function() {};
-log.stream = fakeStream;
 
 function createKnownBrowsers() {
   return [{
@@ -49,8 +42,8 @@ describe('browserArgs', function() {
       it('warns if browser_args is not an object', function(done) {
         config.browser_args = 'invalid';
 
-        log.once('log.warn', function(warning) {
-          expect(warning.message).to.equal('Type error: browser_args should be an object');
+        process.once('log', function(level, warning) {
+          expect(warning).to.equal('Type error: browser_args should be an object');
           done();
         });
 
@@ -64,8 +57,8 @@ describe('browserArgs', function() {
           }
         };
 
-        log.once('log.warn', function(warning) {
-          expect(warning.message).to.equal('Type error: when using an object to specify browser_args for chrome you must specify a mode');
+        process.once('log', function(level, warning) {
+          expect(warning).to.equal('Type error: when using an object to specify browser_args for chrome you must specify a mode');
           done();
         });
 
@@ -79,8 +72,8 @@ describe('browserArgs', function() {
           }
         };
 
-        log.once('log.warn', function(warning) {
-          expect(warning.message).to.equal('Type error: when using an object to specify browser_args for chrome you must specify args');
+        process.once('log', function(level, warning) {
+          expect(warning).to.equal('Type error: when using an object to specify browser_args for chrome you must specify args');
           done();
         });
 
@@ -142,8 +135,8 @@ describe('browserArgs', function() {
           }
         };
 
-        log.once('log.warn', function(warning) {
-          expect(warning.message).to.equal('[DEPRECATION] Specifying browser_args as a hash with "mode" and "args" properties has been deprecated. Mode should be a key with its arguments as a value.');
+        process.once('log', function(level, warning) {
+          expect(warning).to.equal('[DEPRECATION] Specifying browser_args as a hash with "mode" and "args" properties has been deprecated. Mode should be a key with its arguments as a value.');
           done();
         });
 
@@ -262,8 +255,8 @@ describe('browserArgs', function() {
       it('dedupes args', function(done) {
         let args;
 
-        log.once('log.warn', function(warning) {
-          expect(warning.message).to.equal('Removed duplicate arg for Chrome: -b');
+        process.once('log', function(level, warning) {
+          expect(warning).to.equal('Removed duplicate arg for Chrome: -b');
           done();
         });
 
@@ -419,12 +412,11 @@ describe('browserArgs', function() {
       let count = 1;
       let warnHandler = function(warning) {
         if (count === 1) {
-          expect(warning.message).to.equal('Could not find "Fake" in known browsers');
+          expect(warning).to.equal('Could not find "Fake" in known browsers');
         }
 
         if (count === 2) {
-          expect(warning.message).to.equal('Bad value: Chrome\'s "args" may only contain strings');
-          log.removeListener('log.warn', warnHandler);
+          expect(warning).to.equal('Bad value: Chrome\'s "args" may only contain strings');
           done();
         }
 
@@ -439,7 +431,11 @@ describe('browserArgs', function() {
         ]
       };
 
-      log.on('log.warn', warnHandler);
+      process.on('log', (level, ...args) => {
+        if (level === 'warn') {
+          return warnHandler(...args);
+        }
+      });
 
       browserArgs.addCustomArgs(knownBrowsers, config);
     });
