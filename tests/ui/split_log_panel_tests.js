@@ -8,7 +8,7 @@ const screen = require('./fake_screen');
 const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
 const Chars = require('../../lib/utils/chars');
 const TestResults = require('../../lib/reporters/dev/test_results');
-const isWin = /^win/.test(process.platform);
+const isWin = require('../../lib/utils/is-win')();
 
 describe('SplitLogPanel', !isWin ? function() {
 

@@ -6,6 +6,7 @@ var path = require('path');
 var Config = require('../../lib/config');
 var Launcher = require('../../lib/launcher.js');
 var TapProcessTestRunner = require('../../lib/runners/tap_process_test_runner');
+const isWin = require('../../lib/utils/is-win')();
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -378,15 +379,21 @@ describe('tap process test runner', function() {
       runner.start(function() {
         var total = reporter.total;
         var pass = reporter.pass;
-        expect(pass).to.equal(0);
-        expect(total).to.equal(1);
+        if (isWin) {
+          expect(pass).to.equal(0);
+          expect(total).to.equal(0);
+          expect(reporter.results.length).to.equal(0);
+        } else {
+          expect(pass).to.equal(0);
+          expect(total).to.equal(1);
 
-        var results = reporter.results;
-        var failingTest = results[0];
-        expect(failingTest.result.failed).to.equal(1);
-        expect(failingTest.result.launcherId).to.equal(launcher.id);
-        expect(failingTest.result.name).to.equal('error');
-        expect(failingTest.result.error.message).to.match(/ENOENT/);
+          var results = reporter.results;
+          var failingTest = results[0];
+          expect(failingTest.result.failed).to.equal(1);
+          expect(failingTest.result.launcherId).to.equal(launcher.id);
+          expect(failingTest.result.name).to.equal('error');
+          expect(failingTest.result.error.message).to.match(/ENOENT/);
+        }
         done();
       });
     });

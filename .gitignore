@@ -2,3 +2,5 @@
 npm-debug.log
 npm-debug.log.*
 testem.log
+package-lock.json
+examples/*/package-lock.json

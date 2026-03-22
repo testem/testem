@@ -8,6 +8,7 @@ var Launcher = require('../../lib/launcher.js');
 var ProcessTestRunner = require('../../lib/runners/process_test_runner');
 
 var FakeReporter = require('../support/fake_reporter');
+const isWin = require('../../lib/utils/is-win')();
 
 describe('ProcessTestRunner', function() {
   var reporter, config;
@@ -113,22 +114,42 @@ describe('ProcessTestRunner', function() {
     var runner = new ProcessTestRunner(launcher, reporter);
 
     runner.start(function() {
-      var expectedMessage = runner.lastErr + '\n';
+      let expectedMessage = '';
+      let expectedLogs = [];
+
+      if (runner.lastErr) {
+        expectedMessage = runner.lastErr.toString();
+      }
 
       if (runner.lastStderr) {
         expectedMessage += 'Stderr: \n ' + runner.lastStderr + '\n';
       }
 
-      var expectedLogs = [{
-        text: runner.lastErr.toString(),
-        type: 'error'
-      }];
-
-      if (runner.lastStderr) {
+      if (isWin) {
+        expectedMessage = 'Non-zero exit code: 1';
+        /* eslint-disable quotes */
+        const expectedStdErr =
+          `'nope-not-existing' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n`;
+        /* eslint-enable quotes */
+        const expectedTexts = [ expectedMessage, expectedStdErr ];
+        expectedTexts.forEach(expectedText => {
+          expectedLogs.push({
+            text: expectedText,
+            type: 'error'
+          });
+        });
+        expectedMessage = expectedTexts.join('\nStderr: \n ');
+      } else {
         expectedLogs.push({
-          text: runner.lastStderr,
+          text: expectedMessage,
           type: 'error'
         });
+        if (runner.lastStderr) {
+          expectedLogs.push({
+            text: runner.lastStderr,
+            type: 'error'
+          });
+        }
       }
 
       expect(reporter.results).to.deep.equal([{
@@ -140,7 +161,7 @@ describe('ProcessTestRunner', function() {
           passed: 0,
           testContext: {},
           error: {
-            message: expectedMessage
+            message: expectedMessage + '\n'
           }
         }
       }]);

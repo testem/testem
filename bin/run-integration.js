@@ -61,7 +61,7 @@ function shellExec(cmd, runOpts) {
     return shell.exec(cmd, runOpts, function(exitCode, output) {
       if (exitCode !== 0) {
         return callback(new Error(
-          'Cmd: ' + cmd + ' failed with exit code: ' + exitCode + '\n' + output
+          'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + exitCode + '\n' + output
         ));
       }
       callback(null, output);

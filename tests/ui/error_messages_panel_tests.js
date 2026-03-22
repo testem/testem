@@ -5,7 +5,7 @@ var screen = require('./fake_screen');
 var ErrorMessagesPanel = require('../../lib/reporters/dev/error_messages_panel');
 var Chars = require('../../lib/utils/chars');
 
-var isWin = /^win/.test(process.platform);
+var isWin = require('../../lib/utils/is-win')();
 
 describe('ErrorMessagesPanel', !isWin ? function() {
   var panel;

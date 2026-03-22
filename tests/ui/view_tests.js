@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const View = require('../../lib/reporters/dev/view');
 const Backbone = require('backbone');
 const sinon = require('sinon');
-const isWin = /^win/.test(process.platform);
+const isWin = require('../../lib/utils/is-win')();
 
 describe('view', !isWin ? function() {
   let view;

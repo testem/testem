@@ -8,7 +8,7 @@ const indent = strutils.indent;
 const template = strutils.template;
 const assert = require('chai').assert;
 
-const isWin = /^win/.test(process.platform);
+const isWin = require('../lib/utils/is-win')();
 
 describe('splitLines', function() {
   it('splits on newline', function() {

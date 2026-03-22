@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 var screen = require('./fake_screen');
 
-var isWin = /^win/.test(process.platform);
+var isWin = require('../../lib/utils/is-win')();
 
 describe('FakeScreen', !isWin ? function() {
   beforeEach(function() {

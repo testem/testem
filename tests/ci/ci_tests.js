@@ -9,12 +9,12 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var http = require('http');
-var execa = require('execa');
+var execa = require('execa').execa;
 var Bluebird = require('bluebird');
 
 var FakeReporter = require('../support/fake_reporter');
 
-var isWin = /^win/.test(process.platform);
+var isWin = require('../../lib/utils/is-win')();
 
 function makeTestReporter() {
   return new TestReporter(true, undefined, new Config('ci', {}));
@@ -147,7 +147,7 @@ describe('ci mode app', function() {
           launcher.on('processStarted', function(process) {
             setTimeout(function() {
               if (isWin) {
-                execa('taskkill /pid ' + process.pid + ' /T');
+                execa('taskkill /pid ' + process.pid + ' /T', [], { reject: false });
               } else {
                 process.kill();
               }
