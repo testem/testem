@@ -455,11 +455,11 @@ describe('Config', function() {
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
           fileEntry(path.join('ci', 'ci_tests.js')),
           fileEntry(path.join('ci', 'dev_tests.js')),
           fileEntry(path.join('ci', 'report_file_tests.js')),
-          fileEntry(path.join('ci', 'reporter_tests.js')),
-          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
+          fileEntry(path.join('ci', 'reporter_tests.js'))
         ]);
         done();
       });
@@ -472,9 +472,9 @@ describe('Config', function() {
       config.set('src_files_ignore', '**/report*.js');
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
+          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar']),
           fileEntry(path.join('ci', 'ci_tests.js')),
-          fileEntry(path.join('ci', 'dev_tests.js')),
-          fileEntry('config_tests.js', ['data-foo="true"', 'data-bar'])
+          fileEntry(path.join('ci', 'dev_tests.js'))
         ]);
         done();
       });
