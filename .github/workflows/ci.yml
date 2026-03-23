@@ -48,7 +48,7 @@ jobs:
           cache-dependency-path: package.json
       - run: firefox --version
       - run: npm i
-      - uses: nick-invision/retry@v3.0.2
+      - uses: nick-invision/retry@v4.0.0
         with:
           timeout_minutes: 10
           max_attempts: 3
