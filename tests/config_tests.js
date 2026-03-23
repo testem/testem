@@ -16,7 +16,7 @@ describe('Config', function() {
     sandbox = sinon.createSandbox();
     appMode = 'ci';
     progOptions = {
-      file: __dirname + '/testem.yml',
+      file: path.join(__dirname, 'testem.yml'),
       timeout: 2,
       port: undefined,
       reporter: 'tap'
@@ -58,7 +58,7 @@ describe('Config', function() {
   describe('accepts empty config file', function() {
     let config;
     beforeEach(function(done) {
-      let progOptions = { framework: 'mocha', src_files: 'impl.js,tests.js', cwd: __dirname + '/empty' };
+      let progOptions = { framework: 'mocha', src_files: 'impl.js,tests.js', cwd: path.join(__dirname, 'empty') };
       config = new Config('dev', progOptions);
       config.read(done);
     });
@@ -105,7 +105,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: __dirname + '/testem.json'
+        file: path.join(__dirname, 'testem.json')
       };
       config = new Config('dev', progOptions);
       config.read(done);
@@ -120,7 +120,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: __dirname + '/testem.cjs'
+        file: path.join(__dirname, 'testem.cjs')
       };
       config = new Config('dev', progOptions);
       config.read(done);
@@ -135,7 +135,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: __dirname + '/testem.js'
+        file: path.join(__dirname, 'testem.js')
       };
       config = new Config('dev', progOptions);
       config.read(done);
@@ -150,7 +150,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        config_dir: __dirname + '/custom_configs'
+        config_dir: path.join(__dirname, 'custom_configs')
       };
       config = new Config('dev', progOptions);
       config.read(done);
@@ -165,7 +165,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: __dirname + '/custom_configs/testem-promise.js'
+        file: path.join(__dirname, 'custom_configs', 'testem-promise.js')
       };
       config = new Config('dev', progOptions);
       config.read(done);
