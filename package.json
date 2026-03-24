@@ -65,6 +65,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@cypress/request": "^3.0.10",
     "bluebird-retry": "^0.11.0",
     "browserify": "^17.0.0",
     "chai": "^6.2.2",
@@ -76,7 +77,6 @@
     "eslint-plugin-chai-expect": "^3.1.0",
     "eslint-plugin-mocha": "^11.2.0",
     "mocha": "^11.7.5",
-    "request": "^2.51.0",
     "saucie": "^3.3.3",
     "shelljs": "^0.8.2",
     "sinon": "10.0.0",

@@ -1,9 +1,7 @@
-
-
 const Server = require('../lib/server');
 const Config = require('../lib/config');
 const path = require('path');
-const request = require('request');
+const request = require('@cypress/request');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const expect = require('chai').expect;
