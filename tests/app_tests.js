@@ -275,13 +275,13 @@ describe('App', function() {
 
     it('calls on_exit hook on success', function(done) {
       finish = done;
-      sandbox.stub(app, 'waitForTests').usingPromise(Bluebird.Promise).resolves();
+      sandbox.stub(app, 'waitForTests').resolves();
       app.start();
     });
 
     it('calls on_exit hook on failure and waits for it to finish', function(done) {
       finish = done;
-      sandbox.stub(app, 'waitForTests').usingPromise(Bluebird.Promise).rejects();
+      sandbox.stub(app, 'waitForTests').rejects(new Error('waitForTests failed'));
       app.start();
     });
   });
