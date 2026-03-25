@@ -2,7 +2,7 @@
 
 const browserArgs = require('../../lib/utils/browser-args');
 const expect = require('chai').expect;
-const log = require('npmlog');
+const log = require('../../lib/log');
 
 const EventEmitter = require('events').EventEmitter;
 const fakeStream = new EventEmitter();
