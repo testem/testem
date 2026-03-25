@@ -10,7 +10,8 @@ var opts = {
   logger: console.log,
   pidfile: pidFile,
   // Keep this in sync with saucie's default tunnel name in lib/config.js.
-  tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || 'saucie'
+  tunnelIdentifier: process.env.GITHUB_RUN_ID || 'saucie',
+  build: process.env.GITHUB_RUN_NUMBER || 1,
 };
 
 saucie.connect(opts).then(function () {
