@@ -31,9 +31,9 @@ Use the `-d` flag to turn on debug mode. This will allow you to use
 
     log.info('some log message')
 
-To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, just require npmlog like so at the top of the file
+To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, require the local logger wrapper from `lib/log.js`:
 
-    var log = require('npmlog')
+    var log = require('./log')
 
 Then, in a separate terminal you can tail the log and monitor debug messages
 
