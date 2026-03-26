@@ -11,6 +11,7 @@ var path = require('path');
 var http = require('http');
 var execa = require('execa').execa;
 var Bluebird = require('bluebird');
+var log = require('../../lib/log');
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -89,6 +90,11 @@ describe('ci mode app', function() {
           });
           expect(globalLauncher).to.be.empty();
 
+          if (process.env.TESTEM_VERBOSE) {
+            log.verbose('reporter.results', JSON.stringify(reporter.results.map(function(r) {
+              return { launcher: r.launcher, name: r.result.name, passed: r.result.passed, error: r.result.error };
+            }), null, 2));
+          }
           expect(reporter.results.length).to.eq(5);
           done();
         });

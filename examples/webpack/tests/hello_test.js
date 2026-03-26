@@ -1,7 +1,5 @@
-var test = window.tape = require('tape');
-setTimeout(function() {
-    test('constructor', function(t) {
-        t.pass('yahoo');
-        t.end();
-    });
-}, 500);
+var test = window.tape = require('fresh-tape');
+test('constructor', async function(t) {
+    await new Promise(function(resolve) { setTimeout(resolve, 500); });
+    t.pass('yahoo');
+});

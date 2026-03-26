@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "tape": "^5.9.0",
+    "fresh-tape": "^5.5.3",
     "webpack": "^4.47.0",
     "webpack-cli": "^4.10.0"
   },

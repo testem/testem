@@ -2,6 +2,16 @@
 <html>
 <head>
     <title>TAPE Example</title>
+    <script>
+      window.__capturedErrors = [];
+      window.onerror = function(msg, src, line, col) {
+        window.__capturedErrors.push('onerror: ' + msg + ' @ ' + src + ':' + line + ':' + col);
+      };
+      window.addEventListener('unhandledrejection', function(ev) {
+        var reason = ev.reason && ev.reason.message ? ev.reason.message : String(ev.reason);
+        window.__capturedErrors.push('unhandledrejection: ' + reason);
+      });
+    </script>
     <script src="/testem.js"></script>
     <script src="tap_adapter.js"></script>
     <script src="bundle.js"></script>

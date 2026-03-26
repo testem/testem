@@ -11,6 +11,7 @@ esbuild.build({
   outfile: path.join(fixtureDir, 'public', 'bundle.js'),
   platform: 'browser',
   plugins: [nodeModulesPolyfillPlugin()],
+  inject: [browserPolyfills.bufferInject],
   define: browserPolyfills.define,
   banner: browserPolyfills.banner
 }).catch(function(err) {

@@ -2,7 +2,7 @@
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "esbuild": "^0.25.1",
-    "tape": "^5.9.0"
+    "fresh-tape": "^5.5.3"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"

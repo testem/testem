@@ -59,6 +59,7 @@
   "scripts": {
     "install:all": "npm install && npm install phantomjs-prebuilt",
     "test": "mocha tests/*_tests.js tests/**/*_tests.js",
+    "test:verbose": "TESTEM_VERBOSE=1 mocha tests/*_tests.js tests/**/*_tests.js",
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
@@ -82,7 +83,7 @@
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.1.2",
-    "tape": "^5.2.2"
+    "fresh-tape": "^5.5.3"
   },
   "bin": {
     "testem": "./testem.js"
