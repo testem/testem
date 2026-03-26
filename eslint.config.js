@@ -4,6 +4,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import mocha from "eslint-plugin-mocha";
 import chaiExpect from "eslint-plugin-chai-expect";
+import globals from "globals";
 
 // Mimic CommonJS variables in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -40,7 +41,7 @@ export default [
   ...compat.config({
     root: true,
     parserOptions: {
-      ecmaVersion: 2017,
+      ecmaVersion: 2020,
     },
     extends: "eslint:recommended",
     env: {
@@ -107,4 +108,20 @@ export default [
       quotes: [2, "single"],
     },
   }),
+  {
+    files: [
+      "tests/fixtures/tape/public/tap_adapter.js",
+      "tests/fixtures/firefox/custom_user.js",
+      "lib/utils/esbuild-buffer-inject.js",
+    ],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
+    files: ["tests/fixtures/tape/public/tap_adapter.js"],
+    rules: {
+      "no-unused-vars": ["error", { argsIgnorePattern: "^(msg|src|line|col|err)$" }],
+    },
+  },
 ];
