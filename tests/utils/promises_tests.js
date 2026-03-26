@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit } = require('../../lib/utils/promises');
+const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry } = require('../../lib/utils/promises');
 
 describe('fromCallback', function() {
   it('resolves with the result when the callback is called without an error', async function() {
@@ -323,6 +323,50 @@ describe('mapLimit', function() {
     } catch (e) {
       expect(e).to.equal(err);
     }
+  });
+});
+
+describe('retry', function() {
+  it('resolves immediately when the function succeeds on the first try', async function() {
+    const result = await retry(() => Promise.resolve(42));
+    expect(result).to.equal(42);
+  });
+
+  it('retries and resolves when a later attempt succeeds', async function() {
+    let calls = 0;
+    const result = await retry(() => {
+      calls++;
+      if (calls < 3) { throw new Error('not yet'); }
+      return Promise.resolve('ok');
+    }, { max_tries: 3 });
+    expect(result).to.equal('ok');
+    expect(calls).to.equal(3);
+  });
+
+  it('rejects with the last error after all attempts are exhausted', async function() {
+    const err = new Error('always fails');
+    try {
+      await retry(() => { throw err; }, { max_tries: 3 });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+  });
+
+  it('calls the function exactly max_tries times on total failure', async function() {
+    let calls = 0;
+    try {
+      await retry(() => { calls++; throw new Error('fail'); }, { max_tries: 4 });
+    } catch {}
+    expect(calls).to.equal(4);
+  });
+
+  it('defaults to 3 max_tries', async function() {
+    let calls = 0;
+    try {
+      await retry(() => { calls++; throw new Error('fail'); });
+    } catch {}
+    expect(calls).to.equal(3);
   });
 });
 

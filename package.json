@@ -68,7 +68,6 @@
   "devDependencies": {
     "@cypress/request": "^3.0.10",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "bluebird-retry": "^0.11.0",
     "chai": "^6.2.2",
     "chai-files": "^1.2.0",
     "chai-shallow-deep-equal": "^1.4.4",
@@ -78,12 +77,12 @@
     "eslint": "^9.39.4",
     "eslint-plugin-chai-expect": "^3.1.0",
     "eslint-plugin-mocha": "^11.2.0",
+    "fresh-tape": "^5.5.3",
     "mocha": "^11.7.5",
     "saucie": "^4.0.1",
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",
-    "socket.io-client": "^4.1.2",
-    "fresh-tape": "^5.5.3"
+    "socket.io-client": "^4.1.2"
   },
   "bin": {
     "testem": "./testem.js"
