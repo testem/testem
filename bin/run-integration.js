@@ -2,7 +2,8 @@
 
 var os = require('os').type();
 var path = require('path');
-var shell = require('shelljs');
+var fs = require('fs');
+var { exec, execSync } = require('child_process');
 var Bluebird = require('bluebird');
 var retry = require('bluebird-retry');
 
@@ -41,15 +42,15 @@ var RETRIES = 3;
 var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
 
 // show available launchers
-shell.exec('node testem.js launchers');
-shell.echo('');
-shell.echo('Testing with flags:' + (testFlags || '[no custom flags provided]'));
-shell.echo('');
+execSync('node testem.js launchers', { stdio: 'inherit' });
+console.log('');
+console.log('Testing with flags:' + (testFlags || '[no custom flags provided]'));
+console.log('');
 
 // run examples tests
-testExamples(shell.ls(examplesPath), function(err) {
+testExamples(fs.readdirSync(examplesPath), function(err) {
   if (err) {
-    shell.echo(err);
+    console.log(err);
     process.exit(1);
   }
 });
@@ -61,13 +62,14 @@ function testExamples(examples, callback) {
 
 function shellExec(cmd, runOpts) {
   return Bluebird.fromCallback(function(callback) {
-    return shell.exec(cmd, runOpts, function(exitCode, output) {
-      if (exitCode !== 0) {
+    var opts = { cwd: runOpts.cwd, timeout: runOpts.timeout };
+    return exec(cmd, opts, function(err, stdout, stderr) {
+      if (err) {
         return callback(new Error(
-          'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + exitCode + '\n' + output
+          'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + err.code + '\n' + stdout + stderr
         ));
       }
-      callback(null, output);
+      callback(null, stdout);
     });
   });
 }
@@ -95,11 +97,11 @@ function testExample(example) {
     return retry(runExample(cmd, runOpts), { max_tries: RETRIES });
   }).then(function(testOutput) {
     // output test results
-    shell.echo('Testing ' + example);
-    shell.echo(testOutput);
+    console.log('Testing ' + example);
+    console.log(testOutput);
   }).catch(function(err) {
     // output error
-    shell.echo('Testing ' + example + ' failed');
+    console.log('Testing ' + example + ' failed');
     throw err;
   });
 }
