@@ -1,4 +1,4 @@
-var test = require('tape');
+var test = require('fresh-tape');
 var hello = require('./hello');
 
 test('hello says hello', function(t){

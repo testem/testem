@@ -83,7 +83,7 @@
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.1.2",
-    "tape": "^5.2.2"
+    "fresh-tape": "^5.5.3"
   },
   "bin": {
     "testem": "./testem.js"

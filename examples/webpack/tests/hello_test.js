@@ -1,4 +1,4 @@
-var test = window.tape = require('tape');
+var test = window.tape = require('fresh-tape');
 setTimeout(function() {
     test('constructor', function(t) {
         t.pass('yahoo');
