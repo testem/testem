@@ -7,7 +7,7 @@ const fireworm = require('fireworm');
 const Config = require('../lib/config');
 const App = require('../lib/app');
 const RunTimeout = require('../lib/utils/run-timeout');
-const { using } = require('../lib/utils/promises');
+const { using, delay } = require('../lib/utils/promises');
 
 const FakeReporter = require('./support/fake_reporter');
 
@@ -35,7 +35,7 @@ describe('App', function() {
       sandbox.spy(app, 'triggerRun');
       sandbox.spy(app, 'stopRunners');
       sandbox.stub(app, 'singleRun').callsFake(function() {
-        return new Promise(resolve => setTimeout(resolve, 50));
+        return delay(50);
       });
       app.once('testRun', done);
       app.start();
@@ -68,7 +68,7 @@ describe('App', function() {
       app = new App(config);
       runner = {
         start: function() {
-          return new Promise(resolve => setTimeout(resolve, 100)).then(function() {
+          return delay(100).then(function() {
             if (this.killed) {
               throw new Error('Killed');
             }

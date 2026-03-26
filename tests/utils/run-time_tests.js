@@ -3,11 +3,7 @@
 var expect = require('chai').expect;
 
 var RunTimeout = require('../../lib/utils/run-timeout');
-var { using } = require('../../lib/utils/promises');
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+var { using, delay } = require('../../lib/utils/promises');
 
 describe('RunTimeout', function() {
   describe('with', function() {

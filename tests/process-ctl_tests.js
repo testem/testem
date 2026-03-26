@@ -1,10 +1,10 @@
 
 
-const Bluebird = require('bluebird');
 const path = require('path');
 const sinon = require('sinon');
 const expect = require('chai').expect;
 
+const { delay } = require('../lib/utils/promises');
 const ProcessCtl = require('../lib/process-ctl');
 const Config = require('../lib/config');
 
@@ -28,7 +28,7 @@ describe('ProcessCtl', function() {
       });
 
       return processCtl.spawn('node', ['-v']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
@@ -40,11 +40,11 @@ describe('ProcessCtl', function() {
     it('saves stdout', function() {
       let inline = 'console.log(process.argv.slice(1).join(\' \'))';
       return processCtl.spawn('node', ['-e', inline, 'out']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', function(exitCode, stdout, stderr) {
             resolve([exitCode, stdout, stderr]);
           });
-        }).spread(function(exitCode, stdout, stderr) {
+        }).then(function([exitCode, stdout, stderr]) {
           expect(exitCode).to.eq(0);
           expect(p.stdout).to.eq('out\n');
           expect(stdout).to.eq('out\n');
@@ -56,11 +56,11 @@ describe('ProcessCtl', function() {
     it('saves stderr', function() {
       let inline = 'console.error(process.argv.slice(1).join(\' \'))';
       return processCtl.spawn('node', ['-e', inline, 'err']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', function(exitCode, stdout, stderr) {
             resolve([exitCode, stdout, stderr]);
           });
-        }).spread(function(exitCode, stdout, stderr) {
+        }).then(function([exitCode, stdout, stderr]) {
           expect(exitCode).to.eq(0);
           expect(p.stderr).to.eq('err\n');
           expect(stdout).to.eq('');
@@ -72,7 +72,7 @@ describe('ProcessCtl', function() {
     it('copies the current environment', function() {
       process.env.TESTEM_USER_CONFIG = 'TESTEM_CONFIG';
       return processCtl.spawn('node', ['-e', 'console.log(process.env.TESTEM_USER_CONFIG)']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           delete process.env.TESTEM_USER_CONFIG;
@@ -86,7 +86,7 @@ describe('ProcessCtl', function() {
     it('adds the local node modules to the path', function() {
       return processCtl.spawn('node', ['-e', 'console.log(process.env.PATH)']).then(function(p) {
 
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
@@ -97,7 +97,7 @@ describe('ProcessCtl', function() {
 
     it('is able to run executables inside the local node modules', function() {
       return processCtl.spawn('mocha', ['-V']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
@@ -107,7 +107,7 @@ describe('ProcessCtl', function() {
 
     it('allows to specify multiple executables', function() {
       return processCtl.spawn(['nodeFound', 'mocha', 'node'], ['-h']).then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
@@ -138,7 +138,7 @@ describe('ProcessCtl', function() {
     it('supports commands with quotes', function() {
       sandbox.spy(processCtl, 'spawn');
       return processCtl.exec('echo "hello world"').then(function(p) {
-        return new Bluebird.Promise(function(resolve) {
+        return new Promise(function(resolve) {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
@@ -164,30 +164,34 @@ describe('ProcessCtl', function() {
 
     it('kills regular processes', function() {
       let fixture = [path.join(__dirname, 'fixtures/processes/echo.js')];
-      return processCtl.spawn('node', fixture).delay(500).then(function(p) {
-        return p.kill().then(function(exitCode) {
-          if (isNodeLt012()) {
-            expect(exitCode).to.be.eq(143);
-          } else if (isWin) {
-            expect(exitCode).to.be.eq(1);
-          } else {
-            expect(exitCode).to.be.null();
-          }
-          expect(p._killTimer).to.be.null();
+      return processCtl.spawn('node', fixture).then(function(p) {
+        return delay(500).then(function() {
+          return p.kill().then(function(exitCode) {
+            if (isNodeLt012()) {
+              expect(exitCode).to.be.eq(143);
+            } else if (isWin) {
+              expect(exitCode).to.be.eq(1);
+            } else {
+              expect(exitCode).to.be.null();
+            }
+            expect(p._killTimer).to.be.null();
+          });
         });
       });
     });
 
     it('kills processes ignoring sigterm', function() {
       let fixture = [path.join(__dirname, 'fixtures/processes/ignore_sigterm.js')];
-      return processCtl.spawn('node', fixture).delay(500).then(function(p) {
-        return p.kill().then(function(exitCode) {
-          if (isWin) {
-            expect(exitCode).to.be.eq(1);
-          } else {
-            expect(exitCode).to.be.null();
-          }
-          expect(p._killTimer).to.be.null();
+      return processCtl.spawn('node', fixture).then(function(p) {
+        return delay(500).then(function() {
+          return p.kill().then(function(exitCode) {
+            if (isWin) {
+              expect(exitCode).to.be.eq(1);
+            } else {
+              expect(exitCode).to.be.null();
+            }
+            expect(p._killTimer).to.be.null();
+          });
         });
       });
     });

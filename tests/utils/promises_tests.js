@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry } = require('../../lib/utils/promises');
+const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry, delay } = require('../../lib/utils/promises');
 
 describe('fromCallback', function() {
   it('resolves with the result when the callback is called without an error', async function() {
@@ -307,7 +307,7 @@ describe('mapLimit', function() {
   it('preserves result order regardless of completion order', async function() {
     const delays = [30, 10, 20];
     const result = await mapLimit(delays, 3, ms =>
-      new Promise(resolve => setTimeout(() => resolve(ms), ms))
+      delay(ms).then(() => ms)
     );
     expect(result).to.deep.equal([30, 10, 20]);
   });
@@ -367,6 +367,26 @@ describe('retry', function() {
       await retry(() => { calls++; throw new Error('fail'); });
     } catch {}
     expect(calls).to.equal(3);
+  });
+});
+
+describe('delay', function() {
+  it('resolves after approximately the given number of milliseconds', async function() {
+    const start = Date.now();
+    await delay(50);
+    const elapsed = Date.now() - start;
+    expect(elapsed).to.be.at.least(40);
+  });
+
+  it('resolves with undefined', async function() {
+    const result = await delay(0);
+    expect(result).to.be.undefined();
+  });
+
+  it('resolves immediately for 0ms', async function() {
+    const start = Date.now();
+    await delay(0);
+    expect(Date.now() - start).to.be.below(50);
   });
 });
 
