@@ -1,12 +1,12 @@
 
 
-const Bluebird = require('bluebird');
+const { promisify } = require('util');
 const _ = require('lodash');
 const tmp = require('tmp');
 const path = require('path');
 const os = require('os');
 
-const tmpDirAsync = Bluebird.promisify(tmp.dir);
+const tmpDirAsync = promisify(tmp.dir);
 
 const expect = require('chai').expect;
 const file = require('chai-files').file;

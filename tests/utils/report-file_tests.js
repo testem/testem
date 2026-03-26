@@ -1,11 +1,11 @@
 
 
-const Bluebird = require('bluebird');
+const { promisify } = require('util');
 const expect = require('chai').expect;
 const tmp = require('tmp');
 const Writable = require('stream').Writable;
 
-const tmpNameAsync = Bluebird.promisify(tmp.tmpName);
+const tmpNameAsync = promisify(tmp.tmpName);
 
 const ReportFile = require('../../lib/utils/report-file');
 

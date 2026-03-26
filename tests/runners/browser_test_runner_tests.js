@@ -5,7 +5,7 @@ const FakeReporter = require('../support/fake_reporter');
 const FakeSocket = require('../support/fake_socket');
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const Bluebird = require('bluebird');
+
 const path = require('path');
 const isWin = require('../../lib/utils/is-win')();
 
@@ -276,7 +276,7 @@ describe('browser test runner', function() {
 
     it('starts the launcher once', function() {
       sandbox.stub(launcher, 'start').callsFake(function() {
-        return Bluebird.resolve({
+        return Promise.resolve({
           on: function() {}
         });
       });

@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry, delay } = require('../../lib/utils/promises');
+const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry, delay, asCallback } = require('../../lib/utils/promises');
 
 describe('fromCallback', function() {
   it('resolves with the result when the callback is called without an error', async function() {
@@ -387,6 +387,32 @@ describe('delay', function() {
     const start = Date.now();
     await delay(0);
     expect(Date.now() - start).to.be.below(50);
+  });
+});
+
+describe('asCallback', function() {
+  it('calls cb with null and the result on fulfillment', function(done) {
+    Promise.resolve(42).then(...asCallback(function(err, result) {
+      expect(err).to.be.null();
+      expect(result).to.equal(42);
+      done();
+    }));
+  });
+
+  it('calls cb with the error on rejection', function(done) {
+    const err = new Error('oops');
+    Promise.reject(err).then(...asCallback(function(e) {
+      expect(e).to.equal(err);
+      done();
+    }));
+  });
+
+  it('does nothing when cb is null', function() {
+    return Promise.resolve(1).then(...asCallback(null));
+  });
+
+  it('does nothing when cb is undefined', function() {
+    return Promise.resolve(1).then(...asCallback(undefined));
   });
 });
 

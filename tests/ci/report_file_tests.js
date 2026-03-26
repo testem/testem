@@ -3,7 +3,7 @@
 const fs = require('fs');
 const App = require('../../lib/app');
 const Config = require('../../lib/config');
-const Bluebird = require('bluebird');
+const { promisify } = require('util');
 const expect = require('chai').expect;
 const rimraf = require('rimraf').rimraf;
 const path = require('path');
@@ -13,8 +13,8 @@ const tmp = require('tmp');
 
 const FakeReporter = require('../support/fake_reporter');
 
-const tmpDirAsync = Bluebird.promisify(tmp.dir);
-const tmpFileAsync = Bluebird.promisify(tmp.file);
+const tmpDirAsync = promisify(tmp.dir);
+const tmpFileAsync = promisify(tmp.file);
 const rimrafAsync = rimraf;
 
 describe('report file output', function() {
@@ -117,7 +117,7 @@ describe('report file output', function() {
 
     // tmp.file no longer makes folders in the path for us,
     // so we need to do it ourselves before creating the file
-    const mkdirAsync = Bluebird.promisify(fs.mkdir);
+    const mkdirAsync = promisify(fs.mkdir);
     mkdirAsync(nestedDir, { recursive: true })
       .then(function() {
         return tmpFileAsync({
