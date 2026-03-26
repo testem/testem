@@ -10,8 +10,8 @@ var expect = require('chai').expect;
 var path = require('path');
 var http = require('http');
 var execa = require('execa').execa;
-var Bluebird = require('bluebird');
 var log = require('../../lib/log');
+const { asCallback } = require('../../lib/utils/promises');
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -370,7 +370,7 @@ describe('ci mode app', function() {
     app.runners = [
       {
         stop: function(cb) {
-          return Bluebird.resolve().asCallback(cb);
+          return Promise.resolve().then(...asCallback(cb));
         }
       }
     ];

@@ -1,6 +1,7 @@
 
 
 const { promisify } = require('util');
+const { fromCallback } = require('../../lib/utils/promises');
 const _ = require('lodash');
 const tmp = require('tmp');
 const path = require('path');
@@ -92,9 +93,8 @@ describe('knownBrowsers', function() {
         ]);
       });
 
-      it('creates a config file on setup', function(done) {
-        firefox.setup.call(launcher, config, function(err) {
-          expect(err).to.be.null();
+      it('creates a config file on setup', function() {
+        return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
           expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
@@ -105,11 +105,10 @@ describe('knownBrowsers', function() {
             'user_pref("browser.EULA.override", true);',
             'user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);'
           ].join(os.EOL));
-          done();
         });
       });
 
-      it('allows to provide a custom user.js', function(done) {
+      it('allows to provide a custom user.js', function() {
         let customPrefsJSPath = path.join(__dirname, '../fixtures/firefox/custom_user.js');
 
         config.get = function(name) {
@@ -118,14 +117,12 @@ describe('knownBrowsers', function() {
           }
         };
 
-        firefox.setup.call(launcher, config, function(err) {
-          expect(err).to.be.null();
+        return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
           expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
             'user_pref("dom.max_script_run_time", 0);'
           ].join(os.EOL) + os.EOL);
-          done();
         });
       });
 
