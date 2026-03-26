@@ -3,11 +3,11 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const fireworm = require('fireworm');
-const Bluebird = require('bluebird');
 
 const Config = require('../lib/config');
 const App = require('../lib/app');
 const RunTimeout = require('../lib/utils/run-timeout');
+const { using } = require('../lib/utils/promises');
 
 const FakeReporter = require('./support/fake_reporter');
 
@@ -35,7 +35,7 @@ describe('App', function() {
       sandbox.spy(app, 'triggerRun');
       sandbox.spy(app, 'stopRunners');
       sandbox.stub(app, 'singleRun').callsFake(function() {
-        return Bluebird.resolve().delay(50);
+        return new Promise(resolve => setTimeout(resolve, 50));
       });
       app.once('testRun', done);
       app.start();
@@ -51,7 +51,7 @@ describe('App', function() {
     });
 
     it('can only be executed once at the same time', function() {
-      app.currentRun = Bluebird.resolve();
+      app.currentRun = Promise.resolve();
 
       app.triggerRun('one');
       app.triggerRun('two');
@@ -68,7 +68,7 @@ describe('App', function() {
       app = new App(config);
       runner = {
         start: function() {
-          return Bluebird.resolve().delay(100).then(function() {
+          return new Promise(resolve => setTimeout(resolve, 100)).then(function() {
             if (this.killed) {
               throw new Error('Killed');
             }
@@ -79,7 +79,7 @@ describe('App', function() {
         exit: function() {
           this.killed = true;
 
-          return Bluebird.resolve();
+          return Promise.resolve();
         }
       };
       app.runners = [runner];
@@ -89,7 +89,7 @@ describe('App', function() {
     });
 
     it('times out slow runners', function() {
-      return Bluebird.using(RunTimeout.with(0.005), function(timeout) {
+      return using(RunTimeout.with(0.005), function(timeout) {
         timeout.on('timeout', function() {
           app.killRunners();
         });
@@ -106,7 +106,7 @@ describe('App', function() {
     });
 
     it('doesn\'t start additional runners when timed out', function() {
-      return Bluebird.using(RunTimeout.with(0), function(timeout) {
+      return using(RunTimeout.with(0), function(timeout) {
         timeout.on('timeout', function() {
           app.killRunners();
         });
@@ -126,7 +126,7 @@ describe('App', function() {
     it('resolves when restarting', function() {
       app.restarting = true;
 
-      return Bluebird.using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
+      return using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
         timeout.on('timeout', function() {
           app.killRunners();
         });
@@ -140,7 +140,7 @@ describe('App', function() {
     it('rejects when exiting', function() {
       app.exited = true;
 
-      return Bluebird.using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
+      return using(RunTimeout.with(app.config.get('timeout')), function(timeout) {
         timeout.timedOut = true;
         timeout.on('timeout', function() {
           app.killRunners();
