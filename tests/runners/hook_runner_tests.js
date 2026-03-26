@@ -236,7 +236,7 @@ describe('HookRunner', function() {
           return fsReadFileAsync(tmpPath);
         }).then(function(pid) {
           try {
-            process.kill(pid);
+            process.kill(parseInt(pid.toString(), 10));
             expect('true').to.be.false(); // The above should throw
           } catch (e) {
             expect(e.message).to.match(/ESRCH/); // Process shouldn't exist
