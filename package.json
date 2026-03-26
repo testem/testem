@@ -78,7 +78,7 @@
     "eslint-plugin-chai-expect": "^3.1.0",
     "eslint-plugin-mocha": "^11.2.0",
     "mocha": "^11.7.5",
-    "saucie": "^3.3.3",
+    "saucie": "^4.0.1",
     "shelljs": "^0.8.2",
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",

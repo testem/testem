@@ -8,12 +8,11 @@ var opts = {
   accessKey: process.env.SAUCE_ACCESS_KEY,
   verbose: true,
   logger: console.log,
-  pidfile: pidFile
+  pidfile: pidFile,
+  // Keep this in sync with saucie's default tunnel name in lib/config.js.
+  tunnelIdentifier: process.env.GITHUB_RUN_ID || 'saucie',
+  build: process.env.GITHUB_RUN_NUMBER || 1,
 };
-
-if (process.env.TRAVIS_JOB_NUMBER) {
-  opts.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
-}
 
 saucie.connect(opts).then(function () {
   process.exit();

@@ -20,8 +20,8 @@ var client = BrowserStack.createClient({
   });
 });
 
-if (process.env.TRAVIS_JOB_NUMBER) {
-  name = process.env.TRAVIS_JOB_NUMBER;
+if (process.env.GITHUB_RUN_ID && process.env.GITHUB_RUN_NUMBER) {
+  name = `github-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_NUMBER}`;
 }
 
 var settings = {
