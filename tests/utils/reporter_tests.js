@@ -1,21 +1,22 @@
 
 
-const Bluebird = require('bluebird');
+const { using } = require('../../lib/utils/promises');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const tmp = require('tmp');
 const fs = require('fs');
 const PassThrough = require('stream').PassThrough;
 
-const tmpNameAsync = Bluebird.promisify(tmp.tmpName);
+const tmpNameAsync = () => new Promise((resolve, reject) =>
+  tmp.tmpName((err, name) => err ? reject(err) : resolve(name)));
 
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');
 const TapReporter = require('../../lib/reporters/tap_reporter');
 const XUnitReporter = require('../../lib/reporters/xunit_reporter');
 
-const fsReadFileAsync = Bluebird.promisify(fs.readFile);
-const fsUnlinkAsync = Bluebird.promisify(fs.unlink);
+const fsReadFileAsync = (path, enc) => fs.promises.readFile(path, enc);
+const fsUnlinkAsync = path => fs.promises.unlink(path);
 
 describe('Reporter', function() {
   function mockApp(reporter) {
@@ -83,14 +84,14 @@ describe('Reporter', function() {
     let app = mockApp();
 
     it('can be used as a disposable which returns a reporter', function() {
-      return Bluebird.using(Reporter.with(app, stream), function(reporter) {
+      return using(Reporter.with(app, stream), function(reporter) {
         expect(reporter).to.be.an.instanceof(Reporter);
       });
     });
 
     it('closes the reporter when done', function() {
       let close;
-      return Bluebird.using(Reporter.with(app, stream), function(reporter) {
+      return using(Reporter.with(app, stream), function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
         expect(close).to.have.been.called();
@@ -99,12 +100,12 @@ describe('Reporter', function() {
 
     it('closes the reporter when promise is rejected with error hidden from the reporter', function() {
       let close;
-      return Bluebird.using(Reporter.with(app, stream), function(reporter) {
+      return using(Reporter.with(app, stream), function(reporter) {
         close = sandbox.spy(reporter, 'close');
 
         let mockError = new Error('Not all tests passed.');
         mockError.hideFromReporter = true;
-        return Bluebird.reject(mockError);
+        return Promise.reject(mockError);
       }).catch(function() {
         expect(close).to.have.been.called();
       });
@@ -113,9 +114,9 @@ describe('Reporter', function() {
     it('logs an error when the wrapped promise was rejected', function() {
       let report;
 
-      return Bluebird.using(Reporter.with(app, stream), function(reporter) {
+      return using(Reporter.with(app, stream), function(reporter) {
         report = sandbox.spy(reporter, 'report');
-        return Bluebird.reject(new Error('Tests failed.'));
+        return Promise.reject(new Error('Tests failed.'));
       }).catch(function() {
         expect(report).to.have.been.calledWith(null, {
           error: { message: 'Tests failed.' }, name: 'Error', passed: false

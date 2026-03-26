@@ -1,10 +1,10 @@
 
 
-var Bluebird = require('bluebird');
 var expect = require('chai').expect;
 var EventEmitter = require('events').EventEmitter;
 
 var SignalListeners = require('../../lib/utils/signal-listeners');
+var { using } = require('../../lib/utils/promises');
 
 var isNodeLt400 = require('../support/is-node-lt-400');
 
@@ -14,7 +14,7 @@ describe('SignalListeners', function() {
       var intCount = listenerCount(process, 'SIGINT');
       var termCount = listenerCount(process, 'SIGTERM');
 
-      return Bluebird.using(SignalListeners.with(), function() {
+      return using(SignalListeners.with(), function() {
         expect(listenerCount(process, 'SIGINT')).to.eq(intCount + 1);
         expect(listenerCount(process, 'SIGTERM')).to.eq(termCount + 1);
       }).then(function() {
