@@ -4,7 +4,6 @@ var os = require('os').type();
 var path = require('path');
 var fs = require('fs');
 var { exec, execSync } = require('child_process');
-var retry = require('bluebird-retry');
 var { mapLimit, fromCallback, retry } = require('../lib/utils/promises');
 
 // skip node@0.10, because of npm@1

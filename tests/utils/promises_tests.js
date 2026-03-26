@@ -357,7 +357,7 @@ describe('retry', function() {
     let calls = 0;
     try {
       await retry(() => { calls++; throw new Error('fail'); }, { max_tries: 4 });
-    } catch {}
+    } catch { /* ignore */ }
     expect(calls).to.equal(4);
   });
 
@@ -365,7 +365,7 @@ describe('retry', function() {
     let calls = 0;
     try {
       await retry(() => { calls++; throw new Error('fail'); });
-    } catch {}
+    } catch { /* ignore */ }
     expect(calls).to.equal(3);
   });
 });
