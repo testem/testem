@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each, Disposer, disposer, using } = require('../../lib/utils/promises');
+const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit } = require('../../lib/utils/promises');
 
 describe('fromCallback', function() {
   it('resolves with the result when the callback is called without an error', async function() {
@@ -267,3 +267,62 @@ describe('using', function() {
     }
   });
 });
+
+describe('mapLimit', function() {
+  it('maps all items and returns results', async function() {
+    const result = await mapLimit([1, 2, 3], Infinity, x => x * 2);
+    expect(result).to.deep.equal([2, 4, 6]);
+  });
+
+  it('handles an empty array', async function() {
+    const result = await mapLimit([], 2, () => { throw new Error('should not call'); });
+    expect(result).to.deep.equal([]);
+  });
+
+  it('runs all items in parallel when concurrency exceeds array length', async function() {
+    const order = [];
+    await mapLimit([1, 2, 3], Infinity, async x => {
+      order.push(`start:${x}`);
+      await Promise.resolve();
+      order.push(`end:${x}`);
+      return x;
+    });
+    expect(order.slice(0, 3)).to.deep.equal(['start:1', 'start:2', 'start:3']);
+  });
+
+  it('limits concurrency to the given number', async function() {
+    let active = 0;
+    let maxActive = 0;
+    const concurrency = 2;
+
+    await mapLimit([1, 2, 3, 4, 5], concurrency, () => {
+      active++;
+      maxActive = Math.max(maxActive, active);
+      return Promise.resolve().then(() => { active--; });
+    });
+
+    expect(maxActive).to.equal(concurrency);
+  });
+
+  it('preserves result order regardless of completion order', async function() {
+    const delays = [30, 10, 20];
+    const result = await mapLimit(delays, 3, ms =>
+      new Promise(resolve => setTimeout(() => resolve(ms), ms))
+    );
+    expect(result).to.deep.equal([30, 10, 20]);
+  });
+
+  it('rejects if any mapper rejects', async function() {
+    const err = new Error('map fail');
+    try {
+      await mapLimit([1, 2, 3], 2, x => {
+        if (x === 2) { throw err; }
+        return x;
+      });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+  });
+});
+
