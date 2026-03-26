@@ -99,7 +99,11 @@ describe('knownBrowsers', function() {
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
             'user_pref("datareporting.policy.dataSubmissionEnabled", false);',
-            'user_pref("datareporting.policy.dataSubmissionPolicyNotifiedTime", "1481830156314");'
+            'user_pref("datareporting.policy.dataSubmissionPolicyNotifiedTime", "1481830156314");',
+            'user_pref("app.update.auto", false);',
+            'user_pref("app.update.enabled", false);',
+            'user_pref("browser.EULA.override", true);',
+            'user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);'
           ].join(os.EOL));
           done();
         });

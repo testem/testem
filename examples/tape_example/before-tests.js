@@ -1,14 +1,12 @@
 var path = require('path');
 var esbuild = require('esbuild');
 var nodeModulesPolyfillPlugin = require('@esbuild-plugins/node-modules-polyfill').NodeModulesPolyfillPlugin;
-var browserPolyfills = require('../../../lib/utils/esbuild-browser-polyfills');
-
-var fixtureDir = __dirname;
+var browserPolyfills = require('../../lib/utils/esbuild-browser-polyfills');
 
 esbuild.build({
-  entryPoints: [path.join(fixtureDir, 'tests.js')],
+  entryPoints: [path.join(__dirname, 'tests.js')],
   bundle: true,
-  outfile: path.join(fixtureDir, 'public', 'bundle.js'),
+  outfile: path.join(__dirname, 'bundle.js'),
   platform: 'browser',
   plugins: [nodeModulesPolyfillPlugin()],
   define: browserPolyfills.define,
