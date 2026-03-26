@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each } = require('../../lib/utils/promises');
+const { fromCallback, filter, reduce, each, Disposer, disposer, using } = require('../../lib/utils/promises');
 
 describe('fromCallback', function() {
   it('resolves with the result when the callback is called without an error', async function() {
@@ -140,6 +140,127 @@ describe('each', function() {
       await each([1, 2, 3], x => {
         if (x === 2) { throw err; }
       });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+  });
+});
+
+describe('disposer', function() {
+  it('creates a Disposer instance', function() {
+    const d = disposer(Promise.resolve(1), () => {});
+    expect(d).to.be.instanceOf(Disposer);
+  });
+
+  it('wraps a plain value in a resolved promise', async function() {
+    const d = disposer(Promise.resolve('resource'), () => {});
+    const value = await d.promise;
+    expect(value).to.equal('resource');
+  });
+});
+
+describe('using', function() {
+  it('passes the resolved resource to the callback', async function() {
+    const d = disposer(Promise.resolve(42), () => {});
+    const result = await using(d, value => value * 2);
+    expect(result).to.equal(84);
+  });
+
+  it('calls the cleanup function after the callback succeeds', async function() {
+    let cleaned = false;
+    const d = disposer(Promise.resolve('res'), () => { cleaned = true; });
+    await using(d, () => {});
+    expect(cleaned).to.equal(true);
+  });
+
+  it('calls the cleanup function after the callback rejects', async function() {
+    let cleaned = false;
+    const d = disposer(Promise.resolve('res'), () => { cleaned = true; });
+    try {
+      await using(d, () => { throw new Error('fail'); });
+    } catch { /* expected */ }
+    expect(cleaned).to.equal(true);
+  });
+
+  it('re-throws the callback error after cleanup', async function() {
+    const err = new Error('callback error');
+    const d = disposer(Promise.resolve('res'), () => {});
+    try {
+      await using(d, () => { throw err; });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+  });
+
+  it('passes promise inspection to cleanup with isRejected()=false when callback succeeds', async function() {
+    let inspection;
+    const d = disposer(Promise.resolve('res'), (resource, p) => { inspection = p; });
+    await using(d, () => {});
+    expect(inspection.isRejected()).to.equal(false);
+    expect(inspection.reason()).to.equal(undefined);
+  });
+
+  it('passes promise inspection to cleanup with isRejected()=true and reason() when callback fails', async function() {
+    const err = new Error('oops');
+    let inspection;
+    const d = disposer(Promise.resolve('res'), (resource, p) => { inspection = p; });
+    try {
+      await using(d, () => { throw err; });
+    } catch { /* expected */ }
+    expect(inspection.isRejected()).to.equal(true);
+    expect(inspection.reason()).to.equal(err);
+  });
+
+  it('passes the resource as the first argument to cleanup', async function() {
+    let cleanedWith;
+    const d = disposer(Promise.resolve('myResource'), (resource) => { cleanedWith = resource; });
+    await using(d, () => {});
+    expect(cleanedWith).to.equal('myResource');
+  });
+
+  it('surfaces cleanup errors when the callback succeeds', async function() {
+    const cleanupErr = new Error('cleanup failed');
+    const d = disposer(Promise.resolve('res'), () => { throw cleanupErr; });
+    try {
+      await using(d, () => {});
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(cleanupErr);
+    }
+  });
+
+  it('suppresses cleanup errors when the callback already failed', async function() {
+    const originalErr = new Error('original');
+    const d = disposer(Promise.resolve('res'), () => { throw new Error('cleanup also failed'); });
+    try {
+      await using(d, () => { throw originalErr; });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+  });
+
+  it('supports async cleanup functions', async function() {
+    let cleaned = false;
+    const d = disposer(Promise.resolve('res'), async () => {
+      await Promise.resolve();
+      cleaned = true;
+    });
+    await using(d, () => {});
+    expect(cleaned).to.equal(true);
+  });
+
+  it('works with a plain promise (no cleanup)', async function() {
+    const result = await using(Promise.resolve('plain'), value => value + '!');
+    expect(result).to.equal('plain!');
+  });
+
+  it('re-throws when using a plain promise and the callback fails', async function() {
+    const err = new Error('plain fail');
+    try {
+      await using(Promise.resolve('plain'), () => { throw err; });
       throw new Error('expected rejection');
     } catch (e) {
       expect(e).to.equal(err);
