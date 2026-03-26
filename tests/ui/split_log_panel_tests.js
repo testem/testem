@@ -42,8 +42,8 @@ describe('SplitLogPanel', !isWin ? function() {
   });
 
   describe('getResultsDisplayText', function() {
-    it.skip('gets topLevelError', function() {
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('');
+    it('gets topLevelError', function() {
+      expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)');
       results.set('topLevelError', 'Shit happened.');
       expect(panel.getResultsDisplayText().unstyled()).to.equal('Top Level:\n    Shit happened.\n\n');
     });
