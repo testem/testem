@@ -40,7 +40,7 @@ export default [
   ...compat.config({
     root: true,
     parserOptions: {
-      ecmaVersion: 6,
+      ecmaVersion: 2017,
     },
     extends: "eslint:recommended",
     env: {
