@@ -264,7 +264,8 @@ describe('Launcher', function() {
     it('directory is located under getUserDataDir()', function() {
       const dir = fs.realpathSync(launcher.browserTmpDir());
       const userDataDir = fs.realpathSync(config.getUserDataDir());
-      expect(dir.startsWith(userDataDir)).to.be.true();
+      const relative = path.relative(userDataDir, dir);
+      expect(!relative.startsWith('..') && !path.isAbsolute(relative)).to.be.true();
     });
 
     it('returns the same path on repeated calls', function() {
