@@ -5,6 +5,7 @@ const Config = require('../lib/config');
 const expect = require('chai').expect;
 const assert = require('chai').assert;
 const path = require('path');
+const fs = require('fs');
 const sinon = require('sinon');
 
 const os = require('os');
@@ -242,6 +243,39 @@ describe('Launcher', function() {
           done();
         });
       });
+    });
+  });
+
+  describe('browserTmpDir', function() {
+    let config, launcher;
+
+    beforeEach(function() {
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'});
+      launcher = new Launcher('test browser', { protocol: 'browser' }, config);
+    });
+
+    it('returns a path to an existing directory', function() {
+      const dir = launcher.browserTmpDir();
+      expect(dir).to.be.a('string');
+      expect(fs.existsSync(dir)).to.be.true();
+      expect(fs.statSync(dir).isDirectory()).to.be.true();
+    });
+
+    it('directory is located under getUserDataDir()', function() {
+      const dir = fs.realpathSync(launcher.browserTmpDir());
+      const userDataDir = fs.realpathSync(config.getUserDataDir());
+      expect(dir.startsWith(userDataDir)).to.be.true();
+    });
+
+    it('returns the same path on repeated calls', function() {
+      const dir1 = launcher.browserTmpDir();
+      const dir2 = launcher.browserTmpDir();
+      expect(dir1).to.equal(dir2);
+    });
+
+    it('creates distinct directories for different launchers', function() {
+      const other = new Launcher('other browser', { protocol: 'browser' }, config);
+      expect(launcher.browserTmpDir()).to.not.equal(other.browserTmpDir());
     });
   });
 });
