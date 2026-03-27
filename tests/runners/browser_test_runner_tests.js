@@ -5,7 +5,7 @@ const FakeReporter = require('../support/fake_reporter');
 const FakeSocket = require('../support/fake_socket');
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const Bluebird = require('bluebird');
+
 const path = require('path');
 const isWin = require('../../lib/utils/is-win')();
 
@@ -276,7 +276,7 @@ describe('browser test runner', function() {
 
     it('starts the launcher once', function() {
       sandbox.stub(launcher, 'start').callsFake(function() {
-        return Bluebird.resolve({
+        return Promise.resolve({
           on: function() {}
         });
       });
@@ -405,6 +405,81 @@ describe('browser test runner', function() {
       });
 
       runner.start();
+    });
+  });
+
+  describe('onFinish callback', function() {
+    let reporter, launcher, runner;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      let config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
+      launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+    });
+
+    it('invokes the callback when the runner finishes', function(done) {
+      runner.start(function() {
+        done();
+      });
+      // trigger finish via launcher error (no exe configured)
+    });
+
+    it('calls the callback with null as the first argument on success', function(done) {
+      runner.start(function(err) {
+        expect(err).to.be.null();
+        done();
+      });
+    });
+
+    it('both the returned promise and the callback fire on the same run', function() {
+      var callbackCalled = false;
+      var p = runner.start(function() {
+        callbackCalled = true;
+      });
+      return p.then(function() {
+        expect(callbackCalled).to.equal(true);
+      });
+    });
+
+    it('resolves the promise even when no callback is provided', function() {
+      return runner.start();
+    });
+  });
+
+  describe('stop', function() {
+    let reporter, launcher, runner;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      let config = new Config('ci', { reporter: reporter });
+      launcher = new Launcher('ci', { protocol: 'browser' }, config);
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+    });
+
+    it('returns a resolved promise when no callback is provided', function() {
+      return runner.stop();
+    });
+
+    it('calls the callback with no error when provided', function(done) {
+      runner.stop(function(err) {
+        expect(err).to.be.null();
+        done();
+      });
+    });
+
+    it('emits stop-run on the socket when one is attached', function(done) {
+      let socket = new FakeSocket();
+      runner.socket = socket;
+      socket.on('stop-run', function() {
+        done();
+      });
+      runner.stop();
+    });
+
+    it('does not throw when no socket is attached', function() {
+      expect(runner.socket).to.be.undefined();
+      return runner.stop();
     });
   });
 

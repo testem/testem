@@ -68,8 +68,8 @@ describe('Server', function() {
         done();
       });
     });
-    after(function(done) {
-      server.stop(done);
+    after(function() {
+      return server.stop();
     });
 
     it('redirects to an id', function(done) {
@@ -468,12 +468,8 @@ describe('Server', function() {
         });
       });
     });
-    after(function(done) {
-      server.stop(function() {
-        api.close(function() {
-          done();
-        });
-      });
+    after(function() {
+      return server.stop().then(() => new Promise(resolve => api.close(resolve)));
     });
 
     it('does not proxy testem files', function(done) {
@@ -508,10 +504,8 @@ describe('Server', function() {
       });
       server.start();
     });
-    after(function(done) {
-      server.stop(function() {
-        done();
-      });
+    after(function() {
+      return server.stop();
     });
 
     it('gets the home page', function(done) {
@@ -531,10 +525,8 @@ describe('Server', function() {
       });
       server.start();
     });
-    after(function(done) {
-      server.stop(function() {
-        done();
-      });
+    after(function() {
+      return server.stop();
     });
 
     it('updates the config with the actual port', function() {
@@ -566,8 +558,8 @@ describe('Server', function() {
         done();
       });
     });
-    after(function(done) {
-      server.stop(done);
+    after(function() {
+      return server.stop();
     });
 
     it('handles a request for safe content', function(done) {

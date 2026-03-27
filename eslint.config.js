@@ -26,8 +26,7 @@ export default [
       "public/testem/*.js",
       "**/.eslintrc.js",
       "eslint.config.js",
-      "tests/fixtures/tape/public/bundle.js",
-      "tests/fixtures/firefox/custom_user.js",
+      "tests/fixtures/**/*.js",
     ],
   },
   {

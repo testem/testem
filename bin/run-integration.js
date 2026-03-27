@@ -4,8 +4,7 @@ var os = require('os').type();
 var path = require('path');
 var fs = require('fs');
 var { exec, execSync } = require('child_process');
-var Bluebird = require('bluebird');
-var retry = require('bluebird-retry');
+var { mapLimit, fromCallback, retry } = require('../lib/utils/promises');
 
 // skip node@0.10, because of npm@1
 // and inability to pass arguments
@@ -57,11 +56,11 @@ testExamples(fs.readdirSync(examplesPath), function(err) {
 
 // test examples one by one, async
 function testExamples(examples, callback) {
-  Bluebird.map(examples, testExample, { concurrency: concurrency }).asCallback(callback);
+  mapLimit(examples, concurrency, testExample).then(() => callback(), callback);
 }
 
 function shellExec(cmd, runOpts) {
-  return Bluebird.fromCallback(function(callback) {
+  return fromCallback(function(callback) {
     var opts = { cwd: runOpts.cwd, timeout: runOpts.timeout };
     return exec(cmd, opts, function(err, stdout, stderr) {
       if (err) {

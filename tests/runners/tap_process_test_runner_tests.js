@@ -335,6 +335,67 @@ describe('tap process test runner', function() {
     });
   });
 
+  describe('onFinish callback', function() {
+    var runner, reporter, launcher;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      var config = new Config('ci', { reporter: reporter });
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/echo.js')],
+        protocol: 'tap'
+      };
+      launcher = new Launcher('tap', settings, config);
+      runner = new TapProcessTestRunner(launcher, reporter);
+    });
+
+    var simpleTap = [
+      'TAP version 13',
+      'ok 1 test one',
+      '',
+      '1..1',
+      '# tests 1',
+      '# pass  1',
+      '',
+      '# ok'
+    ].join('\n');
+
+    it('invokes the callback when the process exits', function(done) {
+      launcher.processCtl.once('processStarted', function(process) {
+        process.process.stdin.end(simpleTap);
+      });
+      runner.start(function() {
+        done();
+      });
+    });
+
+    it('calls the callback with null as the first argument on success', function(done) {
+      launcher.processCtl.once('processStarted', function(process) {
+        process.process.stdin.end(simpleTap);
+      });
+      runner.start(function(err) {
+        expect(err).to.be.null();
+        done();
+      });
+    });
+
+    it('both the returned promise and the callback fire on the same run', function() {
+      launcher.processCtl.once('processStarted', function(process) {
+        process.process.stdin.end(simpleTap);
+      });
+      var callbackCalled = false;
+
+      var p = runner.start(function() {
+        callbackCalled = true;
+      });
+
+      return p.then(function() {
+        expect(callbackCalled).to.equal(true);
+      });
+    });
+  });
+
   describe('onProcessError', function() {
     var reporter, config;
 

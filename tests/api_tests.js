@@ -2,13 +2,13 @@
 
 const sinon = require('sinon');
 const expect = require('chai').expect;
-const Bluebird = require('bluebird');
 
 const Api = require('../lib/api');
 const App = require('../lib/app');
 const Config = require('../lib/config');
 
 const FakeReporter = require('./support/fake_reporter');
+const { delay } = require('../lib/utils/promises');
 
 describe('Api', function() {
   let sandbox;
@@ -104,7 +104,7 @@ describe('Api', function() {
       });
       sandbox.spy(api.app, 'stopCurrentRun');
       sandbox.stub(api.app, 'singleRun').callsFake(function() {
-        return Bluebird.resolve().delay(100);
+        return delay(100);
       });
       api.app.start(function() {
         setTimeout(function() {

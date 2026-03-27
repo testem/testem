@@ -2,7 +2,6 @@
 
 var fs = require('fs');
 var path = require('path');
-var Bluebird = require('bluebird');
 var os = require('os');
 
 var sinon = require('sinon');
@@ -10,12 +9,13 @@ var expect = require('chai').expect;
 var tmp = require('tmp');
 
 var HookRunner = require('../../lib/runners/hook_runner');
+var { using } = require('../../lib/utils/promises');
 var isWin = require('../../lib/utils/is-win')();
 
-var tmpNameAsync = Bluebird.promisify(tmp.tmpName);
-// fs.access would be enough, but isn't supported in Node 0.10
-var fsStatAsync = Bluebird.promisify(fs.stat);
-var fsReadFileAsync = Bluebird.promisify(fs.readFile);
+var tmpNameAsync = () => new Promise((resolve, reject) =>
+  tmp.tmpName((err, name) => err ? reject(err) : resolve(name)));
+var fsStatAsync = path => fs.promises.stat(path);
+var fsReadFileAsync = path => fs.promises.readFile(path);
 
 describe('HookRunner', function() {
   var config, hook;
@@ -230,13 +230,13 @@ describe('HookRunner', function() {
           wait_for_text_timeout: 5000
         };
 
-        return Bluebird.using(HookRunner.with(config, 'test_hook'), function() {
+        return using(HookRunner.with(config, 'test_hook'), function() {
           return fsStatAsync(tmpPath);
         }).then(function() {
           return fsReadFileAsync(tmpPath);
         }).then(function(pid) {
           try {
-            process.kill(pid);
+            process.kill(parseInt(pid.toString(), 10));
             expect('true').to.be.false(); // The above should throw
           } catch (e) {
             expect(e.message).to.match(/ESRCH/); // Process shouldn't exist

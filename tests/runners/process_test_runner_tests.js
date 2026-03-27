@@ -106,6 +106,53 @@ describe('ProcessTestRunner', function() {
     });
   });
 
+  describe('onFinish callback', function() {
+    it('invokes the callback when the process exits', function(done) {
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
+      };
+      var launcher = new Launcher('node-stdout', settings, config);
+      var runner = new ProcessTestRunner(launcher, reporter);
+
+      runner.start(function() {
+        done();
+      });
+    });
+
+    it('calls the callback with null as the first argument on success', function(done) {
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
+      };
+      var launcher = new Launcher('node-stdout', settings, config);
+      var runner = new ProcessTestRunner(launcher, reporter);
+
+      runner.start(function(err) {
+        expect(err).to.be.null();
+        done();
+      });
+    });
+
+    it('both the returned promise and the callback fire on the same run', function() {
+      var settings = {
+        exe: 'node',
+        args: [path.join(__dirname, '../fixtures/processes/stdout.js')]
+      };
+      var launcher = new Launcher('node-stdout', settings, config);
+      var runner = new ProcessTestRunner(launcher, reporter);
+      var callbackCalled = false;
+
+      var p = runner.start(function() {
+        callbackCalled = true;
+      });
+
+      return p.then(function() {
+        expect(callbackCalled).to.equal(true);
+      });
+    });
+  });
+
   it('handles non existing processes', function(done) {
     var settings = {
       exe: 'nope-not-existing'
