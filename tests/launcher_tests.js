@@ -256,10 +256,10 @@ describe('Launcher', function() {
 
     afterEach(function() {
       if (launcher.browserTmpDirectory) {
-        launcher.browserTmpDirectory.removeCallback();
+        fs.rmSync(launcher.browserTmpDirectory, { recursive: true, force: true });
       }
       if (other && other.browserTmpDirectory) {
-        other.browserTmpDirectory.removeCallback();
+        fs.rmSync(other.browserTmpDirectory, { recursive: true, force: true });
       }
     });
 
