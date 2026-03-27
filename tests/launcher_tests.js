@@ -1,5 +1,3 @@
-
-
 const Launcher = require('../lib/launcher');
 const Config = require('../lib/config');
 const expect = require('chai').expect;
@@ -7,6 +5,7 @@ const assert = require('chai').assert;
 const path = require('path');
 const fs = require('fs');
 const sinon = require('sinon');
+const { execaNode } = require('execa');
 
 const os = require('os');
 const isWin = require('../lib/utils/is-win')();
@@ -287,6 +286,13 @@ describe('Launcher', function() {
     it('creates distinct directories for different launchers', function() {
       other = new Launcher('other browser', { protocol: 'browser' }, config);
       expect(launcher.browserTmpDir()).to.not.equal(other.browserTmpDir());
+    });
+
+    it('removes the directory when the process exits', async function() {
+      const helperPath = path.join(__dirname, 'support', 'launcher_tmp_cleanup_helper.js');
+      const { stdout } = await execaNode(helperPath);
+      const dir = stdout.trim();
+      expect(fs.existsSync(dir)).to.be.false();
     });
   });
 });
