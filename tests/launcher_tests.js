@@ -247,11 +247,21 @@ describe('Launcher', function() {
   });
 
   describe('browserTmpDir', function() {
-    let config, launcher;
+    let config, launcher, other;
 
     beforeEach(function() {
       config = new Config(null, {port: '7357', url: 'http://blah.com/'});
       launcher = new Launcher('test browser', { protocol: 'browser' }, config);
+      other = null;
+    });
+
+    afterEach(function() {
+      if (launcher.browserTmpDirectory) {
+        launcher.browserTmpDirectory.removeCallback();
+      }
+      if (other && other.browserTmpDirectory) {
+        other.browserTmpDirectory.removeCallback();
+      }
     });
 
     it('returns a path to an existing directory', function() {
@@ -275,7 +285,7 @@ describe('Launcher', function() {
     });
 
     it('creates distinct directories for different launchers', function() {
-      const other = new Launcher('other browser', { protocol: 'browser' }, config);
+      other = new Launcher('other browser', { protocol: 'browser' }, config);
       expect(launcher.browserTmpDir()).to.not.equal(other.browserTmpDir());
     });
   });
