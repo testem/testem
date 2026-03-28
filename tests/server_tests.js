@@ -72,170 +72,180 @@ describe('Server', function() {
       return server.stop();
     });
 
-    it('redirects to an id', function(done) {
-      request(baseUrl, { followRedirect: false }, function(err, res) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(302);
-        expect(res.headers.location).to.match(/^\/[0-9]+$/);
-        expectMiddlewareHeaders(res);
-        done();
+    describe('routing and redirects', function() {
+      it('redirects to an id', function(done) {
+        request(baseUrl, { followRedirect: false }, function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(302);
+          expect(res.headers.location).to.match(/^\/[0-9]+$/);
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('serves the homepage after redirect', function(done) {
+        request(baseUrl, { followRedirect: true }, function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('serves the homepage for a numeric browser id directly', function(done) {
+        request(baseUrl + '1234', function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('serves the homepage for tap id (-1) directly', function(done) {
+        request(baseUrl + '-1', function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          expectMiddlewareHeaders(res);
+          done();
+        });
       });
     });
 
-    it('serves the homepage after redirect', function(done) {
-      request(baseUrl, { followRedirect: true }, function(err, res) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expectMiddlewareHeaders(res);
-        done();
+    describe('test page rendering', function() {
+      it('gets scripts for the home page', function(done) {
+        request(baseUrl, function(err, res, text) {
+          let $ = cheerio.load(text);
+          let srcs = $('script').map(function() { return $(this).attr('src'); }).get();
+          expect(srcs).to.deep.equal([
+            '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+            '/testem.js',
+            '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
+            'web' + path.sep + 'hello.js',
+            'web' + path.sep + 'hello_tst.js'
+          ]);
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('serves custom test page', function(done) {
+        config.set('test_page', 'web/tests.html');
+        assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html', done);
+      });
+
+      it('renders custom test page as template', function(done) {
+        config.set('test_page', 'web/tests_template.mustache');
+        request(baseUrl, function(err, res, text) {
+          expect(text).to.equal(
+            [
+              '<!doctype html>',
+              '<html>',
+              '<head>',
+              '    <script src="web/hello.js"></script>',
+              '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+              '</head>',
+              ''
+            ].join(os.EOL));
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('renders the first test page by default when multiple are provided', function(done) {
+        config.set('test_page', ['web/tests_template.mustache', 'web/tests.html']);
+        request(baseUrl, function(err, res, text) {
+          expect(text).to.equal(
+            [
+              '<!doctype html>',
+              '<html>',
+              '<head>',
+              '    <script src="web/hello.js"></script>',
+              '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+              '</head>',
+              ''
+            ].join(os.EOL));
+          expectMiddlewareHeaders(res);
+          done();
+        });
       });
     });
 
-    it('gets scripts for the home page', function(done) {
-      request(baseUrl, function(err, res, text) {
-        let $ = cheerio.load(text);
-        let srcs = $('script').map(function() { return $(this).attr('src'); }).get();
-        expect(srcs).to.deep.equal([
-          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
-          '/testem.js',
-          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-          'web' + path.sep + 'hello.js',
-          'web' + path.sep + 'hello_tst.js'
-        ]);
-        expectMiddlewareHeaders(res);
-        done();
+    describe('testem.js', function() {
+      it('gets testem.js', function(done) {
+        request(baseUrl + '/testem.js', done);
+      });
+
+      it('gets testem.js with expected content', function(done) {
+        request(baseUrl + 'testem.js', function(err, res, text) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          expect(res.headers['content-type']).to.match(/javascript/);
+          expect(text).to.include('TestemConfig');
+          expect(text).to.include('testem_client.js');
+          done();
+        });
       });
     });
 
-    it('gets testem.js', function(done) {
-      request(baseUrl + '/testem.js', done);
-    });
+    describe('static file serving', function() {
+      it('gets src file', function(done) {
+        assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'tests/web/hello.js', done);
+      });
 
-    it('gets testem.js with expected content', function(done) {
-      request(baseUrl + 'testem.js', function(err, res, text) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expect(res.headers['content-type']).to.match(/javascript/);
-        expect(text).to.include('TestemConfig');
-        expect(text).to.include('testem_client.js');
-        done();
+      it('gets bundled files', function(done) {
+        assertUrlReturnsFileContents(baseUrl + 'testem/connection.html', 'public/testem/connection.html', done);
+      });
+
+      it('gets a file using a POST request', function(done) {
+        request.post(baseUrl + 'web/hello.js', function(err, res, text) {
+          expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString());
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('lists directories', function(done) {
+        request(baseUrl + 'data', function(err, res, text) {
+          expect(text).to.match(/<a href="blah.txt">blah.txt<\/a>/);
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('returns 404 for a non-existent file', function(done) {
+        request(baseUrl + 'web/does-not-exist.js', function(err, res, text) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(404);
+          expect(text).to.match(/Not found/);
+          done();
+        });
+      });
+
+      it('serves local content with browser ids', function(done) {
+        assertUrlReturnsFileContents(baseUrl + '1234' + '/web/hello.js', 'tests/web/hello.js', done);
+      });
+
+      it('serves local content with tap id', function(done) {
+        assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
+      });
+
+      it('accepts other http methods', function(done) {
+        request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          expectMiddlewareHeaders(res);
+          done();
+        });
       });
     });
 
-    it('gets src file', function(done) {
-      assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'tests/web/hello.js', done);
-    });
-
-    it('gets bundled files', function(done) {
-      assertUrlReturnsFileContents(baseUrl + 'testem/connection.html', 'public/testem/connection.html', done);
-    });
-
-    it('serves custom test page', function(done) {
-      config.set('test_page', 'web/tests.html');
-      assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html', done);
-    });
-
-    it('renders custom test page as template', function(done) {
-      config.set('test_page', 'web/tests_template.mustache');
-      request(baseUrl, function(err, res, text) {
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            ''
-          ].join(os.EOL));
-        expectMiddlewareHeaders(res);
-        done();
+    describe('socket.io configuration', function() {
+      it('sets heartbeat_timeout on socket.io server', function() {
+        expect(server.io.eio.opts.pingTimeout).to.eq(6000);
       });
     });
 
-    it('renders the first test page by default when multiple are provided', function(done) {
-      config.set('test_page', ['web/tests_template.mustache', 'web/tests.html']);
-      request(baseUrl, function(err, res, text) {
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            ''
-          ].join(os.EOL));
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('gets a file using a POST request', function(done) {
-      request.post(baseUrl + 'web/hello.js', function(err, res, text) {
-        expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString());
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('lists directories', function(done) {
-      request(baseUrl + 'data', function(err, res, text) {
-        expect(text).to.match(/<a href="blah.txt">blah.txt<\/a>/);
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('returns 404 for a non-existent file', function(done) {
-      request(baseUrl + 'web/does-not-exist.js', function(err, res, text) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(404);
-        expect(text).to.match(/Not found/);
-        done();
-      });
-    });
-
-    it('serves local content with browser ids', function(done) {
-      assertUrlReturnsFileContents(baseUrl + '1234' + '/web/hello.js', 'tests/web/hello.js', done);
-    });
-
-    it('serves local content with tap id', function(done) {
-      assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
-    });
-
-    it('serves the homepage for a numeric browser id directly', function(done) {
-      request(baseUrl + '1234', function(err, res) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('serves the homepage for tap id (-1) directly', function(done) {
-      request(baseUrl + '-1', function(err, res) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('accepts other http methods', function(done) {
-      request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expectMiddlewareHeaders(res);
-        done();
-      });
-    });
-
-    it('sets heartbeat_timeout on socket.io server', function() {
-      expect(server.io.eio.opts.pingTimeout).to.eq(6000);
-    });
-
-    describe('route', function() {
+    describe('route config', function() {
       it('routes server paths to local paths', function(done) {
         assertUrlReturnsFileContents(baseUrl + 'direct-test/test.js', 'tests/web/direct/test.js', done);
       });
