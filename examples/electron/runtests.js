@@ -3,7 +3,7 @@ var path = require('path');
 var fs = require('fs');
 var url = require('url');
 var fileUrl = require('file-url');
-var tmp = require('tmp');
+var { randomBytes } = require('crypto');
 var execFile = require('child_process').execFile;
 
 var baseObj = url.parse(process.argv[2]);
@@ -33,12 +33,12 @@ var testPagePath = path.join.apply(null, testPageObj.pathname.split('/'));
 var htmlContent = fs.readFileSync(testPagePath, 'utf8').toString();
 htmlContent = htmlContent.replace('<head>', '<head>\n<base href="' + fileUrl(__dirname) + '/">');
 htmlContent = htmlContent.replace('src="/testem.js"', 'src="' + testemJsUrl + '"');
-var tmpFile = tmp.fileSync({ postfix: '.html' });
-fs.writeFileSync(tmpFile.name, htmlContent, 'utf8');
+var tmpFilePath = path.join(os.tmpdir(), randomBytes(8).toString('hex') + '.html');
+fs.writeFileSync(tmpFilePath, htmlContent, 'utf8');
 
 // Build a file: URL to our temp file, preserving query params from the test
 // page and adding the testem id
-var tmpFileObj = url.parse(fileUrl(tmpFile.name));
+var tmpFileObj = url.parse(fileUrl(tmpFilePath));
 tmpFileObj.query = testPageObj.query;
 tmpFileObj.query.testemId = id;
 var testUrl = url.format(tmpFileObj);
