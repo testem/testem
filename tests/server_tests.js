@@ -634,6 +634,36 @@ describe('Server', function() {
     });
   });
 
+  describe('server start error', function() {
+    it('rejects and emits server-error when port is already in use', function(done) {
+      const occupiedConfig = new Config('dev', { port: 0, cwd: 'tests' });
+      const occupiedServer = new Server(occupiedConfig);
+
+      occupiedServer.start().then(function() {
+        const occupiedPort = occupiedConfig.get('port');
+        const conflictConfig = new Config('dev', { port: occupiedPort, cwd: 'tests' });
+        const conflictServer = new Server(conflictConfig);
+        let errorEmitted = false;
+
+        conflictServer.on('server-error', function() {
+          errorEmitted = true;
+        });
+
+        conflictServer.start().then(function() {
+          return occupiedServer.stop().then(function() {
+            done(new Error('Expected start() to reject on port conflict'));
+          });
+        }).catch(function(err) {
+          expect(err.code).to.eq('EADDRINUSE');
+          expect(errorEmitted).to.eq(true);
+          return occupiedServer.stop();
+        }).then(function() {
+          done();
+        }).catch(done);
+      });
+    });
+  });
+
   describe('stop() idempotency', function() {
     let stopServer;
 
