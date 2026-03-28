@@ -644,6 +644,35 @@ describe('Server', function() {
     });
   });
 
+  describe('routes["/"] config', function() {
+    let routesServer, routesBaseUrl;
+
+    before(function(done) {
+      const routesConfig = new Config('dev', {
+        port: port,
+        cwd: 'tests',
+        routes: { '/': 'web/direct' }
+      });
+      routesBaseUrl = 'http://localhost:' + port + '/';
+      routesServer = new Server(routesConfig);
+      routesServer.start();
+      routesServer.once('server-start', done);
+    });
+
+    after(function() {
+      return routesServer.stop();
+    });
+
+    it('serves static file instead of the default runner when routes["/"] is set', function(done) {
+      request(routesBaseUrl + '1234', function(err, res, text) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.include('test.js');
+        done();
+      });
+    });
+  });
+
   describe('server start error', function() {
     it('rejects and emits server-error when port is already in use', function(done) {
       const occupiedConfig = new Config('dev', { port: 0, cwd: 'tests' });
