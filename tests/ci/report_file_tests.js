@@ -3,18 +3,16 @@
 const fs = require('fs');
 const App = require('../../lib/app');
 const Config = require('../../lib/config');
-const { promisify } = require('util');
 const expect = require('chai').expect;
 const rimraf = require('rimraf').rimraf;
+const os = require('os');
 const path = require('path');
+const { randomBytes } = require('crypto');
 const PassThrough = require('stream').PassThrough;
 const ReportFile = require('../../lib/utils/report-file');
-const tmp = require('tmp');
 
 const FakeReporter = require('../support/fake_reporter');
 
-const tmpDirAsync = promisify(tmp.dir);
-const tmpFileAsync = promisify(tmp.file);
 const rimrafAsync = rimraf;
 
 describe('report file output', function() {
@@ -22,20 +20,9 @@ describe('report file output', function() {
 
   let reportDir, filename;
   beforeEach(function() {
-    return tmpDirAsync({
-      keep: true
-    }).then(dir => {
-      reportDir = dir;
-
-      return tmpFileAsync({
-        dir: dir,
-        name: 'test-reports.xml',
-        keep: true,
-        discardDescriptor: true
-      });
-    }).then(filePath => {
-      filename = filePath;
-    });
+    reportDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
+    filename = path.join(reportDir, 'test-reports.xml');
+    fs.writeFileSync(filename, '');
   });
 
   afterEach(function() {
@@ -65,17 +52,14 @@ describe('report file output', function() {
   });
 
   it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
-    tmp.tmpName((err, filename) => {
-      if (err) {
-        return done(err);
-      }
-
+    const unusedFilename = path.join(os.tmpdir(), randomBytes(8).toString('hex'));
+    {
       let config = new Config('ci', {
         reporter: new FakeReporter(),
         stdout_stream: new PassThrough()
       });
       let app = new App(config, () => {
-        fs.stat(filename, err => {
+        fs.stat(unusedFilename, err => {
           try {
             expect(err).not.eql(null);
             expect(err.code).to.eq('ENOENT');
@@ -88,7 +72,7 @@ describe('report file output', function() {
       });
       app.start();
       app.exit();
-    });
+    }
   });
 
   it('writes out results to the file', function(done) {
@@ -113,25 +97,16 @@ describe('report file output', function() {
     let name = 'nested/test/folders/test-reports.xml';
     let nestedFilename = path.join(reportDir, name);
     let nestedDir = path.dirname(nestedFilename);
-    let filename = path.basename(nestedFilename);
 
-    // tmp.file no longer makes folders in the path for us,
-    // so we need to do it ourselves before creating the file
-    const mkdirAsync = promisify(fs.mkdir);
-    mkdirAsync(nestedDir, { recursive: true })
-      .then(function() {
-        return tmpFileAsync({
-          dir: nestedDir,
-          name: filename
-        });
-      }).then (function() {
-        return new Promise(resolve => {
-          let reportFile = new ReportFile(nestedFilename);
-          reportFile.outputStream.on('finish', () => {
-            fs.stat(nestedFilename, resolve);
-          });
-          reportFile.outputStream.end();
-        });
+    fs.mkdirSync(nestedDir, { recursive: true });
+    fs.writeFileSync(nestedFilename, '');
+
+    return new Promise(resolve => {
+      let reportFile = new ReportFile(nestedFilename);
+      reportFile.outputStream.on('finish', () => {
+        fs.stat(nestedFilename, resolve);
       });
+      reportFile.outputStream.end();
+    });
   });
 });
