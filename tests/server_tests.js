@@ -176,6 +176,15 @@ describe('Server', function() {
       });
     });
 
+    it('returns 404 for a non-existent file', function(done) {
+      request(baseUrl + 'web/does-not-exist.js', function(err, res, text) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(404);
+        expect(text).to.match(/Not found/);
+        done();
+      });
+    });
+
     it('serves local content with browser ids', function(done) {
       assertUrlReturnsFileContents(baseUrl + '1234' + '/web/hello.js', 'tests/web/hello.js', done);
     });
