@@ -580,6 +580,30 @@ describe('Server', function() {
     });
   });
 
+  describe('https with pfx certificate', function() {
+    before(function(done) {
+      config = new Config('dev', {
+        port: port,
+        pfx: 'tests/fixtures/certs/localhost.pfx',
+        cwd: 'tests'
+      });
+      baseUrl = 'https://localhost:' + port + '/';
+
+      server = new Server(config);
+      server.once('server-start', function() {
+        done();
+      });
+      server.start();
+    });
+    after(function() {
+      return server.stop();
+    });
+
+    it('gets the home page over https via pfx certificate', function(done) {
+      request({ url: baseUrl, strictSSL: false }, done);
+    });
+  });
+
   describe('auto port assignment', function() {
     before(function(done) {
       config = new Config('dev', {
