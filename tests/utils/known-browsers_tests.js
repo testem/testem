@@ -1,13 +1,10 @@
 
 
-const { promisify } = require('util');
 const { fromCallback } = require('../../lib/utils/promises');
 const _ = require('lodash');
-const tmp = require('tmp');
+const fs = require('fs');
 const path = require('path');
 const os = require('os');
-
-const tmpDirAsync = promisify(tmp.dir);
 
 const expect = require('chai').expect;
 const file = require('chai-files').file;
@@ -58,9 +55,7 @@ describe('knownBrowsers', function() {
   beforeEach(function() {
     config = createConfig();
 
-    return tmpDirAsync().then(function(path) {
-      browserTmpDir = path;
-    });
+    browserTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
   });
 
   describe('Any platform', function() {
