@@ -3,8 +3,8 @@
 var os = require('os').type();
 var path = require('path');
 var fs = require('fs');
-var { exec, execSync } = require('child_process');
-var { mapLimit, fromCallback, retry } = require('../lib/utils/promises');
+var { execa, execaSync } = require('execa');
+var { mapLimit, retry } = require('../lib/utils/promises');
 
 // skip node@0.10, because of npm@1
 // and inability to pass arguments
@@ -41,7 +41,7 @@ var RETRIES = 3;
 var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
 
 // show available launchers
-execSync('node testem.js launchers', { stdio: 'inherit' });
+execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
 console.log('');
 console.log('Testing with flags:' + (testFlags || '[no custom flags provided]'));
 console.log('');
@@ -59,18 +59,16 @@ function testExamples(examples, callback) {
   mapLimit(examples, concurrency, testExample).then(() => callback(), callback);
 }
 
-function shellExec(cmd, runOpts) {
-  return fromCallback(function(callback) {
-    var opts = { cwd: runOpts.cwd, timeout: runOpts.timeout };
-    return exec(cmd, opts, function(err, stdout, stderr) {
-      if (err) {
-        return callback(new Error(
-          'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + err.code + '\n' + stdout + stderr
-        ));
-      }
-      callback(null, stdout);
-    });
-  });
+async function shellExec(cmd, runOpts) {
+  var opts = { cwd: runOpts.cwd, timeout: runOpts.timeout, shell: true };
+  try {
+    var result = await execa(cmd, opts);
+    return result.stdout;
+  } catch (err) {
+    throw new Error(
+      'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + err.exitCode + '\n' + err.stdout + err.stderr
+    );
+  }
 }
 
 function testExample(example) {
