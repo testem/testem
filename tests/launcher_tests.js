@@ -1,11 +1,11 @@
-
-
 const Launcher = require('../lib/launcher');
 const Config = require('../lib/config');
 const expect = require('chai').expect;
 const assert = require('chai').assert;
 const path = require('path');
+const fs = require('fs');
 const sinon = require('sinon');
+const { execaNode } = require('execa');
 
 const os = require('os');
 const isWin = require('../lib/utils/is-win')();
@@ -242,6 +242,57 @@ describe('Launcher', function() {
           done();
         });
       });
+    });
+  });
+
+  describe('browserTmpDir', function() {
+    let config, launcher, other;
+
+    beforeEach(function() {
+      config = new Config(null, {port: '7357', url: 'http://blah.com/'});
+      launcher = new Launcher('test browser', { protocol: 'browser' }, config);
+      other = null;
+    });
+
+    afterEach(function() {
+      if (launcher.browserTmpDirectory) {
+        fs.rmSync(launcher.browserTmpDirectory, { recursive: true, force: true });
+      }
+      if (other && other.browserTmpDirectory) {
+        fs.rmSync(other.browserTmpDirectory, { recursive: true, force: true });
+      }
+    });
+
+    it('returns a path to an existing directory', function() {
+      const dir = launcher.browserTmpDir();
+      expect(dir).to.be.a('string');
+      expect(fs.existsSync(dir)).to.be.true();
+      expect(fs.statSync(dir).isDirectory()).to.be.true();
+    });
+
+    it('directory is located under getUserDataDir()', function() {
+      const dir = fs.realpathSync(launcher.browserTmpDir());
+      const userDataDir = fs.realpathSync(config.getUserDataDir());
+      const relative = path.relative(userDataDir, dir);
+      expect(!relative.startsWith('..') && !path.isAbsolute(relative)).to.be.true();
+    });
+
+    it('returns the same path on repeated calls', function() {
+      const dir1 = launcher.browserTmpDir();
+      const dir2 = launcher.browserTmpDir();
+      expect(dir1).to.equal(dir2);
+    });
+
+    it('creates distinct directories for different launchers', function() {
+      other = new Launcher('other browser', { protocol: 'browser' }, config);
+      expect(launcher.browserTmpDir()).to.not.equal(other.browserTmpDir());
+    });
+
+    it('removes the directory when the process exits', async function() {
+      const helperPath = path.join(__dirname, 'support', 'launcher_tmp_cleanup_helper.js');
+      const { stdout } = await execaNode(helperPath);
+      const dir = stdout.trim();
+      expect(fs.existsSync(dir)).to.be.false();
     });
   });
 });
