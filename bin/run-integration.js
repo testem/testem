@@ -61,12 +61,12 @@ async function shellExec(cmd, runOpts) {
 }
 
 function testExample(example) {
-  if (skipExamples.indexOf(example) !== -1) {
+  if (skipExamples.includes(example)) {
     // proceed to the next one
     return;
   }
 
-  if (os === 'Windows_NT' && skipOnWindows.indexOf(example) !== -1) {
+  if (os === 'Windows_NT' && skipOnWindows.includes(example)) {
     // proceed to the next one
     return;
   }
@@ -76,7 +76,7 @@ function testExample(example) {
 
   return retry(npmInstall(runOpts), { max_tries: RETRIES }).then(function() {
     let cmd = testCmd;
-    if (skipDefiningReporter.indexOf(example) === -1) {
+    if (!skipDefiningReporter.includes(example)) {
       cmd += ' --launch "Headless Firefox"';
     }
 
