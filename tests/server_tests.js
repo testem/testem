@@ -111,6 +111,17 @@ describe('Server', function() {
       request(baseUrl + '/testem.js', done);
     });
 
+    it('gets testem.js with expected content', function(done) {
+      request(baseUrl + 'testem.js', function(err, res, text) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expect(res.headers['content-type']).to.match(/javascript/);
+        expect(text).to.include('TestemConfig');
+        expect(text).to.include('testem_client.js');
+        done();
+      });
+    });
+
     it('gets src file', function(done) {
       assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'tests/web/hello.js', done);
     });
