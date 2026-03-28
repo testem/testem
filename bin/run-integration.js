@@ -1,35 +1,33 @@
-
-
-var os = require('os').type();
-var path = require('path');
-var fs = require('fs');
-var { execa, execaSync } = require('execa');
-var { mapLimit, retry } = require('../lib/utils/promises');
+const os = require('os').type();
+const path = require('path');
+const fs = require('fs');
+const { execa, execaSync } = require('execa');
+const { mapLimit, retry } = require('../lib/utils/promises');
 
 // get extra params
-var argv = process.argv.slice(2);
-var testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
-var testCmd = 'npm run test -- ' + testFlags;
+const argv = process.argv.slice(2);
+const testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
+const testCmd = 'npm run test -- ' + testFlags;
 
-var skipExamples = [
+const skipExamples = [
   'browserstack', // requires credentials and doesn't work in CI
   'saucelabs',  // requires credentials and doesn't work in CI
   'template_stealjs', // not being maintained
 ];
-var skipOnWindows = [
+const skipOnWindows = [
   'coffeescript', // File not found: C:\projects\testem\examples\coffeescript\*.coffee
   'webpack' // 'webpack' is not recognized as an internal or external command, operable program or batch file.
 ];
-var skipDefiningReporter = [
+const skipDefiningReporter = [
   'node_example',
   'node_tap_example',
   'electron'
 ];
-var examplesPath = path.join(__dirname, '../examples');
-var DEFAULT_CONCURRENY = 5;
-var TIMEOUT = 180000; // npm install is sometimes really slow...
-var RETRIES = 3;
-var concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
+const examplesPath = path.join(__dirname, '../examples');
+const DEFAULT_CONCURRENY = 5;
+const TIMEOUT = 180000; // npm install is sometimes really slow...
+const RETRIES = 3;
+const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
 
 // show available launchers
 execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
@@ -51,9 +49,9 @@ function testExamples(examples, callback) {
 }
 
 async function shellExec(cmd, runOpts) {
-  var opts = { cwd: runOpts.cwd, timeout: runOpts.timeout, shell: true };
+  const opts = { cwd: runOpts.cwd, timeout: runOpts.timeout, shell: true };
   try {
-    var result = await execa(cmd, opts);
+    const result = await execa(cmd, opts);
     return result.stdout;
   } catch (err) {
     throw new Error(
@@ -73,11 +71,11 @@ function testExample(example) {
     return;
   }
 
-  var examplePath = path.join(examplesPath, example);
-  var runOpts = {silent: true, cwd: examplePath, timeout: TIMEOUT};
+  const examplePath = path.join(examplesPath, example);
+  const runOpts = {silent: true, cwd: examplePath, timeout: TIMEOUT};
 
   return retry(npmInstall(runOpts), { max_tries: RETRIES }).then(function() {
-    var cmd = testCmd;
+    let cmd = testCmd;
     if (skipDefiningReporter.indexOf(example) === -1) {
       cmd += ' --launch "Headless Firefox"';
     }
