@@ -426,6 +426,7 @@ describe('Server', function() {
           url: baseUrl + 'api-error/test'
         };
         request.get(options, function(err, res, text) {
+          expect(res.statusCode).to.eq(500);
           expect(text).to.match(/ECONNREFUSED/);
           expectMiddlewareHeaders(res);
           done();
