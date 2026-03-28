@@ -6,15 +6,6 @@ var fs = require('fs');
 var { execa, execaSync } = require('execa');
 var { mapLimit, retry } = require('../lib/utils/promises');
 
-// skip node@0.10, because of npm@1
-// and inability to pass arguments
-// to npm run-script commands
-var version = process.version.match(/^v(\d+)\.(\d+).(\d+)/);
-if (version[1] < 1 && version[2] < 12) {
-  console.info('Integration auto testing supports node@0.12+', version);
-  process.exit(0);
-}
-
 // get extra params
 var argv = process.argv.slice(2);
 var testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
