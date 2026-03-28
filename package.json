@@ -24,7 +24,7 @@
     "@xmldom/xmldom": "^0.8.0",
     "backbone": "^1.1.2",
     "charm": "^1.0.0",
-    "commander": "^2.6.0",
+    "commander": "^14.0.3",
     "compression": "^1.7.4",
     "consolidate": "^1.0.4",
     "execa": "^9.6.1",
