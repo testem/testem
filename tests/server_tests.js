@@ -184,6 +184,24 @@ describe('Server', function() {
       assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
     });
 
+    it('serves the homepage for a numeric browser id directly', function(done) {
+      request(baseUrl + '1234', function(err, res) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expectMiddlewareHeaders(res);
+        done();
+      });
+    });
+
+    it('serves the homepage for tap id (-1) directly', function(done) {
+      request(baseUrl + '-1', function(err, res) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expectMiddlewareHeaders(res);
+        done();
+      });
+    });
+
     it('accepts other http methods', function(done) {
       request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
         expect(err).to.be.null();
@@ -281,6 +299,14 @@ describe('Server', function() {
 
       it('proxies get request to api1', function(done) {
         request.get(baseUrl + 'api1/hello', function(err, res, text) {
+          expect(text).to.equal('API');
+          expectMiddlewareHeaders(res);
+          done();
+        });
+      });
+
+      it('proxies get request with deep subpath to api1', function(done) {
+        request.get(baseUrl + 'api1/foo/bar/baz', function(err, res, text) {
           expect(text).to.equal('API');
           expectMiddlewareHeaders(res);
           done();
