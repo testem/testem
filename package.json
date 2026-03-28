@@ -28,7 +28,7 @@
     "compression": "^1.8.1",
     "consolidate": "^1.0.4",
     "execa": "^9.6.1",
-    "express": "^4.22.1",
+    "express": "^5.2.1",
     "fireworm": "^0.7.2",
     "glob": "^13.0.6",
     "http-proxy": "^1.18.1",
