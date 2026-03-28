@@ -9,7 +9,7 @@ const Api = require('./lib/api');
 // options, it goes in as a string as the 1st argument of the
 // "action" callback, we don't want this
 function act(fun) {
-  return function () {
+  return function() {
     let options = arguments[arguments.length - 1];
     fun(options);
   };
