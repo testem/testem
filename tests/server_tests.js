@@ -239,6 +239,16 @@ describe('Server', function() {
         assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
       });
 
+      it('serves a non-numeric single-segment path as a static file', function(done) {
+        // A single slug like /data should fall through the numeric /:id guard
+        // and be served via the /*file catch-all route as a directory listing.
+        request(baseUrl + 'data', function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(200);
+          done();
+        });
+      });
+
       it('accepts other http methods', function(done) {
         request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
           expect(err).to.be.null();
