@@ -6,8 +6,8 @@ const { mapLimit, retry } = require('../lib/utils/promises');
 
 // get extra params
 const argv = process.argv.slice(2);
-const testFlags = (argv.length ? ' ' + argv.join(' ') : '') + ' -p 0';
-const testCmd = 'npm run test -- ' + testFlags;
+const testFlags = (argv.length ? ` ${argv.join(' ')}` : '') + ' -p 0';
+const testCmd = `npm run test -- ${testFlags}`;
 
 const skipExamples = [
   'browserstack', // requires credentials and doesn't work in CI
@@ -32,7 +32,7 @@ const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAUL
 // show available launchers
 execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
 console.log('');
-console.log('Testing with flags:' + (testFlags || '[no custom flags provided]'));
+console.log(`Testing with flags:${testFlags || '[no custom flags provided]'}`);
 console.log('');
 
 // run examples tests
@@ -55,7 +55,7 @@ async function shellExec(cmd, runOpts) {
     return result.stdout;
   } catch (err) {
     throw new Error(
-      'Cmd: ' + cmd + ' in directory: ' + path.basename(runOpts.cwd) + ' failed with exit code: ' + err.exitCode + '\n' + err.stdout + err.stderr
+      `Cmd: ${cmd} in directory: ${path.basename(runOpts.cwd)} failed with exit code: ${err.exitCode}\n${err.stdout}${err.stderr}`
     );
   }
 }
@@ -83,11 +83,11 @@ function testExample(example) {
     return retry(runExample(cmd, runOpts), { max_tries: RETRIES });
   }).then(function(testOutput) {
     // output test results
-    console.log('Testing ' + example);
+    console.log(`Testing ${example}`);
     console.log(testOutput);
   }).catch(function(err) {
     // output error
-    console.log('Testing ' + example + ' failed');
+    console.log(`Testing ${example} failed`);
     throw err;
   });
 }
