@@ -814,6 +814,55 @@ describe('Server', function() {
     });
   });
 
+  describe('proxy with multiple wildcards in URL key', function() {
+    let wildcardApi;
+
+    before(function(done) {
+      config = new Config('dev', {
+        port: port,
+        cwd: 'tests',
+        // Two * wildcards exercise the wIdx counter, which generates unique
+        // named params (:_proxyW0, :_proxyW1) to keep the path-to-regexp
+        // pattern valid under Express 5.
+        proxies: {
+          '/api*/v*': {
+            target: 'http://localhost:13379',
+          },
+        },
+      });
+      baseUrl = 'http://localhost:' + port + '/';
+
+      wildcardApi = http.createServer(function(req, res) {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('proxied');
+      });
+
+      server = new Server(config);
+      server.start();
+
+      server.once('server-start', function() {
+        wildcardApi.listen(13379, function() {
+          done();
+        });
+      });
+    });
+
+    after(function() {
+      return server
+        .stop()
+        .then(() => new Promise((resolve) => wildcardApi.close(resolve)));
+    });
+
+    it('proxies requests when the proxy URL key contains multiple wildcards', function(done) {
+      request.get(baseUrl + 'api1/v2/resource', function(err, res, text) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.equal('proxied');
+        done();
+      });
+    });
+  });
+
   describe('server start error', function() {
     it('rejects and emits server-error when port is already in use', function(done) {
       const occupiedConfig = new Config('dev', { port: 0, cwd: 'tests' });
