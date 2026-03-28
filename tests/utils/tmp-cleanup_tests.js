@@ -13,7 +13,9 @@ describe('tmp-cleanup', function() {
     let dir;
 
     afterEach(function() {
-      fs.rmSync(dir, { recursive: true, force: true });
+      if (dir) {
+        fs.rmSync(dir, { recursive: true, force: true });
+      }
     });
 
     it('does not remove the directory immediately', function() {
@@ -24,11 +26,11 @@ describe('tmp-cleanup', function() {
 
     it('is idempotent when called multiple times with the same path', function() {
       dir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-cleanup-test-'));
-      const exitCount = process.listenerCount('exit');
       registerCleanup(dir);
+      const exitCountAfterFirst = process.listenerCount('exit');
       registerCleanup(dir);
       // registering twice must not add a second process.on('exit') handler
-      expect(process.listenerCount('exit')).to.equal(exitCount);
+      expect(process.listenerCount('exit')).to.equal(exitCountAfterFirst);
     });
 
     it('removes the directory when the process exits', async function() {

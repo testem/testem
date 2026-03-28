@@ -12,7 +12,10 @@ var HookRunner = require('../../lib/runners/hook_runner');
 var { using } = require('../../lib/utils/promises');
 var isWin = require('../../lib/utils/is-win')();
 
-var tmpNameAsync = () => Promise.resolve(path.join(os.tmpdir(), randomBytes(8).toString('hex')));
+var tmpNameAsync = async () => {
+  const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'hook-runner-'));
+  return path.join(dir, randomBytes(8).toString('hex'));
+};
 var fsStatAsync = path => fs.promises.stat(path);
 var fsReadFileAsync = path => fs.promises.readFile(path);
 

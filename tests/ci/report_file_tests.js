@@ -52,7 +52,7 @@ describe('report file output', function() {
   });
 
   it('doesn\'t create a file if the report_file parameter is not passed in', function(done) {
-    const unusedFilename = path.join(os.tmpdir(), randomBytes(8).toString('hex'));
+    const unusedFilename = path.join(reportDir, randomBytes(8).toString('hex'));
     {
       let config = new Config('ci', {
         reporter: new FakeReporter(),

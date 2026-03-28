@@ -58,6 +58,12 @@ describe('knownBrowsers', function() {
     browserTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
   });
 
+  afterEach(function() {
+    if (browserTmpDir && fs.existsSync(browserTmpDir)) {
+      fs.rmSync(browserTmpDir, { recursive: true, force: true });
+    }
+  });
+
   describe('Any platform', function() {
     describe('Firefox', function() {
       let browsers;

@@ -9,7 +9,10 @@ const path = require('path');
 const { randomBytes } = require('crypto');
 const PassThrough = require('stream').PassThrough;
 
-const tmpNameAsync = () => Promise.resolve(path.join(os.tmpdir(), randomBytes(8).toString('hex')));
+const tmpNameAsync = () =>
+  fs.promises
+    .mkdtemp(path.join(os.tmpdir(), 'reporter-tests-'))
+    .then(dir => path.join(dir, randomBytes(8).toString('hex')));
 
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');

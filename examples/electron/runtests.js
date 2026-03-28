@@ -33,7 +33,8 @@ var testPagePath = path.join.apply(null, testPageObj.pathname.split('/'));
 var htmlContent = fs.readFileSync(testPagePath, 'utf8').toString();
 htmlContent = htmlContent.replace('<head>', '<head>\n<base href="' + fileUrl(__dirname) + '/">');
 htmlContent = htmlContent.replace('src="/testem.js"', 'src="' + testemJsUrl + '"');
-var tmpFilePath = path.join(os.tmpdir(), randomBytes(8).toString('hex') + '.html');
+var tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
+var tmpFilePath = path.join(tmpDir, randomBytes(8).toString('hex') + '.html');
 fs.writeFileSync(tmpFilePath, htmlContent, 'utf8');
 
 // Build a file: URL to our temp file, preserving query params from the test
