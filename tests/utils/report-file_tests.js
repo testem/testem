@@ -1,11 +1,12 @@
 
 
-const { promisify } = require('util');
 const expect = require('chai').expect;
-const tmp = require('tmp');
+const os = require('os');
+const path = require('path');
+const { randomBytes } = require('crypto');
 const Writable = require('stream').Writable;
 
-const tmpNameAsync = promisify(tmp.tmpName);
+const tmpNameAsync = () => Promise.resolve(path.join(os.tmpdir(), randomBytes(8).toString('hex')));
 
 const ReportFile = require('../../lib/utils/report-file');
 

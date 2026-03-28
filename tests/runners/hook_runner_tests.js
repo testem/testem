@@ -3,17 +3,16 @@
 var fs = require('fs');
 var path = require('path');
 var os = require('os');
+var { randomBytes } = require('crypto');
 
 var sinon = require('sinon');
 var expect = require('chai').expect;
-var tmp = require('tmp');
 
 var HookRunner = require('../../lib/runners/hook_runner');
 var { using } = require('../../lib/utils/promises');
 var isWin = require('../../lib/utils/is-win')();
 
-var tmpNameAsync = () => new Promise((resolve, reject) =>
-  tmp.tmpName((err, name) => err ? reject(err) : resolve(name)));
+var tmpNameAsync = () => Promise.resolve(path.join(os.tmpdir(), randomBytes(8).toString('hex')));
 var fsStatAsync = path => fs.promises.stat(path);
 var fsReadFileAsync = path => fs.promises.readFile(path);
 

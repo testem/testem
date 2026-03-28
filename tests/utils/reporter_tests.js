@@ -3,12 +3,13 @@
 const { using } = require('../../lib/utils/promises');
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const tmp = require('tmp');
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { randomBytes } = require('crypto');
 const PassThrough = require('stream').PassThrough;
 
-const tmpNameAsync = () => new Promise((resolve, reject) =>
-  tmp.tmpName((err, name) => err ? reject(err) : resolve(name)));
+const tmpNameAsync = () => Promise.resolve(path.join(os.tmpdir(), randomBytes(8).toString('hex')));
 
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');
