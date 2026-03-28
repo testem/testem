@@ -1,16 +1,7 @@
-
-
 const expect = require('chai').expect;
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const { randomBytes } = require('crypto');
 const Writable = require('stream').Writable;
 
-const tmpNameAsync = () =>
-  fs.promises
-    .mkdtemp(path.join(os.tmpdir(), 'report-file-tests-'))
-    .then(dir => path.join(dir, randomBytes(8).toString('hex')));
+const { tmpNameAsync } = require('../support/tmp-name');
 
 const ReportFile = require('../../lib/utils/report-file');
 

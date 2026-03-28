@@ -5,6 +5,7 @@ var url = require('url');
 var fileUrl = require('file-url');
 var { randomBytes } = require('crypto');
 var execFile = require('child_process').execFile;
+var { registerCleanup } = require('../../lib/utils/tmp-cleanup');
 
 var baseObj = url.parse(process.argv[2]);
 var testPageObj = url.parse(process.argv[3], true);
@@ -34,6 +35,7 @@ var htmlContent = fs.readFileSync(testPagePath, 'utf8').toString();
 htmlContent = htmlContent.replace('<head>', '<head>\n<base href="' + fileUrl(__dirname) + '/">');
 htmlContent = htmlContent.replace('src="/testem.js"', 'src="' + testemJsUrl + '"');
 var tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
+registerCleanup(tmpDir);
 var tmpFilePath = path.join(tmpDir, randomBytes(8).toString('hex') + '.html');
 fs.writeFileSync(tmpFilePath, htmlContent, 'utf8');
 

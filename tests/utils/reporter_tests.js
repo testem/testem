@@ -4,15 +4,9 @@ const { using } = require('../../lib/utils/promises');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const { randomBytes } = require('crypto');
 const PassThrough = require('stream').PassThrough;
 
-const tmpNameAsync = () =>
-  fs.promises
-    .mkdtemp(path.join(os.tmpdir(), 'reporter-tests-'))
-    .then(dir => path.join(dir, randomBytes(8).toString('hex')));
+const { tmpNameAsync } = require('../support/tmp-name');
 
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');

@@ -5,8 +5,9 @@ const os = require('os');
 const path = require('path');
 const { execaNode } = require('execa');
 const expect = require('chai').expect;
+const isWin = require('../../lib/utils/is-win')();
 
-const { registerCleanup } = require('../../lib/utils/tmp-cleanup');
+const { registerCleanup, _registeredDirs } = require('../../lib/utils/tmp-cleanup');
 
 describe('tmp-cleanup', function() {
   describe('registerCleanup', function() {
@@ -27,10 +28,10 @@ describe('tmp-cleanup', function() {
     it('is idempotent when called multiple times with the same path', function() {
       dir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-cleanup-test-'));
       registerCleanup(dir);
-      const exitCountAfterFirst = process.listenerCount('exit');
+      const sizeAfterFirst = _registeredDirs.size;
       registerCleanup(dir);
-      // registering twice must not add a second process.on('exit') handler
-      expect(process.listenerCount('exit')).to.equal(exitCountAfterFirst);
+      // registering same path twice must not add a second entry to the set
+      expect(_registeredDirs.size).to.equal(sizeAfterFirst);
     });
 
     it('removes the directory when the process exits', async function() {
@@ -40,6 +41,30 @@ describe('tmp-cleanup', function() {
       );
       const { stdout } = await execaNode(helperPath);
       dir = stdout.trim(); // afterEach uses this; force:true means no-op if already gone
+      expect(fs.existsSync(dir)).to.be.false();
+    });
+
+    it('removes the directory when the process receives SIGTERM', async function() {
+      if (isWin) { return this.skip(); }
+      const helperPath = path.join(__dirname, '../support/tmp_cleanup_signal_helper.js');
+      const subprocess = execaNode(helperPath);
+      dir = await new Promise(resolve => {
+        subprocess.stdout.once('data', chunk => resolve(chunk.toString().trim()));
+      });
+      subprocess.kill('SIGTERM');
+      await subprocess.catch(() => {});
+      expect(fs.existsSync(dir)).to.be.false();
+    });
+
+    it('removes the directory when the process receives SIGINT', async function() {
+      if (isWin) { return this.skip(); }
+      const helperPath = path.join(__dirname, '../support/tmp_cleanup_signal_helper.js');
+      const subprocess = execaNode(helperPath);
+      dir = await new Promise(resolve => {
+        subprocess.stdout.once('data', chunk => resolve(chunk.toString().trim()));
+      });
+      subprocess.kill('SIGINT');
+      await subprocess.catch(() => {});
       expect(fs.existsSync(dir)).to.be.false();
     });
   });
