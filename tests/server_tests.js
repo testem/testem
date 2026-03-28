@@ -766,6 +766,54 @@ describe('Server', function() {
     });
   });
 
+  describe('proxy with trailing slash URL key', function() {
+    let trailingApi;
+
+    before(function(done) {
+      config = new Config('dev', {
+        port: port,
+        cwd: 'tests',
+        // The trailing slash in the key should be stripped before building the
+        // path-to-regexp pattern, so /api-trailing/ → /api-trailing{/*_proxyRest}
+        proxies: {
+          '/api-trailing/': {
+            target: 'http://localhost:13378',
+          },
+        },
+      });
+      baseUrl = 'http://localhost:' + port + '/';
+
+      trailingApi = http.createServer(function(req, res) {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('proxied');
+      });
+
+      server = new Server(config);
+      server.start();
+
+      server.once('server-start', function() {
+        trailingApi.listen(13378, function() {
+          done();
+        });
+      });
+    });
+
+    after(function() {
+      return server
+        .stop()
+        .then(() => new Promise((resolve) => trailingApi.close(resolve)));
+    });
+
+    it('proxies requests when the proxy URL key has a trailing slash', function(done) {
+      request.get(baseUrl + 'api-trailing/hello', function(err, res, text) {
+        expect(err).to.be.null();
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.equal('proxied');
+        done();
+      });
+    });
+  });
+
   describe('server start error', function() {
     it('rejects and emits server-error when port is already in use', function(done) {
       const occupiedConfig = new Config('dev', { port: 0, cwd: 'tests' });
