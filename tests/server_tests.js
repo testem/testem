@@ -168,6 +168,16 @@ describe('Server', function() {
           done();
         });
       });
+
+      it('URL-encodes test_page path that starts with a slash', function(done) {
+        config.set('test_page', '/my/custom-page.html');
+        request(baseUrl + '1234', { followRedirect: false }, function(err, res) {
+          expect(err).to.be.null();
+          expect(res.statusCode).to.eq(302);
+          expect(res.headers.location).to.include('%2F');
+          done();
+        });
+      });
     });
 
     describe('testem.js', function() {
