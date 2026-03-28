@@ -633,6 +633,22 @@ describe('Server', function() {
       });
     });
   });
+
+  describe('stop() idempotency', function() {
+    let stopServer;
+
+    before(function() {
+      const stopConfig = new Config('dev', { port: 0, cwd: 'tests' });
+      stopServer = new Server(stopConfig);
+      return stopServer.start();
+    });
+
+    it('returns a resolved promise when stop() is called a second time', function() {
+      return stopServer.stop().then(function() {
+        return stopServer.stop();
+      });
+    });
+  });
 });
 
 function middleware(app) {
