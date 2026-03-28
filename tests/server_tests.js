@@ -24,41 +24,41 @@ describe('Server', function() {
         middleware: [middleware],
         src_files: [
           'web/hello.js',
-          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
+          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] },
         ],
         routes: {
           '/direct-test': 'web/direct',
-          '/fallback-test': ['web/direct', 'web/fallback']
+          '/fallback-test': ['web/direct', 'web/fallback'],
         },
         cwd: 'tests',
         proxies: {
           '/api1': {
-            target: 'http://localhost:13372'
+            target: 'http://localhost:13372',
           },
           '/api2': {
             target: 'https://localhost:13373',
-            secure: false
+            secure: false,
           },
           '/api3': {
             target: 'http://localhost:13374',
-            onlyContentTypes: ['json']
+            onlyContentTypes: ['json'],
           },
           '/api4': {
-            target: 'http://localhost:13375'
+            target: 'http://localhost:13375',
           },
           '/wsapi': {
             target: 'ws://localhost:13376',
-            ws: true
+            ws: true,
           },
           '/wssapi': {
             target: 'wss://localhost:13377',
             ws: true,
-            secure: false
+            secure: false,
           },
           '/api-error': {
-            target: 'http://localhost:13378'
+            target: 'http://localhost:13378',
           },
-        }
+        },
       });
       baseUrl = 'http://localhost:' + port + '/';
 
@@ -115,13 +115,17 @@ describe('Server', function() {
       it('gets scripts for the home page', function(done) {
         request(baseUrl, function(err, res, text) {
           let $ = cheerio.load(text);
-          let srcs = $('script').map(function() { return $(this).attr('src'); }).get();
+          let srcs = $('script')
+            .map(function() {
+              return $(this).attr('src');
+            })
+            .get();
           expect(srcs).to.deep.equal([
             '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
             '/testem.js',
             '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
             'web' + path.sep + 'hello.js',
-            'web' + path.sep + 'hello_tst.js'
+            'web' + path.sep + 'hello_tst.js',
           ]);
           expectMiddlewareHeaders(res);
           done();
@@ -144,15 +148,19 @@ describe('Server', function() {
               '    <script src="web/hello.js"></script>',
               '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
               '</head>',
-              ''
-            ].join(os.EOL));
+              '',
+            ].join(os.EOL),
+          );
           expectMiddlewareHeaders(res);
           done();
         });
       });
 
       it('renders the first test page by default when multiple are provided', function(done) {
-        config.set('test_page', ['web/tests_template.mustache', 'web/tests.html']);
+        config.set('test_page', [
+          'web/tests_template.mustache',
+          'web/tests.html',
+        ]);
         request(baseUrl, function(err, res, text) {
           expect(text).to.equal(
             [
@@ -162,8 +170,9 @@ describe('Server', function() {
               '    <script src="web/hello.js"></script>',
               '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
               '</head>',
-              ''
-            ].join(os.EOL));
+              '',
+            ].join(os.EOL),
+          );
           expectMiddlewareHeaders(res);
           done();
         });
@@ -171,12 +180,16 @@ describe('Server', function() {
 
       it('URL-encodes test_page path that starts with a slash', function(done) {
         config.set('test_page', '/my/custom-page.html');
-        request(baseUrl + '1234', { followRedirect: false }, function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(302);
-          expect(res.headers.location).to.include('%2F');
-          done();
-        });
+        request(
+          baseUrl + '1234',
+          { followRedirect: false },
+          function(err, res) {
+            expect(err).to.be.null();
+            expect(res.statusCode).to.eq(302);
+            expect(res.headers.location).to.include('%2F');
+            done();
+          },
+        );
       });
     });
 
@@ -199,16 +212,26 @@ describe('Server', function() {
 
     describe('static file serving', function() {
       it('gets src file', function(done) {
-        assertUrlReturnsFileContents(baseUrl + 'web/hello.js', 'tests/web/hello.js', done);
+        assertUrlReturnsFileContents(
+          baseUrl + 'web/hello.js',
+          'tests/web/hello.js',
+          done,
+        );
       });
 
       it('gets bundled files', function(done) {
-        assertUrlReturnsFileContents(baseUrl + 'testem/connection.html', 'public/testem/connection.html', done);
+        assertUrlReturnsFileContents(
+          baseUrl + 'testem/connection.html',
+          'public/testem/connection.html',
+          done,
+        );
       });
 
       it('gets a file using a POST request', function(done) {
         request.post(baseUrl + 'web/hello.js', function(err, res, text) {
-          expect(text).to.equal(fs.readFileSync('tests/web/hello.js').toString());
+          expect(text).to.equal(
+            fs.readFileSync('tests/web/hello.js').toString(),
+          );
           expectMiddlewareHeaders(res);
           done();
         });
@@ -232,11 +255,27 @@ describe('Server', function() {
       });
 
       it('serves local content with browser ids', function(done) {
-        assertUrlReturnsFileContents(baseUrl + '1234' + '/web/hello.js', 'tests/web/hello.js', done);
+        assertUrlReturnsFileContents(
+          baseUrl + '1234' + '/web/hello.js',
+          'tests/web/hello.js',
+          done,
+        );
       });
 
       it('serves local content with tap id', function(done) {
-        assertUrlReturnsFileContents(baseUrl + '-1' + '/web/hello.js', 'tests/web/hello.js', done);
+        assertUrlReturnsFileContents(
+          baseUrl + '-1' + '/web/hello.js',
+          'tests/web/hello.js',
+          done,
+        );
+      });
+
+      it('serves local content with any negative numeric id', function(done) {
+        assertUrlReturnsFileContents(
+          baseUrl + '-5' + '/web/hello.js',
+          'tests/web/hello.js',
+          done,
+        );
       });
 
       it('serves a non-numeric single-segment path as a static file', function(done) {
@@ -267,7 +306,11 @@ describe('Server', function() {
 
     describe('route config', function() {
       it('routes server paths to local paths', function(done) {
-        assertUrlReturnsFileContents(baseUrl + 'direct-test/test.js', 'tests/web/direct/test.js', done);
+        assertUrlReturnsFileContents(
+          baseUrl + 'direct-test/test.js',
+          'tests/web/direct/test.js',
+          done,
+        );
       });
 
       it('allows fallback paths', function(done) {
@@ -277,8 +320,16 @@ describe('Server', function() {
             done();
           }
         };
-        assertUrlReturnsFileContents(baseUrl + 'fallback-test/test.js', 'tests/web/direct/test.js', cb);
-        assertUrlReturnsFileContents(baseUrl + 'fallback-test/test2.js', 'tests/web/fallback/test2.js', cb);
+        assertUrlReturnsFileContents(
+          baseUrl + 'fallback-test/test.js',
+          'tests/web/direct/test.js',
+          cb,
+        );
+        assertUrlReturnsFileContents(
+          baseUrl + 'fallback-test/test2.js',
+          'tests/web/fallback/test2.js',
+          cb,
+        );
       });
     });
 
@@ -292,7 +343,7 @@ describe('Server', function() {
         });
         let options = {
           key: fs.readFileSync('tests/fixtures/certs/localhost.key'),
-          cert: fs.readFileSync('tests/fixtures/certs/localhost.cert')
+          cert: fs.readFileSync('tests/fixtures/certs/localhost.cert'),
         };
         api2 = https.createServer(options, function(req, res) {
           res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -367,8 +418,8 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api2/hello',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         };
         request.get(options, function(err, res, text) {
           expect(text).to.equal('API - 2');
@@ -381,8 +432,8 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api1/hello',
           headers: {
-            Accept: 'application/json'
-          }
+            Accept: 'application/json',
+          },
         };
         request.post(options, function(err, res, text) {
           expect(text).to.equal('API');
@@ -395,8 +446,8 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api3/test',
           headers: {
-            Accept: 'application/json'
-          }
+            Accept: 'application/json',
+          },
         };
         request.get(options, function(err, res, text) {
           expect(text).to.equal('{"API":3}');
@@ -409,8 +460,8 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api3/test',
           headers: {
-            Accept: 'application/json'
-          }
+            Accept: 'application/json',
+          },
         };
         request.post(options, function(err, res, text) {
           expect(text).to.equal('{"API":3}');
@@ -423,9 +474,9 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api4/test',
           headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
           },
-          body: '{test: \'some value\'}'
+          body: '{test: \'some value\'}',
         };
         request.post(options, function(err, res, text) {
           if (err) {
@@ -441,8 +492,9 @@ describe('Server', function() {
         let options = {
           url: baseUrl + 'api3/test',
           headers: {
-            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-          }
+            Accept:
+              'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          },
         };
         request.get(options, function(err, res, text) {
           expect(text).to.equal('Not found: /api3/test');
@@ -453,7 +505,7 @@ describe('Server', function() {
 
       it('returns an error when a requst can not be proxied', function(done) {
         let options = {
-          url: baseUrl + 'api-error/test'
+          url: baseUrl + 'api-error/test',
         };
         request.get(options, function(err, res, text) {
           expect(res.statusCode).to.eq(500);
@@ -465,7 +517,8 @@ describe('Server', function() {
 
       it('proxies WebSocket to wsapi (ws → ws)', function(done) {
         const wsMsg = 'Hello over wsapi: 341bcb0e-db49-468d-924b-135645cafb90';
-        const wsPingMsg = 'Ping over wsapi: bb161729-414d-4861-8090-db3bbbe728d3';
+        const wsPingMsg =
+          'Ping over wsapi: bb161729-414d-4861-8090-db3bbbe728d3';
         const wsapi = new ws.Server({ server: wsapi_server });
         wsapi.on('connection', function(socket) {
           socket.on('message', function(message) {
@@ -490,8 +543,10 @@ describe('Server', function() {
       });
 
       it('proxies WebSocket to wssapi (ws → wss)', function(done) {
-        const wssMsg = 'Hello over wssapi: 5a120d3f-be82-408f-99ec-be92e7cd8ab7';
-        const wssPingMsg = 'Ping over wssapi: 19c0c2eb-52a3-4be3-83d1-f93eb35479ca';
+        const wssMsg =
+          'Hello over wssapi: 5a120d3f-be82-408f-99ec-be92e7cd8ab7';
+        const wssPingMsg =
+          'Ping over wssapi: 19c0c2eb-52a3-4be3-83d1-f93eb35479ca';
         const wssapi = new ws.Server({ server: wssapi_server });
         wssapi.on('connection', function(socket) {
           socket.on('message', function(message) {
@@ -502,7 +557,9 @@ describe('Server', function() {
             expect(data.toString()).to.equal(wssPingMsg);
           }); // + autoPong by server
         });
-        const wssClient = new ws.WebSocket('ws://localhost:' + port + '/wssapi'); // ws → wss !
+        const wssClient = new ws.WebSocket(
+          'ws://localhost:' + port + '/wssapi',
+        ); // ws → wss !
         wssClient.on('open', function() {
           wssClient.on('pong', function(data) {
             expect(data.toString()).to.equal(wssPingMsg);
@@ -526,8 +583,8 @@ describe('Server', function() {
         proxies: {
           '/*/': {
             target: 'http://localhost:13372',
-          }
-        }
+          },
+        },
       });
       baseUrl = 'http://localhost:' + port + '/';
 
@@ -546,17 +603,22 @@ describe('Server', function() {
       });
     });
     after(function() {
-      return server.stop().then(() => new Promise(resolve => api.close(resolve)));
+      return server
+        .stop()
+        .then(() => new Promise((resolve) => api.close(resolve)));
     });
 
     it('does not proxy testem files', function(done) {
       request.get(baseUrl + 'foo/bar', function(err, res, text) {
         expect(text).to.equal('proxied');
 
-        request.get(baseUrl + 'testem/connection.html', function(err, res, text) {
-          expect(text).to.not.equal('proxied');
-          done();
-        });
+        request.get(
+          baseUrl + 'testem/connection.html',
+          function(err, res, text) {
+            expect(text).to.not.equal('proxied');
+            done();
+          },
+        );
       });
     });
   });
@@ -569,9 +631,9 @@ describe('Server', function() {
         cert: 'tests/fixtures/certs/localhost.cert',
         src_files: [
           'web/hello.js',
-          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
+          { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] },
         ],
-        cwd: 'tests'
+        cwd: 'tests',
       });
       baseUrl = 'https://localhost:' + port + '/';
 
@@ -595,7 +657,7 @@ describe('Server', function() {
       config = new Config('dev', {
         port: port,
         pfx: 'tests/fixtures/certs/localhost.pfx',
-        cwd: 'tests'
+        cwd: 'tests',
       });
       baseUrl = 'https://localhost:' + port + '/';
 
@@ -618,7 +680,7 @@ describe('Server', function() {
     before(function(done) {
       config = new Config('dev', {
         port: 0,
-        cwd: 'tests'
+        cwd: 'tests',
       });
       server = new Server(config);
       server.once('server-start', function() {
@@ -645,11 +707,8 @@ describe('Server', function() {
         port: port,
         unsafe_file_serving: false,
         socket_heartbeat_timeout: 6,
-        serve_files: [
-          'web/hello.js',
-          '../public/.eslintrc.js'
-        ],
-        cwd: forwardSlashCwd
+        serve_files: ['web/hello.js', '../public/.eslintrc.js'],
+        cwd: forwardSlashCwd,
       });
       baseUrl = 'http://localhost:' + port + '/';
 
@@ -685,7 +744,7 @@ describe('Server', function() {
       const routesConfig = new Config('dev', {
         port: port,
         cwd: 'tests',
-        routes: { '/': 'web/direct' }
+        routes: { '/': 'web/direct' },
       });
       routesBaseUrl = 'http://localhost:' + port + '/';
       routesServer = new Server(routesConfig);
@@ -714,7 +773,10 @@ describe('Server', function() {
 
       occupiedServer.start().then(function() {
         const occupiedPort = occupiedConfig.get('port');
-        const conflictConfig = new Config('dev', { port: occupiedPort, cwd: 'tests' });
+        const conflictConfig = new Config('dev', {
+          port: occupiedPort,
+          cwd: 'tests',
+        });
         const conflictServer = new Server(conflictConfig);
         let errorEmitted = false;
 
@@ -722,17 +784,22 @@ describe('Server', function() {
           errorEmitted = true;
         });
 
-        conflictServer.start().then(function() {
-          return occupiedServer.stop().then(function() {
-            done(new Error('Expected start() to reject on port conflict'));
-          });
-        }).catch(function(err) {
-          expect(err.code).to.eq('EADDRINUSE');
-          expect(errorEmitted).to.eq(true);
-          return occupiedServer.stop();
-        }).then(function() {
-          done();
-        }).catch(done);
+        conflictServer
+          .start()
+          .then(function() {
+            return occupiedServer.stop().then(function() {
+              done(new Error('Expected start() to reject on port conflict'));
+            });
+          })
+          .catch(function(err) {
+            expect(err.code).to.eq('EADDRINUSE');
+            expect(errorEmitted).to.eq(true);
+            return occupiedServer.stop();
+          })
+          .then(function() {
+            done();
+          })
+          .catch(done);
       });
     });
   });
