@@ -27,7 +27,7 @@ const examplesPath = path.join(__dirname, '../examples');
 const DEFAULT_CONCURRENY = 5;
 const TIMEOUT = 180000; // npm install is sometimes really slow...
 const RETRIES = 3;
-const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY);
+const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY, 10);
 
 // show available launchers
 execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
