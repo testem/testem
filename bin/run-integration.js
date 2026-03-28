@@ -36,16 +36,14 @@ console.log(`Testing with flags:${testFlags || '[no custom flags provided]'}`);
 console.log('');
 
 // run examples tests
-testExamples(fs.readdirSync(examplesPath), function(err) {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
+testExamples(fs.readdirSync(examplesPath)).catch(err => {
+  console.log(err);
+  process.exit(1);
 });
 
 // test examples one by one, async
-function testExamples(examples, callback) {
-  mapLimit(examples, concurrency, testExample).then(() => callback(), callback);
+async function testExamples(examples) {
+  await mapLimit(examples, concurrency, testExample);
 }
 
 async function shellExec(cmd, runOpts) {
@@ -60,7 +58,7 @@ async function shellExec(cmd, runOpts) {
   }
 }
 
-function testExample(example) {
+async function testExample(example) {
   if (skipExamples.includes(example)) {
     // proceed to the next one
     return;
@@ -72,24 +70,23 @@ function testExample(example) {
   }
 
   const examplePath = path.join(examplesPath, example);
-  const runOpts = {silent: true, cwd: examplePath, timeout: TIMEOUT};
+  const runOpts = { silent: true, cwd: examplePath, timeout: TIMEOUT };
 
-  return retry(npmInstall(runOpts), { max_tries: RETRIES }).then(function() {
+  try {
+    await retry(npmInstall(runOpts), { max_tries: RETRIES });
+
     let cmd = testCmd;
     if (!skipDefiningReporter.includes(example)) {
       cmd += ' --launch "Headless Firefox"';
     }
 
-    return retry(runExample(cmd, runOpts), { max_tries: RETRIES });
-  }).then(function(testOutput) {
-    // output test results
+    const testOutput = await retry(runExample(cmd, runOpts), { max_tries: RETRIES });
     console.log(`Testing ${example}`);
     console.log(testOutput);
-  }).catch(function(err) {
-    // output error
+  } catch (err) {
     console.log(`Testing ${example} failed`);
     throw err;
-  });
+  }
 }
 
 function runExample(cmd, runOpts) {
