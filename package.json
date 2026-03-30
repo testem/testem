@@ -17,7 +17,7 @@
     "url": "http://github.com/testem/testem/issues"
   },
   "engines": {
-    "node": ">= 7.*"
+    "node": ">= 20.*"
   },
   "license": "MIT",
   "dependencies": {
