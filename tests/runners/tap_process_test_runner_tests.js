@@ -154,6 +154,8 @@ describe('tap process test runner', function() {
               items: [{
                 actual: 'hello world',
                 at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
+                buffered: false,
+                closingTestPoint: false,
                 diag: {
                   actual: 'hello world',
                   at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
@@ -161,12 +163,19 @@ describe('tap process test runner', function() {
                   operator: 'equal'
                 },
                 expected: 'hell world',
+                fullname: 'hello() should be "hello world"',
                 id: 1,
                 name: 'hello() should be "hello world"',
                 ok: false,
                 operator: 'equal',
                 passed: false,
-                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n'
+                plan: null,
+                previous: null,
+                skip: false,
+                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n',
+                tapError: null,
+                time: null,
+                todo: false
               }],
               launcherId: launcher.id,
               name: 'hello() should be "hello world"',
