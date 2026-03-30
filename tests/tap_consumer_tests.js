@@ -1,5 +1,3 @@
-'use strict';
-
 const { expect } = require('chai');
 const EventEmitter = require('events');
 
@@ -74,6 +72,45 @@ describe('TapConsumer', function() {
         name: 'oops',
         passed: false
       });
+    });
+  });
+
+  it('appends parser `extra` lines after a failed assertion onto the failure stack (onTapExtra)', function() {
+    const consumer = new TapConsumer();
+    const tap = [
+      'TAP version 13',
+      '1..1',
+      'not ok 1 broken',
+      '  ReferenceError: something failed',
+      '      at foo (bar.js:2:2)',
+      ''
+    ].join('\n');
+    return collectTapResults(consumer, tap).then(results => {
+      expect(results).to.have.length(1);
+      const stack = results[0].items[0].stack;
+      expect(stack).to.be.a('string');
+      expect(stack).to.include('ReferenceError: something failed');
+      expect(stack).to.include('bar.js:2:2');
+    });
+  });
+
+  it('appends parser `extra` lines after YAML when stack already exists (onTapExtra)', function() {
+    const consumer = new TapConsumer();
+    const tap = [
+      'TAP version 13',
+      '1..1',
+      'not ok 1 hello',
+      '  ---',
+      '    at: "Test._cb (file.js:1:1)"',
+      '  ...',
+      '  trailing-after-yaml',
+      ''
+    ].join('\n');
+    return collectTapResults(consumer, tap).then(results => {
+      const stack = results[0].items[0].stack;
+      expect(stack).to.be.a('string');
+      expect(stack).to.include('file.js:1:1');
+      expect(stack).to.include('trailing-after-yaml');
     });
   });
 
@@ -175,6 +212,176 @@ describe('TapConsumer', function() {
         }
       });
       consumer.stream.end(tap);
+    });
+  });
+
+  describe('nested TAP (desired behavior)', function() {
+    // tap-parser emits `child` parsers; nested asserts do not surface on the root
+    // stream until TapConsumer subscribes to them. These tests document the
+    // intended contract: one test-result per assert, names as `subtest > name`.
+    it('emits one test-result per assertion at every nesting depth', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 13',
+        '1..2',
+        'ok 1 parent first',
+        '    # Subtest: child',
+        '    ok 1 child test',
+        '    1..1',
+        'ok 2 parent last',
+        ''
+      ].join('\n');
+      return collectTapResults(consumer, tap).then(results => {
+        expect(results).to.have.length(3);
+        expect(results[0]).to.deep.include({
+          id: 1,
+          name: 'parent first',
+          passed: 1,
+          failed: 0
+        });
+        expect(results[1]).to.deep.include({
+          id: 1,
+          name: 'child > child test',
+          passed: 1,
+          failed: 0,
+          items: []
+        });
+        expect(results[2]).to.deep.include({
+          id: 2,
+          name: 'parent last',
+          passed: 1,
+          failed: 0
+        });
+      });
+    });
+
+    it('reports a failing assertion inside a subtest with a qualified name', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 13',
+        '1..1',
+        'ok 1 wrapper',
+        '    # Subtest: inner',
+        '    not ok 1 inner fail',
+        '    1..1',
+        ''
+      ].join('\n');
+      return collectTapResults(consumer, tap).then(results => {
+        expect(results).to.have.length(2);
+        expect(results[0]).to.deep.include({
+          id: 1,
+          name: 'wrapper',
+          passed: 1,
+          failed: 0
+        });
+        expect(results[1]).to.deep.include({
+          id: 1,
+          name: 'inner > inner fail',
+          passed: 0,
+          failed: 1
+        });
+        expect(results[1].todo).to.equal(undefined);
+        expect(results[1].items).to.have.length(1);
+      });
+    });
+
+    it('propagates skip and todo from nested assertions', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 13',
+        '1..1',
+        'ok 1 outer',
+        '    # Subtest: nest',
+        '    ok 1 skipme # SKIP',
+        '    not ok 2 bad # TODO later',
+        '    ok 3 fut # TODO',
+        '    1..3',
+        ''
+      ].join('\n');
+      return collectTapResults(consumer, tap).then(results => {
+        expect(results).to.have.length(4);
+        expect(results[0].name).to.equal('outer');
+        expect(results[1]).to.deep.include({
+          name: 'nest > skipme',
+          skipped: true,
+          passed: 0,
+          failed: 0
+        });
+        expect(results[2]).to.deep.include({
+          name: 'nest > bad',
+          todo: true,
+          failed: 1
+        });
+        expect(results[3]).to.deep.include({
+          name: 'nest > fut',
+          todo: true,
+          passed: 1,
+          failed: 0
+        });
+      });
+    });
+  });
+
+  describe('TAP version 14', function() {
+    it('parses streams like version 13 (pass, fail, skip, failing todo, passing todo)', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 14',
+        'ok 1 first',
+        'not ok 2 second',
+        'ok 3 skipme # SKIP',
+        'not ok 4 bad # TODO t',
+        'ok 5 future # TODO',
+        '1..5',
+        ''
+      ].join('\n');
+      return collectTapResults(consumer, tap).then(results => {
+        expect(results).to.have.length(5);
+
+        expect(results[0]).to.deep.include({
+          id: 1,
+          name: 'first',
+          passed: 1,
+          failed: 0,
+          items: []
+        });
+
+        expect(results[1]).to.deep.include({
+          id: 2,
+          name: 'second',
+          passed: 0,
+          failed: 1
+        });
+        expect(results[1].todo).to.equal(undefined);
+        expect(results[1].items).to.have.length(1);
+
+        expect(results[2]).to.deep.include({
+          id: 3,
+          name: 'skipme',
+          skipped: true,
+          passed: 0,
+          failed: 0,
+          items: []
+        });
+
+        expect(results[3]).to.deep.include({
+          id: 4,
+          name: 'bad',
+          todo: true,
+          passed: 0,
+          failed: 1
+        });
+        expect(results[3].items).to.have.length(1);
+
+        expect(results[4]).to.deep.include({
+          id: 5,
+          name: 'future',
+          todo: true,
+          passed: 1,
+          failed: 0,
+          items: []
+        });
+      });
     });
   });
 
@@ -284,6 +491,30 @@ describe('BrowserTapConsumer', function() {
         name: 'future',
         todo: true,
         items: []
+      });
+    });
+  });
+
+  describe('TAP version 14', function() {
+    it('forwards the same stream shape through the socket adapter', function() {
+      const socket = new EventEmitter();
+      const lines = [
+        'TAP version 14',
+        'ok 1 first',
+        'not ok 2 second',
+        'ok 3 skipme # SKIP',
+        'not ok 4 bad # TODO t',
+        'ok 5 future # TODO',
+        '1..5',
+        ''
+      ];
+      return collectBrowserTapResults(socket, lines).then(results => {
+        expect(results).to.have.length(5);
+        expect(results[2].skipped).to.equal(true);
+        expect(results[3].todo).to.equal(true);
+        expect(results[3].failed).to.equal(1);
+        expect(results[4].todo).to.equal(true);
+        expect(results[4].passed).to.equal(1);
       });
     });
   });
