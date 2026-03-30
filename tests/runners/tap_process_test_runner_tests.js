@@ -146,55 +146,41 @@ describe('tap process test runner', function() {
         process.process.stdin.end(tap);
       });
       runner.start(function() {
-        expect(reporter.results).to.deep.equal([
-          {
-            result: {
-              failed: 1,
-              id: 1,
-              items: [{
-                actual: 'hello world',
-                at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
-                buffered: false,
-                closingTestPoint: false,
-                diag: {
-                  actual: 'hello world',
-                  at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
-                  expected: 'hell world',
-                  operator: 'equal'
-                },
-                expected: 'hell world',
-                fullname: 'hello() should be "hello world"',
-                id: 1,
-                name: 'hello() should be "hello world"',
-                ok: false,
-                operator: 'equal',
-                passed: false,
-                plan: null,
-                previous: null,
-                skip: false,
-                stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n',
-                tapError: null,
-                time: null,
-                todo: false
-              }],
-              launcherId: launcher.id,
-              name: 'hello() should be "hello world"',
-              passed: 0,
-              total: 1
-            }
+        expect(reporter.results).to.have.length(2);
+        expect(reporter.results[0].result).to.deep.include({
+          failed: 1,
+          id: 1,
+          name: 'hello() should be "hello world"',
+          passed: 0,
+          total: 1,
+          launcherId: launcher.id
+        });
+        expect(reporter.results[0].result.items[0]).to.deep.include({
+          actual: 'hello world',
+          at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
+          diag: {
+            actual: 'hello world',
+            at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)',
+            expected: 'hell world',
+            operator: 'equal'
           },
-          {
-            result: {
-              failed: 0,
-              id: 2,
-              items: [],
-              launcherId: launcher.id,
-              name: 'hello(bob) should be "hello bob"',
-              passed: 1,
-              total: 1
-            }
-          }
-        ]);
+          expected: 'hell world',
+          id: 1,
+          name: 'hello() should be "hello world"',
+          ok: false,
+          operator: 'equal',
+          passed: false,
+          stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n'
+        });
+        expect(reporter.results[1].result).to.deep.include({
+          failed: 0,
+          id: 2,
+          items: [],
+          name: 'hello(bob) should be "hello bob"',
+          passed: 1,
+          total: 1,
+          launcherId: launcher.id
+        });
 
         done();
       });

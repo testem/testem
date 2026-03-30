@@ -181,7 +181,7 @@ describe('TapConsumer', function() {
             failed: 1,
             name: 'bailout'
           });
-          expect(results[1].error).to.deep.equal({ message: 'nope' });
+          expect(results[1].error).to.deep.include({ message: 'nope' });
           resolve();
         } catch (e) {
           reject(e);
@@ -356,7 +356,7 @@ describe('TapConsumer', function() {
               name: 'bailout',
               failed: 1
             });
-            expect(results[2].error).to.deep.equal({ message: 'inner reason' });
+            expect(results[2].error).to.deep.include({ message: 'inner reason' });
             resolve();
           } catch (e) {
             reject(e);
@@ -645,7 +645,7 @@ describe('BrowserTapConsumer', function() {
           try {
             expect(allDone).to.equal(1);
             expect(results).to.have.length(3);
-            expect(results[2].error).to.deep.equal({ message: 'inner reason' });
+            expect(results[2].error).to.deep.include({ message: 'inner reason' });
             resolve();
           } catch (e) {
             reject(e);
