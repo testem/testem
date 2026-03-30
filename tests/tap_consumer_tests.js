@@ -2,19 +2,9 @@
 
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const sinon = require('sinon');
 
-const log = require('../lib/log');
 const TapConsumer = require('../lib/tap_consumer');
 const BrowserTapConsumer = require('../lib/browser_tap_consumer');
-
-beforeEach(function() {
-  sinon.stub(log, 'info').returns();
-});
-
-afterEach(function() {
-  log.info.restore();
-});
 
 function collectTapResults(consumer, tapText) {
   return new Promise((resolve, reject) => {
