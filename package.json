@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@xmldom/xmldom": "^0.8.11",
+    "@xmldom/xmldom": "^0.9.9",
     "backbone": "^1.6.1",
     "charm": "^1.0.2",
     "commander": "^14.0.3",
