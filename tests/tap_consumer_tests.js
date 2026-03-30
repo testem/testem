@@ -320,6 +320,85 @@ describe('TapConsumer', function() {
         });
       });
     });
+
+    it('nested bailout: inner failure is qualified, then bailout test-result with reason', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 13',
+        '1..1',
+        'ok 1 outer',
+        '    # Subtest: inner',
+        '    not ok 1 bad',
+        '    Bail out! inner reason',
+        ''
+      ].join('\n');
+      return new Promise((resolve, reject) => {
+        const results = [];
+        let allDone = 0;
+        consumer.on('test-result', r => results.push(r));
+        consumer.once('error', reject);
+        consumer.on('all-test-results', () => {
+          allDone++;
+          try {
+            expect(allDone).to.equal(1);
+            expect(results).to.have.length(3);
+            expect(results[0]).to.deep.include({
+              name: 'outer',
+              passed: 1,
+              failed: 0
+            });
+            expect(results[1]).to.deep.include({
+              name: 'inner > bad',
+              passed: 0,
+              failed: 1
+            });
+            expect(results[2]).to.deep.include({
+              name: 'bailout',
+              failed: 1
+            });
+            expect(results[2].error).to.deep.equal({ message: 'inner reason' });
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        consumer.stream.end(tap);
+      });
+    });
+
+    it('sibling subtests: two root tests each open their own subtest block', function() {
+      const consumer = new TapConsumer();
+      const tap = [
+        'TAP version 13',
+        '1..2',
+        'ok 1 block-a',
+        '    # Subtest: s1',
+        '    ok 1 x',
+        '    1..1',
+        'ok 2 block-b',
+        '    # Subtest: s2',
+        '    ok 1 y',
+        '    1..1',
+        ''
+      ].join('\n');
+      return collectTapResults(consumer, tap).then(results => {
+        expect(results).to.have.length(4);
+        expect(results[0].name).to.equal('block-a');
+        expect(results[1]).to.deep.include({
+          name: 's1 > x',
+          passed: 1,
+          failed: 0,
+          items: []
+        });
+        expect(results[2].name).to.equal('block-b');
+        expect(results[3]).to.deep.include({
+          name: 's2 > y',
+          passed: 1,
+          failed: 0,
+          items: []
+        });
+      });
+    });
   });
 
   describe('TAP version 14', function() {
@@ -515,6 +594,65 @@ describe('BrowserTapConsumer', function() {
         expect(results[3].failed).to.equal(1);
         expect(results[4].todo).to.equal(true);
         expect(results[4].passed).to.equal(1);
+      });
+    });
+  });
+
+  describe('nested TAP (browser)', function() {
+    it('forwards nested subtest TAP through the socket adapter like TapConsumer', function() {
+      const socket = new EventEmitter();
+      const lines = [
+        'TAP version 13',
+        '1..2',
+        'ok 1 parent first',
+        '    # Subtest: child',
+        '    ok 1 child test',
+        '    1..1',
+        'ok 2 parent last',
+        ''
+      ];
+      return collectBrowserTapResults(socket, lines).then(results => {
+        expect(results).to.have.length(3);
+        expect(results[0].name).to.equal('parent first');
+        expect(results[1]).to.deep.include({
+          name: 'child > child test',
+          passed: 1,
+          failed: 0
+        });
+        expect(results[2].name).to.equal('parent last');
+      });
+    });
+
+    it('forwards nested bailout TAP through the socket adapter', function() {
+      const socket = new EventEmitter();
+      const lines = [
+        'TAP version 13',
+        '1..1',
+        'ok 1 outer',
+        '    # Subtest: inner',
+        '    not ok 1 bad',
+        '    Bail out! inner reason',
+        ''
+      ];
+      return new Promise((resolve, reject) => {
+        const consumer = new BrowserTapConsumer(socket);
+        const results = [];
+        let allDone = 0;
+        consumer.on('test-result', r => results.push(r));
+        consumer.once('error', reject);
+        consumer.on('all-test-results', () => {
+          allDone++;
+          try {
+            expect(allDone).to.equal(1);
+            expect(results).to.have.length(3);
+            expect(results[2].error).to.deep.equal({ message: 'inner reason' });
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        });
+        lines.forEach(line => socket.emit('tap', line));
+        socket.emit('tap', '# ok');
       });
     });
   });
