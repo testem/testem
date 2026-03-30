@@ -6,14 +6,12 @@ var os = require('os');
 
 var sinon = require('sinon');
 var expect = require('chai').expect;
-var tmp = require('tmp');
 
 var HookRunner = require('../../lib/runners/hook_runner');
 var { using } = require('../../lib/utils/promises');
 var isWin = require('../../lib/utils/is-win')();
 
-var tmpNameAsync = () => new Promise((resolve, reject) =>
-  tmp.tmpName((err, name) => err ? reject(err) : resolve(name)));
+var { tmpNameAsync } = require('../support/tmp-name');
 var fsStatAsync = path => fs.promises.stat(path);
 var fsReadFileAsync = path => fs.promises.readFile(path);
 

@@ -1,11 +1,7 @@
-
-
-const { promisify } = require('util');
 const expect = require('chai').expect;
-const tmp = require('tmp');
 const Writable = require('stream').Writable;
 
-const tmpNameAsync = promisify(tmp.tmpName);
+const { tmpNameAsync } = require('../support/tmp-name');
 
 const ReportFile = require('../../lib/utils/report-file');
 
