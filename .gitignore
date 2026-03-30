@@ -4,3 +4,6 @@ npm-debug.log.*
 testem.log
 package-lock.json
 examples/*/package-lock.json
+.vscode
+.prettier*
+.tool-versions
