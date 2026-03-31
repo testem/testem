@@ -82,6 +82,13 @@
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.8.3"
   },
+  "overrides": {
+    "mocha": {
+      "diff": "^8.0.3",
+      "minimatch": "^9.0.7",
+      "serialize-javascript": "^7.0.5"
+    }
+  },
   "bin": {
     "testem": "./testem.js"
   },
