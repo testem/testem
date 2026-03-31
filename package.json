@@ -66,6 +66,7 @@
   "devDependencies": {
     "@cypress/request": "^3.0.10",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@gaurav9576/fresh-tape": "^5.9.1",
     "chai": "^6.2.2",
     "chai-files": "^1.4.0",
     "chai-shallow-deep-equal": "^1.4.6",
@@ -75,7 +76,6 @@
     "eslint": "^9.39.4",
     "eslint-plugin-chai-expect": "^3.1.0",
     "eslint-plugin-mocha": "^11.2.0",
-    "fresh-tape": "^5.5.3",
     "mocha": "^11.7.5",
     "saucie": "^4.0.1",
     "sinon": "^21.0.3",
