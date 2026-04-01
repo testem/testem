@@ -73,7 +73,7 @@
     "dirty-chai": "^3.0.0",
     "esbuild": "^0.27.4",
     "eslint": "^9.39.4",
-    "eslint-plugin-chai-expect": "^3.1.0",
+    "eslint-plugin-chai-expect": "^4.0.0",
     "eslint-plugin-mocha": "^11.2.0",
     "fresh-tape": "^5.9.1",
     "mocha": "^11.7.5",
