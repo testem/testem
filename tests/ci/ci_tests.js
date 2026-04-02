@@ -63,6 +63,12 @@ describe('ci mode app', function() {
           var helloBob = reporter.results.filter(function(r) {
             return r.result.name.match(/hello bob/);
           });
+          var bufferRoundTrip = reporter.results.filter(function(r) {
+            return r.result.name.match(/Buffer string round-trip/);
+          });
+          var processGlobals = reporter.results.filter(function(r) {
+            return r.result.name.match(/process and process\.nextTick/);
+          });
           var nodePlain = reporter.results.filter(function(r) {
             return r.launcher === 'NodePlain';
           });
@@ -73,6 +79,14 @@ describe('ci mode app', function() {
           assert(helloBob.every(function(r) {
             return !r.result.passed;
           }), 'hello bob should fail');
+
+          assert(bufferRoundTrip.every(function(r) {
+            return r.result.passed;
+          }), 'Buffer round-trip should pass');
+
+          assert(processGlobals.every(function(r) {
+            return r.result.passed;
+          }), 'process globals should pass');
 
           expect(nodePlain[0]).to.exist();
           assert(!nodePlain[0].result.passed, 'node plain should fail');
@@ -95,7 +109,7 @@ describe('ci mode app', function() {
               return { launcher: r.launcher, name: r.result.name, passed: r.result.passed, error: r.result.error };
             }), null, 2));
           }
-          expect(reporter.results.length).to.eq(5);
+          expect(reporter.results.length).to.eq(9);
           done();
         });
         app.start();

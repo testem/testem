@@ -1,6 +1,6 @@
 var path = require('path');
 var esbuild = require('esbuild');
-var nodeModulesPolyfillPlugin = require('@esbuild-plugins/node-modules-polyfill').NodeModulesPolyfillPlugin;
+var nodeModulesPolyfillPlugin = require('esbuild-plugins-node-modules-polyfill').nodeModulesPolyfillPlugin;
 var browserPolyfills = require('../../../lib/utils/esbuild-browser-polyfills');
 
 var fixtureDir = __dirname;

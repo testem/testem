@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "esbuild-plugins-node-modules-polyfill": "^1.8.1",
     "esbuild": "^0.25.1",
     "fresh-tape": "^5.9.1"
   },
