@@ -109,21 +109,25 @@ describe('FileWatcher', function() {
     it('adds explicit src_files', function() {
       new FileWatcher(makeConfig({ src_files: ['a.js', 'b.js'] }));
 
-      expect(mockWatcher.add).to.have.been.calledWith(['a.js', 'b.js']);
+      expect(mockWatcher.add).to.have.been.calledOnce();
+      expect(mockWatcher.add.firstCall.args).to.deep.equal(['a.js', 'b.js']);
     });
 
     it('adds config file path when file is set', function() {
       new FileWatcher(makeConfig({ file: 'testem.json' }));
 
-      expect(mockWatcher.add).to.have.been.calledWith('testem.json');
-      expect(mockWatcher.add).to.have.been.calledWith('*.js');
+      expect(mockWatcher.add).to.have.been.calledOnce();
+      expect(mockWatcher.add.firstCall.args).to.deep.equal([
+        'testem.json',
+        '*.js',
+      ]);
     });
 
     it('adds *.js in cwd mode before src_files', function() {
       new FileWatcher(makeConfig({ cwdMode: true, src_files: ['tests.js'] }));
 
-      expect(mockWatcher.add.getCall(0).args[0]).to.equal('*.js');
-      expect(mockWatcher.add).to.have.been.calledWith(['tests.js']);
+      expect(mockWatcher.add).to.have.been.calledOnce();
+      expect(mockWatcher.add.firstCall.args).to.deep.equal(['*.js', 'tests.js']);
     });
 
     it('adds watch_files when set', function() {
@@ -131,15 +135,18 @@ describe('FileWatcher', function() {
         makeConfig({ watch_files: ['extra/**/*.js'], src_files: ['main.js'] }),
       );
 
-      expect(mockWatcher.add).to.have.been.calledWith(['extra/**/*.js']);
-      expect(mockWatcher.add).to.have.been.calledWith(['main.js']);
+      expect(mockWatcher.add).to.have.been.calledOnce();
+      expect(mockWatcher.add.firstCall.args).to.deep.equal([
+        'extra/**/*.js',
+        'main.js',
+      ]);
     });
 
     it('calls ignore when src_files_ignore is set', function() {
       new FileWatcher(makeConfig({ src_files_ignore: ['**/vendor/**'] }));
 
       expect(mockWatcher.ignore).to.have.been.calledOnce();
-      expect(mockWatcher.ignore).to.have.been.calledWith(['**/vendor/**']);
+      expect(mockWatcher.ignore.firstCall.args).to.deep.equal(['**/vendor/**']);
     });
   });
 
@@ -164,7 +171,7 @@ describe('FileWatcher', function() {
       const patterns = ['src/**/*.js', 'lib\\\\**\\\\*.ts', 'vendor/**/x.js'];
       new FileWatcher(makeConfig({ src_files: patterns }));
 
-      expect(mockWatcher.add).to.have.been.calledWith(patterns);
+      expect(mockWatcher.add.firstCall.args).to.deep.equal(patterns);
     });
 
     it('passes watch_files with ** and backslash segments unchanged', function() {
@@ -173,14 +180,18 @@ describe('FileWatcher', function() {
         makeConfig({ watch_files: watchFiles, src_files: ['main.js'] }),
       );
 
-      expect(mockWatcher.add).to.have.been.calledWith(watchFiles);
+      expect(mockWatcher.add.firstCall.args).to.deep.equal([
+        'packages\\\\**\\\\*.js',
+        'assets/**/*.css',
+        'main.js',
+      ]);
     });
 
     it('passes src_files_ignore patterns unchanged (mixed separators)', function() {
       const ignore = ['**/node_modules/**', 'dist\\\\**', '!**/keep.js'];
       new FileWatcher(makeConfig({ src_files_ignore: ignore }));
 
-      expect(mockWatcher.ignore).to.have.been.calledWith(ignore);
+      expect(mockWatcher.ignore.firstCall.args).to.deep.equal(ignore);
     });
 
     it('forwards add() using path.win32.join so Win32-shaped paths are preserved', function() {
@@ -189,7 +200,7 @@ describe('FileWatcher', function() {
 
       fw.add(joined);
 
-      expect(mockWatcher.add).to.have.been.calledWith(joined);
+      expect(mockWatcher.add.lastCall.args[0]).to.equal(joined);
     });
 
     it('forwards add() using path.posix.join for POSIX-shaped paths', function() {
@@ -198,7 +209,7 @@ describe('FileWatcher', function() {
 
       fw.add(joined);
 
-      expect(mockWatcher.add).to.have.been.calledWith(joined);
+      expect(mockWatcher.add.lastCall.args[0]).to.equal(joined);
     });
   });
 
