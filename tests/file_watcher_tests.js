@@ -343,5 +343,14 @@ describe('FileWatcher', function() {
       expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
       expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
     });
+
+    it('returns a promise', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      const out = fw.close();
+
+      expect(out).to.be.instanceOf(Promise);
+      return out;
+    });
   });
 });
