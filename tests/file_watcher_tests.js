@@ -3,18 +3,12 @@ const path = require('path');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-// `lib/file_watcher.js` requires a watch-engine package; tests substitute a stub for that
-// module so FileWatcher behavior is asserted without touching the filesystem.
-const watchEngineModulePath = require.resolve('fireworm');
-require(watchEngineModulePath);
-const savedWatchEngineExports = require.cache[watchEngineModulePath].exports;
-
 const fileWatcherModulePath = require.resolve('../lib/file_watcher.js');
 
 describe('FileWatcher', function() {
   let sandbox;
   let mockWatcher;
-  let stubWatchEngineFactory;
+  let createWatcherStub;
   let FileWatcher;
 
   function makeConfig(overrides) {
@@ -50,139 +44,134 @@ describe('FileWatcher', function() {
     sandbox = sinon.createSandbox();
     mockWatcher = {
       on: sandbox.stub(),
-      clear: sandbox.stub(),
       add: sandbox.stub(),
-      ignore: sandbox.stub(),
-      removeAllListeners: sandbox.stub(),
-      dir: { destroy: sandbox.stub() },
+      close: sandbox.stub().callsFake(function() {
+        return Promise.resolve();
+      }),
     };
-    stubWatchEngineFactory = sandbox.stub().callsFake(function() {
-      return mockWatcher;
-    });
-    require.cache[watchEngineModulePath].exports = stubWatchEngineFactory;
     delete require.cache[fileWatcherModulePath];
     FileWatcher = require('../lib/file_watcher.js');
+    createWatcherStub = sandbox
+      .stub(FileWatcher, 'createWatcher')
+      .callsFake(function() {
+        return mockWatcher;
+      });
   });
 
   afterEach(function() {
-    require.cache[watchEngineModulePath].exports = savedWatchEngineExports;
     delete require.cache[fileWatcherModulePath];
     sandbox.restore();
   });
 
   describe('constructor', function() {
-    it('creates the underlying watcher at ./ with ignoreInitial and empty skipDirEntryPatterns', function() {
+    it('watches cwd only; glob include patterns are applied via policy filter', function() {
       new FileWatcher(makeConfig());
 
-      expect(stubWatchEngineFactory).to.have.been.calledOnce();
-      expect(stubWatchEngineFactory.firstCall.args[0]).to.equal('./');
-      expect(stubWatchEngineFactory.firstCall.args[1]).to.deep.equal({
+      expect(createWatcherStub).to.have.been.calledOnce();
+      expect(createWatcherStub.firstCall.args[0]).to.equal('.');
+      expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
         ignoreInitial: true,
-        skipDirEntryPatterns: [],
       });
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('clears patterns then registers change, add, remove, and emfile listeners', function() {
+    it('registers change, add, unlink, unlinkDir, and error listeners', function() {
       new FileWatcher(makeConfig());
 
-      expect(mockWatcher.clear).to.have.been.calledOnce();
-      expect(mockWatcher.on.callCount).to.equal(4);
+      expect(mockWatcher.on.callCount).to.equal(5);
       expect(mockWatcher.on).to.have.been.calledWith(
         'change',
         sinon.match.func,
       );
       expect(mockWatcher.on).to.have.been.calledWith('add', sinon.match.func);
       expect(mockWatcher.on).to.have.been.calledWith(
-        'remove',
+        'unlink',
         sinon.match.func,
       );
       expect(mockWatcher.on).to.have.been.calledWith(
-        'emfile',
+        'unlinkDir',
+        sinon.match.func,
+      );
+      expect(mockWatcher.on).to.have.been.calledWith(
+        'error',
         sinon.match.func,
       );
     });
 
-    it('adds default src_files pattern *.js when src_files is not set', function() {
+    it('uses default src_files pattern *.js when src_files is not set', function() {
       new FileWatcher(makeConfig());
 
-      expect(mockWatcher.add).to.have.been.calledWith('*.js');
+      expect(createWatcherStub.firstCall.args[0]).to.equal('.');
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('adds explicit src_files', function() {
+    it('does not pass glob src_files to chokidar add (policy filter instead)', function() {
       new FileWatcher(makeConfig({ src_files: ['a.js', 'b.js'] }));
 
-      expect(mockWatcher.add).to.have.been.calledOnce();
-      expect(mockWatcher.add.firstCall.args).to.deep.equal(['a.js', 'b.js']);
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('adds config file path when file is set', function() {
+    it('does not add() glob patterns when file and src_files are set', function() {
       new FileWatcher(makeConfig({ file: 'testem.json' }));
 
-      expect(mockWatcher.add).to.have.been.calledOnce();
-      expect(mockWatcher.add.firstCall.args).to.deep.equal([
-        'testem.json',
-        '*.js',
-      ]);
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('adds *.js in cwd mode before src_files', function() {
+    it('does not add() cwd/src glob literals (policy filter instead)', function() {
       new FileWatcher(makeConfig({ cwdMode: true, src_files: ['tests.js'] }));
 
-      expect(mockWatcher.add).to.have.been.calledOnce();
-      expect(mockWatcher.add.firstCall.args).to.deep.equal(['*.js', 'tests.js']);
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('adds watch_files when set', function() {
+    it('does not add() when watch_files and src_files are globs under cwd', function() {
       new FileWatcher(
         makeConfig({ watch_files: ['extra/**/*.js'], src_files: ['main.js'] }),
       );
 
-      expect(mockWatcher.add).to.have.been.calledOnce();
-      expect(mockWatcher.add.firstCall.args).to.deep.equal([
-        'extra/**/*.js',
-        'main.js',
-      ]);
+      expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('calls ignore when src_files_ignore is set', function() {
+    it('passes ignored when src_files_ignore is set', function() {
       new FileWatcher(makeConfig({ src_files_ignore: ['**/vendor/**'] }));
 
-      expect(mockWatcher.ignore).to.have.been.calledOnce();
-      expect(mockWatcher.ignore.firstCall.args).to.deep.equal(['**/vendor/**']);
+      expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
+        ignoreInitial: true,
+        ignored: ['**/vendor/**'],
+      });
     });
   });
 
-  // FileWatcher does not normalize paths or glob strings; the watch engine receives
-  // exactly what Config provides. These tests lock that contract for cross-platform use.
+  // Policy lists are built the same as before; chokidar only watches '.' plus any
+  // non-glob path that resolves outside cwd (see lib/file_watcher.js).
   describe('path and glob passthrough', function() {
-    it('passes config file path through unchanged (including Win32-style separators)', function() {
+    it('keeps config file path in policy (including Win32-style separators)', function() {
       const confFile = 'C:\\\\project\\\\testem.json';
-      new FileWatcher(makeConfig({ file: confFile }));
+      const fw = new FileWatcher(makeConfig({ file: confFile }));
 
-      expect(mockWatcher.add).to.have.been.calledWith(confFile);
+      expect(fw._watchPolicy.includePatterns).to.include(confFile);
     });
 
-    it('passes src_files as a string without splitting or normalizing', function() {
+    it('keeps src_files as a string without splitting in policy', function() {
       const srcFiles = 'impl.js,tests.js';
-      new FileWatcher(makeConfig({ src_files: srcFiles }));
+      const fw = new FileWatcher(makeConfig({ src_files: srcFiles }));
 
-      expect(mockWatcher.add).to.have.been.calledWith(srcFiles);
+      expect(fw._watchPolicy.includePatterns).to.include(srcFiles);
     });
 
-    it('passes src_files arrays with mixed slash styles in glob patterns', function() {
+    it('keeps src_files arrays with mixed slash styles in policy', function() {
       const patterns = ['src/**/*.js', 'lib\\\\**\\\\*.ts', 'vendor/**/x.js'];
-      new FileWatcher(makeConfig({ src_files: patterns }));
+      const fw = new FileWatcher(makeConfig({ src_files: patterns }));
 
-      expect(mockWatcher.add.firstCall.args).to.deep.equal(patterns);
+      expect(fw._watchPolicy.includePatterns).to.deep.equal(patterns);
     });
 
-    it('passes watch_files with ** and backslash segments unchanged', function() {
+    it('keeps watch_files and src_files order in policy', function() {
       const watchFiles = ['packages\\\\**\\\\*.js', 'assets/**/*.css'];
-      new FileWatcher(
+      const fw = new FileWatcher(
         makeConfig({ watch_files: watchFiles, src_files: ['main.js'] }),
       );
 
-      expect(mockWatcher.add.firstCall.args).to.deep.equal([
+      expect(fw._watchPolicy.includePatterns).to.deep.equal([
         'packages\\\\**\\\\*.js',
         'assets/**/*.css',
         'main.js',
@@ -193,7 +182,7 @@ describe('FileWatcher', function() {
       const ignore = ['**/node_modules/**', 'dist\\\\**', '!**/keep.js'];
       new FileWatcher(makeConfig({ src_files_ignore: ignore }));
 
-      expect(mockWatcher.ignore.firstCall.args).to.deep.equal(ignore);
+      expect(createWatcherStub.firstCall.args[1].ignored).to.deep.equal(ignore);
     });
 
     it('forwards add() using path.win32.join so Win32-shaped paths are preserved', function() {
@@ -215,15 +204,15 @@ describe('FileWatcher', function() {
     });
   });
 
-  describe('fileChanged (via underlying change/add/remove)', function() {
+  describe('fileChanged (via underlying change/add/unlink)', function() {
     it('emits fileChanged with the path when change fires', function() {
       const fw = new FileWatcher(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
-      getHandler('change')('/project/foo.js');
+      getHandler('change')('foo.js');
 
-      expect(spy).to.have.been.calledOnceWith('/project/foo.js');
+      expect(spy).to.have.been.calledOnceWith('foo.js');
     });
 
     it('emits fileChanged when add fires', function() {
@@ -231,19 +220,19 @@ describe('FileWatcher', function() {
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
-      getHandler('add')('/project/new.js');
+      getHandler('add')('new.js');
 
-      expect(spy).to.have.been.calledOnceWith('/project/new.js');
+      expect(spy).to.have.been.calledOnceWith('new.js');
     });
 
-    it('emits fileChanged when remove fires', function() {
+    it('emits fileChanged when unlink fires', function() {
       const fw = new FileWatcher(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
-      getHandler('remove')('/project/gone.js');
+      getHandler('unlink')('gone.js');
 
-      expect(spy).to.have.been.calledOnceWith('/project/gone.js');
+      expect(spy).to.have.been.calledOnceWith('gone.js');
     });
   });
 
@@ -260,12 +249,14 @@ describe('FileWatcher', function() {
   });
 
   describe('EMFILE', function() {
-    it('emits EMFILE when the underlying watcher fires emfile', function() {
+    it('emits EMFILE when the underlying watcher fires error with EMFILE', function() {
       const fw = new FileWatcher(makeConfig());
       const spy = sinon.spy();
       fw.on('EMFILE', spy);
 
-      getHandler('emfile')();
+      const err = new Error('EMFILE');
+      err.code = 'EMFILE';
+      getHandler('error')(err);
 
       expect(spy).to.have.been.calledOnce();
     });
@@ -294,7 +285,7 @@ describe('FileWatcher', function() {
       const fw = new FileWatcher(makeConfig());
 
       expect(() => fw.add('*.js')).to.throw(TypeError, /glob patterns/);
-      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
 
@@ -302,7 +293,7 @@ describe('FileWatcher', function() {
       const fw = new FileWatcher(makeConfig());
 
       expect(() => fw.add('src/**/*.js')).to.throw(TypeError, /glob patterns/);
-      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
 
@@ -310,26 +301,25 @@ describe('FileWatcher', function() {
       const fw = new FileWatcher(makeConfig());
 
       expect(() => fw.add('{a,b}.js')).to.throw(TypeError, /glob patterns/);
-      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
   });
 
   describe('close', function() {
-    it('calls dir.destroy on the underlying engine when present', async function() {
+    it('calls close on the underlying watcher', async function() {
       const fw = new FileWatcher(makeConfig());
 
       await fw.close();
 
-      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce();
     });
 
-    it('removes listeners on the engine and on this instance', async function() {
+    it('removes listeners on this instance after the watcher closes', async function() {
       const fw = new FileWatcher(makeConfig());
 
       await fw.close();
 
-      expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
       expect(fw.listenerCount('fileChanged')).to.equal(0);
       expect(fw.listenerCount('EMFILE')).to.equal(0);
     });
@@ -340,8 +330,7 @@ describe('FileWatcher', function() {
       await fw.close();
       await fw.close();
 
-      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
-      expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce();
     });
 
     it('returns a promise', async function() {
