@@ -44,6 +44,11 @@ describe('FileWatcher', function() {
     sandbox = sinon.createSandbox();
     mockWatcher = {
       on: sandbox.stub(),
+      once: sandbox.stub().callsFake(function(event, listener) {
+        if (event === 'ready') {
+          listener();
+        }
+      }),
       add: sandbox.stub(),
       close: sandbox.stub().callsFake(function() {
         return Promise.resolve();
@@ -63,10 +68,21 @@ describe('FileWatcher', function() {
     sandbox.restore();
   });
 
-  describe('constructor', function() {
-    it('watches cwd only; glob include patterns are applied via policy filter', function() {
-      new FileWatcher(makeConfig());
+  describe('create', function() {
+    it('is not constructable with new', function() {
+      expect(() => new FileWatcher(makeConfig())).to.throw(
+        TypeError,
+        /FileWatcher\.create/,
+      );
+    });
 
+    it('watches cwd only; glob include patterns are applied via policy filter', async function() {
+      await FileWatcher.create(makeConfig());
+
+      expect(mockWatcher.once).to.have.been.calledWith(
+        'ready',
+        sinon.match.func,
+      );
       expect(createWatcherStub).to.have.been.calledOnce();
       expect(createWatcherStub.firstCall.args[0]).to.equal('.');
       expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
@@ -75,8 +91,8 @@ describe('FileWatcher', function() {
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('registers change, add, unlink, unlinkDir, and error listeners', function() {
-      new FileWatcher(makeConfig());
+    it('registers change, add, unlink, unlinkDir, and error listeners', async function() {
+      await FileWatcher.create(makeConfig());
 
       expect(mockWatcher.on.callCount).to.equal(5);
       expect(mockWatcher.on).to.have.been.calledWith(
@@ -98,41 +114,41 @@ describe('FileWatcher', function() {
       );
     });
 
-    it('uses default src_files pattern *.js when src_files is not set', function() {
-      new FileWatcher(makeConfig());
+    it('uses default src_files pattern *.js when src_files is not set', async function() {
+      await FileWatcher.create(makeConfig());
 
       expect(createWatcherStub.firstCall.args[0]).to.equal('.');
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('does not pass glob src_files to chokidar add (policy filter instead)', function() {
-      new FileWatcher(makeConfig({ src_files: ['a.js', 'b.js'] }));
+    it('does not pass glob src_files to chokidar add (policy filter instead)', async function() {
+      await FileWatcher.create(makeConfig({ src_files: ['a.js', 'b.js'] }));
 
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('does not add() glob patterns when file and src_files are set', function() {
-      new FileWatcher(makeConfig({ file: 'testem.json' }));
+    it('does not add() glob patterns when file and src_files are set', async function() {
+      await FileWatcher.create(makeConfig({ file: 'testem.json' }));
 
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('does not add() cwd/src glob literals (policy filter instead)', function() {
-      new FileWatcher(makeConfig({ cwdMode: true, src_files: ['tests.js'] }));
+    it('does not add() cwd/src glob literals (policy filter instead)', async function() {
+      await FileWatcher.create(makeConfig({ cwdMode: true, src_files: ['tests.js'] }));
 
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('does not add() when watch_files and src_files are globs under cwd', function() {
-      new FileWatcher(
+    it('does not add() when watch_files and src_files are globs under cwd', async function() {
+      await FileWatcher.create(
         makeConfig({ watch_files: ['extra/**/*.js'], src_files: ['main.js'] }),
       );
 
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('passes ignored when src_files_ignore is set', function() {
-      new FileWatcher(makeConfig({ src_files_ignore: ['**/vendor/**'] }));
+    it('passes ignored when src_files_ignore is set', async function() {
+      await FileWatcher.create(makeConfig({ src_files_ignore: ['**/vendor/**'] }));
 
       expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
         ignoreInitial: true,
@@ -144,30 +160,30 @@ describe('FileWatcher', function() {
   // Policy lists are built the same as before; chokidar only watches '.' plus any
   // non-glob path that resolves outside cwd (see lib/file_watcher.js).
   describe('path and glob passthrough', function() {
-    it('keeps config file path in policy (including Win32-style separators)', function() {
+    it('keeps config file path in policy (including Win32-style separators)', async function() {
       const confFile = 'C:\\\\project\\\\testem.json';
-      const fw = new FileWatcher(makeConfig({ file: confFile }));
+      const fw = await FileWatcher.create(makeConfig({ file: confFile }));
 
       expect(fw._watchPolicy.includePatterns).to.include(confFile);
     });
 
-    it('keeps src_files as a string without splitting in policy', function() {
+    it('keeps src_files as a string without splitting in policy', async function() {
       const srcFiles = 'impl.js,tests.js';
-      const fw = new FileWatcher(makeConfig({ src_files: srcFiles }));
+      const fw = await FileWatcher.create(makeConfig({ src_files: srcFiles }));
 
       expect(fw._watchPolicy.includePatterns).to.include(srcFiles);
     });
 
-    it('keeps src_files arrays with mixed slash styles in policy', function() {
+    it('keeps src_files arrays with mixed slash styles in policy', async function() {
       const patterns = ['src/**/*.js', 'lib\\\\**\\\\*.ts', 'vendor/**/x.js'];
-      const fw = new FileWatcher(makeConfig({ src_files: patterns }));
+      const fw = await FileWatcher.create(makeConfig({ src_files: patterns }));
 
       expect(fw._watchPolicy.includePatterns).to.deep.equal(patterns);
     });
 
-    it('keeps watch_files and src_files order in policy', function() {
+    it('keeps watch_files and src_files order in policy', async function() {
       const watchFiles = ['packages\\\\**\\\\*.js', 'assets/**/*.css'];
-      const fw = new FileWatcher(
+      const fw = await FileWatcher.create(
         makeConfig({ watch_files: watchFiles, src_files: ['main.js'] }),
       );
 
@@ -178,15 +194,15 @@ describe('FileWatcher', function() {
       ]);
     });
 
-    it('passes src_files_ignore patterns unchanged (mixed separators)', function() {
+    it('passes src_files_ignore patterns unchanged (mixed separators)', async function() {
       const ignore = ['**/node_modules/**', 'dist\\\\**', '!**/keep.js'];
-      new FileWatcher(makeConfig({ src_files_ignore: ignore }));
+      await FileWatcher.create(makeConfig({ src_files_ignore: ignore }));
 
       expect(createWatcherStub.firstCall.args[1].ignored).to.deep.equal(ignore);
     });
 
     it('forwards add() using path.win32.join so Win32-shaped paths are preserved', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
       const joined = path.win32.join('C:', 'workspace', 'pkg', 'src', 'a.js');
 
       await fw.add(joined);
@@ -195,7 +211,7 @@ describe('FileWatcher', function() {
     });
 
     it('forwards add() using path.posix.join for POSIX-shaped paths', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
       const joined = path.posix.join('/home', 'u', 'proj', 'b.js');
 
       await fw.add(joined);
@@ -205,8 +221,8 @@ describe('FileWatcher', function() {
   });
 
   describe('fileChanged (via underlying change/add/unlink)', function() {
-    it('emits fileChanged with the path when change fires', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('emits fileChanged with the path when change fires', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
@@ -215,8 +231,8 @@ describe('FileWatcher', function() {
       expect(spy).to.have.been.calledOnceWith('foo.js');
     });
 
-    it('emits fileChanged when add fires', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('emits fileChanged when add fires', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
@@ -225,8 +241,8 @@ describe('FileWatcher', function() {
       expect(spy).to.have.been.calledOnceWith('new.js');
     });
 
-    it('emits fileChanged when unlink fires', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('emits fileChanged when unlink fires', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
@@ -237,8 +253,8 @@ describe('FileWatcher', function() {
   });
 
   describe('onFileChanged', function() {
-    it('emits fileChanged with the given path', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('emits fileChanged with the given path', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('fileChanged', spy);
 
@@ -249,8 +265,8 @@ describe('FileWatcher', function() {
   });
 
   describe('EMFILE', function() {
-    it('emits EMFILE when the underlying watcher fires error with EMFILE', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('emits EMFILE when the underlying watcher fires error with EMFILE', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('EMFILE', spy);
 
@@ -261,8 +277,8 @@ describe('FileWatcher', function() {
       expect(spy).to.have.been.calledOnce();
     });
 
-    it('onEMFILE emits EMFILE', function() {
-      const fw = new FileWatcher(makeConfig());
+    it('onEMFILE emits EMFILE', async function() {
+      const fw = await FileWatcher.create(makeConfig());
       const spy = sinon.spy();
       fw.on('EMFILE', spy);
 
@@ -274,7 +290,7 @@ describe('FileWatcher', function() {
 
   describe('add', function() {
     it('forwards to the underlying watcher', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       await fw.add('/abs/path/to/file.js');
 
@@ -282,7 +298,7 @@ describe('FileWatcher', function() {
     });
 
     it('rejects glob patterns (single segment)', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       let err;
       try {
@@ -297,7 +313,7 @@ describe('FileWatcher', function() {
     });
 
     it('rejects glob patterns (nested **)', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       let err;
       try {
@@ -312,7 +328,7 @@ describe('FileWatcher', function() {
     });
 
     it('rejects brace expansion when it introduces glob magic', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       let err;
       try {
@@ -329,7 +345,7 @@ describe('FileWatcher', function() {
 
   describe('close', function() {
     it('calls close on the underlying watcher', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       await fw.close();
 
@@ -337,7 +353,7 @@ describe('FileWatcher', function() {
     });
 
     it('removes listeners on this instance after the watcher closes', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       await fw.close();
 
@@ -346,7 +362,7 @@ describe('FileWatcher', function() {
     });
 
     it('is idempotent', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       await fw.close();
       await fw.close();
@@ -355,7 +371,7 @@ describe('FileWatcher', function() {
     });
 
     it('returns a promise', async function() {
-      const fw = new FileWatcher(makeConfig());
+      const fw = await FileWatcher.create(makeConfig());
 
       const out = fw.close();
 
