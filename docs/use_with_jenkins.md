@@ -28,9 +28,9 @@ Now click "Build Now" to test the build. ***Good luck!***
 Troubleshooting
 ---------------
 
-If you hit a snag, try running `testem ci` on the command line first. `testem ci -l` will show you the list of browsers that are available in your system - all of which it will use. You could restrict the set of browsers to include via either whitelisting or blacklisting. For whitelisting, this is how to only run tests on IE9 and Firefox
+If you hit a snag, try running `testem ci` on the command line first. `testem ci -l` will show you the list of browsers that are available in your system - all of which it will use. You could restrict the set of browsers to include via either whitelisting or blacklisting. For whitelisting, this is how to only run tests on IE 11 and Firefox
 
-    testem ci -b IE9,Firefox
+    testem ci -b IE11,Firefox
     
 For blacklisting, this is how to run on all available browsers except Opera(sorry Opera)
 
