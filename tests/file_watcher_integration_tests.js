@@ -7,8 +7,16 @@ const os = require('os');
 const path = require('path');
 
 const expect = require('chai').expect;
+const sinon = require('sinon');
 
 const FileWatcher = require('../lib/file_watcher');
+
+/** Node does not expose a public watcher count; used only to assert no fs.watch leaks. */
+function countActiveFsWatchers() {
+  return process._getActiveHandles().filter(
+    (h) => h && h.constructor && h.constructor.name === 'FSWatcher',
+  ).length;
+}
 
 function makeConfig(overrides) {
   const state = {
@@ -173,5 +181,42 @@ describe('FileWatcher integration', function() {
     fw.close();
 
     expect(fw.fileWatcher).to.equal(null);
+  });
+
+  it('releases fs.watch handles after add() throws EMFILE (no watcher leak)', async function() {
+    process.chdir(tmpDir);
+    fs.writeFileSync(path.join(tmpDir, 'first.js'), 'export {}');
+
+    const watchersBefore = countActiveFsWatchers();
+
+    fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
+    await delay(800);
+
+    expect(countActiveFsWatchers()).to.be.at.least(watchersBefore + 1);
+
+    const sandbox = sinon.createSandbox();
+    const originalAdd = fw.add.bind(fw);
+    sandbox.stub(fw, 'add').callsFake(function(file) {
+      if (file === 'second.js') {
+        const err = new Error('EMFILE: too many open files, watch');
+        err.code = 'EMFILE';
+        err.errno = -24;
+        err.syscall = 'watch';
+        throw err;
+      }
+      return originalAdd(file);
+    });
+
+    try {
+      fw.add('first.js');
+      expect(() => fw.add('second.js')).to.throw().with.property('code', 'EMFILE');
+    } finally {
+      sandbox.restore();
+      fw.close();
+    }
+
+    await delay(150);
+
+    expect(countActiveFsWatchers()).to.equal(watchersBefore);
   });
 });
