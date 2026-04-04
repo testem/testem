@@ -76,10 +76,10 @@ describe('FileWatcher integration', function() {
     fw = null;
   });
 
-  afterEach(function() {
+  afterEach(async function() {
     if (fw) {
       try {
-        fw.close();
+        await fw.close();
       } catch {
         // ignore
       }
@@ -181,7 +181,7 @@ describe('FileWatcher integration', function() {
 
     expect(fw.fileWatcher).to.be.ok();
 
-    fw.close();
+    await fw.close();
 
     expect(fw.fileWatcher).to.equal(null);
   });
@@ -215,7 +215,7 @@ describe('FileWatcher integration', function() {
       expect(() => fw.add('second.js')).to.throw().with.property('code', 'EMFILE');
     } finally {
       sandbox.restore();
-      fw.close();
+      await fw.close();
     }
 
     await delay(150);
