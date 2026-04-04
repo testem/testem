@@ -3,17 +3,19 @@ Got Scripts? Test&rsquo;em!
 
 [![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem)
 
+Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, [PhantomJS](http://phantomjs.org/), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
+
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
 Features
 --------
 
-* Test-framework agnostic. Support for
+* Test-framework agnostic — designed for **any kind of tests** that fit your project (unit, integration, custom runners, etc.), not a single prescribed style. Support for
     - [Jasmine](http://jasmine.github.io/)
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://mochajs.org/)
     - Others, through custom test framework adapters.
-* Run tests in all major browsers as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
+* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
     - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or Teamcity
@@ -26,6 +28,8 @@ Features
     - Browserify
     - JSHint/JSLint
     - everything else
+
+**Internet Explorer** and **PhantomJS** are still supported as launchers, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
 
 Screencasts
 -----------
@@ -61,7 +65,7 @@ You will see a terminal-based interface which looks like this
 
 ![Initial interface](https://github.com/testem/testem/raw/master/images/initial.png)
 
-Now open your browser and go to the specified URL. You should now see
+Now open a **real browser** (the URL Testem prints is a normal page in Chrome, Firefox, Safari, etc.) and go to the specified URL. You should now see
 
 ![Zero of zero](https://github.com/testem/testem/raw/master/images/zeros.png)
 
@@ -107,6 +111,28 @@ In development mode, Testem has a text-based graphical user interface which uses
 * d : half a page down target text panel
 * u : half a page up target text panel
 
+### File watching
+
+In development mode, Testem watches your project directory for changes and re-runs tests when a
+relevant file is added, edited, or removed. Watching is implemented with
+[chokidar](https://github.com/paulmillr/chokidar) (v5).
+
+* **`src_files`** — Glob patterns for source files whose changes should trigger a run (defaults to
+  `*.js` when unset). This is the main *watch list*.
+* **`watch_files`** — Optional; if set, these patterns are watched instead of defaulting to
+  `src_files` (see `docs/config_file.md`).
+* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `node_modules`).
+* **`disable_watching`** — Set to `true` to turn off the file watcher entirely.
+
+Testem watches the **current working directory** and applies your include/ignore patterns to
+events from the watcher. You do not need to list every file explicitly; globs and ignores follow
+the same policy as in the config reference.
+
+**Troubleshooting:** On some setups (Docker, network filesystems, VMs), native `fs.watch` can be
+flaky. Chokidar supports environment variables such as `CHOKIDAR_USE_POLLING=1` (force polling)
+and `CHOKIDAR_INTERVAL` (polling interval in ms). See the
+[chokidar readme](https://github.com/paulmillr/chokidar) for details.
+
 ### Command line options
 
 To see all command line options
@@ -134,17 +160,13 @@ Will print them out. The output might look like
 
     $ testem launchers
     Browsers available on this system:
-    IE7
-    IE8
-    IE9
+    IE11
     Chrome
     Firefox
     Safari
     Safari Technology Preview
     Opera
     PhantomJS
-
-Did you notice that this system has IE versions 7-9? Yes, actually it has only IE9 installed, but Testem uses IE's compatibility mode feature to emulate IE 7 and 8.
 
 When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/) format by default, which looks like
 
@@ -455,7 +477,8 @@ If you need to run a preprocessor (or indeed any shell command before the start 
 
     "before_tests": "coffee -c *.coffee"
 
-And Testem will run it before each test run. For file watching, you may still use the `src_files` option
+And Testem will run it before each test run. Point **`src_files`** at the sources you want
+watched (see **File watching** under Development Mode above).
 
 ```javascript
 "src_files": [

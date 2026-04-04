@@ -209,8 +209,8 @@ describe('FileWatcher', function() {
     });
   });
 
-  // Policy lists are built the same as before; chokidar only watches '.' plus any
-  // non-glob path that resolves outside cwd (see lib/file_watcher_impl.js).
+  // Policy lists match file_watch_glob_policy; the engine watches '.' plus any non-glob path
+  // that resolves outside cwd (see lib/file_watcher_impl.js).
   describe('path and glob passthrough', function() {
     it('keeps config file path in policy (including Win32-style separators)', async function() {
       const confFile = 'C:\\\\project\\\\testem.json';

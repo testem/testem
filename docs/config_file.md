@@ -45,15 +45,33 @@ Common Configuration Options
 
 * **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values at the moment are `jasmine`, `jasmine2`, `qunit`, `mocha`, `custom`, and `tap`. Defaults to `jasmine`.
 * **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in CoffeeScript or TypeScript, this should be your `.coffee` or `.ts` files. If you are writing in Javascript, this would just be your `.js` files, but if you have a compile step for your JS, this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
+
+### File watching behavior
+
+Testem uses a filesystem watcher ([chokidar](https://github.com/paulmillr/chokidar)) on the
+**current working directory** (or `cwd` when set). It does not rely on the watcher to expand
+globs by itself: your **`src_files`**, **`watch_files`**, and **`src_files_ignore`** options
+build an include/ignore policy, and only changes that match that policy trigger a run (along with
+changes to the config file path when configured). This keeps glob semantics consistent with the
+rest of Testem.
+
+* **`disable_watching: true`** — Disables the file watcher; Testem will not auto-rerun on file
+  changes.
+* **Unreliable watching** (e.g. Docker, NFS, some VMs): try setting the environment variable
+  **`CHOKIDAR_USE_POLLING=1`** before starting Testem, or adjust **`CHOKIDAR_INTERVAL`**. See the
+  chokidar documentation for supported variables.
+
 * **serve_files** - the location of the source files to be served to the browser. If don't have a compilation step, don't set this option, and it will default to *src_files*. If you have a compilation step, you should set this to the `*.js` file(s) that result from the compilation.
-* **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `jasmine.js`.
+* **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `mocha.js`.
 * **launchers** - this option allows you to set up custom process launchers which can be used to run Node programs and indeed any kind of process within Testem.
 
 ## Option Reference
 
 ### Potentially available browsers
 
-Chrome, Chrome Canary, Chromium, Firefox, IE, Opera, PhantomJS, Safari, Safari Technology Preview
+Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari Technology Preview
+
+Generally supported but deprecated: IE 11, PhantomJS (using additional transpilation and polyfills)
 
 ### CLI-level options:
 
