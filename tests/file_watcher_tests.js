@@ -185,20 +185,20 @@ describe('FileWatcher', function() {
       expect(createWatcherStub.firstCall.args[1].ignored).to.deep.equal(ignore);
     });
 
-    it('forwards add() using path.win32.join so Win32-shaped paths are preserved', function() {
+    it('forwards add() using path.win32.join so Win32-shaped paths are preserved', async function() {
       const fw = new FileWatcher(makeConfig());
       const joined = path.win32.join('C:', 'workspace', 'pkg', 'src', 'a.js');
 
-      fw.add(joined);
+      await fw.add(joined);
 
       expect(mockWatcher.add.lastCall.args[0]).to.equal(joined);
     });
 
-    it('forwards add() using path.posix.join for POSIX-shaped paths', function() {
+    it('forwards add() using path.posix.join for POSIX-shaped paths', async function() {
       const fw = new FileWatcher(makeConfig());
       const joined = path.posix.join('/home', 'u', 'proj', 'b.js');
 
-      fw.add(joined);
+      await fw.add(joined);
 
       expect(mockWatcher.add.lastCall.args[0]).to.equal(joined);
     });
@@ -273,34 +273,55 @@ describe('FileWatcher', function() {
   });
 
   describe('add', function() {
-    it('forwards to the underlying watcher', function() {
+    it('forwards to the underlying watcher', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      fw.add('/abs/path/to/file.js');
+      await fw.add('/abs/path/to/file.js');
 
       expect(mockWatcher.add).to.have.been.calledWith('/abs/path/to/file.js');
     });
 
-    it('rejects glob patterns (single segment)', function() {
+    it('rejects glob patterns (single segment)', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      expect(() => fw.add('*.js')).to.throw(TypeError, /glob patterns/);
+      let err;
+      try {
+        await fw.add('*.js');
+      } catch (e) {
+        err = e;
+      }
+      expect(err).to.be.instanceOf(TypeError);
+      expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
 
-    it('rejects glob patterns (nested **)', function() {
+    it('rejects glob patterns (nested **)', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      expect(() => fw.add('src/**/*.js')).to.throw(TypeError, /glob patterns/);
+      let err;
+      try {
+        await fw.add('src/**/*.js');
+      } catch (e) {
+        err = e;
+      }
+      expect(err).to.be.instanceOf(TypeError);
+      expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
 
-    it('rejects brace expansion when it introduces glob magic', function() {
+    it('rejects brace expansion when it introduces glob magic', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      expect(() => fw.add('{a,b}.js')).to.throw(TypeError, /glob patterns/);
+      let err;
+      try {
+        await fw.add('{a,b}.js');
+      } catch (e) {
+        err = e;
+      }
+      expect(err).to.be.instanceOf(TypeError);
+      expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
     });
