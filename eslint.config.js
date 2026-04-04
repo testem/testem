@@ -4,6 +4,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import mocha from "eslint-plugin-mocha";
 import chaiExpect from "eslint-plugin-chai-expect";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 import globals from "globals";
 
 // Mimic CommonJS variables in ESM
@@ -123,4 +124,6 @@ export default [
       "no-unused-vars": ["error", { argsIgnorePattern: "^(msg|src|line|col|err)$" }],
     },
   },
+  // Must be last: turns off ESLint stylistic rules that conflict with Prettier (quotes, indent, …).
+  eslintConfigPrettier,
 ];

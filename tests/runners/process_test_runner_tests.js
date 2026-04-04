@@ -174,10 +174,8 @@ describe('ProcessTestRunner', function() {
 
       if (isWin) {
         expectedMessage = 'Non-zero exit code: 1';
-        /* eslint-disable quotes */
         const expectedStdErr =
           `'nope-not-existing' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n`;
-        /* eslint-enable quotes */
         const expectedTexts = [ expectedMessage, expectedStdErr ];
         expectedTexts.forEach(expectedText => {
           expectedLogs.push({
