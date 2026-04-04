@@ -1,4 +1,5 @@
 const path = require('path');
+const { EventEmitter } = require('events');
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
@@ -42,18 +43,22 @@ describe('FileWatcher', function() {
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
-    mockWatcher = {
-      on: sandbox.stub(),
-      once: sandbox.stub().callsFake(function(event, listener) {
-        if (event === 'ready') {
-          listener();
-        }
-      }),
-      add: sandbox.stub(),
-      close: sandbox.stub().callsFake(function() {
-        return Promise.resolve();
-      }),
-    };
+    mockWatcher = new EventEmitter();
+    mockWatcher.add = sandbox.stub().callsFake(function(p) {
+      this.emit('all', 'add', path.resolve(process.cwd(), p));
+    });
+    mockWatcher.close = sandbox.stub().callsFake(function() {
+      return Promise.resolve();
+    });
+    mockWatcher.once = sandbox.stub().callsFake(function(event, listener) {
+      if (event === 'ready') {
+        listener();
+      }
+      return mockWatcher;
+    });
+    mockWatcher.on = sandbox.stub().callsFake(function(...args) {
+      return EventEmitter.prototype.on.apply(mockWatcher, args);
+    });
     delete require.cache[fileWatcherModulePath];
     FileWatcher = require('../lib/file_watcher.js');
     createWatcherStub = sandbox
@@ -94,7 +99,6 @@ describe('FileWatcher', function() {
     it('registers change, add, unlink, unlinkDir, and error listeners', async function() {
       await FileWatcher.create(makeConfig());
 
-      expect(mockWatcher.on.callCount).to.equal(5);
       expect(mockWatcher.on).to.have.been.calledWith(
         'change',
         sinon.match.func,
@@ -154,6 +158,41 @@ describe('FileWatcher', function() {
         ignoreInitial: true,
         ignored: ['**/vendor/**'],
       });
+    });
+
+    it('rejects when the watcher emits a non-EMFILE error before ready', async function() {
+      delete require.cache[fileWatcherModulePath];
+      const emitter = new EventEmitter();
+      const Fw = require('../lib/file_watcher.js');
+      const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
+      const promise = Fw.create(makeConfig());
+      emitter.emit('error', new Error('watch failed'));
+      stub.restore();
+
+      let err;
+      try {
+        await promise;
+      } catch (e) {
+        err = e;
+      }
+      expect(err).to.be.instanceOf(Error);
+      expect(err.message).to.equal('watch failed');
+    });
+
+    it('resolves when EMFILE is emitted before ready then ready fires', async function() {
+      delete require.cache[fileWatcherModulePath];
+      const emitter = new EventEmitter();
+      const Fw = require('../lib/file_watcher.js');
+      const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
+      const promise = Fw.create(makeConfig());
+      const emfile = new Error('too many open files');
+      emfile.code = 'EMFILE';
+      emitter.emit('error', emfile);
+      emitter.emit('ready');
+      const fw = await promise;
+      stub.restore();
+
+      expect(fw).to.be.instanceOf(Fw);
     });
   });
 
@@ -340,6 +379,75 @@ describe('FileWatcher', function() {
       expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
       expect(fw.fileWatcher).to.equal(null);
+    });
+
+    it('awaits close when the underlying watcher add() throws', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      mockWatcher.add.throws(new Error('chokidar add failed'));
+
+      let err;
+      try {
+        await fw.add('valid.js');
+      } catch (e) {
+        err = e;
+      }
+
+      expect(err).to.be.instanceOf(Error);
+      expect(err.message).to.equal('chokidar add failed');
+      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(fw.fileWatcher).to.equal(null);
+    });
+
+    it('awaits close when the underlying watcher emits error asynchronously after add', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      mockWatcher.add.callsFake(function() {
+        process.nextTick(() => {
+          mockWatcher.emit('error', new Error('async watch error'));
+        });
+      });
+
+      let err;
+      try {
+        await fw.add('valid.js');
+      } catch (e) {
+        err = e;
+      }
+
+      expect(err).to.be.instanceOf(Error);
+      expect(err.message).to.equal('async watch error');
+      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(fw.fileWatcher).to.equal(null);
+    });
+
+    it('resolves add when chokidar emits addDir for the same path', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      mockWatcher.add.callsFake(function(p) {
+        const resolved = path.resolve(process.cwd(), p);
+        this.emit('all', 'addDir', resolved);
+      });
+
+      await fw.add('some-watched-dir');
+
+      expect(mockWatcher.add).to.have.been.calledWith('some-watched-dir');
+      expect(mockWatcher.close).not.to.have.been.called();
+    });
+
+    it('settles add via fallback when chokidar emits neither all nor error', async function() {
+      sandbox.useFakeTimers();
+      try {
+        const fw = await FileWatcher.create(makeConfig());
+        mockWatcher.add.callsFake(function() {
+          /* chokidar completes with no matching `all` and no `error` (e.g. already watched) */
+        });
+
+        const p = fw.add('inert-path.js');
+        await sandbox.clock.tickAsync(1000);
+        await p;
+
+        expect(mockWatcher.close).not.to.have.been.called();
+      } finally {
+        sandbox.clock.restore();
+      }
     });
   });
 
