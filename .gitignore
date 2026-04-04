@@ -7,3 +7,4 @@ examples/*/package-lock.json
 .vscode
 .prettier*
 .tool-versions
+/tmp

@@ -252,6 +252,39 @@ describe('using', function() {
     expect(cleaned).to.equal(true);
   });
 
+  it('calls cleanup when the disposer setup promise rejects', async function() {
+    let cleaned = false;
+    const err = new Error('setup failed');
+    const d = disposer(Promise.reject(err), () => {
+      cleaned = true;
+    });
+    try {
+      await using(d, () => {});
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+    expect(cleaned).to.equal(true);
+  });
+
+  it('passes undefined resource and setup error to cleanup when setup rejects', async function() {
+    const err = new Error('setup failed');
+    let resourceArg;
+    let inspectionArg;
+    const d = disposer(Promise.reject(err), (resource, inspection) => {
+      resourceArg = resource;
+      inspectionArg = inspection;
+    });
+    try {
+      await using(d, () => {});
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+    expect(resourceArg).to.equal(undefined);
+    expect(inspectionArg.isRejected()).to.equal(true);
+    expect(inspectionArg.reason()).to.equal(err);
+  });
+
   it('works with a plain promise (no cleanup)', async function() {
     const result = await using(Promise.resolve('plain'), value => value + '!');
     expect(result).to.equal('plain!');

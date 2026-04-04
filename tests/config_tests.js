@@ -503,38 +503,8 @@ describe('Config', function() {
         done();
       });
     });
-  });
 
-  describe('getServeFiles', function() {
-    it('just delegates to getFileSet', function(done) {
-      let egg = [];
-      config.set('src_files', 'integration/*');
-      config.set('src_files_ignore', '**/*.sh');
-      config.getFileSet = function(want, dontWant, cb) {
-        expect(want).to.equal('integration/*');
-        expect(dontWant).to.equal('**/*.sh');
-        process.nextTick(function() { cb(null, egg); });
-      };
-      config.getServeFiles(function(err, files) {
-        expect(files).to.equal(egg);
-        done();
-      });
-    });
-    it('does not return duplicates when file matches multiple globs', function(done) {
-      let egg = [{
-        'attrs': [],
-        'src': 'testem.yml'
-      }];
-      config.set('src_files', ['t*.yml', 'testem.yml']);
-      config.getServeFiles(function(err, files) {
-        expect(files).to.deep.equal(egg);
-        done();
-      });
-    });
-  });
-
-  describe('getCSSFiles', function() {
-    it('loads css_files correctly', function(done) {
+    it('loads css when src_files matches a css glob', function(done) {
       config.set('cwd', 'tests');
       config.set('src_files', 'fixtures/styles/*.css');
       config.getSrcFiles(function(err, files) {
@@ -546,7 +516,7 @@ describe('Config', function() {
       });
     });
 
-    it('does not return duplicates when file matches multiple globs', function(done) {
+    it('dedupes when src_files lists the same css glob twice', function(done) {
       config.set('cwd', 'tests');
       config.set('src_files', ['fixtures/styles/*.css', 'fixtures/styles/*.css']);
       config.getSrcFiles(function(err, files) {
@@ -556,6 +526,246 @@ describe('Config', function() {
         ]);
         done();
       });
+    });
+  });
+
+  describe('getServeFiles', function() {
+    beforeEach(function() {
+      config.set('cwd', 'tests');
+    });
+
+    it('passes serve_files and combined ignores into getFileSet', function(done) {
+      let egg = [];
+      config.set('serve_files', 'integration/*');
+      config.set('serve_files_ignore', '**/*.sh');
+      config.set('src_files_ignore', 'should-not-be-used');
+      config.getFileSet = function(want, dontWant, cb) {
+        expect(want).to.equal('integration/*');
+        expect(dontWant).to.equal('**/*.sh');
+        process.nextTick(function() { cb(null, egg); });
+      };
+      config.getServeFiles(function(err, files) {
+        expect(files).to.equal(egg);
+        done();
+      });
+    });
+
+    it('uses serve_files when set instead of src_files', function(done) {
+      config.set('serve_files', ['config_tests.js']);
+      config.set('src_files', ['ci/*']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([fileEntry('config_tests.js')]);
+        done();
+      });
+    });
+
+    it('falls back to src_files when serve_files is unset', function(done) {
+      config.set('src_files', ['config_tests.js']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([fileEntry('config_tests.js')]);
+        done();
+      });
+    });
+
+    it('uses serve_files_ignore when set', function(done) {
+      config.set('serve_files', ['ci/*']);
+      config.set('serve_files_ignore', ['**/report*.js']);
+      config.set('src_files_ignore', ['**/ci_tests.js']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js'))
+        ]);
+        done();
+      });
+    });
+
+    it('uses src_files_ignore when serve_files_ignore is unset', function(done) {
+      config.set('serve_files', ['ci/*']);
+      config.set('src_files_ignore', ['**/report*.js']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js'))
+        ]);
+        done();
+      });
+    });
+
+    it('excludes using inline negation on serve_files', function(done) {
+      config.set('serve_files', ['ci/*', '!**/report*.js']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js'))
+        ]);
+        done();
+      });
+    });
+
+    it('does not return duplicates when file matches multiple globs', function(done) {
+      config.set('src_files', ['t*.yml', 'testem.yml']);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry('testem.yml')
+        ]);
+        done();
+      });
+    });
+
+    it('applies attrs on serve_files pattern entries', function(done) {
+      config.set('serve_files', [
+        { src: 'config_tests.js', attrs: ['data-foo'] },
+        'ci/ci_tests.js'
+      ]);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry('config_tests.js', ['data-foo']),
+          fileEntry(path.join('ci', 'ci_tests.js'))
+        ]);
+        done();
+      });
+    });
+
+    it('resolves file URLs in serve_files', function(done) {
+      config.set('serve_files', [
+        'file://ci/*',
+        'http://example.com/x.js'
+      ]);
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js')),
+          fileEntry(path.join('ci', 'report_file_tests.js')),
+          fileEntry(path.join('ci', 'reporter_tests.js')),
+          fileEntry('http://example.com/x.js')
+        ]);
+        done();
+      });
+    });
+  });
+
+  describe('getCSSFiles', function() {
+    beforeEach(function() {
+      config.set('cwd', 'tests');
+    });
+
+    it('lists files from css_files', function(done) {
+      config.set('css_files', 'fixtures/styles/*.css');
+      config.getCSSFiles(function(err, files) {
+        expect(err).to.not.exist();
+        expect(files).to.deep.equal([
+          fileEntry(path.join('fixtures', 'styles', 'print.css')),
+          fileEntry(path.join('fixtures', 'styles', 'screen.css'))
+        ]);
+        done();
+      });
+    });
+
+    it('returns an empty list when css_files is an empty array', function(done) {
+      config.set('css_files', []);
+      config.getCSSFiles(function(err, files) {
+        expect(err).to.not.exist();
+        expect(files).to.deep.equal([]);
+        done();
+      });
+    });
+
+    it('does not apply src_files_ignore (getFileSet called with empty ignore)', function(done) {
+      config.set('css_files', ['fixtures/styles/*.css']);
+      config.set('src_files_ignore', ['**/*.css']);
+      config.getCSSFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('fixtures', 'styles', 'print.css')),
+          fileEntry(path.join('fixtures', 'styles', 'screen.css'))
+        ]);
+        done();
+      });
+    });
+
+    it('does not return duplicates when the same css glob is listed twice', function(done) {
+      config.set('css_files', ['fixtures/styles/*.css', 'fixtures/styles/*.css']);
+      config.getCSSFiles(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('fixtures', 'styles', 'print.css')),
+          fileEntry(path.join('fixtures', 'styles', 'screen.css'))
+        ]);
+        done();
+      });
+    });
+  });
+
+  describe('getFooterScripts', function() {
+    beforeEach(function() {
+      config.set('cwd', 'tests');
+    });
+
+    it('lists footer_scripts using the same glob pipeline as src_files', function(done) {
+      config.set('footer_scripts', ['config_tests.js']);
+      config.getFooterScripts(function(err, files) {
+        expect(files).to.deep.equal([fileEntry('config_tests.js')]);
+        done();
+      });
+    });
+
+    it('honors src_files_ignore for footer_scripts', function(done) {
+      config.set('footer_scripts', ['ci/*']);
+      config.set('src_files_ignore', ['**/report*.js']);
+      config.getFooterScripts(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js'))
+        ]);
+        done();
+      });
+    });
+
+    it('returns an empty list when footer_scripts is empty', function(done) {
+      config.set('footer_scripts', []);
+      config.getFooterScripts(function(err, files) {
+        expect(files).to.deep.equal([]);
+        done();
+      });
+    });
+
+    it('supports inline negation in footer_scripts', function(done) {
+      config.set('footer_scripts', ['ci/*', '!**/report*.js']);
+      config.getFooterScripts(function(err, files) {
+        expect(files).to.deep.equal([
+          fileEntry(path.join('ci', 'ci_tests.js')),
+          fileEntry(path.join('ci', 'dev_tests.js'))
+        ]);
+        done();
+      });
+    });
+  });
+
+  describe('getFileSet', function() {
+    beforeEach(function() {
+      config.set('cwd', 'tests');
+    });
+
+    it('returns an empty list when a glob matches no files', function(done) {
+      config.getFileSet(['fixtures/no_such_prefix_zzzz/*.js'], '', function(err, files) {
+        expect(err).to.not.exist();
+        expect(files).to.deep.equal([]);
+        done();
+      });
+    });
+
+    it('merges results from multiple want patterns in order', function(done) {
+      config.getFileSet(
+        ['config_tests.js', path.join('ci', 'ci_tests.js')],
+        '',
+        function(err, files) {
+          expect(err).to.not.exist();
+          expect(files).to.deep.equal([
+            fileEntry('config_tests.js'),
+            fileEntry(path.join('ci', 'ci_tests.js'))
+          ]);
+          done();
+        }
+      );
     });
   });
 
