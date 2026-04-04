@@ -97,7 +97,7 @@ describe('Api', function() {
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
       let api = new Api();
-      api.startDev({ timeout: 20000 }, function() {});
+      api.startDev({ timeout: 20000, disable_watching: true }, function() {});
       api.config.progOptions.reporter = new FakeReporter(); // TODO Find a better way
       api.app = new App(api.config, function() {
         done();
