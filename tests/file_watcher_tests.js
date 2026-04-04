@@ -4,13 +4,16 @@ const { EventEmitter } = require('events');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-const fileWatcherModulePath = require.resolve('../lib/file_watcher.js');
+const fileWatcherImplModulePath = require.resolve('../lib/file_watcher_impl.js');
+const fileWatcherPublicModulePath = require.resolve('../lib/file_watcher.js');
+const { getWatchEngine } = require('./support/file_watcher_test_access');
 
 describe('FileWatcher', function() {
   let sandbox;
   let mockWatcher;
   let createWatcherStub;
   let FileWatcher;
+  let FileWatcherImpl;
 
   function makeConfig(overrides) {
     const state = {
@@ -59,21 +62,29 @@ describe('FileWatcher', function() {
     mockWatcher.on = sandbox.stub().callsFake(function(...args) {
       return EventEmitter.prototype.on.apply(mockWatcher, args);
     });
-    delete require.cache[fileWatcherModulePath];
+    delete require.cache[fileWatcherImplModulePath];
+    delete require.cache[fileWatcherPublicModulePath];
     FileWatcher = require('../lib/file_watcher.js');
+    FileWatcherImpl = require('../lib/file_watcher_impl.js');
     createWatcherStub = sandbox
-      .stub(FileWatcher, 'createWatcher')
+      .stub(FileWatcherImpl, 'createWatcher')
       .callsFake(function() {
         return mockWatcher;
       });
   });
 
   afterEach(function() {
-    delete require.cache[fileWatcherModulePath];
+    delete require.cache[fileWatcherImplModulePath];
+    delete require.cache[fileWatcherPublicModulePath];
     sandbox.restore();
   });
 
   describe('create', function() {
+    it('composes a FileWatcherImpl instance', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      expect(fw._impl).to.be.instanceOf(FileWatcherImpl);
+    });
+
     it('is not constructable with new', function() {
       expect(() => new FileWatcher(makeConfig())).to.throw(
         TypeError,
@@ -125,7 +136,7 @@ describe('FileWatcher', function() {
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('does not pass glob src_files to chokidar add (policy filter instead)', async function() {
+    it('does not pass glob src_files to engine add (policy filter instead)', async function() {
       await FileWatcher.create(makeConfig({ src_files: ['a.js', 'b.js'] }));
 
       expect(mockWatcher.add).to.not.have.been.called();
@@ -161,9 +172,10 @@ describe('FileWatcher', function() {
     });
 
     it('rejects when the watcher emits a non-EMFILE error before ready', async function() {
-      delete require.cache[fileWatcherModulePath];
+      delete require.cache[fileWatcherImplModulePath];
+      delete require.cache[fileWatcherPublicModulePath];
       const emitter = new EventEmitter();
-      const Fw = require('../lib/file_watcher.js');
+      const Fw = require('../lib/file_watcher_impl.js');
       const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
       const promise = Fw.create(makeConfig());
       emitter.emit('error', new Error('watch failed'));
@@ -180,9 +192,10 @@ describe('FileWatcher', function() {
     });
 
     it('resolves when EMFILE is emitted before ready then ready fires', async function() {
-      delete require.cache[fileWatcherModulePath];
+      delete require.cache[fileWatcherImplModulePath];
+      delete require.cache[fileWatcherPublicModulePath];
       const emitter = new EventEmitter();
-      const Fw = require('../lib/file_watcher.js');
+      const Fw = require('../lib/file_watcher_impl.js');
       const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
       const promise = Fw.create(makeConfig());
       const emfile = new Error('too many open files');
@@ -197,27 +210,27 @@ describe('FileWatcher', function() {
   });
 
   // Policy lists are built the same as before; chokidar only watches '.' plus any
-  // non-glob path that resolves outside cwd (see lib/file_watcher.js).
+  // non-glob path that resolves outside cwd (see lib/file_watcher_impl.js).
   describe('path and glob passthrough', function() {
     it('keeps config file path in policy (including Win32-style separators)', async function() {
       const confFile = 'C:\\\\project\\\\testem.json';
       const fw = await FileWatcher.create(makeConfig({ file: confFile }));
 
-      expect(fw._watchPolicy.includePatterns).to.include(confFile);
+      expect(fw._impl._watchPolicy.includePatterns).to.include(confFile);
     });
 
     it('keeps src_files as a string without splitting in policy', async function() {
       const srcFiles = 'impl.js,tests.js';
       const fw = await FileWatcher.create(makeConfig({ src_files: srcFiles }));
 
-      expect(fw._watchPolicy.includePatterns).to.include(srcFiles);
+      expect(fw._impl._watchPolicy.includePatterns).to.include(srcFiles);
     });
 
     it('keeps src_files arrays with mixed slash styles in policy', async function() {
       const patterns = ['src/**/*.js', 'lib\\\\**\\\\*.ts', 'vendor/**/x.js'];
       const fw = await FileWatcher.create(makeConfig({ src_files: patterns }));
 
-      expect(fw._watchPolicy.includePatterns).to.deep.equal(patterns);
+      expect(fw._impl._watchPolicy.includePatterns).to.deep.equal(patterns);
     });
 
     it('keeps watch_files and src_files order in policy', async function() {
@@ -226,7 +239,7 @@ describe('FileWatcher', function() {
         makeConfig({ watch_files: watchFiles, src_files: ['main.js'] }),
       );
 
-      expect(fw._watchPolicy.includePatterns).to.deep.equal([
+      expect(fw._impl._watchPolicy.includePatterns).to.deep.equal([
         'packages\\\\**\\\\*.js',
         'assets/**/*.css',
         'main.js',
@@ -348,7 +361,7 @@ describe('FileWatcher', function() {
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
-      expect(fw.fileWatcher).to.equal(null);
+      expect(getWatchEngine(fw)).to.equal(null);
     });
 
     it('rejects glob patterns (nested **)', async function() {
@@ -363,7 +376,7 @@ describe('FileWatcher', function() {
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
-      expect(fw.fileWatcher).to.equal(null);
+      expect(getWatchEngine(fw)).to.equal(null);
     });
 
     it('rejects brace expansion when it introduces glob magic', async function() {
@@ -378,7 +391,7 @@ describe('FileWatcher', function() {
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
       expect(mockWatcher.close).to.have.been.calledOnce();
-      expect(fw.fileWatcher).to.equal(null);
+      expect(getWatchEngine(fw)).to.equal(null);
     });
 
     it('awaits close when the underlying watcher add() throws', async function() {
@@ -395,7 +408,7 @@ describe('FileWatcher', function() {
       expect(err).to.be.instanceOf(Error);
       expect(err.message).to.equal('chokidar add failed');
       expect(mockWatcher.close).to.have.been.calledOnce();
-      expect(fw.fileWatcher).to.equal(null);
+      expect(getWatchEngine(fw)).to.equal(null);
     });
 
     it('awaits close when the underlying watcher emits error asynchronously after add', async function() {
@@ -416,10 +429,10 @@ describe('FileWatcher', function() {
       expect(err).to.be.instanceOf(Error);
       expect(err.message).to.equal('async watch error');
       expect(mockWatcher.close).to.have.been.calledOnce();
-      expect(fw.fileWatcher).to.equal(null);
+      expect(getWatchEngine(fw)).to.equal(null);
     });
 
-    it('resolves add when chokidar emits addDir for the same path', async function() {
+    it('resolves add when the engine emits addDir for the same path', async function() {
       const fw = await FileWatcher.create(makeConfig());
       mockWatcher.add.callsFake(function(p) {
         const resolved = path.resolve(process.cwd(), p);
@@ -432,7 +445,7 @@ describe('FileWatcher', function() {
       expect(mockWatcher.close).not.to.have.been.called();
     });
 
-    it('settles add via fallback when chokidar emits neither all nor error', async function() {
+    it('settles add via fallback when the engine emits neither all nor error', async function() {
       sandbox.useFakeTimers();
       try {
         const fw = await FileWatcher.create(makeConfig());
