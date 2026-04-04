@@ -155,6 +155,7 @@ describe('FileWatcher integration', function() {
 
   it('add forwards a path so later changes to that file are observed', async function() {
     fs.mkdirSync(path.join(tmpDir, 'lib'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'lib', 'extra.js'), '');
     process.chdir(tmpDir);
 
     fw = await FileWatcher.create(makeConfig({ src_files: ['root.js'] }));
