@@ -162,7 +162,7 @@ describe('FileWatcher integration', function() {
     await delay(400);
 
     // Same shape as App#onFileRequested: path relative to cwd
-    fw.add('lib/extra.js');
+    await fw.add('lib/extra.js');
 
     await delay(600);
 
@@ -199,7 +199,7 @@ describe('FileWatcher integration', function() {
 
     const sandbox = sinon.createSandbox();
     const originalAdd = fw.add.bind(fw);
-    sandbox.stub(fw, 'add').callsFake(function(file) {
+    sandbox.stub(fw, 'add').callsFake(async function(file) {
       if (file === 'second.js') {
         const err = new Error('EMFILE: too many open files, watch');
         err.code = 'EMFILE';
@@ -211,8 +211,14 @@ describe('FileWatcher integration', function() {
     });
 
     try {
-      fw.add('first.js');
-      expect(() => fw.add('second.js')).to.throw().with.property('code', 'EMFILE');
+      await fw.add('first.js');
+      let emfileErr;
+      try {
+        await fw.add('second.js');
+      } catch (e) {
+        emfileErr = e;
+      }
+      expect(emfileErr).to.have.property('code', 'EMFILE');
     } finally {
       sandbox.restore();
       await fw.close();
