@@ -53,6 +53,8 @@ describe('FileWatcher', function() {
       clear: sandbox.stub(),
       add: sandbox.stub(),
       ignore: sandbox.stub(),
+      removeAllListeners: sandbox.stub(),
+      dir: { destroy: sandbox.stub() },
     };
     stubWatchEngineFactory = sandbox.stub().callsFake(function() {
       return mockWatcher;
@@ -286,6 +288,36 @@ describe('FileWatcher', function() {
       fw.add('/abs/path/to/file.js');
 
       expect(mockWatcher.add).to.have.been.calledWith('/abs/path/to/file.js');
+    });
+  });
+
+  describe('close', function() {
+    it('calls dir.destroy on the underlying engine when present', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      fw.close();
+
+      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+    });
+
+    it('removes listeners on the engine and on this instance', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      fw.close();
+
+      expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
+      expect(fw.listenerCount('fileChanged')).to.equal(0);
+      expect(fw.listenerCount('EMFILE')).to.equal(0);
+    });
+
+    it('is idempotent', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      fw.close();
+      fw.close();
+
+      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
     });
   });
 });

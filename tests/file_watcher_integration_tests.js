@@ -57,13 +57,23 @@ describe('FileWatcher integration', function() {
 
   let prevCwd;
   let tmpDir;
+  let fw;
 
   beforeEach(function() {
     prevCwd = process.cwd();
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-fw-int-'));
+    fw = null;
   });
 
   afterEach(function() {
+    if (fw) {
+      try {
+        fw.close();
+      } catch {
+        // ignore
+      }
+      fw = null;
+    }
     try {
       process.chdir(prevCwd);
     } catch {
@@ -81,7 +91,7 @@ describe('FileWatcher integration', function() {
 
   it('emits fileChanged when a new file matching src_files is created', async function() {
     process.chdir(tmpDir);
-    const fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
+    fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
 
     await delay(600);
 
@@ -96,7 +106,7 @@ describe('FileWatcher integration', function() {
     fs.writeFileSync(path.join(tmpDir, 'existing.js'), 'v1');
     process.chdir(tmpDir);
 
-    const fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
+    fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
 
     await delay(600);
 
@@ -111,7 +121,7 @@ describe('FileWatcher integration', function() {
     fs.mkdirSync(path.join(tmpDir, 'vendor'), { recursive: true });
     process.chdir(tmpDir);
 
-    const fw = new FileWatcher(
+    fw = new FileWatcher(
       makeConfig({
         src_files: ['**/*.js'],
         src_files_ignore: ['vendor/**'],
@@ -136,7 +146,7 @@ describe('FileWatcher integration', function() {
     fs.mkdirSync(path.join(tmpDir, 'lib'), { recursive: true });
     process.chdir(tmpDir);
 
-    const fw = new FileWatcher(makeConfig({ src_files: ['root.js'] }));
+    fw = new FileWatcher(makeConfig({ src_files: ['root.js'] }));
 
     await delay(400);
 
@@ -150,5 +160,18 @@ describe('FileWatcher integration', function() {
 
     const filepath = await next;
     expect(path.basename(filepath)).to.equal('extra.js');
+  });
+
+  it('close clears the wrapper reference to the engine (safe to call after use)', async function() {
+    process.chdir(tmpDir);
+    fw = new FileWatcher(makeConfig({ src_files: ['*.js'] }));
+
+    await delay(400);
+
+    expect(fw.fileWatcher).to.be.ok();
+
+    fw.close();
+
+    expect(fw.fileWatcher).to.equal(null);
   });
 });
