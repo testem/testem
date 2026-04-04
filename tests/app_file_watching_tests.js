@@ -1,3 +1,5 @@
+const fs = require('fs');
+const os = require('os');
 const Path = require('path');
 
 const expect = require('chai').expect;
@@ -13,8 +15,13 @@ describe('App file watching', function() {
   let app;
   let config;
   let sandbox;
+  let prevCwd;
+  let tmpDir;
 
   beforeEach(function() {
+    prevCwd = process.cwd();
+    tmpDir = fs.mkdtempSync(Path.join(os.tmpdir(), 'testem-app-fw-'));
+    process.chdir(tmpDir);
     sandbox = sinon.createSandbox();
     sandbox.stub(Config.prototype, 'readConfigFile').callsFake(function(file, cb) {
       cb();
@@ -23,6 +30,19 @@ describe('App file watching', function() {
 
   afterEach(function() {
     sandbox.restore();
+    try {
+      process.chdir(prevCwd);
+    } catch {
+      // ignore
+    }
+    if (tmpDir) {
+      try {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      } catch {
+        // ignore
+      }
+      tmpDir = null;
+    }
   });
 
   it('creates a FileWatcher when watching is enabled', function(done) {

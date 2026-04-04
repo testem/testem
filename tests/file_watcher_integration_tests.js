@@ -1,6 +1,9 @@
 /**
  * Integration tests for `lib/file_watcher` (FileWatcher): real temp dirs and
  * `process.chdir`, no stubbed watch engine.
+ *
+ * Each test uses a fresh empty directory from `fs.mkdtempSync` as cwd so the
+ * watcher is not scoped to the repo tree.
  */
 const fs = require('fs');
 const os = require('os');
