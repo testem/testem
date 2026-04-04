@@ -289,6 +289,30 @@ describe('FileWatcher', function() {
 
       expect(mockWatcher.add).to.have.been.calledWith('/abs/path/to/file.js');
     });
+
+    it('rejects glob patterns (single segment)', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      expect(() => fw.add('*.js')).to.throw(TypeError, /glob patterns/);
+      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(fw.fileWatcher).to.equal(null);
+    });
+
+    it('rejects glob patterns (nested **)', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      expect(() => fw.add('src/**/*.js')).to.throw(TypeError, /glob patterns/);
+      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(fw.fileWatcher).to.equal(null);
+    });
+
+    it('rejects brace expansion when it introduces glob magic', function() {
+      const fw = new FileWatcher(makeConfig());
+
+      expect(() => fw.add('{a,b}.js')).to.throw(TypeError, /glob patterns/);
+      expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
+      expect(fw.fileWatcher).to.equal(null);
+    });
   });
 
   describe('close', function() {
