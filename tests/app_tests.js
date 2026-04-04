@@ -27,6 +27,7 @@ describe('App', function () {
         {},
         {
           reporter: new FakeReporter(),
+          disable_watching: true,
         },
       );
       app = new App(config, function () {
@@ -189,6 +190,7 @@ describe('App', function () {
         {},
         {
           reporter: new FakeReporter(),
+          disable_watching: true,
         },
       );
       app = new App(config, function () {});
@@ -240,6 +242,7 @@ describe('App', function () {
         {
           reporter: new FakeReporter(),
           on_exit: onExitCb,
+          disable_watching: true,
         },
       );
       app = new App(config, function () {
