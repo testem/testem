@@ -316,41 +316,41 @@ describe('FileWatcher', function() {
   });
 
   describe('close', function() {
-    it('calls dir.destroy on the underlying engine when present', function() {
+    it('calls dir.destroy on the underlying engine when present', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      fw.close();
+      await fw.close();
 
       expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
     });
 
-    it('removes listeners on the engine and on this instance', function() {
+    it('removes listeners on the engine and on this instance', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      fw.close();
+      await fw.close();
 
       expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
       expect(fw.listenerCount('fileChanged')).to.equal(0);
       expect(fw.listenerCount('EMFILE')).to.equal(0);
     });
 
-    it('is idempotent', function() {
+    it('is idempotent', async function() {
       const fw = new FileWatcher(makeConfig());
 
-      fw.close();
-      fw.close();
+      await fw.close();
+      await fw.close();
 
       expect(mockWatcher.dir.destroy).to.have.been.calledOnce();
       expect(mockWatcher.removeAllListeners).to.have.been.calledOnce();
     });
 
-    it('returns a promise', function() {
+    it('returns a promise', async function() {
       const fw = new FileWatcher(makeConfig());
 
       const out = fw.close();
 
       expect(out).to.be.instanceOf(Promise);
-      return out;
+      await out;
     });
   });
 });
