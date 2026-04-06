@@ -338,90 +338,168 @@ describe('knownBrowsers', function() {
       let browsers;
       let safari;
 
-      function setup(browserName) {
+      function setup(browserName, platform) {
         if (browserName) {
           addBrowserArgsToConfig(config, browserName);
         } else {
           config = createConfig();
         }
 
-        browsers = knownBrowsers('any', config);
+        browsers = knownBrowsers(platform, config);
         safari = findBrowser(browsers, 'Safari');
       }
 
-      beforeEach(function() {
-        setup();
-      });
+      describe('on macOS', function() {
+        const platform = 'darwin';
 
-      it('exists', function() {
-        expect(safari).to.exist();
-      });
-
-      it('constructs correct args', function() {
-        expect(safari.args.call(launcher, config, url)).to.deep.eq([
-          path.join(browserTmpDir, 'start.html')
-        ]);
-      });
-
-      it('creates a config file on setup', function(done) {
-        safari.setup.call(launcher, config, function(err) {
-          expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
-            '<script>window.location = \'http://localhost:7357\'</script>'
-          );
-          done();
-        });
-      });
-
-      it('allows a custom path to be used as the possiblePath for safari ', function() {
-        let customPath = '/my/custom/path/to/safari';
-
-        config.get = function(name) {
-          if (name === 'browser_paths') {
-            return {
-              Safari: customPath
-            };
-          }
-        };
-
-        browsers = knownBrowsers('any', config);
-        safari = findBrowser(browsers, 'Safari');
-
-        expect(safari.possiblePath).to.be.a('string');
-        expect(safari.possiblePath).to.equal(customPath);
-      });
-
-      it('allows a custom exe to be used as the possibleExe for safari ', function() {
-        let customExe = 'safari-custom';
-
-        config.get = function(name) {
-          if (name === 'browser_exes') {
-            return {
-              Safari: customExe
-            };
-          }
-        };
-
-        browsers = knownBrowsers('any', config);
-        safari = findBrowser(browsers, 'Safari');
-
-        expect(safari.possibleExe).to.be.a('string');
-        expect(safari.possibleExe).to.equal(customExe);
-      });
-
-      describe('browser_args', function() {
         beforeEach(function() {
-          setup('Safari');
+          setup(null, platform);
         });
 
-        afterEach(function() {
-          setup();
+        it('exists', function() {
+          expect(safari).to.exist();
         });
 
-        it('constructs correct args with browser_args', function() {
+        it('constructs correct args (opens test URL via Launch Services)', function() {
           expect(safari.args.call(launcher, config, url)).to.deep.eq([
-            '--testem', path.join(browserTmpDir, 'start.html')
+            '-a', 'Safari', url
           ]);
+        });
+
+        it('does not use a local start.html redirect', function() {
+          expect(safari.setup).to.be.undefined();
+        });
+
+        it('allows a custom path to be used as the possiblePath for safari ', function() {
+          let customPath = '/my/custom/path/to/open';
+
+          config.get = function(name) {
+            if (name === 'browser_paths') {
+              return {
+                Safari: customPath
+              };
+            }
+          };
+
+          browsers = knownBrowsers(platform, config);
+          safari = findBrowser(browsers, 'Safari');
+
+          expect(safari.possiblePath).to.be.a('string');
+          expect(safari.possiblePath).to.equal(customPath);
+        });
+
+        it('allows a custom exe to be used as the possibleExe for safari ', function() {
+          let customExe = 'open-custom';
+
+          config.get = function(name) {
+            if (name === 'browser_exes') {
+              return {
+                Safari: customExe
+              };
+            }
+          };
+
+          browsers = knownBrowsers(platform, config);
+          safari = findBrowser(browsers, 'Safari');
+
+          expect(safari.possibleExe).to.be.a('string');
+          expect(safari.possibleExe).to.equal(customExe);
+        });
+
+        describe('browser_args', function() {
+          beforeEach(function() {
+            setup('Safari', platform);
+          });
+
+          afterEach(function() {
+            setup(null, platform);
+          });
+
+          it('constructs correct args with browser_args', function() {
+            expect(safari.args.call(launcher, config, url)).to.deep.eq([
+              '--testem', '-a', 'Safari', url
+            ]);
+          });
+        });
+      });
+
+      describe('on non-macOS', function() {
+        const platform = 'win32';
+
+        beforeEach(function() {
+          setup(null, platform);
+        });
+
+        it('exists', function() {
+          expect(safari).to.exist();
+        });
+
+        it('constructs correct args', function() {
+          expect(safari.args.call(launcher, config, url)).to.deep.eq([
+            path.join(browserTmpDir, 'start.html')
+          ]);
+        });
+
+        it('creates a config file on setup', function(done) {
+          safari.setup.call(launcher, config, function(err) {
+            expect(err).to.be.null();
+            expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
+              '<script>window.location = \'http://localhost:7357\'</script>'
+            );
+            done();
+          });
+        });
+
+        it('allows a custom path to be used as the possiblePath for safari ', function() {
+          let customPath = '/my/custom/path/to/safari';
+
+          config.get = function(name) {
+            if (name === 'browser_paths') {
+              return {
+                Safari: customPath
+              };
+            }
+          };
+
+          browsers = knownBrowsers(platform, config);
+          safari = findBrowser(browsers, 'Safari');
+
+          expect(safari.possiblePath).to.be.a('string');
+          expect(safari.possiblePath).to.equal(customPath);
+        });
+
+        it('allows a custom exe to be used as the possibleExe for safari ', function() {
+          let customExe = 'safari-custom';
+
+          config.get = function(name) {
+            if (name === 'browser_exes') {
+              return {
+                Safari: customExe
+              };
+            }
+          };
+
+          browsers = knownBrowsers(platform, config);
+          safari = findBrowser(browsers, 'Safari');
+
+          expect(safari.possibleExe).to.be.a('string');
+          expect(safari.possibleExe).to.equal(customExe);
+        });
+
+        describe('browser_args', function() {
+          beforeEach(function() {
+            setup('Safari', platform);
+          });
+
+          afterEach(function() {
+            setup(null, platform);
+          });
+
+          it('constructs correct args with browser_args', function() {
+            expect(safari.args.call(launcher, config, url)).to.deep.eq([
+              '--testem', path.join(browserTmpDir, 'start.html')
+            ]);
+          });
         });
       });
     });
@@ -429,6 +507,7 @@ describe('knownBrowsers', function() {
     describe('Safari Technology Preview', function() {
       let browsers;
       let safariTP;
+      const platform = 'darwin';
 
       function setup(browserName) {
         if (browserName) {
@@ -437,7 +516,7 @@ describe('knownBrowsers', function() {
           config = createConfig();
         }
 
-        browsers = knownBrowsers('any', config);
+        browsers = knownBrowsers(platform, config);
         safariTP = findBrowser(browsers, 'Safari Technology Preview');
       }
 
@@ -445,28 +524,23 @@ describe('knownBrowsers', function() {
         setup();
       });
 
-      it('exists', function() {
+      it('exists on macOS only', function() {
         expect(safariTP).to.exist();
+        expect(findBrowser(knownBrowsers('linux', config), 'Safari Technology Preview')).to.be.undefined();
       });
 
-      it('constructs correct args', function() {
+      it('constructs correct args (opens test URL via Launch Services)', function() {
         expect(safariTP.args.call(launcher, config, url)).to.deep.eq([
-          path.join(browserTmpDir, 'start.html')
+          '-a', 'Safari Technology Preview', url
         ]);
       });
 
-      it('creates a config file on setup', function(done) {
-        safariTP.setup.call(launcher, config, function(err) {
-          expect(err).to.be.null();
-          expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
-            '<script>window.location = \'http://localhost:7357\'</script>'
-          );
-          done();
-        });
+      it('does not use a local start.html redirect', function() {
+        expect(safariTP.setup).to.be.undefined();
       });
 
       it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function() {
-        let customPath = '/my/custom/path/to/safari-technology-preview';
+        let customPath = '/my/custom/path/to/open';
 
         config.get = function(name) {
           if (name === 'browser_paths') {
@@ -476,7 +550,7 @@ describe('knownBrowsers', function() {
           }
         };
 
-        browsers = knownBrowsers('any', config);
+        browsers = knownBrowsers(platform, config);
         safariTP = findBrowser(browsers, 'Safari Technology Preview');
 
         expect(safariTP.possiblePath).to.be.a('string');
@@ -494,7 +568,7 @@ describe('knownBrowsers', function() {
           }
         };
 
-        browsers = knownBrowsers('any', config);
+        browsers = knownBrowsers(platform, config);
         safariTP = findBrowser(browsers, 'Safari Technology Preview');
 
         expect(safariTP.possibleExe).to.be.a('string');
@@ -512,7 +586,7 @@ describe('knownBrowsers', function() {
 
         it('constructs correct args with browser_args', function() {
           expect(safariTP.args.call(launcher, config, url)).to.deep.eq([
-            '--testem', path.join(browserTmpDir, 'start.html')
+            '--testem', '-a', 'Safari Technology Preview', url
           ]);
         });
       });
