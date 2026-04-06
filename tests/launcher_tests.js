@@ -1,11 +1,14 @@
 const Launcher = require('../lib/launcher');
 const Config = require('../lib/config');
+const ProcessCtl = require('../lib/process-ctl');
+const knownBrowsers = require('../lib/utils/known-browsers');
 const expect = require('chai').expect;
 const assert = require('chai').assert;
 const path = require('path');
 const fs = require('fs');
 const sinon = require('sinon');
 const { execaNode } = require('execa');
+const _ = require('lodash');
 
 const os = require('os');
 const isWin = require('../lib/utils/is-win')();
@@ -293,6 +296,98 @@ describe('Launcher', function() {
       const { stdout } = await execaNode(helperPath);
       const dir = stdout.trim();
       expect(fs.existsSync(dir)).to.be.false();
+    });
+  });
+
+  describe('Safari spawn args', function() {
+    let sandbox;
+    let config;
+
+    beforeEach(function() {
+      sandbox = sinon.createSandbox();
+      config = new Config(null, { port: '7357', url: 'http://localhost:7357/' });
+    });
+
+    afterEach(function() {
+      sandbox.restore();
+    });
+
+    describe('on macOS (darwin)', function() {
+      it('spawns /usr/bin/open with -a Safari and the test URL', function() {
+        const safari = _.find(knownBrowsers('darwin', config), { name: 'Safari' });
+        const settings = _.assign({}, safari, {
+          exe: '/usr/bin/open',
+          protocol: 'browser',
+          id: '42'
+        });
+        const launcher = new Launcher('Safari', settings, config);
+
+        sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
+
+        return launcher.start().then(function() {
+          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+          expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal('/usr/bin/open');
+          expect(ProcessCtl.prototype.spawn.firstCall.args[1]).to.deep.equal([
+            '-a',
+            'Safari',
+            'http://localhost:7357/42'
+          ]);
+        });
+      });
+
+      it('spawns /usr/bin/open with -a Safari Technology Preview and the test URL', function() {
+        const stp = _.find(knownBrowsers('darwin', config), {
+          name: 'Safari Technology Preview'
+        });
+        const settings = _.assign({}, stp, {
+          exe: '/usr/bin/open',
+          protocol: 'browser',
+          id: '99'
+        });
+        const launcher = new Launcher('Safari Technology Preview', settings, config);
+
+        sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
+
+        return launcher.start().then(function() {
+          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+          expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal('/usr/bin/open');
+          expect(ProcessCtl.prototype.spawn.firstCall.args[1]).to.deep.equal([
+            '-a',
+            'Safari Technology Preview',
+            'http://localhost:7357/99'
+          ]);
+        });
+      });
+    });
+
+    describe('on non-macOS (win32 and linux use the start.html launcher)', function() {
+      ['win32', 'linux'].forEach(function(platform) {
+        it('spawns Safari exe with start.html for known-browsers platform ' + platform, function() {
+          const safari = _.find(knownBrowsers(platform, config), { name: 'Safari' });
+          const settings = _.assign({}, safari, {
+            exe: 'C:\\Program Files\\Safari\\safari.exe',
+            protocol: 'browser',
+            id: '7'
+          });
+          const launcher = new Launcher('Safari', settings, config);
+
+          sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
+
+          return launcher.start().then(function() {
+            expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+            expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal(
+              'C:\\Program Files\\Safari\\safari.exe'
+            );
+            const spawnArgs = ProcessCtl.prototype.spawn.firstCall.args[1];
+            expect(spawnArgs).to.have.length(1);
+            expect(spawnArgs[0]).to.match(/start\.html$/);
+            expect(fs.readFileSync(spawnArgs[0], 'utf8')).to.equal(
+              '<script>window.location = \'http://localhost:7357/7\'</script>'
+            );
+            fs.rmSync(launcher.browserTmpDirectory, { recursive: true, force: true });
+          });
+        });
+      });
     });
   });
 });
