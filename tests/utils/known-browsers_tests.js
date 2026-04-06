@@ -370,6 +370,10 @@ describe('knownBrowsers', function() {
           expect(safari.setup).to.be.undefined();
         });
 
+        it('sets ignoreProcessExit because /usr/bin/open exits after handoff', function() {
+          expect(safari.ignoreProcessExit).to.equal(true);
+        });
+
         it('allows a custom path to be used as the possiblePath for safari ', function() {
           let customPath = '/my/custom/path/to/open';
 
@@ -537,6 +541,10 @@ describe('knownBrowsers', function() {
 
       it('does not use a local start.html redirect', function() {
         expect(safariTP.setup).to.be.undefined();
+      });
+
+      it('sets ignoreProcessExit because /usr/bin/open exits after handoff', function() {
+        expect(safariTP.ignoreProcessExit).to.equal(true);
       });
 
       it('allows a custom path to be used as the possiblePath for Safari Technology Preview ', function() {

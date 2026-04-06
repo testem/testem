@@ -3,6 +3,8 @@
 /**
  * Unattended Safari smoke for CI (macOS only).
  * If Safari showed the local-file open dialog (#1387), Testem would hang past the wall timeout.
+ * The macOS launcher uses `open`, which exits immediately; Testem ignores that process exit
+ * (ignoreProcessExit on the Safari launcher) so the run is not marked as a failure.
  */
 
 const path = require('path');
