@@ -61,6 +61,21 @@ jobs:
         with:
           run: npm run integration
 
+  safari-smoke:
+    name: safari-ci-smoke
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: package.json
+      - run: npm i
+      - run: npm run ci:safari-smoke
+
   browser-tests:
     name: browser-tests
     runs-on: ubuntu-latest
