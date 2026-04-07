@@ -1,5 +1,3 @@
-
-
 const chai = require('chai');
 const sinonChai = require('sinon-chai').default;
 const chaiFiles = require('chai-files');
@@ -17,7 +15,7 @@ let PATH = 'PATH';
 // windows calls it's path 'Path' usually, but this is not guaranteed.
 if (process.platform === 'win32') {
   PATH = 'Path';
-  Object.keys(process.env).forEach(function(e) {
+  Object.keys(process.env).forEach(function (e) {
     if (e.match(/^PATH$/i)) {
       PATH = e;
     }
@@ -31,4 +29,7 @@ function escapeRegExp(str) {
 }
 
 // Unset PATH set by npm running the test to ensure testem sets it correctly
-process.env[PATH] = process.env[PATH].replace(new RegExp(escapeRegExp(modulesPath), 'g'), 'NOOP');
+process.env[PATH] = process.env[PATH].replace(
+  new RegExp(escapeRegExp(modulesPath), 'g'),
+  'NOOP',
+);

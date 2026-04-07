@@ -28,7 +28,8 @@ describe('dev mode app', function() {
         port: 0,
         cwd: dir,
         reporter: reporter,
-        launch_in_ci: ['Node', 'NodePlain', 'Headless Firefox']
+        launch_in_ci: ['Node', 'NodePlain', 'Headless Firefox'],
+        disable_watching: true,
       });
       config.read(function() {
         var app = new App(config, function(code, err) {

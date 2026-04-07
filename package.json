@@ -17,23 +17,24 @@
     "url": "http://github.com/testem/testem/issues"
   },
   "engines": {
-    "node": ">= 20.*"
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
   },
   "license": "MIT",
   "dependencies": {
     "@xmldom/xmldom": "^0.9.9",
     "backbone": "^1.6.1",
     "charm": "^1.0.2",
+    "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "compression": "^1.8.1",
     "consolidate": "^1.0.4",
     "execa": "^9.6.1",
     "express": "^5.2.1",
-    "fireworm": "^0.7.2",
     "glob": "^13.0.6",
     "http-proxy": "^1.18.1",
     "js-yaml": "^4.1.1",
     "lodash": "^4.18.1",
+    "minimatch": "^10.2.5",
     "mkdirp": "^3.0.1",
     "mustache": "^4.2.0",
     "node-notifier": "^10.0.1",
