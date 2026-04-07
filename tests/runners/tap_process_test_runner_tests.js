@@ -170,7 +170,7 @@ describe('tap process test runner', function() {
           ok: false,
           operator: 'equal',
           passed: false,
-          stack: '\'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\'\n \n'
+          stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n \n'
         });
         expect(reporter.results[1].result).to.deep.include({
           failed: 0,
