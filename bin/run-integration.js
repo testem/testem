@@ -53,7 +53,8 @@ async function shellExec(cmd, runOpts) {
     return result.stdout;
   } catch (err) {
     throw new Error(
-      `Cmd: ${cmd} in directory: ${path.basename(runOpts.cwd)} failed with exit code: ${err.exitCode}\n${err.stdout}${err.stderr}`
+      `Cmd: ${cmd} in directory: ${path.basename(runOpts.cwd)} failed with exit code: ${err.exitCode}\n${err.stdout}${err.stderr}`,
+      { cause: err }
     );
   }
 }

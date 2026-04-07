@@ -66,6 +66,8 @@
   },
   "devDependencies": {
     "@cypress/request": "^3.0.10",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
     "chai": "^6.2.2",
     "chai-files": "^1.4.0",
     "chai-shallow-deep-equal": "^1.4.6",
