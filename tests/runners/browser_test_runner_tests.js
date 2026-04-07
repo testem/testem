@@ -379,6 +379,26 @@ describe('browser test runner', function() {
       });
     });
 
+    it('does not report unexpected exit when ignoreProcessExit is true (e.g. macOS open -a Safari)', function(done) {
+      launcher.settings.ignoreProcessExit = true;
+      launcher.settings.exe = 'node';
+      launcher.settings.args = ['-e', 'console.log(\'test\')'];
+      runner.start(function() {
+        const unexpected = reporter.results.filter(function(r) {
+          return r.result && r.result.logs && r.result.logs.some(function(l) {
+            return l.text && l.text.indexOf('Browser exited unexpectedly') >= 0;
+          });
+        });
+        expect(unexpected).to.have.length(0);
+        done();
+      });
+
+      setTimeout(function() {
+        runner.tryAttach('browser', launcher.id, socket);
+        socket.emit('after-tests-complete');
+      }, 50);
+    });
+
     it('allows to cancel the timeout', function(done) {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
