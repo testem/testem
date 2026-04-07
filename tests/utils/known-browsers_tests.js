@@ -104,7 +104,31 @@ describe('knownBrowsers', function() {
             'user_pref("app.update.auto", false);',
             'user_pref("app.update.enabled", false);',
             'user_pref("browser.EULA.override", true);',
-            'user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);'
+            'user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);',
+            'user_pref("browser.aboutwelcome.enabled", false);',
+            'user_pref("browser.startup.homepage", "about:blank");',
+            'user_pref("browser.startup.page", 0);',
+            'user_pref("browser.startup.firstrunSkipsHomepage", true);',
+            'user_pref("browser.startup.homepage_override.mstone", "ignore");',
+            'user_pref("browser.startup.homepage_welcome_url", "");',
+            'user_pref("browser.startup.homepage_welcome_url.additional", "");',
+            'user_pref("browser.startup.cohort", "ignore");',
+            'user_pref("browser.messaging-system.prompts.enabled", false);',
+            'user_pref("browser.onboarding.enabled", false);',
+            'user_pref("browser.tour.enabled", false);',
+            'user_pref("browser.startup.upgradeDialog.enabled", false);',
+            'user_pref("browser.uiCustomization.skipDefaultState", true);',
+            'user_pref("toolkit.telemetry.enabled", false);',
+            'user_pref("toolkit.telemetry.unified", false);',
+            'user_pref("browser.ping-centre.telemetry", false);',
+            'user_pref("browser.sessionstore.resume_from_crash", false);',
+            'user_pref("browser.tabs.warnOnClose", false);',
+            'user_pref("browser.tabs.warnOnCloseOtherTabs", false);',
+            'user_pref("browser.tabs.warnOnOpen", false);',
+            'user_pref("browser.download.manager.showWhenStarting", false);',
+            'user_pref("extensions.update.enabled", false);',
+            'user_pref("dom.webnotifications.enabled", false);',
+            'user_pref("gfx.direct2d.disabled", true);'
           ].join(os.EOL));
         });
       });
@@ -228,6 +252,8 @@ describe('knownBrowsers', function() {
           '--test-type',
           '--disable-renderer-backgrounding',
           '--disable-background-timer-throttling',
+          '--disable-infobars',
+          '--disable-session-crashed-bubble',
           url
         ]);
       });
@@ -298,6 +324,8 @@ describe('knownBrowsers', function() {
             '--test-type',
             '--disable-renderer-backgrounding',
             '--disable-background-timer-throttling',
+            '--disable-infobars',
+            '--disable-session-crashed-bubble',
             url
           ]);
         });
@@ -328,6 +356,8 @@ describe('knownBrowsers', function() {
             '--test-type',
             '--disable-renderer-backgrounding',
             '--disable-background-timer-throttling',
+            '--disable-infobars',
+            '--disable-session-crashed-bubble',
             url
           ]);
         });
