@@ -11,22 +11,14 @@ const Config = require('../lib/config');
 describe('envWithLocalPath', function() {
   it('returns the process env with the local node module path from the config added if it exists', function() {
     let tempPath = path.join(process.cwd(), 'tmp');
-    let cumulativeTempPath = tempPath;
-    fs.mkdirSync(cumulativeTempPath);
-    cumulativeTempPath = path.join(cumulativeTempPath, 'node_modules');
-    fs.mkdirSync(cumulativeTempPath);
-    cumulativeTempPath = path.join(cumulativeTempPath, '.bin');
-    fs.mkdirSync(cumulativeTempPath);
+    let binPath = path.join(tempPath, 'node_modules', '.bin');
+    fs.mkdirSync(binPath, { recursive: true });
     let config = new Config('ci', {}, {
       cwd: tempPath
     });
     let env = envWithLocalPath(config);
-    expect(env[envWithLocalPath.PATH]).to.contain(cumulativeTempPath);
-    fs.rmdirSync(cumulativeTempPath);
-    cumulativeTempPath = path.dirname(cumulativeTempPath);
-    fs.rmdirSync(cumulativeTempPath);
-    cumulativeTempPath = path.dirname(cumulativeTempPath);
-    fs.rmdirSync(cumulativeTempPath);
+    expect(env[envWithLocalPath.PATH]).to.contain(binPath);
+    fs.rmSync(path.join(tempPath, 'node_modules'), { recursive: true, force: true });
   });
 
   it('returns the process env with the local node module path added', function() {
