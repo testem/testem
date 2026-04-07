@@ -12,16 +12,14 @@ var assert = require('chai').assert;
 var assertXmlIsValid = function(xmlString) {
   var failure = null;
   var parser = new XmlDom.DOMParser({
-    errorHandler:{
-      locator:{},
-      warning: function(txt) { failure = txt; },
-      error: function(txt) { failure = txt; },
-      fatalError: function(txt) { failure = txt; }
-    }
+    onError: function(level, msg) { failure = msg; }
   });
 
-  // this will throw into failure variable with invalid xml
-  parser.parseFromString(xmlString, 'text/xml');
+  try {
+    parser.parseFromString(xmlString, 'text/xml');
+  } catch (e) {
+    failure = failure || e.message;
+  }
 
   if (failure)
   {
