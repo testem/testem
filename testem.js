@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+const { tryDelegateToLocalTestem } = require('./lib/cli-local-delegation');
+if (require.main === module) {
+  tryDelegateToLocalTestem(__filename, process.argv, process.cwd(), process.env);
+}
+
 const { Command } = require('commander');
 const Config = require('./lib/config');
 const Api = require('./lib/api');
