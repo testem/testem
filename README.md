@@ -41,13 +41,18 @@ Screencasts
 
 Installation
 ------------
-You need [Node](http://nodejs.org/) version 0.10+ or iojs installed on your system. Node is extremely easy to install and has a small footprint, and is really awesome otherwise too, so [just do it](http://nodejs.org/).
+Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^20.19.0**, **^22.12.0**, or **>=24.0.0**).
 
-Once you have Node installed:
+**Recommended:** install Testem **both** as a **dev dependency** (so your project pins a version) **and** **globally** (so the `testem` command is always available on your `PATH`):
 
-    npm install testem -g
+```bash
+npm install testem --save-dev
+npm install testem -g
+```
 
-This will install the `testem` executable globally on your system.
+When you run the global `testem` inside a project directory that has a local `testem` install, the CLI **automatically re-runs the local copy** so the version stays in sync with `package.json`. Set **`TESTEM_USE_GLOBAL=1`** if you ever need to force the global binary only.
+
+This README uses the `testem` command in examples; add it to npm scripts or invoke it as `testem` from a shell after the installs above.
 
 Usage
 -----

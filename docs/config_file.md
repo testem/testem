@@ -29,15 +29,17 @@ Here's an example `testem.json` file
 
 Here's an example `testem.js` file that defines a [custom reporter](custom_reporter.md):
 
-    var CustomReporter = require('./my-custom-reporter');
-    module.exports = {
-        "framework": "mocha",
-        "src_files": [
-            "src/*.js",
-            "tests/*_tests.js"
-        ]
-        "reporter": new CustomReporter()
-    };
+```javascript
+var CustomReporter = require('./my-custom-reporter');
+module.exports = {
+    "framework": "mocha",
+    "src_files": [
+        "src/*.js",
+        "tests/*_tests.js"
+    ],
+    "reporter": new CustomReporter()
+};
+```
 
 
 Common Configuration Options

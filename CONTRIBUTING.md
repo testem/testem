@@ -7,6 +7,7 @@ Getting Started
 ---------------
 
 * Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
+* Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 20.19+, 22.12+, or 24+).
 * Run `npm install` and `npm test` to make sure you're off to a good start
 
 > Testem expects `PhantomJS` to be in the PATH, if you don't have one,
