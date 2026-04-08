@@ -11,14 +11,14 @@ In the Jenkins web console, go to "Manage Jenkins" in the top level side bar men
 Step 2: Create a New Job
 ------------------------
 
-For your project, create a "New Job" in Jenkins. In the first screen, choose a "Job name" and select "Build a free-style software project". 
+For your project, create a "New Job" in Jenkins. In the first screen, choose a "Job name" and select "Build a free-style software project".
 
 Setup your Source Code Management and Build triggers, this is dependent on what version control tool you use. *Sorry, but you are on your own for this part.*
 
 Hit "Add build step" and select "Execute shell" - or "Execute Windows batch command" if you are on Windows. In the "Command" text area, paste this code (after `npm ci` or `npm install` so Testem is available, typically as a dev dependency)
 
     testem ci > tests.tap
-    
+
 Under "Post-build Actions", check "Publish TAP Results", then in "Test results" put `tests.tap`.
 
 Finally, hit the "Save" button.
@@ -31,9 +31,9 @@ Troubleshooting
 If you hit a snag, try running `testem ci` on the command line first. `testem launchers` will show you the list of browsers that are available on your system — CI mode uses all of them unless you restrict the set. You could restrict the set of browsers to include via either whitelisting or blacklisting. For whitelisting, this is how to only run tests on IE 11 and Firefox (global `-l` / `-s` options go **before** the `ci` subcommand):
 
     testem -l IE11,Firefox ci
-    
+
 For blacklisting, this is how to run on all available browsers except Opera(sorry Opera)
 
     testem -s Opera ci
 
-    
+
