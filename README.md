@@ -632,15 +632,6 @@ I've created [examples](https://github.com/testem/testem/tree/master/examples/) 
 * [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs) **bleeding edge**
 * [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
 
-Known Issues
-------------
-
-1. On Windows, Mocha fails to run under Testem due to an [issue](https://github.com/joyent/node/issues/3871) in Node core. Until that gets resolved, I've made a [workaround](https://github.com/airportyh/mocha/tree/windowsfix) for Mocha. To install this fork of Mocha, do
-
-        npm install https://github.com/airportyh/mocha/tarball/windowsfix -g
-
-2. If you are using prototype.js version 1.6.3 or below, you will [encounter issues](https://github.com/testem/testem/issues/130).
-
 Contributing
 ------------
 
