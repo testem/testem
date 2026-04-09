@@ -1,0 +1,7 @@
+framework: jasmine
+before_tests: tsc
+on_exit: rm -f hello.js tests.js
+src_files:
+- "src/**/*.ts"
+serve_files:
+- "*.js"

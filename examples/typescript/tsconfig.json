@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "none",
+    "lib": ["ES2015", "DOM"],
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": ".",
+    "rootDir": "src",
+    "types": ["jasmine"],
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["src/**/*.ts"],
+  // With outDir ".", listing node_modules here avoids TS18003 (no input files).
+  "exclude": ["node_modules"]
+}
