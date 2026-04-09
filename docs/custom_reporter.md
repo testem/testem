@@ -10,7 +10,7 @@ Your reporter should have `total` and `pass` properties, and implement `report(p
 `finish()` methods.
 
 The `report` method gets called for each test with `prefix` and `data` arguments:
-* `prefix` - name of the test runner (ie PhantomJS)
+* `prefix` - name of the test runner (e.g. Chrome, Firefox)
 * `data`
     * `passed` - whether test passed
     * `failed` - whether test failed

@@ -10,11 +10,6 @@ Getting Started
 * Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 20.19+, 22.12+, or 24+).
 * Run `npm install` and `npm test` to make sure you're off to a good start
 
-> Testem expects `PhantomJS` to be in the PATH, if you don't have one,
-> either install it globally via `npm install -g phantomjs-prebuilt`
-> (*you might need to use `sudo` for global installiation*)
-> or run `npm run install:all` instead of `npm install` during the second step
-
 Brief Code Walk Through
 -----------------------
 
@@ -69,6 +64,6 @@ If it isn't practical to write a test first, it might be my fault, feel free to 
 
 There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`
 
-Node + PhantomJS
+Node + headless browser
 
     npm run integration

@@ -3,7 +3,7 @@ Got Scripts? Test&rsquo;em!
 
 [![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem)
 
-Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, [PhantomJS](http://phantomjs.org/), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
+Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
 
 Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
@@ -15,7 +15,7 @@ Features
     - [QUnit](http://qunitjs.com/)
     - [Mocha](http://mochajs.org/)
     - Others, through custom test framework adapters.
-* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and [PhantomJS](http://phantomjs.org/)
+* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
     - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or Teamcity
@@ -29,7 +29,7 @@ Features
     - JSHint/JSLint
     - everything else
 
-**Internet Explorer** and **PhantomJS** are still supported as launchers, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
+**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
 
 Screencasts
 -----------
@@ -171,7 +171,8 @@ Will print them out. The output might look like
     Safari
     Safari Technology Preview
     Opera
-    PhantomJS
+
+Your machine may list other launchers too. For **headless** runs, prefer **Chrome** with `browser_args` (for example `--headless`) rather than the deprecated PhantomJS launcher—see `docs/browser_args.md`.
 
 When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/) format by default, which looks like
 
@@ -235,8 +236,8 @@ You can also [add your own reporter](docs/custom_reporter.md).
 Note that the real output is not pretty printed.
 ```xml
 <testsuite name="Testem Tests" tests="4" failures="1" timestamp="Wed Apr 01 2015 11:56:20 GMT+0100 (GMT Daylight Time)" time="9">
-  <testcase classname="PhantomJS 1.9" name="myFunc returns true when input is valid" time="0"/>
-  <testcase classname="PhantomJS 1.9" name="myFunc returns false when user tickles it" time="0"/>
+  <testcase classname="Firefox 128" name="myFunc returns true when input is valid" time="0"/>
+  <testcase classname="Firefox 128" name="myFunc returns false when user tickles it" time="0"/>
   <testcase classname="Chrome" name="myFunc returns true when input is valid" time="0"/>
   <testcase classname="Chrome" name="myFunc returns false when user tickles it" time="0">
     <failure name="myFunc returns false when user tickles it" message="function is not ticklish">
@@ -250,13 +251,13 @@ Note that the real output is not pretty printed.
 
 ### Example teamcity reporter output
 
-    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello']
-    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello']
-    ##teamcity[testStarted name='PhantomJS 1.9 - hello should say hello to person']
-    ##teamcity[testFinished name='PhantomJS 1.9 - hello should say hello to person']
-    ##teamcity[testStarted name='PhantomJS 1.9 - goodbye should say goodbye']
-    ##teamcity[testFailed name='PhantomJS 1.9 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
-    ##teamcity[testFinished name='PhantomJS 1.9 - goodbye should say goodbye']
+    ##teamcity[testStarted name='Firefox 128 - hello should say hello']
+    ##teamcity[testFinished name='Firefox 128 - hello should say hello']
+    ##teamcity[testStarted name='Firefox 128 - hello should say hello to person']
+    ##teamcity[testFinished name='Firefox 128 - hello should say hello to person']
+    ##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
+    ##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
+    ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
 
     ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
 
@@ -453,27 +454,36 @@ If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_
 
 When this is done, Testem will read in the process's stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process's stdout output from the console log panel, although it will still display the stderr.
 
-PhantomJS
----------
+Headless Chrome
+---------------
 
-PhantomJS is a Webkit-based headless browser. It's fast and it's awesome! Testem will pick it up if you have [PhantomJS](http://www.phantomjs.org/) installed in your system and the `phantomjs` executable is in your path. Run
+Testem ships a **Headless Chrome** launcher that runs [Google Chrome](https://www.google.com/chrome/) (or Chromium where that is the detected binary) with **`--headless`**, **`--disable-gpu`**, and other defaults suitable for CI and unattended runs. You need Chrome installed; run
 
     testem launchers
 
-And verify that it's in the list.
+and confirm **Headless Chrome** appears.
 
-If you want to debug tests in PhantomJS, include the `phantomjs_debug_port` option in your testem configuration, referencing an available port number.  Once testem has started PhantomJS, navigate (with a traditional browser) to http://localhost:<port> and attach to one of PhantomJS's browser tabs (probably the second one in the list).  `debugger` statements will now break in the debugging console.
+Select it like any other launcher, for example:
 
-If you want to use any of the [PhantomJS command line options](http://phantomjs.org/api/command-line.html), include the `phantomjs_args` option in your testem configuration. For example:
-
-```javascript
-"phantomjs_args": [
-  "--ignore-ssl-errors=true"
-]
+```json
+{
+  "launch_in_ci": ["Headless Chrome"]
+}
 ```
 
-You can also customize the phantomjs launcher file by specifying the `phantomjs_launch_script` option.
-In this launcher you can change options like the `viewPortSize`. See `assets/phantom.js` for the default launcher.
+To add or override flags, use **`browser_args`** (see [`docs/browser_args.md`](docs/browser_args.md)). Testem merges these with the built-in headless arguments—for example a fixed remote-debugging port for attaching DevTools:
+
+```json
+{
+  "browser_args": {
+    "Headless Chrome": ["--remote-debugging-port=9222"]
+  }
+}
+```
+
+**Remote debugging:** By default the headless launcher passes **`--remote-debugging-port=0`**, so Chrome chooses a random port—set a **fixed** port in `browser_args` (as in the example above) so you can connect reliably. With Testem running, open a regular Chrome window to **`chrome://inspect`**, use **Configure…** under “Discover network targets” to add **`localhost:9222`** (or whatever port you set), find your test page under **Remote Target**, and click **inspect**. You can also open **`http://localhost:9222`** and follow the links to a target page. **`debugger`** statements and breakpoints work in the DevTools **Sources** panel.
+
+**Headless Chrome Beta** is available when the Chrome Beta channel is installed. For legacy **PhantomJS**-specific options (`phantomjs_args`, `phantomjs_debug_port`, etc.), see [`docs/config_file.md`](docs/config_file.md).
 
 Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
@@ -662,7 +672,6 @@ Testem depends on the following great software
 * [Mocha](http://mochajs.org/)
 * [Node](http://nodejs.org/)
 * [Socket.IO](http://socket.io/)
-* [PhantomJS](http://www.phantomjs.org/)
 * [Node-Tap](https://github.com/isaacs/node-tap)
 * [Node-Charm](https://github.com/substack/node-charm)
 * [Node Commander](http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy)
