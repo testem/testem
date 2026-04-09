@@ -26,7 +26,7 @@ Features
 * Preprocessor support
     - CoffeeScript
     - Browserify
-    - JSHint/JSLint
+    - JSHint/JSLint/ESLint
     - everything else
 
 **Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
@@ -509,7 +509,7 @@ Since you want to be serving the `.js` files that are generated and not the `.co
 ]
 ```
 
-Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like jshint can be used here as well.
+Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like JSHint or ESLint can be used here as well.
 
 If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
 
@@ -626,6 +626,7 @@ I've created [examples](https://github.com/testem/testem/tree/master/examples/) 
 * [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
 * [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
 * [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
+* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
 * [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
 * [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack) **bleeding edge**
