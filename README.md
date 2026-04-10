@@ -25,6 +25,8 @@ Features
     - Linux
 * Preprocessor support
     - CoffeeScript
+    - Babel
+    - TypeScript
     - Browserify
     - JSHint/JSLint/ESLint
     - everything else
@@ -485,12 +487,20 @@ To add or override flags, use **`browser_args`** (see [`docs/browser_args.md`](d
 
 **Headless Chrome Beta** is available when the Chrome Beta channel is installed. For legacy **PhantomJS**-specific options (`phantomjs_args`, `phantomjs_debug_port`, etc.), see [`docs/config_file.md`](docs/config_file.md).
 
-Preprocessors (CoffeeScript, LESS, Sass, Browserify, etc)
+Preprocessors (CoffeeScript, Babel, TypeScript, LESS, Sass, Browserify, etc)
 ---------------------------------------------------------
 
 If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
 
     "before_tests": "coffee -c *.coffee"
+
+or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
+
+    "before_tests": "babel src --out-dir ."
+
+or, with a `tsconfig.json` that emits JavaScript next to your project (see the [TypeScript example](https://github.com/testem/testem/tree/master/examples/typescript)):
+
+    "before_tests": "tsc"
 
 And Testem will run it before each test run. Point **`src_files`** at the sources you want
 watched (see **File watching** under Development Mode above).
@@ -624,6 +634,8 @@ I've created [examples](https://github.com/testem/testem/tree/master/examples/) 
 * [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
 * [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
+* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
+* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
 * [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
 * [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
 * [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)

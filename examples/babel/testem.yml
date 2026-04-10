@@ -1,0 +1,7 @@
+framework: jasmine
+before_tests: babel src --out-dir .
+on_exit: rm -f hello.js tests.js
+src_files:
+- "src/**/*.js"
+serve_files:
+- "*.js"
