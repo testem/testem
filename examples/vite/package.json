@@ -1,0 +1,16 @@
+{
+  "description": "Example: Testem with Vite (dev middleware + Mocha)",
+  "scripts": {
+    "test": "node ../../testem.js ci -P 10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^6.2.2",
+    "mocha": "^11.7.5",
+    "vite": "^8.0.0"
+  }
+}
