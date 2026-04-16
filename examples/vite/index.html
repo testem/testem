@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>testem + vite</title>
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css" />
+    <!-- Prebuilt UMD bundle (not the package main); avoids Node `process` in Vite’s optimizer. -->
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/testem.js"></script>
+    <script>
+      mocha.setup('bdd');
+    </script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script type="module" src="/src/tests.js"></script>
+  </body>
+</html>
