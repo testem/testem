@@ -1,5 +1,5 @@
 const { defineConfig } = require('vite');
-const { vitePluginTestem } = require('./vite-plugin-testem');
+const { vitePluginTestem } = require('vite-plugin-testem');
 
 module.exports = defineConfig({
   plugins: [

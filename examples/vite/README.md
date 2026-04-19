@@ -24,10 +24,12 @@ Testem serves the browser and the Testem client (`/testem.js`, Socket.IO). This 
 
 ### `vite-plugin-testem`
 
-The local `vite-plugin-testem` folder provides:
+The [`vite-plugin-testem`](https://www.npmjs.com/package/vite-plugin-testem) package (installed as a dev dependency) provides:
 
 1. **`vitePluginTestem()`** — a Vite plugin that can inject `/testem.js` (and the TAP bridge for `framework: 'tap'`). This example loads `/testem.js` explicitly in `index.html` in the same order as Testem’s [Mocha runner template](../../views/mocharunner.mustache), so the plugin does not add a second copy.
 2. **`createTestemViteMiddleware()`** — builds a Vite dev server in middleware mode and returns Express middleware for Testem’s `middleware` config. It skips URLs that belong to Testem so the client still loads from the same origin.
+
+See the package README for full API details and the recommended **`on_exit`** handler when using the middleware.
 
 HMR is turned off in middleware mode here because Testem’s Express app would need explicit wiring to Vite’s WebSocket server; you can still get fast feedback from Testem’s file watching and reloads.
 
