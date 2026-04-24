@@ -1,7 +1,6 @@
 const Server = require('../lib/server');
 const Config = require('../lib/config');
 const path = require('path');
-const request = require('@cypress/request');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const expect = require('chai').expect;
@@ -15,6 +14,12 @@ describe('Server', function() {
 
   let baseUrl, server, config;
   let port = 63571;
+  let client;
+
+  before(async function() {
+    const m = await import('./helpers/http_client.mjs');
+    client = m.client;
+  });
 
   describe('http', function() {
     before(function(done) {
@@ -74,62 +79,74 @@ describe('Server', function() {
 
     describe('routing and redirects', function() {
       it('redirects to an id', function(done) {
-        request(baseUrl, { followRedirect: false }, function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(302);
-          expect(res.headers.location).to.match(/^\/[0-9]+$/);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl, { followRedirect: false })
+          .then(function(res) {
+            expect(res.statusCode).to.eq(302);
+            expect(res.headers.location).to.match(/^\/[0-9]+$/);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('serves the homepage after redirect', function(done) {
-        request(baseUrl, { followRedirect: true }, function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl, { followRedirect: true })
+          .then(function(res) {
+            expect(res.statusCode).to.eq(200);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('serves the homepage for a numeric browser id directly', function(done) {
-        request(baseUrl + '1234', function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl + '1234')
+          .then(function(res) {
+            expect(res.statusCode).to.eq(200);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('serves the homepage for tap id (-1) directly', function(done) {
-        request(baseUrl + '-1', function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl + '-1')
+          .then(function(res) {
+            expect(res.statusCode).to.eq(200);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
     });
 
     describe('test page rendering', function() {
       it('gets scripts for the home page', function(done) {
-        request(baseUrl, function(err, res, text) {
-          let $ = cheerio.load(text);
-          let srcs = $('script')
-            .map(function() {
-              return $(this).attr('src');
-            })
-            .get();
-          expect(srcs).to.deep.equal([
-            '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
-            '/testem.js',
-            '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-            'web' + path.sep + 'hello.js',
-            'web' + path.sep + 'hello_tst.js',
-          ]);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl)
+          .then(function(res) {
+            const text = bodyText(res);
+            let $ = cheerio.load(text);
+            let srcs = $('script')
+              .map(function() {
+                return $(this).attr('src');
+              })
+              .get();
+            expect(srcs).to.deep.equal([
+              '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+              '/testem.js',
+              '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
+              'web' + path.sep + 'hello.js',
+              'web' + path.sep + 'hello_tst.js',
+            ]);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('serves custom test page', function(done) {
@@ -139,21 +156,25 @@ describe('Server', function() {
 
       it('renders custom test page as template', function(done) {
         config.set('test_page', 'web/tests_template.mustache');
-        request(baseUrl, function(err, res, text) {
-          expect(text).to.equal(
-            [
-              '<!doctype html>',
-              '<html>',
-              '<head>',
-              '    <script src="web/hello.js"></script>',
-              '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-              '</head>',
-              '',
-            ].join(os.EOL),
-          );
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl)
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal(
+              [
+                '<!doctype html>',
+                '<html>',
+                '<head>',
+                '    <script src="web/hello.js"></script>',
+                '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+                '</head>',
+                '',
+              ].join(os.EOL),
+            );
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('renders the first test page by default when multiple are provided', function(done) {
@@ -161,52 +182,65 @@ describe('Server', function() {
           'web/tests_template.mustache',
           'web/tests.html',
         ]);
-        request(baseUrl, function(err, res, text) {
-          expect(text).to.equal(
-            [
-              '<!doctype html>',
-              '<html>',
-              '<head>',
-              '    <script src="web/hello.js"></script>',
-              '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-              '</head>',
-              '',
-            ].join(os.EOL),
-          );
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl)
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal(
+              [
+                '<!doctype html>',
+                '<html>',
+                '<head>',
+                '    <script src="web/hello.js"></script>',
+                '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
+                '</head>',
+                '',
+              ].join(os.EOL),
+            );
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('URL-encodes test_page path that starts with a slash', function(done) {
         config.set('test_page', '/my/custom-page.html');
-        request(
-          baseUrl + '1234',
-          { followRedirect: false },
-          function(err, res) {
-            expect(err).to.be.null();
+        client
+          .get(baseUrl + '1234', { followRedirect: false })
+          .then(function(res) {
             expect(res.statusCode).to.eq(302);
             expect(res.headers.location).to.include('%2F');
             done();
-          },
-        );
+          })
+          .catch(done);
       });
     });
 
     describe('testem.js', function() {
       it('gets testem.js', function(done) {
-        request(baseUrl + '/testem.js', done);
+        client
+          .get(baseUrl + '/testem.js')
+          .then(function(res) {
+            if (res.statusCode >= 400) {
+              return done(new Error('expected success status, got ' + res.statusCode));
+            }
+            done();
+          })
+          .catch(done);
       });
 
       it('gets testem.js with expected content', function(done) {
-        request(baseUrl + 'testem.js', function(err, res, text) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          expect(res.headers['content-type']).to.match(/javascript/);
-          expect(text).to.include('TestemConfig');
-          expect(text).to.include('testem_client.js');
-          done();
-        });
+        client
+          .get(baseUrl + 'testem.js')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(res.statusCode).to.eq(200);
+            expect(res.headers['content-type']).to.match(/javascript/);
+            expect(text).to.include('TestemConfig');
+            expect(text).to.include('testem_client.js');
+            done();
+          })
+          .catch(done);
       });
     });
 
@@ -228,30 +262,41 @@ describe('Server', function() {
       });
 
       it('gets a file using a POST request', function(done) {
-        request.post(baseUrl + 'web/hello.js', function(err, res, text) {
-          expect(text).to.equal(
-            fs.readFileSync('tests/web/hello.js').toString(),
-          );
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .post(baseUrl + 'web/hello.js')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal(
+              fs.readFileSync('tests/web/hello.js').toString(),
+            );
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('lists directories', function(done) {
-        request(baseUrl + 'data', function(err, res, text) {
-          expect(text).to.match(/<a href="blah.txt">blah.txt<\/a>/);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl + 'data')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.match(/<a href="blah.txt">blah.txt<\/a>/);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('returns 404 for a non-existent file', function(done) {
-        request(baseUrl + 'web/does-not-exist.js', function(err, res, text) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(404);
-          expect(text).to.match(/Not found/);
-          done();
-        });
+        client
+          .get(baseUrl + 'web/does-not-exist.js')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(res.statusCode).to.eq(404);
+            expect(text).to.match(/Not found/);
+            done();
+          })
+          .catch(done);
       });
 
       it('serves local content with browser ids', function(done) {
@@ -281,20 +326,24 @@ describe('Server', function() {
       it('serves a non-numeric single-segment path as a static file', function(done) {
         // A single slug like /data should fall through the numeric /:id guard
         // and be served via the /*file catch-all route as a directory listing.
-        request(baseUrl + 'data', function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          done();
-        });
+        client
+          .get(baseUrl + 'data')
+          .then(function(res) {
+            expect(res.statusCode).to.eq(200);
+            done();
+          })
+          .catch(done);
       });
 
       it('accepts other http methods', function(done) {
-        request.del(baseUrl + '-1' + '/web/hello.js', function(err, res) {
-          expect(err).to.be.null();
-          expect(res.statusCode).to.eq(200);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .delete(baseUrl + '-1' + '/web/hello.js')
+          .then(function(res) {
+            expect(res.statusCode).to.eq(200);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
     });
 
@@ -399,120 +448,139 @@ describe('Server', function() {
       });
 
       it('proxies get request to api1', function(done) {
-        request.get(baseUrl + 'api1/hello', function(err, res, text) {
-          expect(text).to.equal('API');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl + 'api1/hello')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('API');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies get request with deep subpath to api1', function(done) {
-        request.get(baseUrl + 'api1/foo/bar/baz', function(err, res, text) {
-          expect(text).to.equal('API');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(baseUrl + 'api1/foo/bar/baz')
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('API');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies get request to api2', function(done) {
-        let options = {
-          url: baseUrl + 'api2/hello',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        const url = baseUrl + 'api2/hello';
+        const headers = {
+          'Content-Type': 'application/json',
         };
-        request.get(options, function(err, res, text) {
-          expect(text).to.equal('API - 2');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(url, { headers: headers })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('API - 2');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies post request to api1', function(done) {
-        let options = {
-          url: baseUrl + 'api1/hello',
-          headers: {
-            Accept: 'application/json',
-          },
+        const url = baseUrl + 'api1/hello';
+        const headers = {
+          Accept: 'application/json',
         };
-        request.post(options, function(err, res, text) {
-          expect(text).to.equal('API');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .post(url, { headers: headers })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('API');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies get request to api3', function(done) {
-        let options = {
-          url: baseUrl + 'api3/test',
-          headers: {
-            Accept: 'application/json',
-          },
+        const url = baseUrl + 'api3/test';
+        const headers = {
+          Accept: 'application/json',
         };
-        request.get(options, function(err, res, text) {
-          expect(text).to.equal('{"API":3}');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(url, { headers: headers })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('{"API":3}');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies post request to api3', function(done) {
-        let options = {
-          url: baseUrl + 'api3/test',
-          headers: {
-            Accept: 'application/json',
-          },
+        const url = baseUrl + 'api3/test';
+        const headers = {
+          Accept: 'application/json',
         };
-        request.post(options, function(err, res, text) {
-          expect(text).to.equal('{"API":3}');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .post(url, { headers: headers })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('{"API":3}');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies post request to api4', function(done) {
-        let options = {
-          url: baseUrl + 'api4/test',
-          headers: {
-            Accept: 'application/json',
-          },
-          body: '{test: \'some value\'}',
+        const url = baseUrl + 'api4/test';
+        const headers = {
+          Accept: 'application/json',
         };
-        request.post(options, function(err, res, text) {
-          if (err) {
-            return done(err);
-          }
-          expect(text).to.equal('{test: \'some value\'}');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        const body = '{test: \'some value\'}';
+        client
+          .post(url, { headers: headers, body: body })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('{test: \'some value\'}');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies get html request to api3', function(done) {
-        let options = {
-          url: baseUrl + 'api3/test',
-          headers: {
-            Accept:
-              'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          },
+        const url = baseUrl + 'api3/test';
+        const headers = {
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         };
-        request.get(options, function(err, res, text) {
-          expect(text).to.equal('Not found: /api3/test');
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        client
+          .get(url, { headers: headers })
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(text).to.equal('Not found: /api3/test');
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('returns an error when a requst can not be proxied', function(done) {
-        let options = {
-          url: baseUrl + 'api-error/test',
-        };
-        request.get(options, function(err, res, text) {
-          expect(res.statusCode).to.eq(500);
-          expect(text).to.match(/ECONNREFUSED/);
-          expectMiddlewareHeaders(res);
-          done();
-        });
+        const url = baseUrl + 'api-error/test';
+        client
+          .get(url)
+          .then(function(res) {
+            const text = bodyText(res);
+            expect(res.statusCode).to.eq(500);
+            expect(text).to.match(/ECONNREFUSED/);
+            expectMiddlewareHeaders(res);
+            done();
+          })
+          .catch(done);
       });
 
       it('proxies WebSocket to wsapi (ws → ws)', function(done) {
@@ -609,17 +677,19 @@ describe('Server', function() {
     });
 
     it('does not proxy testem files', function(done) {
-      request.get(baseUrl + 'foo/bar', function(err, res, text) {
-        expect(text).to.equal('proxied');
-
-        request.get(
-          baseUrl + 'testem/connection.html',
-          function(err, res, text) {
-            expect(text).to.not.equal('proxied');
-            done();
-          },
-        );
-      });
+      client
+        .get(baseUrl + 'foo/bar')
+        .then(function(res) {
+          const text = bodyText(res);
+          expect(text).to.equal('proxied');
+          return client.get(baseUrl + 'testem/connection.html');
+        })
+        .then(function(res) {
+          const text = bodyText(res);
+          expect(text).to.not.equal('proxied');
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -648,7 +718,17 @@ describe('Server', function() {
     });
 
     it('gets the home page', function(done) {
-      request({ url: baseUrl, strictSSL: false }, done);
+      client
+        .get(baseUrl)
+        .then(function(res) {
+          if (res.statusCode >= 400) {
+            return done(
+              new Error('expected success status, got ' + res.statusCode),
+            );
+          }
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -672,7 +752,17 @@ describe('Server', function() {
     });
 
     it('gets the home page over https via pfx certificate', function(done) {
-      request({ url: baseUrl, strictSSL: false }, done);
+      client
+        .get(baseUrl)
+        .then(function(res) {
+          if (res.statusCode >= 400) {
+            return done(
+              new Error('expected success status, got ' + res.statusCode),
+            );
+          }
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -723,17 +813,23 @@ describe('Server', function() {
     });
 
     it('handles a request for safe content', function(done) {
-      request(baseUrl + 'web/hello.js', function(err, res) {
-        expect(res.statusCode).to.eq(200);
-        done();
-      });
+      client
+        .get(baseUrl + 'web/hello.js')
+        .then(function(res) {
+          expect(res.statusCode).to.eq(200);
+          done();
+        })
+        .catch(done);
     });
 
     it('rejects a request for unsafe content', function(done) {
-      request(baseUrl + '../public/.eslintrc.js', function(err, res) {
-        expect(res.statusCode).to.eq(403);
-        done();
-      });
+      client
+        .get(baseUrl + '../public/.eslintrc.js')
+        .then(function(res) {
+          expect(res.statusCode).to.eq(403);
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -757,12 +853,15 @@ describe('Server', function() {
     });
 
     it('serves static file instead of the default runner when routes["/"] is set', function(done) {
-      request(routesBaseUrl + '1234', function(err, res, text) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expect(text).to.include('test.js');
-        done();
-      });
+      client
+        .get(routesBaseUrl + '1234')
+        .then(function(res) {
+          const text = bodyText(res);
+          expect(res.statusCode).to.eq(200);
+          expect(text).to.include('test.js');
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -805,12 +904,15 @@ describe('Server', function() {
     });
 
     it('proxies requests when the proxy URL key has a trailing slash', function(done) {
-      request.get(baseUrl + 'api-trailing/hello', function(err, res, text) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expect(text).to.equal('proxied');
-        done();
-      });
+      client
+        .get(baseUrl + 'api-trailing/hello')
+        .then(function(res) {
+          const text = bodyText(res);
+          expect(res.statusCode).to.eq(200);
+          expect(text).to.equal('proxied');
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -854,12 +956,15 @@ describe('Server', function() {
     });
 
     it('proxies requests when the proxy URL key contains multiple wildcards', function(done) {
-      request.get(baseUrl + 'api1/v2/resource', function(err, res, text) {
-        expect(err).to.be.null();
-        expect(res.statusCode).to.eq(200);
-        expect(text).to.equal('proxied');
-        done();
-      });
+      client
+        .get(baseUrl + 'api1/v2/resource')
+        .then(function(res) {
+          const text = bodyText(res);
+          expect(res.statusCode).to.eq(200);
+          expect(text).to.equal('proxied');
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -916,25 +1021,38 @@ describe('Server', function() {
       });
     });
   });
+
+  function bodyText(res) {
+    if (res.body == null) {
+      return '';
+    }
+    if (Buffer.isBuffer(res.body)) {
+      return res.body.toString('utf8');
+    }
+    return String(res.body);
+  }
+
+  function expectMiddlewareHeaders(res) {
+    expect(res.headers['x-testem-middleware']).to.eq('success');
+  }
+
+  function assertUrlReturnsFileContents(url, file, done) {
+    client
+      .get(url)
+      .then(function(res) {
+        const text = bodyText(res);
+        expect(res.statusCode).to.eq(200);
+        expectMiddlewareHeaders(res);
+        expect(text).to.equal(fs.readFileSync(file).toString());
+        done();
+      })
+      .catch(done);
+  }
 });
 
 function middleware(app) {
   app.use((_, res, next) => {
     res.setHeader('x-testem-middleware', 'success');
     next();
-  });
-}
-
-function expectMiddlewareHeaders(res) {
-  expect(res.headers['x-testem-middleware']).to.eq('success');
-}
-
-function assertUrlReturnsFileContents(url, file, done) {
-  request(url, function(err, res, text) {
-    expect(err).to.be.null();
-    expect(res.statusCode).to.eq(200);
-    expectMiddlewareHeaders(res);
-    expect(text).to.equal(fs.readFileSync(file).toString());
-    done();
   });
 }
