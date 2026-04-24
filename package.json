@@ -65,6 +65,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "got": "^15.0.0",
     "@cypress/request": "^3.0.10",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
