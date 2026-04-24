@@ -219,7 +219,7 @@ describe('Server', function() {
     describe('testem.js', function() {
       it('gets testem.js', function(done) {
         client
-          .get(baseUrl + '/testem.js')
+          .get(baseUrl + 'testem.js')
           .then(function(res) {
             if (res.statusCode >= 400) {
               return done(new Error('expected success status, got ' + res.statusCode));
@@ -823,13 +823,29 @@ describe('Server', function() {
     });
 
     it('rejects a request for unsafe content', function(done) {
-      client
-        .get(baseUrl + '../public/.eslintrc.js')
-        .then(function(res) {
-          expect(res.statusCode).to.eq(403);
-          done();
-        })
-        .catch(done);
+      // Legacy request() used `url.parse`, which keeps "/../" in the request
+      // path. got normalizes WHATWG URLs and would collapse ".." (different
+      // server behavior). Use raw http(s) to match the original path.
+      const u = new URL(baseUrl);
+      const pathFromLegacyUrl = require('url').parse(
+        baseUrl + '../public/.eslintrc.js',
+      ).path;
+      const mod = u.protocol === 'https:' ? https : http;
+      mod
+        .get(
+          {
+            hostname: u.hostname,
+            port: u.port,
+            path: pathFromLegacyUrl,
+            rejectUnauthorized: false,
+          },
+          function(res) {
+            expect(res.statusCode).to.eq(403);
+            res.resume();
+            done();
+          },
+        )
+        .on('error', done);
     });
   });
 
@@ -1023,7 +1039,7 @@ describe('Server', function() {
   });
 
   function bodyText(res) {
-    if (res.body == null) {
+    if (res.body === undefined || res.body === null) {
       return '';
     }
     if (Buffer.isBuffer(res.body)) {
