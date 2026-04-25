@@ -6,7 +6,7 @@ This document details the steps for using Testem with Jenkins. It assumes that y
 Step 1: Install the TAP Plugin
 ------------------------------
 
-In the Jenkins web console, go to "Manage Jenkins" in the top level side bar menu and then select "Manage Plugins". Select the "Available" tab and find the "TAP Plugin" in this long list of plugins, check the box next to it and then hit the "Install without restart" button, you'll wait several seconds for it to download the plugin and install it.
+Install the [TAP plugin](https://plugins.jenkins.io/tap/) (see also [Jenkins.io documentation](https://www.jenkins.io/)). In the Jenkins web console, go to "Manage Jenkins" in the top level side bar menu and then select "Manage Plugins". Select the "Available" tab and find the "TAP Plugin" in this long list of plugins, check the box next to it and then hit the "Install without restart" button, you'll wait several seconds for it to download the plugin and install it.
 
 Step 2: Create a New Job
 ------------------------

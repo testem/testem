@@ -113,9 +113,9 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     middleware                   [Array]   list of functions to be called with the express app instance
     parallel:                    [Number]  max number of parallel runners (1)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
-    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from http://phantomjs.org/api/command-line.html
+    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from https://phantomjs.org/api/command-line.html
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
-    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/nodejitsu/node-http-proxy#options
+    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/http-party/node-http-proxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     route or routes:             [Object]  overrides for assets paths
@@ -139,7 +139,7 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
 
 ### HTTPS:
 
-Testem allows the test page to be served via HTTPS. To enable HTTPS either the pfx or the cert and key options need to be specificed. More details around HTTPS in Node can be found here: https://nodejs.org/dist/latest-v4.x/docs/api/https.html#https_https_createserver_options_requestlistener
+Testem allows the test page to be served via HTTPS. To enable HTTPS either the pfx or the cert and key options need to be specificed. More details around HTTPS in Node can be found here: https://nodejs.org/api/https.html
 
     cert:                        [String]  path to a public x509 certificate to use
     key:                         [String]  path to a private key to use for SS

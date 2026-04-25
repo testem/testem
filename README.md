@@ -1,9 +1,9 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem)
+[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](https://badge.fury.io/js/testem)
 
-Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
+Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](https://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
 
 Unit testing in JavaScript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
@@ -11,11 +11,11 @@ Features
 --------
 
 * Test-framework agnostic — designed for **any kind of tests** that fit your project (unit, integration, custom runners, etc.), not a single prescribed style. Support for
-    - [Jasmine](http://jasmine.github.io/)
-    - [QUnit](http://qunitjs.com/)
-    - [Mocha](http://mochajs.org/)
+    - [Jasmine](https://jasmine.github.io/)
+    - [QUnit](https://qunitjs.com/)
+    - [Mocha](https://mochajs.org/)
     - Others, through custom test framework adapters.
-* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
+* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](https://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
     - Continuous Integration(CI) &mdash; designed to work well with **GitHub Actions** and other CI systems, including Jenkins and TeamCity
@@ -168,7 +168,7 @@ Will print them out. The output might look like
 
 Your machine may list other launchers too. For **headless** runs, prefer **Chrome** with `browser_args` (for example `--headless`) rather than the deprecated PhantomJS launcher—see `docs/browser_args.md`.
 
-When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/) format by default, which looks like
+When you run `testem ci` to run tests, it outputs the results in the [TAP](https://testanything.org/) format by default, which looks like
 
     ok 1 Chrome 130.0 - hello should say hello.
 
@@ -180,7 +180,7 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](http:
 
 TAP is a human-readable and language-agnostic test result format. On **GitHub Actions**, a typical pattern is a step that runs `testem ci` and relies on the exit code to fail the job (see [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml) in this repository). For **Jenkins** and **TeamCity**, use TAP plugins:
 
-* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
+* [Jenkins TAP plugin](https://plugins.jenkins.io/tap/) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 ## TAP Options
@@ -443,7 +443,7 @@ When you run `testem`, it will auto-launch the mocha process based on the specif
 Processes with TAP Output
 -------------------------
 
-If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
+If your process outputs test results in [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
 ```javascript
 "launchers": {
@@ -576,7 +576,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy*, hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/http-party/node-http-proxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
@@ -628,6 +628,7 @@ Example Projects
 I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
 
 * [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
+* [Electron](https://github.com/testem/testem/tree/master/examples/electron)
 * [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
 * [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
 * [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
@@ -653,9 +654,9 @@ Historical Screencasts
 
 These YouTube screencasts are from around **2012** and may not match the current UI or features, but they still illustrate the core ideas:
 
-* **[Introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
-* **[Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
-* **[CI mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
+* **[Introductory screencast (11:39)](https://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
+* **[Launchers (12:10)](https://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
+* **[CI mode (4:24)](https://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
 
 Contributing
 ------------
@@ -672,13 +673,13 @@ Credits
 
 Testem depends on the following great software
 
-* [Jasmine](http://jasmine.github.io/)
+* [Jasmine](https://jasmine.github.io/)
 * [QUnit](https://qunitjs.com/)
-* [Mocha](http://mochajs.org/)
-* [Node](http://nodejs.org/)
-* [Socket.IO](http://socket.io/)
-* [Node-Tap](https://github.com/isaacs/node-tap)
-* [Node-Charm](https://github.com/substack/node-charm)
+* [Mocha](https://mochajs.org/)
+* [Node](https://nodejs.org/)
+* [Socket.IO](https://socket.io/)
+* [tap-parser](https://github.com/tapjs/tap-parser)
+* [Charm](https://github.com/aheckmann/charm)
 * [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
-* [Express](http://expressjs.com/)
+* [Express](https://expressjs.com/)

@@ -1,6 +1,6 @@
 {
   "name": "testem",
-  "description": "Test'em 'scripts! Javascript Unit testing made easy.",
+  "description": "Test'em 'scripts! JavaScript unit testing made easy.",
   "keywords": [
     "javascript",
     "testing",
@@ -11,10 +11,10 @@
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/testem/testem.git"
+    "url": "https://github.com/testem/testem.git"
   },
   "bugs": {
-    "url": "http://github.com/testem/testem/issues"
+    "url": "https://github.com/testem/testem/issues"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
