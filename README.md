@@ -1,45 +1,35 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](http://badge.fury.io/js/testem)
+[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](https://badge.fury.io/js/testem)
 
-Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
+Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](https://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
 
-Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
+Unit testing in JavaScript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
 Features
 --------
 
 * Test-framework agnostic — designed for **any kind of tests** that fit your project (unit, integration, custom runners, etc.), not a single prescribed style. Support for
-    - [Jasmine](http://jasmine.github.io/)
-    - [QUnit](http://qunitjs.com/)
-    - [Mocha](http://mochajs.org/)
+    - [Jasmine](https://jasmine.github.io/)
+    - [QUnit](https://qunitjs.com/)
+    - [Mocha](https://mochajs.org/)
     - Others, through custom test framework adapters.
-* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
+* Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](https://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
-    - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or Teamcity
+    - Continuous Integration(CI) &mdash; designed to work well with **GitHub Actions** and other CI systems, including Jenkins and TeamCity
 * Cross-platform support
-    - OS X
+    - macOS
     - Windows
     - Linux
 * Preprocessor support
-    - CoffeeScript
     - Babel
     - TypeScript
     - Browserify
-    - JSHint/JSLint/ESLint
+    - ESLint/JSHint/JSLint
+    - CoffeeScript
     - everything else
-
-**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
-
-Screencasts
------------
-
-* Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
-* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) &mdash; more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
-* [Continuous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) &mdash; details about how CI mode works.
-* [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) &mdash; a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
 
 Installation
 ------------
@@ -153,6 +143,8 @@ To use Testem for continuous integration
 
     testem ci
 
+**GitHub Actions** is a common way to run Testem in CI: add a workflow job that runs `testem ci` (often with the **Headless Chrome** or **Chromium** launcher). This project’s own workflow is in [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml).
+
 In CI mode, Testem runs your tests on all the browsers that are available on the system one after another.
 
 You can run multiple browsers in parallel in CI mode by specifying the `--parallel` (or `-P`) option to be the number of concurrent running browsers.
@@ -176,9 +168,9 @@ Will print them out. The output might look like
 
 Your machine may list other launchers too. For **headless** runs, prefer **Chrome** with `browser_args` (for example `--headless`) rather than the deprecated PhantomJS launcher—see `docs/browser_args.md`.
 
-When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/) format by default, which looks like
+When you run `testem ci` to run tests, it outputs the results in the [TAP](https://testanything.org/) format by default, which looks like
 
-    ok 1 Chrome 16.0 - hello should say hello.
+    ok 1 Chrome 130.0 - hello should say hello.
 
     1..1
     # tests 1
@@ -186,9 +178,9 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](http:
 
     # ok
 
-TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
+TAP is a human-readable and language-agnostic test result format. On **GitHub Actions**, a typical pattern is a step that runs `testem ci` and relies on the exit code to fail the job (see [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml) in this repository). For **Jenkins** and **TeamCity**, use TAP plugins:
 
-* [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
+* [Jenkins TAP plugin](https://plugins.jenkins.io/tap/) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 ## TAP Options
@@ -233,11 +225,12 @@ Testem has other test reporters besides TAP: `dot`, `xunit` and `teamcity`. You 
 
 You can also [add your own reporter](docs/custom_reporter.md).
 
-### Example xunit reporter output
+<details>
+<summary>Example <code>xunit</code> reporter output</summary>
 
 Note that the real output is not pretty printed.
 ```xml
-<testsuite name="Testem Tests" tests="4" failures="1" timestamp="Wed Apr 01 2015 11:56:20 GMT+0100 (GMT Daylight Time)" time="9">
+<testsuite name="Testem Tests" tests="4" failures="1" timestamp="2026-04-25T10:00:00.000Z" time="9">
   <testcase classname="Firefox 128" name="myFunc returns true when input is valid" time="0"/>
   <testcase classname="Firefox 128" name="myFunc returns false when user tickles it" time="0"/>
   <testcase classname="Chrome" name="myFunc returns true when input is valid" time="0"/>
@@ -251,17 +244,24 @@ Note that the real output is not pretty printed.
 </testsuite>
 ```
 
-### Example teamcity reporter output
+</details>
 
-    ##teamcity[testStarted name='Firefox 128 - hello should say hello']
-    ##teamcity[testFinished name='Firefox 128 - hello should say hello']
-    ##teamcity[testStarted name='Firefox 128 - hello should say hello to person']
-    ##teamcity[testFinished name='Firefox 128 - hello should say hello to person']
-    ##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
-    ##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
-    ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
+<details>
+<summary>Example <code>teamcity</code> reporter output</summary>
 
-    ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+```text
+##teamcity[testStarted name='Firefox 128 - hello should say hello']
+##teamcity[testFinished name='Firefox 128 - hello should say hello']
+##teamcity[testStarted name='Firefox 128 - hello should say hello to person']
+##teamcity[testFinished name='Firefox 128 - hello should say hello to person']
+##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
+##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
+##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
+
+##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+```
+
+</details>
 
 ### Command line options
 
@@ -342,10 +342,10 @@ Or if you are using require.js or another loader, just make sure you load `/test
 
 ### Dynamic Substitution
 
-To enable dynamic substitutions within the Javascript files in your custom test page, you must
+To enable dynamic substitutions within the JavaScript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
+2. use `{{#serve_files}}` to loop over the set of JavaScript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
@@ -399,14 +399,14 @@ You can add your own custom paths to browser binaries by including `browser_path
 
 ```javascript
 "browser_paths": {
-  "Chromium": "./node_modules/puppeteer/.local-chromium/mac-549031/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+  "Chromium": "./path/to/chromium"
 }
 "browser_exes": {
   "Chromium": "chrome-custom-binary"
 }
 ```
 
-Adding a browser_path for a browser will override all default places for testem to look for the browser. So if the browser doesn't exist at the path you provided, you will get failures.
+Set `Chromium` to a real browser binary path, for example the Chromium or Chrome under your Puppeteer install (the exact `path/to/chromium` depends on your platform and Puppeteer version). Adding a browser_path for a browser will override all default places for testem to look for the browser. So if the browser doesn't exist at the path you provided, you will get failures.
 
 Customizing Browser Arguments
 -----------------------------
@@ -443,7 +443,7 @@ When you run `testem`, it will auto-launch the mocha process based on the specif
 Processes with TAP Output
 -------------------------
 
-If your process outputs test results in [TAP](http://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
+If your process outputs test results in [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
 ```javascript
 "launchers": {
@@ -487,7 +487,100 @@ To add or override flags, use **`browser_args`** (see [`docs/browser_args.md`](d
 
 **Headless Chrome Beta** is available when the Chrome Beta channel is installed. For legacy **PhantomJS**-specific options (`phantomjs_args`, `phantomjs_debug_port`, etc.), see [`docs/config_file.md`](docs/config_file.md).
 
-Preprocessors (CoffeeScript, Babel, TypeScript, LESS, Sass, Browserify, etc)
+**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
+
+Running browser code after tests complete
+-------------
+It is possible to send coverage reports or run other JavaScript in the browser by using the `afterTests` method.
+
+```javascript
+Testem.afterTests(
+  function(config, data, callback) {
+    var coverage = window.__coverage__;
+    var postBody = JSON.stringify(coverage);
+    if (postBody) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                callback();
+            }
+        };
+        xhr.open('POST', 'http://localhost:7358/', true);
+        xhr.send(postBody);
+    }
+});
+```
+
+
+Custom Routes
+-------------
+
+Sometimes you may want to re-map a URL to a different directory on the file system. Maybe you have the following file structure:
+
+    + src
+      + hello.js
+      + tests.js
+    + css
+      + styles.css
+    + public
+      + tests.html
+
+Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the JavaScript files under `/js` and all the css under `/css`. You can use the "routes" option to do that
+
+```javascript
+"routes": {
+  "/tests.html": "public/tests.html",
+  "/js": "src",
+  "/css": "css"
+}
+```
+
+DIY: Use Any Test Framework
+---------------------------
+
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+
+Then, to use it, in your config file simply set
+
+```javascript
+"framework": "custom"
+```
+
+And then make sure you include the adapter code in your test suite and you are ready to go. See here for the [full example](https://github.com/testem/testem/tree/master/examples/custom_adapter).
+
+Native notifications
+--------------------------------
+
+If you'd prefer not to be looking at the terminal while developing, you can enable native notifications (e.g. Notification Center on macOS) using the `-g` option.
+
+API Proxy
+--------------------------------
+
+The proxy option allows you to transparently forward HTTP requests to an external endpoint.
+
+Simply add a `proxies` section to the `testem.json` configuration file.
+
+```json
+{
+  "proxies": {
+    "/api": {
+      "target": "http://localhost:4200",
+      "onlyContentTypes": ["xml", "json"]
+    },
+    "/xmlapi": {
+      "target": "https://localhost:8000",
+      "secure": false
+    }
+  }
+}
+```
+
+This functionality is implemented as a *transparent proxy*, hence a request to
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/http-party/node-http-proxy#options
+
+To limit the functionality to only certain content types, use "onlyContentTypes".
+
+Preprocessors (Babel, TypeScript, LESS, Sass, Browserify, CoffeeScript, etc)
 ---------------------------------------------------------
 
 If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
@@ -529,158 +622,64 @@ If you need to run a command after your tests have completed (such as removing c
 
 If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
 
-Running browser code after tests complete
--------------
-It is possible to send coverage reports or run other JavaScript in the browser by using the `afterTests` method.
-
-```javascript
-Testem.afterTests(
-  function(config, data, callback) {
-    var coverage = window.__coverage__;
-    var postBody = JSON.stringify(coverage);
-    if (postBody) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                callback();
-            }
-        };
-        xhr.open('POST', 'http://localhost:7358/', true);
-        xhr.send(postBody);
-    }
-});
-```
-
-
-Custom Routes
--------------
-
-Sometimes you may want to re-map a URL to a different directory on the file system. Maybe you have the following file structure:
-
-    + src
-      + hello.js
-      + tests.js
-    + css
-      + styles.css
-    + public
-      + tests.html
-
-Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css`. You can use the "routes" option to do that
-
-```javascript
-"routes": {
-  "/tests.html": "public/tests.html",
-  "/js": "src",
-  "/css": "css"
-}
-```
-
-DIY: Use Any Test Framework
----------------------------
-
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
-
-Then, to use it, in your config file simply set
-
-```javascript
-"framework": "custom"
-```
-
-And then make sure you include the adapter code in your test suite and you are ready to go. See here for the [full example](https://github.com/testem/testem/tree/master/examples/custom_adapter).
-
-Native notifications
---------------------------------
-
-If you'd prefer not to be looking at the terminal while developing, you can enable native notifications (e.g. notification center, growl) using the `-g` option.
-
-API Proxy
---------------------------------
-
-The proxy option allows you to transparently forward HTTP requests to an external endpoint.
-
-Simply add a `proxies` section to the `testem.json` configuration file.
-
-```json
-{
-  "proxies": {
-    "/api": {
-      "target": "http://localhost:4200",
-      "onlyContentTypes": ["xml", "json"]
-    },
-    "/xmlapi": {
-      "target": "https://localhost:8000",
-      "secure": false
-    }
-  }
-}
-```
-
-This functionality is implemented as a *transparent proxy*, hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/nodejitsu/node-http-proxy#options
-
-To limit the functionality to only certain content types, use "onlyContentTypes".
-
 Example Projects
 ----------------
 
 I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
 
+* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
+* [Electron](https://github.com/testem/testem/tree/master/examples/electron)
+* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
+* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
+* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
 * [Simple QUnit project](https://github.com/testem/testem/tree/master/examples/qunit_simple)
 * [Simple Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_simple)
 * [Jasmine 2](https://github.com/testem/testem/tree/master/examples/jasmine2)
 * [Custom Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_custom)
-* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
 * [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
-* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
-* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
-* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
-* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
-* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
-* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
 * [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
-* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack) **bleeding edge**
-* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs) **bleeding edge**
-* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
+* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
+* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
+* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
+* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
+* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack)
+* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs)
+* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul)
+
+Historical Screencasts
+----------------------
+
+These YouTube screencasts are from around **2012** and may not match the current UI or features, but they still illustrate the core ideas:
+
+* **[Introductory screencast (11:39)](https://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
+* **[Launchers (12:10)](https://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
+* **[CI mode (4:24)](https://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
 
 Contributing
 ------------
 
 If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
 
-Roadmap
--------
-
-1. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
-2. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
-
 Core Maintainer(s)
 ------------------
 
 * [Johannes Würbach](https://github.com/johanneswuerbach)
-
-Community
----------
-
-* **Mailing list**: <https://groups.google.com/forum/?fromgroups#!forum/testem-users>
 
 Credits
 -------
 
 Testem depends on the following great software
 
-* [Jasmine](http://jasmine.github.io/)
-* [QUnit](http://code.google.com/p/jqunit/)
-* [Mocha](http://mochajs.org/)
-* [Node](http://nodejs.org/)
-* [Socket.IO](http://socket.io/)
-* [Node-Tap](https://github.com/isaacs/node-tap)
-* [Node-Charm](https://github.com/substack/node-charm)
-* [Node Commander](http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy)
+* [Jasmine](https://jasmine.github.io/)
+* [QUnit](https://qunitjs.com/)
+* [Mocha](https://mochajs.org/)
+* [Node](https://nodejs.org/)
+* [Socket.IO](https://socket.io/)
+* [tap-parser](https://github.com/tapjs/tap-parser)
+* [Charm](https://github.com/aheckmann/charm)
+* [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
-* [Express](http://expressjs.com/)
-* [jQuery](http://jquery.com/)
-* [Backbone](http://backbonejs.org/)
+* [Express](https://expressjs.com/)

@@ -46,7 +46,7 @@ Common Configuration Options
 ----------------------------
 
 * **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values at the moment are `jasmine`, `jasmine2`, `qunit`, `mocha`, `custom`, and `tap`. Defaults to `jasmine`.
-* **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in CoffeeScript or TypeScript, this should be your `.coffee` or `.ts` files. If you are writing in Javascript, this would just be your `.js` files, but if you have a compile step for your JS, this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
+* **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in TypeScript, this should be your `.ts` files. If you are writing in JavaScript, this would just be your `.js` files, but if you have a compile step for your JS (e.g. Babel), this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
 
 ### File watching behavior
 
@@ -113,9 +113,9 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     middleware                   [Array]   list of functions to be called with the express app instance
     parallel:                    [Number]  max number of parallel runners (1)
     phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
-    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from http://phantomjs.org/api/command-line.html
+    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from https://phantomjs.org/api/command-line.html
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
-    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/nodejitsu/node-http-proxy#options
+    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/http-party/node-http-proxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     route or routes:             [Object]  overrides for assets paths
@@ -139,7 +139,7 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
 
 ### HTTPS:
 
-Testem allows the test page to be served via HTTPS. To enable HTTPS either the pfx or the cert and key options need to be specificed. More details around HTTPS in Node can be found here: https://nodejs.org/dist/latest-v4.x/docs/api/https.html#https_https_createserver_options_requestlistener
+Testem allows the test page to be served via HTTPS. To enable HTTPS either the pfx or the cert and key options need to be specificed. More details around HTTPS in Node can be found here: https://nodejs.org/api/https.html
 
     cert:                        [String]  path to a public x509 certificate to use
     key:                         [String]  path to a private key to use for SS
