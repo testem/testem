@@ -17,7 +17,7 @@ Brief Code Walk Through
 
 The source code for the browser side is under the folders `public/testem` and `views`
 
-* `public/testem` - is where the client side assets are (Javascript and CSS)
+* `public/testem` - is where the client side assets are (JavaScript and CSS)
 * `views` - are HTML templates used to generate default test runner pages
 
 Debug Mode

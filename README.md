@@ -5,7 +5,7 @@ Got Scripts? Test&rsquo;em!
 
 Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](http://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
 
-Unit testing in Javascript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
+Unit testing in JavaScript can be tedious and painful, but Testem makes it so easy that you will actually *want* to write tests.
 
 Features
 --------
@@ -18,9 +18,9 @@ Features
 * Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
-    - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or Teamcity
+    - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or TeamCity
 * Cross-platform support
-    - OS X
+    - macOS
     - Windows
     - Linux
 * Preprocessor support
@@ -28,18 +28,19 @@ Features
     - Babel
     - TypeScript
     - Browserify
-    - JSHint/JSLint/ESLint
+    - ESLint/JSHint/JSLint
     - everything else
 
 **Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
 
-Screencasts
------------
+Historical Screencasts
+----------------------
 
-* Watch this **[introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** to see it in action! This one demonstrates the TDD workflow.
-* [Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk) &mdash; more detail about launchers: how to specify what to auto-launch and how to configure one yourself to run tests in **Node**.
-* [Continuous Integration (CI) Mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY) &mdash; details about how CI mode works.
-* [Making JavaScript Testing Fun With Testem (22:53)](http://net.tutsplus.com/tutorials/javascript-ajax/make-javascript-testing-fun-with-testem/) &mdash; a thorough screencast by NetTuts+'s Jeffery Way covering the basics, Jasmine, Mocha/Chai, CoffeeScript and more!
+These YouTube screencasts are from around **2012** and may not match the current UI or features, but they still illustrate the core ideas:
+
+* **[Introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
+* **[Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
+* **[CI mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
 
 Installation
 ------------
@@ -178,7 +179,7 @@ Your machine may list other launchers too. For **headless** runs, prefer **Chrom
 
 When you run `testem ci` to run tests, it outputs the results in the [TAP](http://testanything.org/) format by default, which looks like
 
-    ok 1 Chrome 16.0 - hello should say hello.
+    ok 1 Chrome 130.0 - hello should say hello.
 
     1..1
     # tests 1
@@ -237,7 +238,7 @@ You can also [add your own reporter](docs/custom_reporter.md).
 
 Note that the real output is not pretty printed.
 ```xml
-<testsuite name="Testem Tests" tests="4" failures="1" timestamp="Wed Apr 01 2015 11:56:20 GMT+0100 (GMT Daylight Time)" time="9">
+<testsuite name="Testem Tests" tests="4" failures="1" timestamp="2026-04-25T10:00:00.000Z" time="9">
   <testcase classname="Firefox 128" name="myFunc returns true when input is valid" time="0"/>
   <testcase classname="Firefox 128" name="myFunc returns false when user tickles it" time="0"/>
   <testcase classname="Chrome" name="myFunc returns true when input is valid" time="0"/>
@@ -342,10 +343,10 @@ Or if you are using require.js or another loader, just make sure you load `/test
 
 ### Dynamic Substitution
 
-To enable dynamic substitutions within the Javascript files in your custom test page, you must
+To enable dynamic substitutions within the JavaScript files in your custom test page, you must
 
 1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of Javascript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
+2. use `{{#serve_files}}` to loop over the set of JavaScript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
 
 Example:
 
@@ -399,14 +400,14 @@ You can add your own custom paths to browser binaries by including `browser_path
 
 ```javascript
 "browser_paths": {
-  "Chromium": "./node_modules/puppeteer/.local-chromium/mac-549031/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+  "Chromium": "./path/to/chromium"
 }
 "browser_exes": {
   "Chromium": "chrome-custom-binary"
 }
 ```
 
-Adding a browser_path for a browser will override all default places for testem to look for the browser. So if the browser doesn't exist at the path you provided, you will get failures.
+Set `Chromium` to a real browser binary path, for example the Chromium or Chrome under your Puppeteer install (the exact `path/to/chromium` depends on your platform and Puppeteer version). Adding a browser_path for a browser will override all default places for testem to look for the browser. So if the browser doesn't exist at the path you provided, you will get failures.
 
 Customizing Browser Arguments
 -----------------------------
@@ -565,7 +566,7 @@ Sometimes you may want to re-map a URL to a different directory on the file syst
     + public
       + tests.html
 
-Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the Javascripts under `/js` and all the css under `/css`. You can use the "routes" option to do that
+Let's say you want to serve `tests.html` at the top level url `/tests.html`, all the JavaScript files under `/js` and all the css under `/css`. You can use the "routes" option to do that
 
 ```javascript
 "routes": {
@@ -591,7 +592,7 @@ And then make sure you include the adapter code in your test suite and you are r
 Native notifications
 --------------------------------
 
-If you'd prefer not to be looking at the terminal while developing, you can enable native notifications (e.g. notification center, growl) using the `-g` option.
+If you'd prefer not to be looking at the terminal while developing, you can enable native notifications (e.g. Notification Center on macOS) using the `-g` option.
 
 API Proxy
 --------------------------------
@@ -642,30 +643,19 @@ I've created [examples](https://github.com/testem/testem/tree/master/examples/) 
 * [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
 * [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
-* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack) **bleeding edge**
-* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs) **bleeding edge**
-* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul) **bleeding edge**
+* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack)
+* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs)
+* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul)
 
 Contributing
 ------------
 
 If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
 
-Roadmap
--------
-
-1. [BrowserStack](http://www.browserstack.com/user/dashboard) integration - following [Bunyip](http://www.thecssninja.com/javascript/bunyip)'s example
-2. Figure out a happy path for testing on mobile browsers (maybe BrowserStack).
-
 Core Maintainer(s)
 ------------------
 
 * [Johannes Würbach](https://github.com/johanneswuerbach)
-
-Community
----------
-
-* **Mailing list**: <https://groups.google.com/forum/?fromgroups#!forum/testem-users>
 
 Credits
 -------
@@ -673,14 +663,12 @@ Credits
 Testem depends on the following great software
 
 * [Jasmine](http://jasmine.github.io/)
-* [QUnit](http://code.google.com/p/jqunit/)
+* [QUnit](https://qunitjs.com/)
 * [Mocha](http://mochajs.org/)
 * [Node](http://nodejs.org/)
 * [Socket.IO](http://socket.io/)
 * [Node-Tap](https://github.com/isaacs/node-tap)
 * [Node-Charm](https://github.com/substack/node-charm)
-* [Node Commander](http://tjholowaychuk.com/post/9103188408/commander-js-nodejs-command-line-interfaces-made-easy)
+* [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
 * [Express](http://expressjs.com/)
-* [jQuery](http://jquery.com/)
-* [Backbone](http://backbonejs.org/)

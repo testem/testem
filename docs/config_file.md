@@ -46,7 +46,7 @@ Common Configuration Options
 ----------------------------
 
 * **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values at the moment are `jasmine`, `jasmine2`, `qunit`, `mocha`, `custom`, and `tap`. Defaults to `jasmine`.
-* **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in CoffeeScript or TypeScript, this should be your `.coffee` or `.ts` files. If you are writing in Javascript, this would just be your `.js` files, but if you have a compile step for your JS, this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
+* **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in TypeScript, this should be your `.ts` files. If you are writing in JavaScript, this would just be your `.js` files, but if you have a compile step for your JS (e.g. Babel), this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
 
 ### File watching behavior
 
