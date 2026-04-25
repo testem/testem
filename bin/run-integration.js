@@ -12,7 +12,6 @@ const testCmd = `npm run test -- ${testFlags}`;
 const skipExamples = [
   'browserstack', // requires credentials and doesn't work in CI
   'saucelabs',  // requires credentials and doesn't work in CI
-  'template_stealjs', // not being maintained
 ];
 const skipOnWindows = [
   'coffeescript', // File not found: C:\projects\testem\examples\coffeescript\*.coffee
