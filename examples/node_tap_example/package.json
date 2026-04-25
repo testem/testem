@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "tap": "^5.1.1"
+    "tap": "^21.7.1"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10 --launch tap"
