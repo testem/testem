@@ -18,7 +18,7 @@ Features
 * Run tests in **all** major **real** browsers (your tests load and run in the actual browser) as well as [Node](http://nodejs.org) and **Chrome** (use `browser_args` with `--headless` for headless runs—see `docs/browser_args.md`)
 * Two distinct use-cases:
     - Test-Driven-Development(TDD) &mdash; designed to streamline the TDD workflow
-    - Continuous Integration(CI) &mdash; designed to work well with popular CI servers like Jenkins or TeamCity
+    - Continuous Integration(CI) &mdash; designed to work well with **GitHub Actions** and other CI systems, including Jenkins and TeamCity
 * Cross-platform support
     - macOS
     - Windows
@@ -143,6 +143,8 @@ To use Testem for continuous integration
 
     testem ci
 
+**GitHub Actions** is a common way to run Testem in CI: add a workflow job that runs `testem ci` (often with the **Headless Chrome** or **Chromium** launcher). This project’s own workflow is in [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml).
+
 In CI mode, Testem runs your tests on all the browsers that are available on the system one after another.
 
 You can run multiple browsers in parallel in CI mode by specifying the `--parallel` (or `-P`) option to be the number of concurrent running browsers.
@@ -176,7 +178,7 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](http:
 
     # ok
 
-TAP is a human-readable and language-agnostic test result format. TAP plugins exist for popular CI servers
+TAP is a human-readable and language-agnostic test result format. On **GitHub Actions**, a typical pattern is a step that runs `testem ci` and relies on the exit code to fail the job (see [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml) in this repository). For **Jenkins** and **TeamCity**, use TAP plugins:
 
 * [Jenkins TAP plugin](https://wiki.jenkins-ci.org/display/JENKINS/TAP+Plugin) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
@@ -223,7 +225,8 @@ Testem has other test reporters besides TAP: `dot`, `xunit` and `teamcity`. You 
 
 You can also [add your own reporter](docs/custom_reporter.md).
 
-### Example xunit reporter output
+<details>
+<summary>Example <code>xunit</code> reporter output</summary>
 
 Note that the real output is not pretty printed.
 ```xml
@@ -241,17 +244,24 @@ Note that the real output is not pretty printed.
 </testsuite>
 ```
 
-### Example teamcity reporter output
+</details>
 
-    ##teamcity[testStarted name='Firefox 128 - hello should say hello']
-    ##teamcity[testFinished name='Firefox 128 - hello should say hello']
-    ##teamcity[testStarted name='Firefox 128 - hello should say hello to person']
-    ##teamcity[testFinished name='Firefox 128 - hello should say hello to person']
-    ##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
-    ##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
-    ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
+<details>
+<summary>Example <code>teamcity</code> reporter output</summary>
 
-    ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+```text
+##teamcity[testStarted name='Firefox 128 - hello should say hello']
+##teamcity[testFinished name='Firefox 128 - hello should say hello']
+##teamcity[testStarted name='Firefox 128 - hello should say hello to person']
+##teamcity[testFinished name='Firefox 128 - hello should say hello to person']
+##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
+##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
+##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
+
+##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+```
+
+</details>
 
 ### Command line options
 
@@ -570,7 +580,7 @@ This functionality is implemented as a *transparent proxy*, hence a request to
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
-Preprocessors (CoffeeScript, Babel, TypeScript, LESS, Sass, Browserify, etc)
+Preprocessors (Babel, TypeScript, LESS, Sass, Browserify, CoffeeScript, etc)
 ---------------------------------------------------------
 
 If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
