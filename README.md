@@ -24,23 +24,12 @@ Features
     - Windows
     - Linux
 * Preprocessor support
-    - CoffeeScript
     - Babel
     - TypeScript
     - Browserify
     - ESLint/JSHint/JSLint
+    - CoffeeScript
     - everything else
-
-**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
-
-Historical Screencasts
-----------------------
-
-These YouTube screencasts are from around **2012** and may not match the current UI or features, but they still illustrate the core ideas:
-
-* **[Introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
-* **[Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
-* **[CI mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
 
 Installation
 ------------
@@ -488,47 +477,7 @@ To add or override flags, use **`browser_args`** (see [`docs/browser_args.md`](d
 
 **Headless Chrome Beta** is available when the Chrome Beta channel is installed. For legacy **PhantomJS**-specific options (`phantomjs_args`, `phantomjs_debug_port`, etc.), see [`docs/config_file.md`](docs/config_file.md).
 
-Preprocessors (CoffeeScript, Babel, TypeScript, LESS, Sass, Browserify, etc)
----------------------------------------------------------
-
-If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
-
-    "before_tests": "coffee -c *.coffee"
-
-or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
-
-    "before_tests": "babel src --out-dir ."
-
-or, with a `tsconfig.json` that emits JavaScript next to your project (see the [TypeScript example](https://github.com/testem/testem/tree/master/examples/typescript)):
-
-    "before_tests": "tsc"
-
-And Testem will run it before each test run. Point **`src_files`** at the sources you want
-watched (see **File watching** under Development Mode above).
-
-```javascript
-"src_files": [
-  "*.coffee"
-]
-```
-
-Since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
-
-```javascript
-"serve_files": [
-  "*.js"
-]
-```
-
-Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like JSHint or ESLint can be used here as well.
-
-If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
-
-```javascript
-"after_tests": "rm *.js"
-```
-
-If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
+**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
 
 Running browser code after tests complete
 -------------
@@ -621,31 +570,82 @@ This functionality is implemented as a *transparent proxy*, hence a request to
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 
+Preprocessors (CoffeeScript, Babel, TypeScript, LESS, Sass, Browserify, etc)
+---------------------------------------------------------
+
+If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
+
+    "before_tests": "coffee -c *.coffee"
+
+or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
+
+    "before_tests": "babel src --out-dir ."
+
+or, with a `tsconfig.json` that emits JavaScript next to your project (see the [TypeScript example](https://github.com/testem/testem/tree/master/examples/typescript)):
+
+    "before_tests": "tsc"
+
+And Testem will run it before each test run. Point **`src_files`** at the sources you want
+watched (see **File watching** under Development Mode above).
+
+```javascript
+"src_files": [
+  "*.coffee"
+]
+```
+
+Since you want to be serving the `.js` files that are generated and not the `.coffee` files, you want to specify the `serve_files` option to tell it that
+
+```javascript
+"serve_files": [
+  "*.js"
+]
+```
+
+Testem will throw up a big ol' error dialog if the preprocessor command exits with an error code, so code checkers like JSHint or ESLint can be used here as well.
+
+If you need to run a command after your tests have completed (such as removing compiled `.js` files), use the `after_tests` option.
+
+```javascript
+"after_tests": "rm *.js"
+```
+
+If you would prefer simply to clean up when Testem exits, you can use the `on_exit` option.
+
 Example Projects
 ----------------
 
 I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
 
+* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
+* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
+* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
+* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
 * [Simple QUnit project](https://github.com/testem/testem/tree/master/examples/qunit_simple)
 * [Simple Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_simple)
 * [Jasmine 2](https://github.com/testem/testem/tree/master/examples/jasmine2)
 * [Custom Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_custom)
-* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
 * [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
 * [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
-* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
-* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
-* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
-* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
-* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
-* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
 * [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
+* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
+* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
+* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
+* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
 * [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack)
 * [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs)
 * [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul)
+
+Historical Screencasts
+----------------------
+
+These YouTube screencasts are from around **2012** and may not match the current UI or features, but they still illustrate the core ideas:
+
+* **[Introductory screencast (11:39)](http://www.youtube.com/watch?v=-1mjv4yk5JM)** &mdash; TDD workflow
+* **[Launchers (12:10)](http://www.youtube.com/watch?v=Up0lVjWk9Rk)** &mdash; auto-launch and running tests in **Node**
+* **[CI mode (4:24)](http://www.youtube.com/watch?v=Js16Cj80HKY)** &mdash; continuous integration
 
 Contributing
 ------------
