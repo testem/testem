@@ -2,7 +2,7 @@ var os = require('os');
 var path = require('path');
 var fs = require('fs');
 var url = require('url');
-var fileUrl = require('file-url');
+var pathToFileURL = url.pathToFileURL;
 var { randomBytes } = require('crypto');
 var execFile = require('child_process').execFile;
 var { registerCleanup } = require('../../lib/utils/tmp-cleanup');
@@ -32,7 +32,10 @@ var testemJsUrl = url.format(baseObj);
 // pointing back to this directory.
 var testPagePath = path.join.apply(null, testPageObj.pathname.split('/'));
 var htmlContent = fs.readFileSync(testPagePath, 'utf8').toString();
-htmlContent = htmlContent.replace('<head>', '<head>\n<base href="' + fileUrl(__dirname) + '/">');
+var baseDirUrl = pathToFileURL(
+  __dirname.endsWith(path.sep) ? __dirname : __dirname + path.sep
+).href;
+htmlContent = htmlContent.replace('<head>', '<head>\n<base href="' + baseDirUrl + '">');
 htmlContent = htmlContent.replace('src="/testem.js"', 'src="' + testemJsUrl + '"');
 var tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-'));
 registerCleanup(tmpDir);
@@ -41,7 +44,7 @@ fs.writeFileSync(tmpFilePath, htmlContent, 'utf8');
 
 // Build a file: URL to our temp file, preserving query params from the test
 // page and adding the testem id
-var tmpFileObj = url.parse(fileUrl(tmpFilePath));
+var tmpFileObj = url.parse(pathToFileURL(tmpFilePath).href);
 tmpFileObj.query = testPageObj.query;
 tmpFileObj.query.testemId = id;
 var testUrl = url.format(tmpFileObj);
