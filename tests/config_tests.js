@@ -1,6 +1,7 @@
 
 
 const Config = require('../lib/config.js');
+const log = require('../lib/log');
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
@@ -146,6 +147,36 @@ describe('Config', function() {
     });
   });
 
+  describe('read mjs config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'testem.mjs')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
+  describe('read esm testem.js config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'fixtures', 'esm_js_config', 'testem.js')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
   describe('read js config file from custom path', function() {
     let config;
     beforeEach(function(done) {
@@ -172,6 +203,55 @@ describe('Config', function() {
     });
     it('gets properties from config file', function() {
       expect(config.get('framework')).to.equal('qunit');
+    });
+  });
+
+  describe('resolve promise from esm mjs config', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'custom_configs', 'testem-promise-esm.mjs')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('qunit');
+    });
+  });
+
+  describe('broken mjs config file (syntax error)', function() {
+    it('logs error, leaves fileOptions empty, and invokes callback', function(done) {
+      sandbox.stub(log, 'error');
+      let progOptions = {
+        file: path.join(__dirname, 'custom_configs', 'testem-syntax-error.mjs'),
+      };
+      let cfg = new Config('dev', progOptions);
+      cfg.read(function() {
+        expect(log.error.called).to.be.true();
+        expect(cfg.fileOptions).to.deep.equal({});
+        expect(cfg.get('framework')).to.be.undefined();
+        done();
+      });
+    });
+  });
+
+  describe('mjs config with named exports only (no default export)', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'custom_configs', 'testem-named-exports-only.mjs'),
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('does not treat a named export as the config root', function() {
+      expect(config.get('framework')).to.be.undefined();
+      expect(config.fileOptions.config.framework).to.equal('mocha');
+      expect(config.fileOptions.config.src_files).to.deep.equal([
+        'impl.js',
+        'tests.js',
+      ]);
     });
   });
 

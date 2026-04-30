@@ -1,7 +1,7 @@
 Testem Configuration File
 =========================
 
-This document will go into more detail about the Testem configuration file and list in glorious detail all of its available options. The config file is in either JSON format or YAML format and can be called any of the following
+This document will go into more detail about the Testem configuration file and list in glorious detail all of its available options. The config file may be JSON, YAML, or JavaScript (CommonJS or ESM). When auto-discovered (no `--file`), Testem tries these names in order and uses the first one that exists:
 
 * `testem.json`
 * `.testem.json`
@@ -9,6 +9,8 @@ This document will go into more detail about the Testem configuration file and l
 * `.testem.yml`
 * `testem.js`
 * `.testem.js`
+* `testem.mjs`
+* `.testem.mjs`
 * `testem.cjs`
 * `.testem.cjs`
 
@@ -38,6 +40,18 @@ module.exports = {
         "tests/*_tests.js"
     ],
     "reporter": new CustomReporter()
+};
+```
+
+You can author configs as ECMAScript modules. Use `testem.mjs`, or `testem.js` in a package with [`"type": "module"`](https://nodejs.org/api/packages.html#type) in `package.json`. Export the options object as the default export (or export an async function whose resolved value is the options object):
+
+```javascript
+export default {
+    framework: 'mocha',
+    src_files: [
+        'src/*.js',
+        'tests/*_tests.js'
+    ]
 };
 ```
 
