@@ -28,6 +28,8 @@ export default [
       "**/.eslintrc.js",
       "eslint.config.js",
       "tests/fixtures/**/*.js",
+      // Intentional parse error for custom-config tests; ESLint cannot parse it.
+      "tests/custom_configs/testem-syntax-error.mjs",
     ],
   },
   {
