@@ -251,6 +251,13 @@ describe('Server', function() {
         expect(res.statusCode).to.eq(200);
       });
 
+      it('serves files under a dot-prefixed directory (eg .pnpm/)', async function() {
+        await assertUrlReturnsFileContents(
+          baseUrl + 'web/.pnpm-like/inside.js',
+          'tests/web/.pnpm-like/inside.js',
+        );
+      });
+
       it('accepts other http methods', async function() {
         const { res } = await httpRequest.del(
           baseUrl + '-1' + '/web/hello.js',
