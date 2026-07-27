@@ -274,7 +274,7 @@ Configuration File
 
 For the simplest JavaScript projects, the TDD workflow described above will work fine. There are times when you want to structure your source files into separate directories, or want to have finer control over what files to include.
 
-This calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file or return json from a javascript file `testem.js`). It looks like
+This calls for the `testem.json` configuration file (you can also alternatively use the YAML format with a `testem.yml` file or return JSON from a JavaScript file `testem.js`). It looks like
 
 ```json
 {
