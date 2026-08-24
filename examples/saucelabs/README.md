@@ -26,3 +26,8 @@ The `on_start` hook ([`saucie-connect.js`](saucie-connect.js)) uses saucie 4.0.2
 The `on_exit` hook ([`saucie-disconnect.js`](saucie-disconnect.js)) stops that process via `saucie.disconnect()`.
 
 See the [saucie Sauce Connect tunnel options](https://github.com/johanneswuerbach/saucie#sauce-connect-tunnel-options) for details.
+
+Browser launchers
+-----------------
+
+`SL_Safari_Current` uses `-v latest` because fixed Safari versions (for example `17`) are retired on Sauce Labs over time. `SL_Safari_Last` pins an older release for regression coverage.
