@@ -80,7 +80,7 @@ function appendTestemIframeOnLoad(callback) {
 var testFrameworkDidInit = false;
 function hookIntoTestFramework(socket) {
   if (testFrameworkDidInit) {
-    return;
+    return true;
   }
 
   var found = true;
