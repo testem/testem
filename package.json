@@ -80,7 +80,7 @@
     "eslint-plugin-mocha": "^11.2.0",
     "fresh-tape": "^5.9.1",
     "mocha": "^11.7.5",
-    "saucie": "^4.0.1",
+    "saucie": "^4.1.0",
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.8.3"

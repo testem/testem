@@ -7,9 +7,27 @@ Instructions
 ------------
 
 1. Get a [SauceLabs](https://saucelabs.com/) account.
-2. Install [saucie](https://github.com/igorlima/sauce-js-tests-integration) via `SAUCE_CONNECT_DOWNLOAD_ON_INSTALL=true npm install saucie -g`. If the SAUCE_CONNECT_DOWNLOAD_ON_INSTALL environment variable is not set then [sauce-connect-launcher will attempt to download it](https://github.com/bermi/sauce-connect-launcher#installation) on the first run which might prevent saucie from working if elevated privileges are not used.
+2. Install dependencies from the testem repo root (`npm i`). The [saucie](https://github.com/johanneswuerbach/saucie) devDependency starts Sauce Connect and runs browsers on Sauce Labs.
 3. Make sure Sauce credentials are set in env:
     * **SAUCE_USERNAME** - your SauceLabs username
     * **SAUCE_ACCESS_KEY** - your SauceLabs API/Access key.
 4. Run `testem ci --port 8080` to run it on all the listed browsers - see `testem launchers` for the full list.
-    * *It will take a while at the first time. This will only happen once to download the jar of Sauce Connect*
+    * *It will take a while at the first time. This will only happen once to download the Sauce Connect binary*
+
+Sauce Connect lifecycle
+-----------------------
+
+The `on_start` hook ([`saucie-connect.js`](saucie-connect.js)) uses saucie 4.0.2+ to:
+
+- start Sauce Connect detached so the tunnel survives hook exit
+- wait for local `/readyz` and Sauce Labs API `is_ready`
+- write the process id to `sc_client.pid`
+
+The `on_exit` hook ([`saucie-disconnect.js`](saucie-disconnect.js)) stops that process via `saucie.disconnect()`.
+
+See the [saucie Sauce Connect tunnel options](https://github.com/johanneswuerbach/saucie#sauce-connect-tunnel-options) for details.
+
+Browser launchers
+-----------------
+
+`SL_Safari_Current` uses `-v latest` because fixed Safari versions (for example `17`) are retired on Sauce Labs over time. `SL_Safari_Last` pins an older release for regression coverage.
