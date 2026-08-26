@@ -8,6 +8,9 @@ on:
       - "0.8.x"
       - v*
   pull_request:
+  schedule:
+    - cron: "23 8 * * 4" # Thursdays 08:23 UTC
+  workflow_dispatch:
 
 jobs:
   lint:
