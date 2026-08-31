@@ -7,6 +7,7 @@ const fs = require('fs');
 const PassThrough = require('stream').PassThrough;
 
 const { tmpNameAsync } = require('../support/tmp-name');
+const readStream = require('../support/read-stream');
 
 const Reporter = require('../../lib/utils/reporter');
 const FakeReporter = require('../support/fake_reporter');
@@ -144,7 +145,7 @@ describe('Reporter', function() {
       });
       reporter.finish();
 
-      let output = stream.read().toString();
+      let output = readStream(stream);
       expect(output).to.match(/tests 1/);
     });
 
@@ -170,7 +171,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          let output = stream.read().toString();
+          let output = readStream(stream);
           expect(output).to.match(/tests 1/);
 
           return fsReadFileAsync(path, 'utf-8');
@@ -272,7 +273,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          let output = stream.read().toString();
+          let output = readStream(stream);
           expect(output).to.match(/<testsuite name/);
 
           return fsReadFileAsync(path, 'utf-8');
@@ -305,7 +306,7 @@ describe('Reporter', function() {
         reporter.finish();
 
         return reporter.close().then(function() {
-          let output = stream.read().toString();
+          let output = readStream(stream);
           expect(output).to.match(/tests 1/);
 
           return fsReadFileAsync(path, 'utf-8');

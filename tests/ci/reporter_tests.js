@@ -9,6 +9,7 @@ var Config = require('../../lib/config');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('@xmldom/xmldom');
 var assert = require('chai').assert;
+var readStream = require('../support/read-stream');
 var assertXmlIsValid = function(xmlString) {
   var failure = null;
   var parser = new XmlDom.DOMParser({
@@ -79,7 +80,7 @@ describe('test reporters', function() {
             runDuration: 3,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
             '        browser log: |',
@@ -128,7 +129,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
             '        browser log: |',
@@ -177,7 +178,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [3 ms] - it does stuff',
             'skip 2 phantomjs - [0 ms] - it is skipped',
             '',
@@ -217,7 +218,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [50 ms] - it does stuff',
             'not ok 2 phantomjs - [5 ms] - it fails',
             '    ---',
@@ -260,7 +261,7 @@ describe('test reporters', function() {
             runDuration: 5,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'todo 1 phantomjs - [5 ms] - it is a failing todo',
             '    ---',
             '        message: >',
@@ -299,7 +300,7 @@ describe('test reporters', function() {
           runDuration: 1,
         });
         reporter.finish();
-        assert.deepEqual(stream.read().toString().split('\n'), [
+        assert.deepEqual(readStream(stream).split('\n'), [
           'ok 1 phantomjs - [1 ms]',
           '',
           '1..1',
@@ -336,7 +337,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             '',
             '1..2',
             '# tests 2',
@@ -374,7 +375,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'not ok 1 phantomjs - [5 ms] - it fails',
             '    ---',
             '        message: >',
@@ -415,7 +416,7 @@ describe('test reporters', function() {
             runDuration: 5,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'todo 1 phantomjs - [5 ms] - it is a failing todo',
             '    ---',
             '        message: >',
@@ -466,7 +467,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
             '        browser log: |',
@@ -510,7 +511,7 @@ describe('test reporters', function() {
             runDuration: 0,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'ok 1 phantomjs - [3 ms] - it does stuff',
             '    ---',
             '        browser log: |',
@@ -557,7 +558,7 @@ describe('test reporters', function() {
             runDuration: 5,
           });
           reporter.finish();
-          assert.deepEqual(stream.read().toString().split('\n'), [
+          assert.deepEqual(readStream(stream).split('\n'), [
             'not ok 1 phantomjs - [5 ms] - it is a failing todo # todo',
             '    ---',
             '        message: >',
@@ -653,7 +654,7 @@ describe('test reporters', function() {
           runDuration: 3,
         });
         reporter.finish();
-        assert.deepEqual(stream.read().toString().split('\n'), [
+        assert.deepEqual(readStream(stream).split('\n'), [
           'ok 1 phantomjs - [3 ms] - it does stuff',
           '    ---',
           '        browser log: |',
@@ -692,7 +693,7 @@ describe('test reporters', function() {
           logs: []
         });
         reporter.finish();
-        var output = stream.read().toString();
+        var output = readStream(stream);
         assert.match(output, / {2}\.\n\n/);
         assert.match(output, /\[duration - [0-9]+ ms\]\n/);
         assert.match(output, /1\.\.1/);
@@ -720,7 +721,7 @@ describe('test reporters', function() {
           }
         });
         reporter.finish();
-        var output = stream.read().toString().split('\n');
+        var output = readStream(stream).split('\n');
 
         output.shift();
         assert.match(output.shift(), / {2}F/);
@@ -755,7 +756,7 @@ describe('test reporters', function() {
           logs: []
         });
         reporter.finish();
-        var output = stream.read().toString();
+        var output = readStream(stream);
         assert.match(output, / {2}\*/);
         assert.match(output, /\[duration - [0-9]+ ms\]\n/);
         assert.match(output, /# tests 1\n/);
@@ -790,7 +791,7 @@ describe('test reporters', function() {
           logs: []
         });
         reporter.finish();
-        var output = stream.read().toString();
+        var output = readStream(stream);
         assert.match(output, / {2}TF/);
         assert.match(output, /\[duration - [0-9]+ ms\]\n/);
         assert.match(output, /# tests 2\n/);
@@ -818,7 +819,7 @@ describe('test reporters', function() {
           }
         });
         reporter.finish();
-        var output = stream.read().toString().split('\n');
+        var output = readStream(stream).split('\n');
 
         output.shift();
         assert.match(output.shift(), / {2}F/);
@@ -861,7 +862,7 @@ describe('test reporters', function() {
         passed: true
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
 
       assert.match(output, /<testsuite name="Testem Tests" tests="1" skipped="0" todo="0" failures="0" timestamp="(.+)" time="(\d+(\.\d+)?)">/);
       assert.match(output, /<testcase classname="phantomjs" name="it does &lt;cool&gt; &quot;cool&quot; 'cool' stuff"/);
@@ -897,7 +898,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out">/);
       assert.match(output, /CDATA\[Source:\nError: it crapped out/);
@@ -918,7 +919,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
       assert.match(output, /CDATA\[Expected:\n {4}bar\n\nResult:\n {4}foo\n\nSource:\nError: it crapped out/);
@@ -940,7 +941,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
       assert.match(output, /CDATA\[Expected:\n {4}false\n\nResult:\n {4}foo\n\nSource:\nError: it crapped out/);
@@ -962,7 +963,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
       assert.match(output, /CDATA\[Expected:\n {4}bar\n\nResult:\n {4}NOT foo\n\nSource:\nError: it crapped out/);
@@ -985,7 +986,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
@@ -1001,7 +1002,7 @@ describe('test reporters', function() {
         skipped: true
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /<skipped\/>/);
 
       assertXmlIsValid(output);
@@ -1015,7 +1016,7 @@ describe('test reporters', function() {
         todo: true
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /<todo\/>/);
 
       assertXmlIsValid(output);
@@ -1029,7 +1030,7 @@ describe('test reporters', function() {
         skipped: true
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.notMatch(output, /<failure/);
 
       assertXmlIsValid(output);
@@ -1043,7 +1044,7 @@ describe('test reporters', function() {
         todo: true
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.notMatch(output, /<failure/);
 
       assertXmlIsValid(output);
@@ -1056,7 +1057,7 @@ describe('test reporters', function() {
         passed: false
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /<failure/);
 
       assertXmlIsValid(output);
@@ -1072,7 +1073,7 @@ describe('test reporters', function() {
         }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it failed with quotes"/);
       assert.match(output, /&lt;it&gt; &quot;crapped&quot; out/);
 
@@ -1087,7 +1088,7 @@ describe('test reporters', function() {
         error: { message: '&&' }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
       assert.match(output, /it failed with ampersands"/);
       assert.match(output, /&amp;&amp;/);
 
@@ -1102,7 +1103,7 @@ describe('test reporters', function() {
         error: { message: null }
       });
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
 
       assertXmlIsValid(output);
     });
@@ -1147,7 +1148,7 @@ describe('test reporters', function() {
       });
 
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
 
       assert.match(output, /##teamcity\[testSuiteFinished name='testem\.suite' duration='(\d+(\.\d+)?)'\]/);
       assert.match(output, /##teamcity\[testStarted name='phantomjs - it does <cool> "cool" \|'cool\|' stuff']/);
@@ -1177,7 +1178,7 @@ describe('test reporters', function() {
       });
 
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
 
       assert.match(output, /##teamcity\[testFailed name='firefox - it handles failures' message='' details='' type='comparisonFailure' expected='foo' actual='bar']/);
     });
@@ -1205,7 +1206,7 @@ describe('test reporters', function() {
       });
 
       reporter.finish();
-      var output = stream.read().toString();
+      var output = readStream(stream);
 
       assert.match(output, /##teamcity\[testFailed name='firefox - it negates' message='' details='' type='comparisonFailure' expected='NOT foo' actual='foo']/);
     });
