@@ -539,13 +539,13 @@ describe('Server', function() {
     const runnerPort = 63579;
     const repoRoot = path.join(__dirname, '..');
 
-    async function startRunnerServer(framework, cwd) {
-      const runnerConfig = new Config('dev', {
+    async function startRunnerServer(framework, cwd, extra) {
+      const runnerConfig = new Config('dev', Object.assign({
         port: runnerPort,
         framework,
         cwd: cwd || repoRoot,
         src_files: []
-      });
+      }, extra || {}));
       const runnerServer = new Server(runnerConfig);
       const started = once(runnerServer, 'server-start');
       runnerServer.start();
@@ -661,6 +661,32 @@ describe('Server', function() {
         );
       } finally {
         await runnerServer.stop();
+      }
+    });
+
+    it('emits /node_modules mocha URLs when routes remap node_modules', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-routes-assets-'));
+      const appDir = path.join(root, 'app');
+      fs.mkdirSync(appDir);
+      const mochaDir = path.join(root, 'node_modules', 'mocha');
+      fs.mkdirSync(mochaDir, { recursive: true });
+      fs.writeFileSync(path.join(mochaDir, 'mocha.js'), '');
+      fs.writeFileSync(path.join(mochaDir, 'mocha.css'), '');
+      const runnerServer = await startRunnerServer('mocha', appDir, {
+        routes: { '/node_modules': '../node_modules' }
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
       }
     });
   });
