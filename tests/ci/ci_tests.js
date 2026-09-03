@@ -402,6 +402,7 @@ describe('ci mode app', function() {
     var config = new Config('ci', {
       port: 0,
       cwd: path.join('tests/fixtures/fail_later'),
+      routes: { '/node_modules': '../../../node_modules' },
       timeout: 2,
       launch_in_ci: ['Headless Firefox'],
       reporter: makeTestReporter()
