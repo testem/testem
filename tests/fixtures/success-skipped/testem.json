@@ -1,3 +1,6 @@
 {
-    "framework": "qunit"
+    "framework": "qunit",
+    "routes": {
+        "/node_modules": "../../../node_modules"
+    }
 }

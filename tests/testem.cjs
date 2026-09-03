@@ -5,5 +5,8 @@ module.exports = {
   src_files: [
     'impl.js',
     'tests.js'
-  ]
+  ],
+  routes: {
+    '/node_modules': '../node_modules'
+  }
 };
