@@ -148,14 +148,60 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(fs.existsSync(path.join(parentNm, 'mocha/mocha.js'))).to.equal(true);
   });
 
-  it('prefers cwd node_modules over an empty routed dir', function() {
-    const other = path.join(tmpDir, 'other-node-modules');
-    fs.mkdirSync(other);
+  it('resolves all runner assets through a trailing-slash array route', function() {
+    const appDir = path.join(tmpDir, 'app');
+    fs.mkdirSync(appDir);
+
+    writeFile(tmpDir, 'mocha/mocha.js');
+    writeFile(tmpDir, 'mocha/mocha.css');
+    writeFile(tmpDir, 'chai/index.js');
+    writeFile(tmpDir, 'chai/package.json', JSON.stringify({ type: 'module' }));
+    writeFile(tmpDir, 'jasmine-core/lib/jasmine-core/jasmine.js');
+    writeFile(tmpDir, 'jasmine-core/lib/jasmine-core/jasmine-html.js');
+    writeFile(tmpDir, 'jasmine-core/lib/jasmine-core/boot0.js');
+    writeFile(tmpDir, 'jasmine-core/lib/jasmine-core/boot1.js');
+    writeFile(tmpDir, 'jasmine-core/lib/jasmine-core/jasmine.css');
+    writeFile(tmpDir, 'qunit/qunit/qunit.js');
+    writeFile(tmpDir, 'qunit/qunit/qunit.css');
+
+    const assets = resolveRunnerFrameworkAssets(appDir, {
+      '/node_modules/': ['missing-node-modules', '../node_modules']
+    });
+
+    expect(assets.mochaJs).to.equal('/node_modules/mocha/mocha.js');
+    expect(assets.chaiLocal).to.equal(true);
+    expect(assets.chaiJs).to.equal('/node_modules/chai/index.js');
+    expect(assets.jasmineCoreV5).to.equal(true);
+    expect(assets.jasmineJs).to.equal(
+      '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js'
+    );
+    expect(assets.qunitJs).to.equal('/node_modules/qunit/qunit/qunit.js');
+
+    Object.values(assets)
+      .filter(value => typeof value === 'string' && value.startsWith('/node_modules/'))
+      .forEach(value => expect(value).not.to.include('\\'));
+  });
+
+  it('prefers a cwd Chai UMD layout over routed Chai ESM', function() {
+    const otherRoot = path.join(tmpDir, 'other');
+    const otherNodeModules = path.join(otherRoot, 'node_modules');
+
     writeCwdFile('mocha/mocha.js');
     writeCwdFile('mocha/mocha.css');
+    writeCwdFile('chai/chai.js');
+    writeFile(otherRoot, 'chai/index.js');
+    writeFile(
+      otherRoot,
+      'chai/package.json',
+      JSON.stringify({ type: 'module' })
+    );
+
     const assets = resolveRunnerFrameworkAssets(tmpDir, {
-      '/node_modules': other
+      '/node_modules': otherNodeModules
     });
+
     expect(assets.mochaJs).to.equal('/node_modules/mocha/mocha.js');
+    expect(assets.chaiLocal).to.equal(false);
+    expect(assets.chaiJs).to.equal('/node_modules/chai/chai.js');
   });
 });
