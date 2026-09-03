@@ -31,3 +31,5 @@ Browser launchers
 -----------------
 
 `SL_Safari_Current` uses `-v latest` because fixed Safari versions (for example `17`) are retired on Sauce Labs over time. `SL_Safari_Last` pins an older release for regression coverage.
+
+The CI `launch_in_ci` set targets browsers that run **jasmine-core 5** (Chrome, Firefox, Safari, Edge). Internet Explorer launchers remain defined for manual runs but are excluded from CI because jasmine-core 5 does not support IE. `SL_Chrome_Current_No_Details` (TAP protocol without `--attach`) is also excluded from CI; it relied on legacy Sauce result scraping that does not work with the modern Jasmine runner.
