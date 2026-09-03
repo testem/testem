@@ -1,3 +1,6 @@
 {
-    "test_page": "index.html"
+    "test_page": "index.html",
+    "routes": {
+        "/node_modules": "../../node_modules"
+    }
 }
