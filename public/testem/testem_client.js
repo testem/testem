@@ -56,21 +56,12 @@ function appendTestemIframeOnLoad(callback) {
   };
 
   var DOMContentLoaded = function() {
-    if (document.addEventListener) {
-      document.removeEventListener('DOMContentLoaded', DOMContentLoaded, false);
-    } else {
-      document.detachEvent('onreadystatechange', DOMContentLoaded);
-    }
+    document.removeEventListener('DOMContentLoaded', DOMContentLoaded, false);
     domReady();
   };
 
-  if (document.addEventListener) {
-    document.addEventListener('DOMContentLoaded', DOMContentLoaded, false);
-    window.addEventListener('load', DOMContentLoaded, false);
-  } else if (document.attachEvent) {
-    document.attachEvent('onreadystatechange', DOMContentLoaded);
-    window.attachEvent('onload', DOMContentLoaded);
-  }
+  document.addEventListener('DOMContentLoaded', DOMContentLoaded, false);
+  window.addEventListener('load', DOMContentLoaded, false);
 
   if (document.readyState !== 'loading') {
     domReady();
@@ -98,11 +89,8 @@ function hookIntoTestFramework(socket) {
   return found;
 }
 
-var addListener;
-if (typeof window !== 'undefined') {
-  addListener = window.addEventListener ?
-    function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-    function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
+function addListener(obj, evt, cb) {
+  obj.addEventListener(evt, cb, false);
 }
 
 // Used internally in order to remember state involving a message that needs to
@@ -284,7 +272,6 @@ var Testem = {
     if (depth !== -1) {
       message = decycle(message, depth);
     }
-    // stringify for clients that only can handle string postMessages (IE <= 10)
     return JSON.stringify(message);
   },
   removeEventCallbacks: function(evt, callback) {
@@ -389,13 +376,7 @@ function takeOverConsole() {
         args.unshift('browser-console');
         emit.apply(Testem, args);
 
-        if (typeof original === 'object') {
-          // Do this for IE
-          Function.prototype.apply.call(original, console, arguments);
-        } else {
-          // Do this for normal browsers
-          original.apply(console, arguments);
-        }
+        original.apply(console, arguments);
       }
     };
   }
