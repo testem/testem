@@ -3,6 +3,6 @@
     "routes": {
         "/tests.html": "public/tests.html",
         "/js": "src",
-        "/css": "css"
+        "/node_modules": "../../node_modules"
     }
 }
