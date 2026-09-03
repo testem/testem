@@ -32,6 +32,7 @@ describe('Server', function() {
         routes: {
           '/direct-test': 'web/direct',
           '/fallback-test': ['web/direct', 'web/fallback'],
+          '/node_modules': '../node_modules',
         },
         cwd: 'tests',
         proxies: {
@@ -637,7 +638,7 @@ describe('Server', function() {
       }
     });
 
-    it('falls back to CDN pins when cwd has no framework packages', async function() {
+    it('uses /node_modules URLs when cwd has no framework packages', async function() {
       const emptyCwd = path.join(__dirname);
       const runnerServer = await startRunnerServer('mocha', emptyCwd);
       try {
@@ -645,10 +646,8 @@ describe('Server', function() {
           'http://localhost:' + runnerPort + '/-1',
         );
         const srcs = scriptSrcs(text);
-        expect(srcs).to.include(
-          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
-        );
-        expect(srcs).to.not.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include('cdnjs.cloudflare.com');
       } finally {
         await runnerServer.stop();
       }
@@ -863,6 +862,9 @@ describe('Server', function() {
           { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] },
         ],
         cwd: 'tests',
+        routes: {
+          '/node_modules': '../node_modules',
+        },
       });
       baseUrl = 'https://localhost:' + port + '/';
 
@@ -886,6 +888,9 @@ describe('Server', function() {
         port: port,
         pfx: 'tests/fixtures/certs/localhost.pfx',
         cwd: 'tests',
+        routes: {
+          '/node_modules': '../node_modules',
+        },
       });
       baseUrl = 'https://localhost:' + port + '/';
 
