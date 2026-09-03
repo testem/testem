@@ -171,7 +171,7 @@ Will print them out. The output might look like
     Safari Technology Preview
     Opera
 
-Your machine may list other launchers too. For **headless** runs, prefer **Chrome** with `browser_args` (for example `--headless`) rather than the deprecated PhantomJS launcher—see `docs/browser_args.md`.
+Your machine may list other launchers too. For **headless** runs, use the built-in **Headless Chrome** launcher or pass `--headless` via `browser_args` — see `docs/browser_args.md`.
 
 When you run `testem ci` to run tests, it outputs the results in the [TAP](https://testanything.org/) format by default, which looks like
 
@@ -355,6 +355,7 @@ Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
+5. Replace PhantomJS with **Headless Chrome** (or Chrome with `"browser_args": { "Chrome": ["--headless"] }`). Config options `phantomjs_args`, `phantomjs_debug_port`, and `phantomjs_launch_script` are removed.
 
 Custom Test Pages
 -----------------
@@ -529,9 +530,9 @@ To add or override flags, use **`browser_args`** (see [`docs/browser_args.md`](d
 
 **Remote debugging:** By default the headless launcher passes **`--remote-debugging-port=0`**, so Chrome chooses a random port—set a **fixed** port in `browser_args` (as in the example above) so you can connect reliably. With Testem running, open a regular Chrome window to **`chrome://inspect`**, use **Configure…** under “Discover network targets” to add **`localhost:9222`** (or whatever port you set), find your test page under **Remote Target**, and click **inspect**. You can also open **`http://localhost:9222`** and follow the links to a target page. **`debugger`** statements and breakpoints work in the DevTools **Sources** panel.
 
-**Headless Chrome Beta** is available when the Chrome Beta channel is installed. For legacy **PhantomJS**-specific options (`phantomjs_args`, `phantomjs_debug_port`, etc.), see [`docs/config_file.md`](docs/config_file.md).
+**Headless Chrome Beta** is available when the Chrome Beta channel is installed.
 
-**Internet Explorer** and the legacy **PhantomJS** launcher are still available, but we document them as **deprecated** targets: keeping them viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Chrome** with `--headless` for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
+**Internet Explorer** is still available as a built-in launcher on Windows, but we document it as a **deprecated** target: keeping it viable through transpilation and polyfills is likely to get more difficult over time, so prefer evergreen browsers, **Headless Chrome** for headless automation, or Node for new projects. See the [configuration reference](docs/config_file.md) for how we categorize browsers.
 
 Running browser code after tests complete
 -------------
