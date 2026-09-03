@@ -336,7 +336,9 @@ Run `npm install` in the project directory. In a monorepo, or when `cwd` is not 
 }
 ```
 
-The `mocha+chai` runner loads Chai 6 as an ES module when `chai` is installed locally, then loads your spec files as classic scripts (`var expect = chai.expect` still works).
+The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses the UMD build `chai/chai.js` as a classic script. Chai 5+ (`"type": "module"`) is imported as an ES module, then your spec files load as classic scripts (`var expect = chai.expect` still works).
+
+`jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4. Incomplete installs fall back to the CDN pin.
 
 ### Jasmine 1.x deprecation
 
