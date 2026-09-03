@@ -89,9 +89,7 @@ rest of Testem.
 
 ### Potentially available browsers
 
-Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari Technology Preview
-
-Generally supported but deprecated: IE 11, PhantomJS (using additional transpilation and polyfills). For **headless** automation, prefer **Chrome** with `browser_args` such as `--headless` instead of PhantomJS.
+Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari Technology Preview. On Windows: Edge.
 
 ### CLI-level options:
 
