@@ -49,7 +49,13 @@ tmpFileObj.query = testPageObj.query;
 tmpFileObj.query.testemId = id;
 var testUrl = url.format(tmpFileObj);
 
-var child = execFile(electronPath, ['--no-sandbox', testUrl], function(error) {
+var env = Object.assign({}, process.env);
+delete env.ELECTRON_RUN_AS_NODE;
+var electronArgs = [testUrl];
+if (platform === 'linux') {
+  electronArgs.unshift('--no-sandbox');
+}
+var child = execFile(electronPath, electronArgs, { env: env }, function(error) {
   if (error) {
     throw error;
   }
