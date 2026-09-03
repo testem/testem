@@ -62,7 +62,7 @@ If it isn't practical to write a test first, it might be my fault, feel free to 
 
 ### Integration Tests
 
-There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`
+There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`. Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback.
 
 Node + headless browser
 

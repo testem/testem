@@ -278,13 +278,15 @@ This calls for the `testem.json` configuration file (you can also alternatively 
 
 ```json
 {
-  "framework": "jasmine",
+  "framework": "jasmine2",
   "src_files": [
     "hello.js",
     "hello_spec.js"
   ]
 }
 ```
+
+The default `framework` is still `"jasmine"` (Jasmine 1.x). That default is **deprecated** and will be removed in the next version of Testem. New projects should use `"jasmine2"` with `jasmine-core` (see [Browser framework dependencies](#browser-framework-dependencies)).
 
 The `src_files` can also be unix glob patterns.
 
@@ -312,6 +314,46 @@ You can also ignore certain files using `src_files_ignore`.
 
 Read [more details](docs/config_file.md) about the config options.
 
+Browser framework dependencies
+------------------------------
+
+Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine2` runners **prefer** files from `/node_modules/` in the project `cwd`. If those packages are not installed, Testem still loads the previous CDN URLs (Mocha 2.3.4, Chai 3.4.1, QUnit 1.20.0, Jasmine 2.4.1). Installing the packages is optional on this version and required in the next major version.
+
+| `framework` | Install for modern versions |
+|---|---|
+| `jasmine2` | `jasmine-core` |
+| `qunit` | `qunit` |
+| `mocha` | `mocha` |
+| `mocha+chai` | `mocha` and `chai` |
+
+Run `npm install` in the project directory. In a monorepo, or when `cwd` is not the install root, map the path with `routes`:
+
+```json
+{
+  "routes": {
+    "/node_modules": "../node_modules"
+  }
+}
+```
+
+The `mocha+chai` runner loads Chai 6 as an ES module when `chai` is installed locally, then loads your spec files as classic scripts (`var expect = chai.expect` still works).
+
+### Jasmine 1.x deprecation
+
+`framework: "jasmine"` (the default) still runs Jasmine 1.3.1 from CDN. Testem logs a deprecation warning on the server, and the Jasmine 1 adapter logs a warning in the browser (including custom `test_page`s that still load Jasmine 1).
+
+**The next version of Testem will not support Jasmine 1.** Migrate with:
+
+```json
+{
+  "framework": "jasmine2"
+}
+```
+
+```bash
+npm install --save-dev jasmine-core
+```
+
 Custom Test Pages
 -----------------
 
@@ -330,7 +372,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page.
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page. Prefer loading those frameworks from `/node_modules/...` (see [examples/qunit_lazy](examples/qunit_lazy) and [examples/vite](examples/vite)); CDN URLs still work.
 
 ```html
 <script src="/testem.js"></script>
