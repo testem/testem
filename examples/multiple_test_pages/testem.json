@@ -1,5 +1,5 @@
 {
-  "framework": "qunit",
+  "framework": "custom",
   "test_page": [
     "test.html?batch=1",
     "test.html?batch=2"
