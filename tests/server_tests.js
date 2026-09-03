@@ -563,6 +563,12 @@ describe('Server', function() {
         .filter(Boolean);
     }
 
+    function writeRunnerFixture(root, relPath, contents) {
+      const fullPath = path.join(root, relPath);
+      fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+      fs.writeFileSync(fullPath, contents || '');
+    }
+
     it('serves mocha from cwd node_modules when mocha is installed', async function() {
       const runnerServer = await startRunnerServer('mocha');
       try {
@@ -664,11 +670,98 @@ describe('Server', function() {
       }
     });
 
+    it('renders Chai 4 UMD and classic runner assets in execution order', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-chai4-assets-'));
+      writeRunnerFixture(root, 'node_modules/mocha/mocha.js');
+      writeRunnerFixture(root, 'node_modules/mocha/mocha.css');
+      writeRunnerFixture(root, 'node_modules/chai/chai.js');
+      writeRunnerFixture(root, 'spec.js');
+      writeRunnerFixture(root, 'footer.js');
+      writeRunnerFixture(root, 'custom.css');
+
+      const runnerServer = await startRunnerServer('mocha+chai', root, {
+        src_files: [
+          { src: 'spec.js', attrs: ['data-suite="chai4"', 'defer'] }
+        ],
+        footer_scripts: [
+          { src: 'footer.js', attrs: ['data-footer'] }
+        ],
+        css_files: ['custom.css']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const $ = cheerio.load(text);
+        expect(scriptSrcs(text)).to.deep.equal([
+          '/node_modules/mocha/mocha.js',
+          '/node_modules/chai/chai.js',
+          '/testem.js',
+          'spec.js',
+          'footer.js'
+        ]);
+        expect($('script[src="spec.js"]').attr('data-suite')).to.equal('chai4');
+        expect($('script[src="spec.js"]').attr('defer')).to.equal('defer');
+        expect($('script[src="footer.js"]').attr('data-footer')).to.equal('');
+        expect(
+          $('link[rel="stylesheet"]')
+            .map(function() { return $(this).attr('href'); })
+            .get()
+        ).to.deep.equal([
+          '/node_modules/mocha/mocha.css',
+          'custom.css'
+        ]);
+        expect(text.indexOf('src="footer.js"')).to.be.lessThan(
+          text.indexOf('mocha.run()')
+        );
+        expect(text).to.not.include('function loadScript(src)');
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    });
+
+    it('renders jasmine-core 3/4 with boot.js', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-jasmine-assets-'));
+      const jasmineRoot = 'node_modules/jasmine-core/lib/jasmine-core/';
+      writeRunnerFixture(root, jasmineRoot + 'jasmine.js');
+      writeRunnerFixture(root, jasmineRoot + 'jasmine-html.js');
+      writeRunnerFixture(root, jasmineRoot + 'boot.js');
+      writeRunnerFixture(root, jasmineRoot + 'jasmine.css');
+
+      const runnerServer = await startRunnerServer('jasmine2', root);
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const $ = cheerio.load(text);
+        expect(scriptSrcs(text)).to.deep.equal([
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/boot.js',
+          '/testem.js'
+        ]);
+        expect($('link[rel="stylesheet"]').attr('href')).to.equal(
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.css'
+        );
+        expect(text).to.not.include('boot0.js');
+        expect(text).to.not.include('boot1.js');
+        expect(text).to.not.include('cdnjs.cloudflare.com');
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    });
+
     it('forwards serve_files attrs through loadScript for local Chai ESM', async function() {
       const runnerServer = await startRunnerServer('mocha+chai', repoRoot, {
         src_files: [
           { src: 'tests/web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
-        ]
+        ],
+        footer_scripts: [
+          { src: 'tests/web/hello.js', attrs: ['data-footer'] }
+        ],
+        css_files: ['tests/fixtures/styles/screen.css']
       });
       try {
         const { text } = await httpRequest(
@@ -677,6 +770,15 @@ describe('Server', function() {
         expect(text).to.include(
           "await loadScript('tests/web/hello_tst.js', 'data-foo=\"true\"', 'data-bar');"
         );
+        expect(text).to.include(
+          "await loadScript('tests/web/hello.js', 'data-footer');"
+        );
+        expect(text.indexOf("await loadScript('tests/web/hello_tst.js'"))
+          .to.be.lessThan(text.indexOf("await loadScript('tests/web/hello.js'"));
+        expect(text.indexOf("await loadScript('tests/web/hello.js'"))
+          .to.be.lessThan(text.indexOf('globalThis.mocha.run()'));
+        const $ = cheerio.load(text);
+        expect($('link[href="tests/fixtures/styles/screen.css"]')).to.have.length(1);
       } finally {
         await runnerServer.stop();
       }

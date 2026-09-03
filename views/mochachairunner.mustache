@@ -12,6 +12,7 @@
 {{^chaiLocal}}
 {{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
 {{/chaiLocal}}
+{{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 </head>
 <body>
 <div id="mocha"></div>
