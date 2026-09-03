@@ -59,12 +59,11 @@ export default {
 Common Configuration Options
 ----------------------------
 
-* **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values are `jasmine`, `jasmine2`, `qunit`, `mocha`, `mocha+chai`, `custom`, and `tap`. Defaults to `jasmine`.
-  * `jasmine` is Jasmine **1.x** and is **deprecated**. It will be removed in the next version of Testem. Use `jasmine2` with the `jasmine-core` package.
-  * `jasmine` and `jasmine2` are distinct: `jasmine` is not an alias for modern Jasmine.
-  * Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine2` runners prefer `/node_modules/` in `cwd` (install `mocha`, `chai`, `qunit`, or `jasmine-core` as appropriate). If those files are missing, Testem falls back to the previous CDN pins. In a monorepo, remap with `"routes": { "/node_modules": "../node_modules" }` so both HTML URLs and static serving resolve to the install root.
+* **framework** - the test framework that you are using, in the browser, in the case that you are not also using the `test_page` option. The possible values are `jasmine`, `jasmine2`, `qunit`, `mocha`, `mocha+chai`, `custom`, and `tap`. Defaults to `jasmine2`.
+  * `jasmine` is an alias for modern Jasmine (`jasmine2` / `jasmine-core`).
+  * Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load **only** from `/node_modules/` in `cwd` (install `mocha`, `chai`, `qunit`, or `jasmine-core` as appropriate). In a monorepo, remap with `"routes": { "/node_modules": "../node_modules" }` so both HTML URLs and static serving resolve to the install root.
   * `mocha+chai` loads Chai 4 via UMD `chai/chai.js`, and Chai 5+ as an ES module (`chai/index.js` when `package.json` has `"type": "module"`).
-  * `jasmine2` uses jasmine-core 5 `boot0.js`/`boot1.js` when present, otherwise jasmine-core 3/4 `boot.js`.
+  * `jasmine` / `jasmine2` uses jasmine-core 5 `boot0.js`/`boot1.js` when present, otherwise jasmine-core 3/4 `boot.js`.
 * **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in TypeScript, this should be your `.ts` files. If you are writing in JavaScript, this would just be your `.js` files, but if you have a compile step for your JS (e.g. Babel), this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
 
 ### File watching behavior
@@ -124,7 +123,7 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     disable_watching:            [Boolean] disable any file watching
     fail_on_zero_tests:          [Boolean] whether process should exit with error status when no tests found
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
-    framework:                   [String]  test framework to use; defaults to "jasmine" (Jasmine 1.x, deprecated). Also: jasmine2, qunit, mocha, mocha+chai, custom, tap
+    framework:                   [String]  test framework to use; defaults to "jasmine2". Also: jasmine (alias), qunit, mocha, mocha+chai, custom, tap
     ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
     launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs

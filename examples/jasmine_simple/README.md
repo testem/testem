@@ -1,11 +1,9 @@
-## Setup
+# Jasmine Simple Example
 
-This example uses the default `framework: "jasmine"` (Jasmine 1.x). That path is deprecated and will be removed in the next version of Testem. Switch to `"framework": "jasmine2"` and `npm install --save-dev jasmine-core` when you can.
+This example uses `framework: "jasmine"`, which is an alias for modern Jasmine (`jasmine-core` via the built-in `jasmine2` runner).
 
-First install dependencies
+Install dependencies before running:
 
-    npm install
-
-Then, just run tests
-
-    npm test
+```bash
+npm install
+```
