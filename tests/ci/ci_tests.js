@@ -171,7 +171,7 @@ describe('ci mode app', function() {
               } else {
                 process.kill();
               }
-            }, 10000); // TODO Starting PhantomJS on Windows is really slow / find a better way
+            }, 10000); // allow child processes time to shut down on Windows
           });
 
           callback();
