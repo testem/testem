@@ -664,6 +664,24 @@ describe('Server', function() {
       }
     });
 
+    it('forwards serve_files attrs through loadScript for local Chai ESM', async function() {
+      const runnerServer = await startRunnerServer('mocha+chai', repoRoot, {
+        src_files: [
+          { src: 'tests/web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
+        ]
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include(
+          "await loadScript('tests/web/hello_tst.js', 'data-foo=\"true\"', 'data-bar');"
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
     it('emits /node_modules mocha URLs when routes remap node_modules', async function() {
       const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-routes-assets-'));
       const appDir = path.join(root, 'app');

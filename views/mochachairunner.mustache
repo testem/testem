@@ -25,20 +25,33 @@ mocha.run()
 <script type="module">
 import * as chai from '{{{chaiJs}}}';
 globalThis.chai = chai;
+function applyScriptAttr(el, attr) {
+  attr = String(attr).trim();
+  var eq = attr.indexOf('=');
+  if (eq === -1) {
+    el.setAttribute(attr, '');
+    return;
+  }
+  var name = attr.slice(0, eq);
+  var value = attr.slice(eq + 1).replace(/^["']|["']$/g, '');
+  el.setAttribute(name, value);
+}
 function loadScript(src) {
+  var attrs = Array.prototype.slice.call(arguments, 1);
   return new Promise(function(resolve, reject) {
     var s = document.createElement('script');
     s.src = src;
+    attrs.forEach(function(attr) { applyScriptAttr(s, attr); });
     s.onload = resolve;
     s.onerror = reject;
     document.body.appendChild(s);
   });
 }
-{{#scripts}}await loadScript('{{{src}}}');
+{{#scripts}}await loadScript('{{{src}}}'{{#attrs}}, '{{&.}}'{{/attrs}});
 {{/scripts}}
-{{#footer_scripts}}await loadScript('{{{src}}}');
+{{#footer_scripts}}await loadScript('{{{src}}}'{{#attrs}}, '{{&.}}'{{/attrs}});
 {{/footer_scripts}}
-mocha.run();
+globalThis.mocha.run();
 </script>
 {{/chaiLocal}}
 </body>
