@@ -8,6 +8,7 @@
 - **Default `framework` is `jasmine2`.** `"jasmine"` remains supported as an alias.
 - **CDN fallback removed.** Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load only from `/node_modules/` (including routed `/node_modules`). Install `mocha`, `chai`, `qunit`, or `jasmine-core` in your project, or map `"routes": { "/node_modules": "..." }` to an install root.
 - **Node 20 dropped.** Supported Node versions are `^22.12.0`, `^24.0.0`, and `>= 26.0.0`.
+- **PhantomJS removed.** The built-in `PhantomJS` launcher and config options (`phantomjs_args`, `phantomjs_debug_port`, `phantomjs_launch_script`) are gone. Use **Headless Chrome** or Chrome with `browser_args: { "Chrome": ["--headless"] }` for headless runs.
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 

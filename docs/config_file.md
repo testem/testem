@@ -91,7 +91,7 @@ rest of Testem.
 
 Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari Technology Preview
 
-Generally supported but deprecated: IE 11, PhantomJS (using additional transpilation and polyfills). For **headless** automation, prefer **Chrome** with `browser_args` such as `--headless` instead of PhantomJS.
+Generally supported but deprecated: IE 11. For **headless** automation, use **Headless Chrome** or Chrome with `browser_args` such as `--headless`.
 
 ### CLI-level options:
 
@@ -130,9 +130,6 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     launch_in_ci:                [Array]   list of launchers to use for CI runs
     middleware                   [Array]   list of functions to be called with the express app instance
     parallel:                    [Number]  max number of parallel runners (1)
-    phantomjs_debug_port:        [Number]  port used to attach phantomjs debugger
-    phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from https://phantomjs.org/api/command-line.html
-    phantomjs_launch_script:     [String]  path of custom phantomjs launch script
     proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/http-party/node-http-proxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)

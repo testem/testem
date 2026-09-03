@@ -13,8 +13,7 @@ module.exports = {
     'src/*.js'
   ],
 
-  // proxy to the create http server
-  // phantomjs has problems with POSTs to different port
+  // proxy to the coverage HTTP server
   "proxies": {
     "/coverage": {
       "target": "http://localhost:7358"
