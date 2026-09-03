@@ -25,7 +25,7 @@ Reporter.prototype = {
 };
 
 module.exports = {
-  "framework": "qunit",
+  "framework": "custom",
   "test_page": "test.html",
   "reporter": new Reporter()
 };
