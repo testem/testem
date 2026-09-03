@@ -5,7 +5,7 @@ This is an example of how to generate a code coverage report using Testem + Ista
 
 ## Setup
 
-First install dependencies
+First install dependencies (`istanbul`, `jasmine-core`, `rimraf`)
 
     npm install
 
