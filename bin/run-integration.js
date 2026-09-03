@@ -23,15 +23,17 @@ const skipDefiningReporter = [
   'electron'
 ];
 const examplesPath = path.join(__dirname, '../examples');
-const DEFAULT_CONCURRENY = 5;
+// Headless Firefox is flaky on Windows when several examples run in parallel.
+const DEFAULT_CONCURRENCY = os === 'Windows_NT' ? 1 : 5;
 const TIMEOUT = 180000; // npm install is sometimes really slow...
 const RETRIES = 3;
-const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENY, 10);
+const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENCY, 10);
 
 // show available launchers
 execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
 console.log('');
 console.log(`Testing with flags:${testFlags || '[no custom flags provided]'}`);
+console.log(`Running with concurrency: ${concurrency}`);
 console.log('');
 
 // run examples tests

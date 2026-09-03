@@ -114,8 +114,8 @@ describe('Server', function() {
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
           '/testem.js',
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-          'web' + path.sep + 'hello.js',
-          'web' + path.sep + 'hello_tst.js',
+          'web/hello.js',
+          'web/hello_tst.js',
         ]);
         expectMiddlewareHeaders(res);
       });
@@ -532,6 +532,282 @@ describe('Server', function() {
         await wssapiPromise;
         wssapi.close();
       });
+    });
+  });
+
+  describe('built-in runner framework assets', function() {
+    const runnerPort = 63579;
+    const repoRoot = path.join(__dirname, '..');
+
+    async function startRunnerServer(framework, cwd, extra) {
+      const runnerConfig = new Config('dev', Object.assign({
+        port: runnerPort,
+        framework,
+        cwd: cwd || repoRoot,
+        src_files: []
+      }, extra || {}));
+      const runnerServer = new Server(runnerConfig);
+      const started = once(runnerServer, 'server-start');
+      runnerServer.start();
+      await started;
+      return runnerServer;
+    }
+
+    function scriptSrcs(html) {
+      const $ = cheerio.load(html);
+      return $('script')
+        .map(function() {
+          return $(this).attr('src');
+        })
+        .get()
+        .filter(Boolean);
+    }
+
+    function writeRunnerFixture(root, relPath, contents) {
+      const fullPath = path.join(root, relPath);
+      fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+      fs.writeFileSync(fullPath, contents || '');
+    }
+
+    it('serves mocha from cwd node_modules when mocha is installed', async function() {
+      const runnerServer = await startRunnerServer('mocha');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('serves jasmine2 from cwd jasmine-core when installed', async function() {
+      const runnerServer = await startRunnerServer('jasmine2');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+        );
+        expect(srcs).to.include(
+          '/node_modules/jasmine-core/lib/jasmine-core/boot0.js',
+        );
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('serves qunit from cwd node_modules when qunit is installed', async function() {
+      const runnerServer = await startRunnerServer('qunit');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/qunit/qunit/qunit.js');
+        expect(srcs).to.not.include(
+          '//code.jquery.com/qunit/qunit-1.20.0.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('keeps Jasmine 1 CDN pins for the default jasmine runner', async function() {
+      const runnerServer = await startRunnerServer('jasmine');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('falls back to CDN pins when cwd has no framework packages', async function() {
+      const emptyCwd = path.join(__dirname);
+      const runnerServer = await startRunnerServer('mocha', emptyCwd);
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+        expect(srcs).to.not.include('/node_modules/mocha/mocha.js');
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('loads mocha+chai specs as classic scripts after local Chai ESM', async function() {
+      const runnerServer = await startRunnerServer('mocha+chai');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include("import * as chai from '/node_modules/chai/index.js'");
+        expect(text).to.include('function loadScript(src)');
+        expect(text).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/chai/3.4.1/chai.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('renders Chai 4 UMD and classic runner assets in execution order', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-chai4-assets-'));
+      writeRunnerFixture(root, 'node_modules/mocha/mocha.js');
+      writeRunnerFixture(root, 'node_modules/mocha/mocha.css');
+      writeRunnerFixture(root, 'node_modules/chai/chai.js');
+      writeRunnerFixture(root, 'spec.js');
+      writeRunnerFixture(root, 'footer.js');
+      writeRunnerFixture(root, 'custom.css');
+
+      const runnerServer = await startRunnerServer('mocha+chai', root, {
+        src_files: [
+          { src: 'spec.js', attrs: ['data-suite="chai4"', 'defer'] }
+        ],
+        footer_scripts: [
+          { src: 'footer.js', attrs: ['data-footer'] }
+        ],
+        css_files: ['custom.css']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const $ = cheerio.load(text);
+        expect(scriptSrcs(text)).to.deep.equal([
+          '/node_modules/mocha/mocha.js',
+          '/node_modules/chai/chai.js',
+          '/testem.js',
+          'spec.js',
+          'footer.js'
+        ]);
+        expect($('script[src="spec.js"]').attr('data-suite')).to.equal('chai4');
+        expect($('script[src="spec.js"]').attr('defer')).to.equal('defer');
+        expect($('script[src="footer.js"]').attr('data-footer')).to.equal('');
+        expect(
+          $('link[rel="stylesheet"]')
+            .map(function() { return $(this).attr('href'); })
+            .get()
+        ).to.deep.equal([
+          '/node_modules/mocha/mocha.css',
+          'custom.css'
+        ]);
+        expect(text.indexOf('src="footer.js"')).to.be.lessThan(
+          text.indexOf('mocha.run()')
+        );
+        expect(text).to.not.include('function loadScript(src)');
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    });
+
+    it('renders jasmine-core 3/4 with boot.js', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-jasmine-assets-'));
+      const jasmineRoot = 'node_modules/jasmine-core/lib/jasmine-core/';
+      writeRunnerFixture(root, jasmineRoot + 'jasmine.js');
+      writeRunnerFixture(root, jasmineRoot + 'jasmine-html.js');
+      writeRunnerFixture(root, jasmineRoot + 'boot.js');
+      writeRunnerFixture(root, jasmineRoot + 'jasmine.css');
+
+      const runnerServer = await startRunnerServer('jasmine2', root);
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const $ = cheerio.load(text);
+        expect(scriptSrcs(text)).to.deep.equal([
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/boot.js',
+          '/testem.js'
+        ]);
+        expect($('link[rel="stylesheet"]').attr('href')).to.equal(
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.css'
+        );
+        expect(text).to.not.include('boot0.js');
+        expect(text).to.not.include('boot1.js');
+        expect(text).to.not.include('cdnjs.cloudflare.com');
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    });
+
+    it('forwards serve_files attrs through loadScript for local Chai ESM', async function() {
+      const runnerServer = await startRunnerServer('mocha+chai', repoRoot, {
+        src_files: [
+          { src: 'tests/web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] }
+        ],
+        footer_scripts: [
+          { src: 'tests/web/hello.js', attrs: ['data-footer'] }
+        ],
+        css_files: ['tests/fixtures/styles/screen.css']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include(
+          "await loadScript('tests/web/hello_tst.js', 'data-foo=\"true\"', 'data-bar');"
+        );
+        expect(text).to.include(
+          "await loadScript('tests/web/hello.js', 'data-footer');"
+        );
+        expect(text.indexOf("await loadScript('tests/web/hello_tst.js'"))
+          .to.be.lessThan(text.indexOf("await loadScript('tests/web/hello.js'"));
+        expect(text.indexOf("await loadScript('tests/web/hello.js'"))
+          .to.be.lessThan(text.indexOf('globalThis.mocha.run()'));
+        const $ = cheerio.load(text);
+        expect($('link[href="tests/fixtures/styles/screen.css"]')).to.have.length(1);
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('emits /node_modules mocha URLs when routes remap node_modules', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-routes-assets-'));
+      const appDir = path.join(root, 'app');
+      fs.mkdirSync(appDir);
+      const mochaDir = path.join(root, 'node_modules', 'mocha');
+      fs.mkdirSync(mochaDir, { recursive: true });
+      fs.writeFileSync(path.join(mochaDir, 'mocha.js'), '');
+      fs.writeFileSync(path.join(mochaDir, 'mocha.css'), '');
+      const runnerServer = await startRunnerServer('mocha', appDir, {
+        routes: { '/node_modules': '../node_modules' }
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
     });
   });
 

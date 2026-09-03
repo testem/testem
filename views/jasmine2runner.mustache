@@ -2,14 +2,20 @@
 <html>
 <head>
   <title>Test'em</title>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine-html.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/boot.js"></script>
+  <script src="{{{jasmineJs}}}"></script>
+  <script src="{{{jasmineHtml}}}"></script>
+  {{#jasmineCoreV5}}
+  <script src="/node_modules/jasmine-core/lib/jasmine-core/boot0.js"></script>
+  <script src="/node_modules/jasmine-core/lib/jasmine-core/boot1.js"></script>
+  {{/jasmineCoreV5}}
+  {{^jasmineCoreV5}}
+  <script src="{{{jasmineBoot}}}"></script>
+  {{/jasmineCoreV5}}
   <script src="/testem.js"></script>
 
   {{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
 
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.css">
+  <link rel="stylesheet" href="{{{jasmineCss}}}">
 
   {{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 </head>

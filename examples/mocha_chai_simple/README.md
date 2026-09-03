@@ -1,6 +1,6 @@
 ## Setup
 
-First install dependencies
+First install dependencies (`mocha` and `chai` for the built-in runner)
 
     npm install
 

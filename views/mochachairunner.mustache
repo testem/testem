@@ -2,18 +2,58 @@
 <html>
 <head>
 <title>Test'em</title>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/chai/3.4.1/chai.js"></script>
+<link rel="stylesheet" href="{{{mochaCss}}}">
+<script src="{{{mochaJs}}}"></script>
+{{^chaiLocal}}
+<script src="{{{chaiJs}}}"></script>
+{{/chaiLocal}}
 <script src="/testem.js"></script>
 <script>mocha.setup('bdd')</script>
+{{^chaiLocal}}
 {{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
+{{/chaiLocal}}
+{{#styles}}<link rel="stylesheet" href="{{.}}">{{/styles}}
 </head>
 <body>
 <div id="mocha"></div>
+{{^chaiLocal}}
 {{#footer_scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/footer_scripts}}
 <script>
 mocha.run()
 </script>
+{{/chaiLocal}}
+{{#chaiLocal}}
+<script type="module">
+import * as chai from '{{{chaiJs}}}';
+globalThis.chai = chai;
+function applyScriptAttr(el, attr) {
+  attr = String(attr).trim();
+  var eq = attr.indexOf('=');
+  if (eq === -1) {
+    el.setAttribute(attr, '');
+    return;
+  }
+  var name = attr.slice(0, eq);
+  var value = attr.slice(eq + 1).replace(/^["']|["']$/g, '');
+  el.setAttribute(name, value);
+}
+function loadScript(src) {
+  var attrs = Array.prototype.slice.call(arguments, 1);
+  return new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = src;
+    attrs.forEach(function(attr) { applyScriptAttr(s, attr); });
+    s.onload = resolve;
+    s.onerror = reject;
+    document.body.appendChild(s);
+  });
+}
+{{#scripts}}await loadScript('{{{src}}}'{{#attrs}}, '{{&.}}'{{/attrs}});
+{{/scripts}}
+{{#footer_scripts}}await loadScript('{{{src}}}'{{#attrs}}, '{{&.}}'{{/attrs}});
+{{/footer_scripts}}
+globalThis.mocha.run();
+</script>
+{{/chaiLocal}}
 </body>
 </html>

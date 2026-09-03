@@ -1,6 +1,6 @@
 ## Setup
 
-First install dependencies
+First install dependencies (`qunit`)
 
     npm install
 
