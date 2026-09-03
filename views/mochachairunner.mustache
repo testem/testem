@@ -2,18 +2,44 @@
 <html>
 <head>
 <title>Test'em</title>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/chai/3.4.1/chai.js"></script>
+<link rel="stylesheet" href="{{{mochaCss}}}">
+<script src="{{{mochaJs}}}"></script>
+{{^chaiLocal}}
+<script src="{{{chaiJs}}}"></script>
+{{/chaiLocal}}
 <script src="/testem.js"></script>
 <script>mocha.setup('bdd')</script>
+{{^chaiLocal}}
 {{#scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/scripts}}
+{{/chaiLocal}}
 </head>
 <body>
 <div id="mocha"></div>
+{{^chaiLocal}}
 {{#footer_scripts}}<script src="{{{src}}}"{{#attrs}} {{&.}}{{/attrs}}></script>{{/footer_scripts}}
 <script>
 mocha.run()
 </script>
+{{/chaiLocal}}
+{{#chaiLocal}}
+<script type="module">
+import * as chai from '{{{chaiJs}}}';
+globalThis.chai = chai;
+function loadScript(src) {
+  return new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.body.appendChild(s);
+  });
+}
+{{#scripts}}await loadScript('{{{src}}}');
+{{/scripts}}
+{{#footer_scripts}}await loadScript('{{{src}}}');
+{{/footer_scripts}}
+mocha.run();
+</script>
+{{/chaiLocal}}
 </body>
 </html>

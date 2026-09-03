@@ -535,6 +535,136 @@ describe('Server', function() {
     });
   });
 
+  describe('built-in runner framework assets', function() {
+    const runnerPort = 63579;
+    const repoRoot = path.join(__dirname, '..');
+
+    async function startRunnerServer(framework, cwd) {
+      const runnerConfig = new Config('dev', {
+        port: runnerPort,
+        framework,
+        cwd: cwd || repoRoot,
+        src_files: []
+      });
+      const runnerServer = new Server(runnerConfig);
+      const started = once(runnerServer, 'server-start');
+      runnerServer.start();
+      await started;
+      return runnerServer;
+    }
+
+    function scriptSrcs(html) {
+      const $ = cheerio.load(html);
+      return $('script')
+        .map(function() {
+          return $(this).attr('src');
+        })
+        .get()
+        .filter(Boolean);
+    }
+
+    it('serves mocha from cwd node_modules when mocha is installed', async function() {
+      const runnerServer = await startRunnerServer('mocha');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('serves jasmine2 from cwd jasmine-core when installed', async function() {
+      const runnerServer = await startRunnerServer('jasmine2');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+        );
+        expect(srcs).to.include(
+          '/node_modules/jasmine-core/lib/jasmine-core/boot0.js',
+        );
+        expect(srcs).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('serves qunit from cwd node_modules when qunit is installed', async function() {
+      const runnerServer = await startRunnerServer('qunit');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/node_modules/qunit/qunit/qunit.js');
+        expect(srcs).to.not.include(
+          '//code.jquery.com/qunit/qunit-1.20.0.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('keeps Jasmine 1 CDN pins for the default jasmine runner', async function() {
+      const runnerServer = await startRunnerServer('jasmine');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('falls back to CDN pins when cwd has no framework packages', async function() {
+      const emptyCwd = path.join(__dirname);
+      const runnerServer = await startRunnerServer('mocha', emptyCwd);
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include(
+          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
+        );
+        expect(srcs).to.not.include('/node_modules/mocha/mocha.js');
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('loads mocha+chai specs as classic scripts after local Chai ESM', async function() {
+      const runnerServer = await startRunnerServer('mocha+chai');
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include("import * as chai from '/node_modules/chai/index.js'");
+        expect(text).to.include('function loadScript(src)');
+        expect(text).to.not.include(
+          '//cdnjs.cloudflare.com/ajax/libs/chai/3.4.1/chai.js',
+        );
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+  });
+
   describe('a wildcard proxy', function() {
     let api;
 
