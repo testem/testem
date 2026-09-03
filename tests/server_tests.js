@@ -114,8 +114,8 @@ describe('Server', function() {
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
           '/testem.js',
           '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-          'web' + path.sep + 'hello.js',
-          'web' + path.sep + 'hello_tst.js',
+          'web/hello.js',
+          'web/hello_tst.js',
         ]);
         expectMiddlewareHeaders(res);
       });
