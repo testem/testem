@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "jshint": "^2.13.6"
+    "jshint": "^2.13.6",
+    "qunit": "^2.26.0"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
