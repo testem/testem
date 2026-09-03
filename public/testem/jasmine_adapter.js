@@ -7,11 +7,17 @@ Testem's adapter for Jasmine. It works by adding a custom reporter.
 
 */
 
-/* globals emit, jasmine */
+/* globals emit, jasmine, console */
 /* exported jasmineAdapter */
 'use strict';
 
 function jasmineAdapter() {
+  if (!jasmineAdapter._deprecationWarned) {
+    jasmineAdapter._deprecationWarned = true;
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn('Testem: the Jasmine 1.x adapter is deprecated and will be removed in the next version of Testem. Upgrade to Jasmine 2+ (jasmine-core) so Testem can use the jasmine2 adapter.');
+    }
+  }
 
   var results = {
     failed: 0,
