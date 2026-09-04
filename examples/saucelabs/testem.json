@@ -1,5 +1,8 @@
 {
   "framework": "jasmine",
+  "routes": {
+    "/node_modules": "../../node_modules"
+  },
   "timeout": 600,
   "parallel": 5,
   "disable_watching": true,
