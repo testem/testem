@@ -1,4 +1,4 @@
-framework: jasmine
+framework: jasmine2
 before_tests: coffee -c *.coffee
 on_exit: rm *.js
 src_files:
