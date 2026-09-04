@@ -2,7 +2,6 @@
     "test_page": "tests.html",
     "routes": {
         "/tests.html": "public/tests.html",
-        "/js": "src",
-        "/node_modules": "../../node_modules"
+        "/js": "src"
     }
 }
