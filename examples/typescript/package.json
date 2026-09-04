@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@types/jasmine": "^5.1.5",
+    "jasmine-core": "^5.1.0",
     "typescript": "^5.7.0"
   },
   "scripts": {

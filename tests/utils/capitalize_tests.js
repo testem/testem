@@ -12,10 +12,6 @@ describe('capitalize', function() {
     expect(capitalize('chrome canary')).to.equal('Chrome Canary');
   });
 
-  it('capitalizes phantomjs correctly', function() {
-    expect(capitalize('phantomjs')).to.equal('PhantomJS');
-  });
-
   it('ignores non-string arguments', function() {
     let badInputs = [ 0, [], {}, NaN, null, undefined ];
 

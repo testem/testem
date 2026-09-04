@@ -1,6 +1,6 @@
-framework: jasmine
-before_tests: coffee -c *.coffee
-on_exit: rm *.js
+framework: jasmine2
+before_tests: coffee -c hello.coffee tests.coffee
+on_exit: rm -f hello.js tests.js
 src_files:
 - "*.coffee"
 serve_files:
