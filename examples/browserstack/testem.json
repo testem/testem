@@ -1,5 +1,8 @@
 {
   "framework": "jasmine",
+  "routes": {
+    "/node_modules": "../../node_modules"
+  },
   "parallel": 5,
   "on_start": {
     "command": "kill -9 $(ps -A | grep BrowserStackLocal | grep -v grep | cut -d ' ' -f2); node start-BrowserStackLocal.js &",
