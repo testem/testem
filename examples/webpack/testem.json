@@ -4,6 +4,6 @@
     "serve_files": [
         "test-bundle.js"
     ],
-    "before_tests": "webpack",
+    "before_tests": "npx webpack",
     "launch_in_dev": ["Headless Firefox"]
 }
