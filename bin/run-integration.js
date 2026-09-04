@@ -13,9 +13,7 @@ const skipExamples = [
   'browserstack', // requires credentials and doesn't work in CI
   'saucelabs',  // requires credentials and doesn't work in CI
 ];
-const skipOnWindows = [
-  'webpack' // 'webpack' is not recognized as an internal or external command, operable program or batch file.
-];
+const skipOnWindows = [];
 const skipDefiningReporter = [
   'node_example',
   'node_tap_example',
