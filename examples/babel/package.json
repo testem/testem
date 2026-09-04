@@ -2,7 +2,8 @@
   "devDependencies": {
     "@babel/cli": "^7.26.0",
     "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0"
+    "@babel/preset-env": "^7.26.0",
+    "jasmine-core": "^5.1.0"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
