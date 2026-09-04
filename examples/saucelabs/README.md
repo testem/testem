@@ -7,7 +7,7 @@ Instructions
 ------------
 
 1. Get a [SauceLabs](https://saucelabs.com/) account.
-2. Install dependencies from the testem repo root (`npm i`). The [saucie](https://github.com/johanneswuerbach/saucie) devDependency starts Sauce Connect and runs browsers on Sauce Labs.
+2. Install dependencies from the testem repo root (`npm i`). The [saucie](https://github.com/johanneswuerbach/saucie) devDependency starts Sauce Connect and runs browsers on Sauce Labs. `testem.json` maps `/node_modules` to `../../node_modules` so the built-in Jasmine runner loads `jasmine-core` from that root install (CI does not run `npm install` in this example).
 3. Make sure Sauce credentials are set in env:
     * **SAUCE_USERNAME** - your SauceLabs username
     * **SAUCE_ACCESS_KEY** - your SauceLabs API/Access key.
