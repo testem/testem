@@ -1,5 +1,8 @@
 {
   "framework": "jasmine",
+  "routes": {
+    "/node_modules": "../../node_modules"
+  },
   "timeout": 600,
   "parallel": 5,
   "disable_watching": true,
@@ -40,32 +43,14 @@
       "exe": "../../node_modules/.bin/saucie",
       "args": ["-b", "microsoftedge", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
-    },
-    "SL_IE_11": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "11", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_10": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "10", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_9": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "9", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
     }
   },
   "launch_in_dev": ["SL_Firefox_Current"],
   "launch_in_ci": [
     "SL_Chrome_Current",
-    "SL_Chrome_Current_No_Details",
     "SL_Firefox_Current",
     "SL_Safari_Current",
     "SL_Safari_Last",
-    "SL_MS_Edge",
-    "SL_IE_11",
-    "SL_IE_10"
+    "SL_MS_Edge"
   ]
 }

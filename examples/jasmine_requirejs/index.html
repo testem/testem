@@ -2,11 +2,16 @@
 <html>
   <head>
     <title>Require.js with Jasmine Example</title>
-    <link rel="stylesheet" href="jasmine.css">
+    <link rel="stylesheet" href="/node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
   </head>
   <body>
     <h1>Require.js with Jasmine Example</h1>
     <div id="jasmine_content"></div>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/boot0.js"></script>
+    <script src="/node_modules/jasmine-core/lib/jasmine-core/boot1.js"></script>
+    <script src="/testem.js"></script>
     <script data-main="scripts/main" src="scripts/require.js"></script>
   </body>
 </html>

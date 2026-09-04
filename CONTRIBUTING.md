@@ -7,7 +7,7 @@ Getting Started
 ---------------
 
 * Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
-* Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 20.19+, 22.12+, 24.x, or 26+).
+* Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 22.12+, 24.x, or 26+).
 * Run `npm install` and `npm test` to make sure you're off to a good start
 
 Brief Code Walk Through
@@ -62,8 +62,14 @@ If it isn't practical to write a test first, it might be my fault, feel free to 
 
 ### Integration Tests
 
-There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`. Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
+There are also integration tests that run every example in the `examples` folder by `cd`'ing into each and executing `testem ci`. CI runs them on Linux, macOS, and Windows (`windows-latest` in [`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The runner is [`bin/run-integration.js`](bin/run-integration.js):
 
-Node + headless browser
+* **`skipExamples`** — `browserstack` and `saucelabs` (need credentials; not run in CI).
+* **`skipOnWindows`** — none. The `coffeescript` example lists CoffeeScript sources explicitly instead of `*.coffee` (cmd.exe does not expand globs for external programs). The `webpack` example uses `npx webpack` so local `webpack-cli` runs without relying on PATH. See [`examples/coffeescript`](examples/coffeescript) and [Available hooks](docs/config_file.md#available-hooks).
+* **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
+
+Examples that use built-in runners must list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Custom `test_page` examples load frameworks from `/node_modules/` directly. `mocha_simple` uses local Mocha plus Chai 6 (ESM).
+
+Node + headless browser:
 
     npm run integration
