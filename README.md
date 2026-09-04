@@ -629,7 +629,9 @@ Preprocessors (Babel, TypeScript, LESS, Sass, Browserify, CoffeeScript, etc)
 
 If you need to run a preprocessor (or indeed any shell command before the start of the tests) use the `before_tests` option, such as
 
-    "before_tests": "coffee -c *.coffee"
+    "before_tests": "coffee -c hello.coffee tests.coffee"
+
+On Windows, list files explicitly in string hooks like this—cmd.exe does not expand `*` for external programs (see [Available hooks](docs/config_file.md#available-hooks) and the [coffeescript example](examples/coffeescript)). Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
 
 or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
 
