@@ -51,6 +51,10 @@ Or in the spirit of eating our own dog food:
 
     testem
 
+`tests/ui/*` is the interactive dashboard suite. Those tests inject terminal-kit's `createTerminal` with fake streams (no real TTY) and run on Windows CI. `npm run integration` uses `testem ci` and does **not** exercise the TUI. To check the dashboard on a real terminal:
+
+    npm run dogfood:tui
+
 To lint your code:
 
     npm run lint
