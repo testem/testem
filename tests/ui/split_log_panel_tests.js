@@ -4,12 +4,10 @@ const expect = require('chai').expect;
 const Backbone = require('backbone');
 const sinon = require('sinon');
 
-const screen = require('./fake_screen');
 const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
 const displayText = require('../../lib/reporters/dev/display_text');
 const Chars = require('../../lib/utils/chars');
 const TestResults = require('../../lib/reporters/dev/test_results');
-const isWin = require('../../lib/utils/is-win')();
 const plainText = displayText.plainText;
 
 describe('SplitLogPanel', function() {
@@ -18,7 +16,6 @@ describe('SplitLogPanel', function() {
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
-    screen.$setSize(10, 20);
     results = new TestResults();
     messages = new Backbone.Collection();
     runner = new Backbone.Model({
@@ -34,8 +31,7 @@ describe('SplitLogPanel', function() {
     panel = new SplitLogPanel({
       runner: runner,
       appview: appview,
-      visible: true,
-      screen: screen
+      visible: true
     });
   });
 
@@ -262,43 +258,6 @@ describe('SplitLogPanel', function() {
       expect(panel.topPanel.get('height')).to.equal(0);
       expect(panel.bottomPanel.get('height')).to.equal(12);
     });
-  });
-
-  describe('render', function() {
-    it('FakeScreen pixel suite retired after terminal-kit cutover', function() {
-      this.skip();
-    });
-  });
-
-  describe.skip('render (legacy FakeScreen)', !isWin ? function() {
-    it('renders', function() {
-      panel.topPanel.set('text', '1 tests passed.');
-      panel.bottomPanel.set('text', 'This is a message.');
-      panel.render();
-      expect(screen.buffer).to.deep.equal([
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '1 tests pa',
-        'ssed.     ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        'This is a ',
-        'message.  ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ']);
-    });
-  } : function() {
-    xit('TODO: Fix and re-enable for windows');
   });
 
 });
