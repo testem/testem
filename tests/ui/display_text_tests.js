@@ -9,22 +9,22 @@ describe('display_text', function () {
   describe('getResultsDisplayText', function () {
     it('gets topLevelError', function () {
       const results = new TestResults();
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal('Please be patient :)');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('Please be patient :)');
       results.set('topLevelError', 'Shit happened.');
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal('Top Level:\n    Shit happened.\n\n');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('Top Level:\n    Shit happened.\n\n');
     });
 
     it('says "Please be patient" if not all results are in', function () {
       const results = new TestResults();
       results.set('tests', new Backbone.Collection());
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal('Please be patient :)');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('Please be patient :)');
     });
 
     it('says "No tests were run :(" when no tests but all is true', function () {
       const results = new TestResults();
       results.set('tests', new Backbone.Collection());
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal('No tests were run :(');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('No tests were run :(');
     });
 
     it('gives result when has results and all is true', function () {
@@ -35,7 +35,7 @@ describe('display_text', function () {
         new Backbone.Model({ name: 'blah', passed: true })
       ]));
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal(Chars.success + ' 1 tests complete.');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal(Chars.success + ' 1 tests complete.');
     });
 
     it('shows pending tests in yellow when all done and none failed', function () {
@@ -47,12 +47,10 @@ describe('display_text', function () {
       ]));
       results.set('all', true);
 
-      const text = displayText.getResultsDisplayText(results);
-      expect(text.children).to.have.length(2);
-      expect(text.children[0].str).to.equal(Chars.success + ' 1 tests complete (1 pending).');
-      expect(text.children[0].attrs.foreground).to.equal('cyan');
-      expect(text.children[1].str).to.equal('\n\n[PENDING] blah');
-      expect(text.children[1].attrs.foreground).to.equal('yellow');
+      expect(displayText.getResultsDisplayText(results)).to.deep.equal([
+        { text: Chars.success + ' 1 tests complete (1 pending).', color: 'cyan' },
+        { text: '\n\n[PENDING] blah', color: 'yellow' }
+      ]);
     });
 
     it('shows "failed" when failure', function () {
@@ -65,7 +63,9 @@ describe('display_text', function () {
         ]
       });
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.match(/blah\n {4}[x✘] failed/);
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.contain(
+        'blah\n    ' + Chars.fail + ' failed'
+      );
     });
 
     it('shows "failed" without items when failure', function () {
@@ -75,7 +75,7 @@ describe('display_text', function () {
         name: 'blah', passed: false, failed: 1
       });
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.match(/blah\n {4}/);
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.contain('blah\n    ');
     });
 
     it('shows the error message', function () {
@@ -90,7 +90,9 @@ describe('display_text', function () {
         })
       ]));
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.match(/blah\n {4}[x✘] should not be null/);
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.contain(
+        'blah\n    ' + Chars.fail + ' should not be null'
+      );
     });
 
     it('shows the stacktrace', function () {
@@ -112,7 +114,7 @@ describe('display_text', function () {
         })
       ]));
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal(
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal(
         'blah\n    ' + Chars.fail + ' should not be null\n        AssertionError: \n            at Module._compile (module.js:437:25)\n            at Object.Module._extensions..js (module.js:467:10)'
       );
     });
@@ -125,7 +127,7 @@ describe('display_text', function () {
           name: 'blah', passed: true
         })
       ]));
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.equal('Looking good...');
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('Looking good...');
     });
 
     it('prepends NOT to expected for negative assertions', function () {
@@ -142,22 +144,24 @@ describe('display_text', function () {
         })
       ]));
       results.set('all', true);
-      expect(displayText.getResultsDisplayText(results).unstyled()).to.match(/blah\n {4}[x✘] should not be foo\n {9}expected NOT foo/);
+      expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.contain(
+        'blah\n    ' + Chars.fail + ' should not be foo\n         expected NOT foo'
+      );
     });
   });
 
   describe('getMessagesText', function () {
     it('returns "" with no messages', function () {
-      expect(displayText.getMessagesText(new Backbone.Collection()).unstyled()).to.equal('');
+      expect(displayText.plainText(displayText.getMessagesText(new Backbone.Collection()))).to.equal('');
     });
 
     it('returns the messages', function () {
       const messages = new Backbone.Collection([
         new Backbone.Model({type: 'log', text: 'hello world'})
       ]);
-      expect(displayText.getMessagesText(messages).unstyled()).to.equal('hello world');
+      expect(displayText.plainText(displayText.getMessagesText(messages))).to.equal('hello world');
       messages.add(new Backbone.Model({type: 'error', text: 'crap happens'}));
-      expect(displayText.getMessagesText(messages).unstyled()).to.equal('hello worldcrap happens');
+      expect(displayText.plainText(displayText.getMessagesText(messages))).to.equal('hello worldcrap happens');
     });
 
     it('colors messages by type', function () {
@@ -165,6 +169,14 @@ describe('display_text', function () {
       expect(displayText.messageColor('warn')).to.equal('cyan');
       expect(displayText.messageColor('info')).to.equal('green');
       expect(displayText.messageColor('error')).to.equal('red');
+      const messages = new Backbone.Collection([
+        new Backbone.Model({type: 'log', text: 'hello'}),
+        new Backbone.Model({type: 'error', text: 'boom'})
+      ]);
+      expect(displayText.getMessagesText(messages)).to.deep.equal([
+        { text: 'hello', color: 'yellow' },
+        { text: 'boom', color: 'red' }
+      ]);
     });
   });
 });
