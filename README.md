@@ -103,6 +103,7 @@ In development mode, Testem has a text-based graphical user interface which uses
 
 * ENTER : Run the tests
 * q : Quit
+* p : Pause / unpause file-watch reruns
 * ← LEFT ARROW  : Move to the next browser tab on the left
 * → RIGHT ARROW : Move to the next browser tab on the right
 * TAB : switch the target text panel between the top and bottom halves of the split panel (if a split is present)
@@ -396,6 +397,7 @@ Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache
    ```
 
    The generic form is the same: replace `{{#serve_files}}` / `{{#css_files}}` loops with explicit tags for each file you already list in config. If you interpolated other config keys (`{{port}}`, custom options) via `getTemplateData`, bake those values into the HTML or generate the page in `before_tests`.
+9. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
@@ -764,7 +766,7 @@ Testem depends on the following great software
 * [Node](https://nodejs.org/)
 * [Socket.IO](https://socket.io/)
 * [tap-parser](https://github.com/tapjs/tap-parser)
-* [Charm](https://github.com/aheckmann/charm)
+* [terminal-kit](https://github.com/cronvel/terminal-kit)
 * [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
 * [Express](https://expressjs.com/)
