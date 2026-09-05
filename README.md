@@ -103,6 +103,7 @@ In development mode, Testem has a text-based graphical user interface which uses
 
 * ENTER : Run the tests
 * q : Quit
+* p : Pause / unpause file-watch reruns
 * ← LEFT ARROW  : Move to the next browser tab on the left
 * → RIGHT ARROW : Move to the next browser tab on the right
 * TAB : switch the target text panel between the top and bottom halves of the split panel (if a split is present)
@@ -355,6 +356,7 @@ Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
+5. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
@@ -725,7 +727,7 @@ Testem depends on the following great software
 * [Node](https://nodejs.org/)
 * [Socket.IO](https://socket.io/)
 * [tap-parser](https://github.com/tapjs/tap-parser)
-* [Charm](https://github.com/aheckmann/charm)
+* [terminal-kit](https://github.com/cronvel/terminal-kit)
 * [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
 * [Express](https://expressjs.com/)

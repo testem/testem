@@ -11,6 +11,11 @@
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 
+### Changed
+
+- **Interactive TUI now uses [terminal-kit](https://github.com/cronvel/terminal-kit).** Dashboard layout and keyboard shortcuts are unchanged. `p` to pause / unpause file-watch reruns already existed and is now documented. `charm` and `styled_string` are no longer dependencies. This is not a config or CLI break.
+- **File watching no longer descends into `node_modules` or `.git` by default.** Scanning those trees opened enough descriptors to exhaust the process (on macOS, later browser or TAP launches then fail with `EBADF`). Include a path under `node_modules` in `src_files` or `watch_files` if you still need reruns from that tree; `.git` stays skipped unless you name it the same way.
+
 ## Earlier releases
 
 See https://github.com/testem/testem/releases
