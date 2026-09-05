@@ -2,7 +2,6 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const Backbone = require('backbone');
 
-const screen = require('./fake_screen');
 const Config = require('../../lib/config');
 const toastNotifyPath = require.resolve('../../lib/reporters/dev/toast_notify');
 const runnertabs = require('../../lib/reporters/dev/runner_tabs');
@@ -23,7 +22,6 @@ describe('RunnerTab growl / native notifications', function () {
   });
 
   function buildTab(progOptions, runnerAttrs) {
-    screen.$setSize(20, 8);
     const runner = new Backbone.Model(
       Object.assign(
         {
@@ -45,8 +43,7 @@ describe('RunnerTab growl / native notifications', function () {
       runner,
       appview,
       selected: true,
-      index: 0,
-      screen,
+      index: 0
     });
     return { runner, tab };
   }
