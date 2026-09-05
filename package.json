@@ -23,7 +23,6 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.9.9",
     "backbone": "^1.6.1",
-    "charm": "^1.0.2",
     "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "compression": "^1.8.1",
@@ -33,7 +32,6 @@
     "js-yaml": "^5.3.0",
     "picomatch": "^4.0.7",
     "socket.io": "^4.8.3",
-    "styled_string": "0.0.1",
     "tap-parser": "^18.3.0",
     "terminal-kit": "^3.1.4",
     "toasted-notifier": "^10.1.0"

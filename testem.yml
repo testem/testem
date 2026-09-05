@@ -15,7 +15,7 @@ launchers:
         command: mocha server_tests.js -R tap
         protocol: tap
     UI:
-        command: mocha tests/ui/error_messages_panel_tests.js -R tap
+        command: mocha tests/ui/appview_term_tests.js -R tap
         protocol: tap
     CI: 
         command: mocha --timeout 3000 tests/ci/*_tests.js -R tap
