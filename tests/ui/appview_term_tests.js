@@ -45,6 +45,14 @@ describe('AppView terminal-kit', function () {
     expect(appview.isPopupVisible()).to.equal(false);
   });
 
+  it('can draw on a 157x38 ScreenBuffer without overflowing', function () {
+    const { term } = createTestTerm(157, 38);
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(function () {
+      appview.document.draw();
+    }).not.to.throw();
+  });
+
   it('prints a one-line hint when stdout is not a TTY', function () {
     const descriptor = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
     const writes = [];
