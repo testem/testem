@@ -1,18 +1,12 @@
 module.exports = {
-  test_page: 'examples/mocha_simple/test.html',
-  src_files: ['examples/mocha_simple/*.js'],
-  // GUI browsers (not Headless Chrome / Headless Firefox). Temp profiles
-  // open a separate window — --new-window / -foreground make that visible.
-  browser_args: {
-    Chrome: ['--new-window', '--window-position=80,80', '--window-size=1100,800'],
-    Firefox: ['-new-window', '-foreground']
-  },
+  // The Mocha tab runs the unit suite, and tests/ci/ci_tests.js binds the
+  // default 7357 on purpose. Leave that port free or the suite wedges there.
+  port: 7400,
+  test_page: 'tests/fixtures/dogfood_browser/test.html',
+  src_files: ['tests/fixtures/dogfood_browser/*.js'],
   launchers: {
     Mocha: {
-      // npm expands the same globs as `npm test`. Passing them through
-      // spawnargs + execa leaves tests/*_tests.js unexpanded and mocha
-      // reports 0/0.
-      command: 'npm test -- --reporter tap',
+      command: 'npx mocha tests/*_tests.js tests/**/*_tests.js -R tap',
       protocol: 'tap'
     }
   },
