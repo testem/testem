@@ -71,6 +71,34 @@ describe('AppView terminal-kit', function () {
     expect(appview.runners().length).to.equal(2);
   });
 
+  it('relays a terminal shrink without overflowing the ScreenBuffer', function () {
+    const { term } = createTestTerm(157, 38);
+    appview = new AppView(false, process.stdout, config, app, term);
+    appview.runnerAdded({
+      name: function () { return 'Chrome'; },
+      launcherId: 1
+    });
+    expect(function () {
+      term.width = 157;
+      term.height = 36;
+      term.emit('resize', 157, 36);
+    }).not.to.throw();
+    expect(appview.get('lines')).to.equal(36);
+    expect(appview.footerText.outputY).to.equal(35);
+  });
+
+  it('relays a terminal grow without overflowing the ScreenBuffer', function () {
+    const { term } = createTestTerm(80, 24);
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(function () {
+      term.width = 157;
+      term.height = 38;
+      term.emit('resize', 157, 38);
+    }).not.to.throw();
+    expect(appview.get('cols')).to.equal(157);
+    expect(appview.footerText.outputY).to.equal(37);
+  });
+
   it('prints a one-line hint when stdout is not a TTY', function () {
     const descriptor = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
     const writes = [];
