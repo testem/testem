@@ -38,6 +38,8 @@ describe('dev key map', function () {
   it('is case-sensitive for non-quit letter keys', function () {
     expect(actionForKey('P')).to.equal(undefined);
     expect(actionForKey('B')).to.equal(undefined);
+    expect(actionForKey('U')).to.equal(undefined);
+    expect(actionForKey('D')).to.equal(undefined);
   });
 
   it('maps raw stdin bytes used after grabInput', function () {
@@ -46,6 +48,10 @@ describe('dev key map', function () {
     expect(actionForRawByte(0x51)).to.equal('quit');
     expect(actionForRawByte(0x0d)).to.equal('run');
     expect(actionForRawByte(0x20)).to.equal('pageDown');
+    expect(actionForRawByte(0x62)).to.equal('pageUp');
+    expect(actionForRawByte(0x75)).to.equal('halfPageUp');
+    expect(actionForRawByte(0x64)).to.equal('halfPageDown');
+    expect(actionForRawByte(0x1b)).to.equal(null);
     expect(actionForRawByte(0x78)).to.equal(undefined);
   });
 });

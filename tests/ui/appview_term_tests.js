@@ -216,6 +216,10 @@ describe('AppView terminal-kit', function () {
     expect(app.paused).to.equal(true);
     expect(footer()).to.contain('PAUSED');
     expect(draws).to.equal(1);
+    term.emit('key', 'p');
+    expect(app.paused).to.equal(false);
+    expect(footer()).to.contain('p to pause');
+    expect(footer()).to.not.contain('PAUSED');
   });
 
   it('toggles split-pane focus when TAB is pressed', function () {
@@ -228,6 +232,23 @@ describe('AppView terminal-kit', function () {
     expect(panel.get('focus')).to.equal('bottom');
     term.emit('key', 'TAB');
     expect(panel.get('focus')).to.equal('top');
+  });
+
+  it('scrolls the other pane after TAB when both halves have content', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const viewRunner = appview.currentRunnerTab().get('runner');
+    viewRunner.hasResults = function () { return true; };
+    viewRunner.hasMessages = function () { return true; };
+    const panel = appview.currentRunnerTab().splitPanel;
+    const hits = [];
+    panel.topPanel.scrollDown = function () { hits.push('top'); };
+    panel.bottomPanel.scrollDown = function () { hits.push('bottom'); };
+    term.emit('key', 'TAB');
+    expect(panel.get('focus')).to.equal('bottom');
+    term.emit('key', 'DOWN');
+    expect(hits).to.deep.equal(['bottom']);
   });
 
   it('cycles tabs with RIGHT and LEFT and wraps', function () {
@@ -282,6 +303,31 @@ describe('AppView terminal-kit', function () {
       'halfPageUp',
       'halfPageDown'
     ]);
+  });
+
+  it('ignores unbound keys including uppercase pause and page letters', function () {
+    const { term } = createTestTerm();
+    let exits = 0;
+    let runs = 0;
+    app.exit = function () { exits++; };
+    app.triggerRun = function () { runs++; };
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const panel = appview.currentRunnerTab().splitPanel;
+    const calls = [];
+    panel.scrollDown = function () { calls.push('scroll'); };
+    panel.pageDown = function () { calls.push('page'); };
+    panel.pageUp = function () { calls.push('pageUp'); };
+    panel.halfPageUp = function () { calls.push('halfUp'); };
+    panel.halfPageDown = function () { calls.push('halfDown'); };
+    ['P', 'B', 'U', 'D', 'x', 'SHIFT_TAB', 'ESCAPE'].forEach(function (name) {
+      term.emit('key', name);
+    });
+    expect(exits).to.equal(0);
+    expect(runs).to.equal(0);
+    expect(app.paused).to.equal(false);
+    expect(appview.get('currentTab')).to.equal(0);
+    expect(calls).to.deep.equal([]);
   });
 
   it('hides the split pane while the error popup is visible and restores the footer', function () {
@@ -339,6 +385,8 @@ describe('AppView terminal-kit', function () {
     // Keep injectedTerm true so _requestQuit does not arm _forceExit.
     appview.injectedTerm = true;
     process.stdin.emit('data', Buffer.from([0x71]));
+    expect(exits).to.equal(1);
+    process.stdin.emit('data', Buffer.from([0x51]));
     expect(exits).to.equal(1);
     process.stdin.emit('data', Buffer.from([0x03]));
     expect(exits).to.equal(1);
