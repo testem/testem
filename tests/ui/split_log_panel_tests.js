@@ -12,7 +12,7 @@ const TestResults = require('../../lib/reporters/dev/test_results');
 const isWin = require('../../lib/utils/is-win')();
 const plainText = displayText.plainText;
 
-describe('SplitLogPanel', !isWin ? function() {
+describe('SplitLogPanel', function() {
 
   let runner, panel, appview, results, messages, sandbox;
 
@@ -264,7 +264,7 @@ describe('SplitLogPanel', !isWin ? function() {
     });
   });
 
-  describe('render', function() {
+  describe('render', !isWin ? function() {
     it('renders', function() {
       panel.topPanel.set('text', '1 tests passed.');
       panel.bottomPanel.set('text', 'This is a message.');
@@ -291,8 +291,8 @@ describe('SplitLogPanel', !isWin ? function() {
         '          ',
         '          ']);
     });
+  } : function() {
+    xit('TODO: Fix and re-enable for windows');
   });
 
-} : function() {
-  xit('TODO: Fix and re-enable for windows');
 });
