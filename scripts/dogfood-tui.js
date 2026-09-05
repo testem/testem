@@ -84,10 +84,7 @@ function main() {
       }
 
       console.log('Launching ' + launch.join(', ') + '.');
-      console.log('Chrome/Firefox/Safari are GUI browsers (not headless).');
-      console.log('They use a temp profile, so look for a new dock icon or another desktop.');
-      console.log('Those tabs should show 2/2 from examples/mocha_simple.');
-      console.log('The Mocha tab is the Node unit suite (npm test), not the 2 browser tests.');
+      console.log('Browser tabs: dogfood fixture (failures + console for paging). Mocha is the unit suite as TAP.');
       startDashboard(launch);
     });
   });
