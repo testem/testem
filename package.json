@@ -61,12 +61,14 @@
     "integration": "node ./bin/run-integration.js",
     "ci:safari-smoke": "node ./scripts/safari-ci-smoke.js",
     "dogfood:tui": "node ./scripts/dogfood-tui.js",
+    "test:tui-e2e": "node ./tests/tui-e2e/spike.mjs",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "eslint ."
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
+    "@microsoft/tui-test": "^0.1.0-beta.3",
     "chai": "^6.2.2",
     "chai-files": "^1.4.0",
     "chai-shallow-deep-equal": "^1.4.6",

@@ -55,6 +55,10 @@ Or in the spirit of eating our own dog food:
 
     npm run dogfood:tui
 
+A PTY/ConPTY spike (start, pause, quit; not part of `npm test`) is:
+
+    npm run test:tui-e2e
+
 To lint your code:
 
     npm run lint
