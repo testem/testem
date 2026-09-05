@@ -53,6 +53,24 @@ describe('AppView terminal-kit', function () {
     }).not.to.throw();
   });
 
+  it('can add runner tabs and draw without overflowing', function () {
+    const { term } = createTestTerm(157, 38);
+    appview = new AppView(false, process.stdout, config, app, term);
+    appview.injectedTerm = false;
+    expect(function () {
+      appview.runnerAdded({
+        name: function () { return 'Chrome'; },
+        launcherId: 1
+      });
+      appview.runnerAdded({
+        name: function () { return 'Mocha'; },
+        launcherId: 2
+      });
+      appview.document.draw();
+    }).not.to.throw();
+    expect(appview.runners().length).to.equal(2);
+  });
+
   it('prints a one-line hint when stdout is not a TTY', function () {
     const descriptor = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
     const writes = [];
