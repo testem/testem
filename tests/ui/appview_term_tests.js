@@ -45,6 +45,18 @@ describe('AppView terminal-kit', function () {
     expect(appview.isPopupVisible()).to.equal(false);
   });
 
+  it('shows a Testem error popup without throwing', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(function () {
+      appview.report('testem', {
+        launcherId: 0,
+        error: { name: 'Error', message: 'boom' }
+      });
+    }).not.to.throw();
+    expect(appview.isPopupVisible()).to.equal(true);
+  });
+
   it('can draw on a 157x38 ScreenBuffer without overflowing', function () {
     const { term } = createTestTerm(157, 38);
     appview = new AppView(false, process.stdout, config, app, term);
@@ -124,5 +136,100 @@ describe('AppView terminal-kit', function () {
         delete process.stdout.isTTY;
       }
     }
+  });
+
+  it('mounts runners that were added before the Document existed', function () {
+    appview = new AppView(false, process.stdout, config, app, {});
+    appview.disabled = false;
+    appview.injectedTerm = true;
+    appview.runnerAdded({
+      name: function () { return 'Chrome'; },
+      launcherId: 1
+    });
+    expect(appview.document).to.equal(undefined);
+    expect(appview.runnerTabs.length).to.equal(0);
+    const { term } = createTestTerm(157, 38);
+    appview._startTui(term);
+    expect(appview.document).to.exist();
+    expect(appview.runnerTabs.length).to.equal(1);
+    expect(function () {
+      appview.document.draw();
+    }).not.to.throw();
+  });
+
+  it('quits when q is pressed', function () {
+    const { term } = createTestTerm();
+    let exits = 0;
+    app.exit = function () {
+      exits++;
+    };
+    appview = new AppView(false, process.stdout, config, app, term);
+    term.emit('key', 'q');
+    expect(exits).to.equal(1);
+    expect(appview.disabled).to.equal(true);
+  });
+
+  it('quits when Q is pressed', function () {
+    const { term } = createTestTerm();
+    let exits = 0;
+    app.exit = function () {
+      exits++;
+    };
+    appview = new AppView(false, process.stdout, config, app, term);
+    term.emit('key', 'Q');
+    expect(exits).to.equal(1);
+  });
+
+  it('quits once when CTRL_C is pressed twice', function () {
+    const { term } = createTestTerm();
+    let exits = 0;
+    app.exit = function () {
+      exits++;
+    };
+    appview = new AppView(false, process.stdout, config, app, term);
+    term.emit('key', 'CTRL_C');
+    term.emit('key', 'CTRL_C');
+    expect(exits).to.equal(1);
+  });
+
+  it('runs tests when ENTER is pressed', function () {
+    const { term } = createTestTerm();
+    const runs = [];
+    app.triggerRun = function (src) {
+      runs.push(src);
+    };
+    appview = new AppView(false, process.stdout, config, app, term);
+    term.emit('key', 'ENTER');
+    expect(runs).to.deep.equal(['Triggered manually by pressing enter']);
+  });
+
+  it('repaints the footer when p toggles pause', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    const footer = () => [].concat(appview.footerText.content).join('');
+    expect(footer()).to.contain('p to pause');
+    let draws = 0;
+    appview.requestDraw = function () {
+      draws++;
+    };
+    term.emit('key', 'p');
+    expect(app.paused).to.equal(true);
+    expect(footer()).to.contain('PAUSED');
+    expect(draws).to.equal(1);
+  });
+
+  it('toggles split-pane focus when TAB is pressed', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    appview.runnerAdded({
+      name: function () { return 'Chrome'; },
+      launcherId: 1
+    });
+    const panel = appview.currentRunnerTab().splitPanel;
+    expect(panel.get('focus')).to.equal('top');
+    term.emit('key', 'TAB');
+    expect(panel.get('focus')).to.equal('bottom');
+    term.emit('key', 'TAB');
+    expect(panel.get('focus')).to.equal('top');
   });
 });
