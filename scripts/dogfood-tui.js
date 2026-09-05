@@ -32,7 +32,14 @@ function selectLaunchers(available, options) {
 function startDashboard(launch) {
   const child = spawn(
     process.execPath,
-    [path.join(root, 'testem.js'), '-f', configFile, '--launch', launch.join(',')],
+    [
+      path.join(root, 'testem.js'),
+      '-f',
+      configFile,
+      '--launch',
+      launch.join(','),
+      '-d'
+    ],
     {
       cwd: root,
       stdio: 'inherit'
