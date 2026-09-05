@@ -19,6 +19,13 @@ async function main() {
     process.exit(0);
   }
 
+  console.log('Installing examples/qunit_simple dependencies...');
+  await execa('npm', ['install'], {
+    cwd: exampleDir,
+    stdio: 'inherit',
+    timeout: 180000,
+  });
+
   console.log('Running Testem CI with Safari (examples/qunit_simple)...');
 
   await execa('node', [path.join(root, 'testem.js'), 'ci', '--launch', 'Safari', '-P', '10'], {
