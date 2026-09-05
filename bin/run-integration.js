@@ -14,7 +14,6 @@ const skipExamples = [
   'saucelabs',  // requires credentials and doesn't work in CI
 ];
 const skipOnWindows = [
-  'coffeescript', // File not found: C:\projects\testem\examples\coffeescript\*.coffee
   'webpack' // 'webpack' is not recognized as an internal or external command, operable program or batch file.
 ];
 const skipDefiningReporter = [

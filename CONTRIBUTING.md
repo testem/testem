@@ -62,8 +62,14 @@ If it isn't practical to write a test first, it might be my fault, feel free to 
 
 ### Integration Tests
 
-There are also some integrations tests that test running all the examples in the `examples` folder by cd'ing into each and executing `testem ci`. Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
+There are also integration tests that run every example in the `examples` folder by `cd`'ing into each and executing `testem ci`. CI runs them on Linux, macOS, and Windows (`windows-latest` in [`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The runner is [`bin/run-integration.js`](bin/run-integration.js):
 
-Node + headless browser
+* **`skipExamples`** — `browserstack` and `saucelabs` (need credentials; not run in CI).
+* **`skipOnWindows`** — only `webpack` (`webpack` is not on PATH in cmd.exe). The `coffeescript` example used to be skipped here because `before_tests: coffee -c *.coffee` passes a literal `*.coffee` to the CoffeeScript CLI on Windows; it now lists sources explicitly (`coffee -c hello.coffee tests.coffee`) and runs on Windows. See [`examples/coffeescript`](examples/coffeescript) and [Available hooks](docs/config_file.md#available-hooks) for that pitfall.
+* **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
+
+Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
+
+Node + headless browser:
 
     npm run integration
