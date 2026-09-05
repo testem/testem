@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const dogfoodConfig = require('../testem.dogfood.js');
 const {
   parseDogfoodArgs,
   selectLaunchers
@@ -36,5 +37,10 @@ describe('dogfood-tui', function () {
         skipped: []
       });
     });
+  });
+
+  it('runs the unit suite via npm test so mocha globs expand', function () {
+    expect(dogfoodConfig.launchers.Mocha.command).to.equal('npm test -- --reporter tap');
+    expect(dogfoodConfig.launchers.Mocha.protocol).to.equal('tap');
   });
 });
