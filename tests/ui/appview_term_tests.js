@@ -221,10 +221,7 @@ describe('AppView terminal-kit', function () {
   it('toggles split-pane focus when TAB is pressed', function () {
     const { term } = createTestTerm();
     appview = new AppView(false, process.stdout, config, app, term);
-    appview.runnerAdded({
-      name: function () { return 'Chrome'; },
-      launcherId: 1
-    });
+    addRunner(appview, 'Chrome', 1);
     const panel = appview.currentRunnerTab().splitPanel;
     expect(panel.get('focus')).to.equal('top');
     term.emit('key', 'TAB');
@@ -232,4 +229,150 @@ describe('AppView terminal-kit', function () {
     term.emit('key', 'TAB');
     expect(panel.get('focus')).to.equal('top');
   });
+
+  it('cycles tabs with RIGHT and LEFT and wraps', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    addRunner(appview, 'Mocha', 2);
+    expect(appview.get('currentTab')).to.equal(0);
+    term.emit('key', 'RIGHT');
+    expect(appview.get('currentTab')).to.equal(1);
+    term.emit('key', 'RIGHT');
+    expect(appview.get('currentTab')).to.equal(0);
+    term.emit('key', 'LEFT');
+    expect(appview.get('currentTab')).to.equal(1);
+    term.emit('key', 'LEFT');
+    expect(appview.get('currentTab')).to.equal(0);
+  });
+
+  it('ignores LEFT and RIGHT when there are no runners', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(appview.get('currentTab')).to.equal(0);
+    expect(function () {
+      term.emit('key', 'LEFT');
+      term.emit('key', 'RIGHT');
+    }).not.to.throw();
+    expect(appview.get('currentTab')).to.equal(0);
+  });
+
+  it('scrolls and pages the focused split pane from the key map', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const panel = appview.currentRunnerTab().splitPanel;
+    const calls = [];
+    ['scrollUp', 'scrollDown', 'pageDown', 'pageUp', 'halfPageUp', 'halfPageDown'].forEach(function (method) {
+      panel[method] = function () {
+        calls.push(method);
+      };
+    });
+    term.emit('key', 'UP');
+    term.emit('key', 'DOWN');
+    term.emit('key', ' ');
+    term.emit('key', 'b');
+    term.emit('key', 'u');
+    term.emit('key', 'd');
+    expect(calls).to.deep.equal([
+      'scrollUp',
+      'scrollDown',
+      'pageDown',
+      'pageUp',
+      'halfPageUp',
+      'halfPageDown'
+    ]);
+  });
+
+  it('hides the split pane while the error popup is visible and restores the footer', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const panel = appview.currentRunnerTab().splitPanel;
+    expect(panel.get('visible')).to.equal(true);
+    appview.setErrorPopupMessage('EMFILE');
+    expect(appview.popupText.hidden).to.equal(false);
+    expect(panel.get('visible')).to.equal(false);
+    expect(widgetText(appview.popupText)).to.contain('EMFILE');
+    appview.clearErrorPopupMessage();
+    expect(appview.isPopupVisible()).to.equal(false);
+    expect(appview.popupText.hidden).to.equal(true);
+    expect(panel.get('visible')).to.equal(true);
+    expect(widgetText(appview.footerText)).to.contain('q to quit');
+  });
+
+  it('finishes and cleans up an injected Document without throwing', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(term.listenerCount('key')).to.be.above(0);
+    expect(function () {
+      appview.finish();
+    }).not.to.throw();
+    expect(appview.document).to.equal(null);
+    expect(appview.grabbedInput).to.equal(false);
+    expect(appview._onTermKey).to.equal(null);
+  });
+
+  it('cleans up when there is no Document or TTY', function () {
+    const out = { write: function () {} };
+    appview = new AppView(false, out, config, app, {});
+    expect(appview.disabled).to.equal(true);
+    expect(appview.document).to.equal(undefined);
+    expect(function () {
+      appview.cleanup();
+      appview.finish();
+    }).not.to.throw();
+  });
+
+  it('quits when raw stdin delivers a quit byte', function () {
+    const { term } = createTestTerm();
+    let exits = 0;
+    app.exit = function () {
+      exits++;
+    };
+    appview = new AppView(false, process.stdout, config, app, {});
+    appview.disabled = false;
+    appview.term = term;
+    appview.injectedTerm = false;
+    appview._bindKeys();
+    expect(appview._onStdinData).to.be.a('function');
+    // Keep injectedTerm true so _requestQuit does not arm _forceExit.
+    appview.injectedTerm = true;
+    process.stdin.emit('data', Buffer.from([0x71]));
+    expect(exits).to.equal(1);
+    process.stdin.emit('data', Buffer.from([0x03]));
+    expect(exits).to.equal(1);
+    appview.cleanup();
+    process.stdin.emit('data', Buffer.from([0x71]));
+    expect(exits).to.equal(1);
+  });
+
+  it('writes a startup error when no Document exists yet', function () {
+    const writes = [];
+    const out = {
+      write: function (chunk) {
+        writes.push(String(chunk));
+      }
+    };
+    appview = new AppView(false, out, config, app, {});
+    appview.report('Chrome', {
+      launcherId: 7,
+      name: 'Chrome',
+      error: { message: 'listen EADDRINUSE: address already in use :::7400' }
+    });
+    expect(writes.join('')).to.equal(
+      'Chrome: listen EADDRINUSE: address already in use :::7400\n'
+    );
+  });
 });
+
+function addRunner(appview, name, launcherId) {
+  appview.runnerAdded({
+    name: function () { return name; },
+    launcherId: launcherId
+  });
+}
+
+function widgetText(widget) {
+  return [].concat(widget.content).join('');
+}
