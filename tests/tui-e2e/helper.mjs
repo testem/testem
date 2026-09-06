@@ -59,6 +59,12 @@ export async function dumpFailure(terminal, err) {
   console.error(err);
 }
 
+// tui-test type(' ') and press('Space') never deliver 0x20 on GitHub's
+// macos-26 PTY. write() sends the raw byte; terminal-kit then emits ' '.
+export async function pageDown(terminal) {
+  await terminal.write(' ');
+}
+
 export async function quit(terminal, key) {
   if (key === 'Ctrl+C') {
     await terminal.press('Ctrl+C');

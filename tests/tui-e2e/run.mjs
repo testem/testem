@@ -7,6 +7,7 @@ import { name as unboundName, run as unbound } from './unbound.mjs';
 import { name as quitLowerName, run as quitLower } from './quit_lower.mjs';
 import { name as quitUpperName, run as quitUpper } from './quit_upper.mjs';
 import { name as quitCtrlCName, run as quitCtrlC } from './quit_ctrl_c.mjs';
+import { name as quitTwiceName, run as quitTwice } from './quit_twice.mjs';
 
 const sessions = [
   { name: startupName, run: startup },
@@ -17,7 +18,8 @@ const sessions = [
   { name: unboundName, run: unbound },
   { name: quitLowerName, run: quitLower },
   { name: quitUpperName, run: quitUpper },
-  { name: quitCtrlCName, run: quitCtrlC }
+  { name: quitCtrlCName, run: quitCtrlC },
+  { name: quitTwiceName, run: quitTwice }
 ];
 
 async function main() {
