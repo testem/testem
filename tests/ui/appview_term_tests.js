@@ -395,6 +395,22 @@ describe('AppView terminal-kit', function () {
     expect(exits).to.equal(1);
   });
 
+  it('does not page from raw stdin, which would double every scroll', function () {
+    const { term } = createTestTerm();
+    const calls = [];
+    appview = new AppView(false, process.stdout, config, app, {});
+    appview.disabled = false;
+    appview.term = term;
+    appview.injectedTerm = false;
+    appview._dispatchAction = function (action) {
+      calls.push(action);
+    };
+    appview._bindKeys();
+    process.stdin.emit('data', Buffer.from([0x20, 0x62, 0x75, 0x64]));
+    expect(calls).to.deep.equal([]);
+    appview.cleanup();
+  });
+
   it('writes a startup error when no Document exists yet', function () {
     const writes = [];
     const out = {
