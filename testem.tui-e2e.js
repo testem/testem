@@ -3,10 +3,22 @@ module.exports = {
   port: 7401,
   disable_watching: true,
   launchers: {
-    Fixture: {
-      command: 'node tests/fixtures/tui_e2e/pass.js',
+    Alpha: {
+      command: 'node tests/fixtures/tui_e2e/alpha.js',
+      protocol: 'tap'
+    },
+    Beta: {
+      command: 'node tests/fixtures/tui_e2e/beta.js',
+      protocol: 'tap'
+    },
+    Long: {
+      command: 'node tests/fixtures/tui_e2e/long.js',
+      protocol: 'tap'
+    },
+    Hang: {
+      command: 'node tests/fixtures/tui_e2e/hang.js',
       protocol: 'tap'
     }
   },
-  launch_in_dev: ['Fixture']
+  launch_in_dev: ['Alpha', 'Beta']
 };
