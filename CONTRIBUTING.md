@@ -51,13 +51,20 @@ Or in the spirit of eating our own dog food:
 
     testem
 
-`tests/ui/*` is the interactive dashboard suite. Those tests inject terminal-kit's `createTerminal` with fake streams (no real TTY) and run on Windows CI. `npm run integration` uses `testem ci` and does **not** exercise the TUI. To check the dashboard on a real terminal:
+Dashboard coverage is three layers. Do **not** add `tests/tui-e2e/**` to the Mocha glob (`npm test`).
+
+| Command | What it is | TTY | CI |
+|---|---|---|---|
+| `npm test` | Mocha, including `tests/ui/*` via `createTerminal` (no real TTY) | No | Yes (`test` job) |
+| `npm run test:tui-e2e` | `@microsoft/tui-test` black-box dashboard; real PTY/ConPTY; fixture TAP only | Child PTY | Yes (`tui-e2e` job, Ubuntu / macOS / Windows, Node 22, `fail-fast: false`) |
+| `npm run dogfood:tui` | Interactive `testem` + browsers + unit-suite Mocha tab | Your terminal | **No** |
+| `npm run integration` | `testem ci` on examples | No | Yes |
+
+`test:tui-e2e` uses port **7401** (`testem.tui-e2e.js`). Dogfood uses **7400**. `tests/ci/ci_tests.js` binds **7357**. Failures write `artifacts/tui-e2e/` (gitignored); CI uploads `tui-e2e-<os>`. Run one session with `TESTEM_TUI_E2E=tabs npm run test:tui-e2e` (names: `startup`, `pause`, `tabs`, `paging`, `rerun`, `unbound`, `quit_lower`, `quit_upper`, `quit_ctrl_c`). On Windows use the same command; ConPTY is automatic — do not wrap it in `script` or mintty. `@microsoft/tui-test` is a **devDependency** (`@beta`); do not add it to `dependencies` or published `files`.
+
+To check the dashboard on a real terminal (split pane, browsers):
 
     npm run dogfood:tui
-
-A PTY/ConPTY spike (start, pause, quit; not part of `npm test`) is:
-
-    npm run test:tui-e2e
 
 To lint your code:
 

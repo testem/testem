@@ -14,6 +14,7 @@ describe('dev key map', function () {
     DOWN: 'scrollDown',
     TAB: 'toggleFocus',
     ' ': 'pageDown',
+    SPACE: 'pageDown',
     b: 'pageUp',
     u: 'halfPageUp',
     d: 'halfPageDown'
@@ -32,7 +33,6 @@ describe('dev key map', function () {
   it('returns undefined for an unbound key', function () {
     expect(actionForKey('x')).to.equal(undefined);
     expect(actionForKey('SHIFT_TAB')).to.equal(undefined);
-    expect(actionForKey('SPACE')).to.equal(undefined);
   });
 
   it('is case-sensitive for non-quit letter keys', function () {
