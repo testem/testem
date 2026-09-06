@@ -709,7 +709,7 @@ These YouTube screencasts are from around **2012** and may not match the current
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way. Dashboard logic is covered by `npm test`; a real-PTY smoke is `npm run test:tui-e2e` (see CONTRIBUTING).
 
 Core Maintainer(s)
 ------------------
