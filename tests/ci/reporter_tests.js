@@ -9,6 +9,7 @@ var Config = require('../../lib/config');
 var PassThrough = require('stream').PassThrough;
 var XmlDom = require('@xmldom/xmldom');
 var assert = require('chai').assert;
+var inspect = require('util').inspect;
 var readStream = require('../support/read-stream');
 var assertXmlIsValid = function(xmlString) {
   var failure = null;
@@ -743,6 +744,46 @@ describe('test reporters', function() {
         assert.match(output.shift(), / {5}trace/);
         output.shift();
         assert.equal(output, '');
+      });
+
+      it('right-aligns failure numbers to 3 characters', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        for (var i = 1; i <= 10; i++) {
+          reporter.report('phantomjs', {
+            name: 'it fails ' + i,
+            passed: false,
+            error: {
+              message: 'failure ' + i
+            }
+          });
+        }
+        reporter.finish();
+        var output = readStream(stream);
+        assert.include(output, '  1) [phantomjs] it fails 1\n');
+        assert.include(output, '  9) [phantomjs] it fails 9\n');
+        assert.include(output, ' 10) [phantomjs] it fails 10\n');
+      });
+
+      it('inspects object expected and actual values', function() {
+        var stream = new PassThrough();
+        var reporter = new DotReporter(false, stream);
+        var expected = { n: 7 };
+        var actual = { n: 'Seven' };
+        reporter.report('phantomjs', {
+          name: 'it fails',
+          passed: false,
+          error: {
+            actual: actual,
+            expected: expected,
+            message: 'objects should match',
+            stack: 'trace'
+          }
+        });
+        reporter.finish();
+        var output = readStream(stream);
+        assert.include(output, '     expected: ' + inspect(expected) + '\n');
+        assert.include(output, '       actual: ' + inspect(actual) + '\n');
       });
     });
 
