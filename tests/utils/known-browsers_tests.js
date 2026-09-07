@@ -7,7 +7,6 @@ const path = require('path');
 const os = require('os');
 
 const expect = require('chai').expect;
-const file = require('chai-files').file;
 
 const knownBrowsers = require('../../lib/utils/known-browsers');
 
@@ -96,7 +95,7 @@ describe('knownBrowsers', function() {
 
       it('creates a config file on setup', function() {
         return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
-          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
+          expect(fs.readFileSync(path.join(browserTmpDir, 'user.js'), 'utf8')).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
             'user_pref("datareporting.policy.dataSubmissionEnabled", false);',
@@ -143,7 +142,7 @@ describe('knownBrowsers', function() {
         };
 
         return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
-          expect(file(path.join(browserTmpDir, 'user.js'))).to.equal([
+          expect(fs.readFileSync(path.join(browserTmpDir, 'user.js'), 'utf8')).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
             'user_pref("dom.max_script_run_time", 0);'
@@ -477,7 +476,7 @@ describe('knownBrowsers', function() {
         it('creates a config file on setup', function(done) {
           safari.setup.call(launcher, config, function(err) {
             expect(err).to.be.null();
-            expect(file(path.join(browserTmpDir, 'start.html'))).to.equal(
+            expect(fs.readFileSync(path.join(browserTmpDir, 'start.html'), 'utf8')).to.equal(
               '<script>window.location = \'http://localhost:7357\'</script>'
             );
             done();
