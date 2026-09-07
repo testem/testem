@@ -9,6 +9,7 @@
 - **CDN fallback removed.** Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load only from `/node_modules/` (including routed `/node_modules`). Install `mocha`, `chai`, `qunit`, or `jasmine-core` in your project, or map `"routes": { "/node_modules": "..." }` to an install root.
 - **Node 20 dropped.** Supported Node versions are `^22.12.0`, `^24.0.0`, and `>= 26.0.0`.
 - **PhantomJS removed.** The built-in `PhantomJS` launcher and config options (`phantomjs_args`, `phantomjs_debug_port`, `phantomjs_launch_script`) are gone. Use **Headless Chrome** or Chrome with `browser_args: { "Chrome": ["--headless"] }` for headless runs.
+- **Internet Explorer removed.** The built-in `IE` launcher and IE-specific client compatibility shims are gone. Use Edge (Chromium), Chrome, or Firefox locally. For legacy IE in the cloud, define a custom launcher.
 - **Command strings are no longer tokenized.** Custom launcher `command` and string / `{ command }` hooks are passed to the shell unchanged (`shell: true`). Most commands are unaffected. Adjacent quoted runs now follow shell rules (`echo 'a'"b"` prints `ab`, not `a b`), and an unbalanced quote is a shell error instead of being silently dropped. Use `exe` + `args` for argv without a shell.
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.

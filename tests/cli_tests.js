@@ -42,8 +42,8 @@ describe('CLI argument parsing (parseArgs)', function() {
     });
 
     it('exposes --skip value as a plain property', function() {
-      const { progOptions } = parseArgs(...argv('-s', 'IE'));
-      expect(progOptions.skip).to.equal('IE');
+      const { progOptions } = parseArgs(...argv('-s', 'Firefox'));
+      expect(progOptions.skip).to.equal('Firefox');
     });
 
     it('exposes --debug value as a plain property', function() {

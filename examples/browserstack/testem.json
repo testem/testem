@@ -34,21 +34,6 @@
     "bs_safari_51": {
       "command": "node run_on_browserstack.js 'OS X' 'Snow Leopard' safari 5.1 nil <url>",
       "protocol": "browser"
-    },
-
-    "bs_ie_11": {
-      "command": "node run_on_browserstack.js Windows 10 ie 11.0 nil <url>",
-      "protocol": "browser"
-    },
-
-    "bs_ie_9": {
-      "command": "node run_on_browserstack.js Windows 7 ie 9.0 nil <url>",
-      "protocol": "browser"
-    },
-
-    "bs_ie_8": {
-      "command": "node run_on_browserstack.js Windows 7 ie 8.0 nil <url>",
-      "protocol": "browser"
     }
   },
   "launch_in_dev": [],
@@ -57,9 +42,6 @@
     "bs_chrome",
     "bs_firefox",
     "bs_safari_71",
-    "bs_safari_51",
-    "bs_ie_11",
-    "bs_ie_9",
-    "bs_ie_8"
+    "bs_safari_51"
   ]
 }

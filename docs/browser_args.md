@@ -82,7 +82,6 @@ Note: This guide doesn't go into depth about the numerous command line arguments
 * Chrome Canary
 * Chromium
 * Firefox
-* IE
 * Opera
 * Safari
 * Safari Technology Preview
