@@ -440,6 +440,7 @@ describe('Server', function() {
         };
         const { res, text } = await httpRequest.get(options);
         expect(res.statusCode).to.eq(500);
+        expect(JSON.parse(text)).to.have.all.keys('error');
         expect(text).to.match(/ECONNREFUSED/);
         expectMiddlewareHeaders(res);
       });
