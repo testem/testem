@@ -12,12 +12,6 @@ const http = require('http');
 const https = require('https');
 const ws = require('ws');
 const os = require('os');
-const sinon = require('sinon');
-const log = require('../lib/log');
-const {
-  MUSTACHE_TEST_PAGE_WARNING,
-  resetMustacheTestPageWarning
-} = require('../lib/utils/mustache_test_page_deprecation');
 
 describe('Server', function() {
   this.timeout(10000);
@@ -134,71 +128,19 @@ describe('Server', function() {
         await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
       });
 
-      it('renders custom test page as template', async function() {
-        config.set('test_page', 'web/tests_template.mustache');
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
-        );
-        expectMiddlewareHeaders(res);
-      });
-
       it('renders the first test page by default when multiple are provided', async function() {
         config.set('test_page', [
-          'web/tests_template.mustache',
           'web/tests.html',
+          'web/tests_other.html',
         ]);
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
-        );
-        expectMiddlewareHeaders(res);
+        await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
       });
 
-      describe('mustache test page deprecation', function() {
-        let sandbox;
-
-        beforeEach(function() {
-          sandbox = sinon.createSandbox();
-          resetMustacheTestPageWarning();
-        });
-
-        afterEach(function() {
-          sandbox.restore();
-          resetMustacheTestPageWarning();
-        });
-
-        it('emits TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED once', async function() {
-          const logWarn = sandbox.stub(log, 'warn');
-          const emitWarning = sandbox.stub(process, 'emitWarning');
-          config.set('test_page', 'web/tests_template.mustache');
-
-          await httpRequest(baseUrl);
-          await httpRequest(baseUrl);
-
-          expect(logWarn).to.have.been.calledOnce();
-          expect(emitWarning).to.have.been.calledOnce();
-          expect(emitWarning).to.have.been.calledWith(
-            MUSTACHE_TEST_PAGE_WARNING,
-            sinon.match({ code: 'TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED' })
-          );
-        });
+      it('serves leftover .mustache files as raw text', async function() {
+        await assertUrlReturnsFileContents(
+          baseUrl + 'web/uninterpolated.mustache',
+          'tests/web/uninterpolated.mustache',
+        );
       });
 
       it('URL-encodes test_page path that starts with a slash', async function() {
