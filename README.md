@@ -362,16 +362,55 @@ The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses t
 
 ### Migrating from Testem 3.x
 
-Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
+Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache interpolation of `.mustache` test pages.
 
 1. Install the framework packages listed above (`npm install --save-dev jasmine-core`, etc.).
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
-5. Replace PhantomJS with **Headless Chrome** (or Chrome with `"browser_args": { "Chrome": ["--headless"] }`). Config options `phantomjs_args`, `phantomjs_debug_port`, and `phantomjs_launch_script` are removed.
-6. Replace built-in `IE` launcher usage with Edge, Chrome, or Firefox. For legacy IE in the cloud, define a custom launcher.
-7. Most launcher `command` strings and string hooks need no change. Testem no longer tokenizes them with `spawn-args`; the string is the shell line. Check adjacent quoted runs (`'a'"b"`) and unbalanced quotes, which previously got rewritten or dropped. Quote paths that contain spaces for the **shell**. If the string was meant as argv (literal `*`, `&&`, `$`, and so on), switch to `exe` + `args`. On Windows, do not rely on glob expansion or bare local binaries in `command`; use explicit files, `npx`, or `node_modules/.bin` (same as hooks today). Template placeholders (`<url>`, `<port>`, and so on) still run **before** the shell sees the string.
-8. File watching no longer descends into `node_modules` or `.git` by default. If you relied on reruns when a linked or `file:` package changed, add that folder to `src_files` or `watch_files` (see [File watching](#file-watching)):
+5. Convert `.mustache` `test_page` files to static HTML. Leftover `.mustache` files are served as raw text (`{{#serve_files}}` appears literally). `serve_files` can stay in config for watching or compilation; it is no longer injected into a custom page.
+
+   Before ([examples/webpack](examples/webpack)):
+
+   ```html
+   <html>
+     <body>
+       <script src="/testem.js"></script>
+       <script>
+       Testem.handleConsoleMessage = function(msg){
+         Testem.emit('tap', msg)
+         return false
+       }
+       </script>
+       {{#serve_files}}
+       <script src="/{{src}}"></script>
+       {{/serve_files}}
+     </body>
+   </html>
+   ```
+
+   After:
+
+   ```html
+   <html>
+     <body>
+       <script src="/testem.js"></script>
+       <script>
+       Testem.handleConsoleMessage = function(msg){
+         Testem.emit('tap', msg)
+         return false
+       }
+       </script>
+       <script src="/test-bundle.js"></script>
+     </body>
+   </html>
+   ```
+
+   The generic form is the same: replace `{{#serve_files}}` / `{{#css_files}}` loops with explicit tags for each file you already list in config. If you interpolated other config keys (`{{port}}`, custom options) via `getTemplateData`, bake those values into the HTML or generate the page in `before_tests`.
+6. Replace PhantomJS with **Headless Chrome** (or Chrome with `"browser_args": { "Chrome": ["--headless"] }`). Config options `phantomjs_args`, `phantomjs_debug_port`, and `phantomjs_launch_script` are removed.
+7. Replace built-in `IE` launcher usage with Edge, Chrome, or Firefox. For legacy IE in the cloud, define a custom launcher.
+8. Most launcher `command` strings and string hooks need no change. Testem no longer tokenizes them with `spawn-args`; the string is the shell line. Check adjacent quoted runs (`'a'"b"`) and unbalanced quotes, which previously got rewritten or dropped. Quote paths that contain spaces for the **shell**. If the string was meant as argv (literal `*`, `&&`, `$`, and so on), switch to `exe` + `args`. On Windows, do not rely on glob expansion or bare local binaries in `command`; use explicit files, `npx`, or `node_modules/.bin` (same as hooks today). Template placeholders (`<url>`, `<port>`, and so on) still run **before** the shell sees the string.
+9. File watching no longer descends into `node_modules` or `.git` by default. If you relied on reruns when a linked or `file:` package changed, add that folder to `src_files` or `watch_files` (see [File watching](#file-watching)):
 
     ```json
     {
@@ -381,7 +420,7 @@ Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
     ```
 
     Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
-9. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
+10. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
@@ -410,23 +449,6 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
 Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
 
 '/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
-
-### Dynamic Substitution
-
-To enable dynamic substitutions within the JavaScript files in your custom test page, you must
-
-1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of JavaScript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
-
-Example:
-
-    {{#serve_files}}
-    <script src="{{src}}"></script>
-    {{/serve_files}}
-
-    {{#css_files}}
-    <link rel="stylesheet" href="{{src}}">
-    {{/css_files}}
 
 ### Multiple Test Pages
 

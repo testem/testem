@@ -128,41 +128,19 @@ describe('Server', function() {
         await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
       });
 
-      it('renders custom test page as template', async function() {
-        config.set('test_page', 'web/tests_template.mustache');
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
-        );
-        expectMiddlewareHeaders(res);
-      });
-
       it('renders the first test page by default when multiple are provided', async function() {
         config.set('test_page', [
-          'web/tests_template.mustache',
           'web/tests.html',
+          'web/tests_other.html',
         ]);
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
+        await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
+      });
+
+      it('serves leftover .mustache files as raw text', async function() {
+        await assertUrlReturnsFileContents(
+          baseUrl + 'web/uninterpolated.mustache',
+          'tests/web/uninterpolated.mustache',
         );
-        expectMiddlewareHeaders(res);
       });
 
       it('URL-encodes test_page path that starts with a slash', async function() {
