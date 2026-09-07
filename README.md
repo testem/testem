@@ -355,6 +355,7 @@ Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
+5. Most launcher `command` strings and string hooks need no change. Testem no longer tokenizes them with `spawn-args`; the string is the shell line. Check adjacent quoted runs (`'a'"b"`) and unbalanced quotes, which previously got rewritten or dropped. Quote paths that contain spaces for the **shell**. If the string was meant as argv (literal `*`, `&&`, `$`, and so on), switch to `exe` + `args`. On Windows, do not rely on glob expansion or bare local binaries in `command`; use explicit files, `npx`, or `node_modules/.bin` (same as hooks today). Template placeholders (`<url>`, `<port>`, and so on) still run **before** the shell sees the string.
 
 Custom Test Pages
 -----------------
@@ -481,6 +482,8 @@ To run tests in Node you need to create a custom launcher which launches a proce
   }
 }
 ```
+
+`command` is a shell line (`/bin/sh` on Unix, `cmd.exe` on Windows). The `*` in `mocha tests/*_tests.js` expands on Unix and is literal on Windows. For portable argv without a shell, use `exe` and `args` instead.
 
 When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
 
@@ -631,7 +634,7 @@ If you need to run a preprocessor (or indeed any shell command before the start 
 
     "before_tests": "coffee -c hello.coffee tests.coffee"
 
-On Windows, list files explicitly in string hooks like this—cmd.exe does not expand `*` for external programs (see [Available hooks](docs/config_file.md#available-hooks) and the [coffeescript example](examples/coffeescript)). Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
+String hooks and launcher `command` share this shell-as-is behavior: Testem does not tokenize the string. On Windows, list files explicitly in string hooks like this—cmd.exe does not expand `*` for external programs (see [Available hooks](docs/config_file.md#available-hooks) and the [coffeescript example](examples/coffeescript)). Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
 
 or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
 
