@@ -9,6 +9,7 @@ const {
   renderRunner,
   renderDirectoryListing
 } = require('../lib/runner_pages');
+const renderJasmine1 = require('../lib/runner_pages/jasmine');
 
 describe('runner_pages html helpers', function() {
   describe('escapeHtml', function() {
@@ -76,8 +77,8 @@ describe('renderDirectoryListing', function() {
 });
 
 describe('renderRunner', function() {
-  it('keeps Jasmine 1 CDN pins', function() {
-    const html = renderRunner('jasmine', {});
+  it('keeps Jasmine 1 CDN pins on the unused jasmine module', function() {
+    const html = renderJasmine1({});
     expect(html).to.include(
       '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
     );
@@ -88,6 +89,24 @@ describe('renderRunner', function() {
       '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.css',
     );
     expect(html).to.include('jasmine.HtmlReporter');
+  });
+
+  it('aliases framework jasmine to the jasmine2 runner', function() {
+    const data = {
+      jasmineJs: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+      jasmineHtml: '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+      jasmineCss: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
+      jasmineBoot: '/node_modules/jasmine-core/lib/jasmine-core/boot.js',
+      jasmineCoreV5: false
+    };
+    const html = renderRunner('jasmine', data);
+    expect(html).to.equal(renderRunner('jasmine2', data));
+    expect(html).to.include(
+      '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+    );
+    expect(html).to.not.include(
+      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/',
+    );
   });
 
   it('returns null for an unknown framework', function() {
