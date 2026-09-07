@@ -349,12 +349,51 @@ The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses t
 
 ### Migrating from Testem 3.x
 
-Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
+Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache interpolation of `.mustache` test pages.
 
 1. Install the framework packages listed above (`npm install --save-dev jasmine-core`, etc.).
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
+5. Convert `.mustache` `test_page` files to static HTML. Leftover `.mustache` files are served as raw text (`{{#serve_files}}` appears literally). `serve_files` can stay in config for watching or compilation; it is no longer injected into a custom page.
+
+   Before ([examples/webpack](examples/webpack)):
+
+   ```html
+   <html>
+     <body>
+       <script src="/testem.js"></script>
+       <script>
+       Testem.handleConsoleMessage = function(msg){
+         Testem.emit('tap', msg)
+         return false
+       }
+       </script>
+       {{#serve_files}}
+       <script src="/{{src}}"></script>
+       {{/serve_files}}
+     </body>
+   </html>
+   ```
+
+   After:
+
+   ```html
+   <html>
+     <body>
+       <script src="/testem.js"></script>
+       <script>
+       Testem.handleConsoleMessage = function(msg){
+         Testem.emit('tap', msg)
+         return false
+       }
+       </script>
+       <script src="/test-bundle.js"></script>
+     </body>
+   </html>
+   ```
+
+   The generic form is the same: replace `{{#serve_files}}` / `{{#css_files}}` loops with explicit tags for each file you already list in config. If you interpolated other config keys (`{{port}}`, custom options) via `getTemplateData`, bake those values into the HTML or generate the page in `before_tests`.
 
 Custom Test Pages
 -----------------
@@ -383,47 +422,6 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
 Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
 
 '/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
-
-### Dynamic Substitution (deprecated)
-
-Naming `test_page` with a `.mustache` extension to interpolate `serve_files` / `css_files` is **deprecated** and will be removed in Testem 4. Prefer a static HTML page and include `<script src="/testem.js"></script>` as shown above.
-
-On Testem 3.x the old form still works:
-
-1. name your test page using `.mustache` as the extension
-2. use `{{#serve_files}}` to loop over the set of JavaScript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
-
-Example:
-
-    {{#serve_files}}
-    <script src="{{src}}"></script>
-    {{/serve_files}}
-
-    {{#css_files}}
-    <link rel="stylesheet" href="{{src}}">
-    {{/css_files}}
-
-To migrate, rename the page to `.html`, list the same scripts and styles as tags, and point `test_page` at that file. `serve_files` can stay in config for watching or compilation; it no longer needs to be injected.
-
-Before:
-
-```html
-{{#serve_files}}
-<script src="{{src}}"></script>
-{{/serve_files}}
-{{#css_files}}
-<link rel="stylesheet" href="{{src}}">
-{{/css_files}}
-```
-
-After, if config has `"serve_files": ["test-bundle.js"]` and `"css_files": ["app.css"]`:
-
-```html
-<script src="test-bundle.js"></script>
-<link rel="stylesheet" href="app.css">
-```
-
-Keep `/testem.js` and your test framework scripts in the same order as a normal custom page. If you interpolated other config keys (`{{port}}`, custom options), bake those values into the HTML or generate the page in `before_tests`.
 
 ### Multiple Test Pages
 
