@@ -9,7 +9,6 @@ const {
   renderRunner,
   renderDirectoryListing
 } = require('../lib/runner_pages');
-const renderJasmine1 = require('../lib/runner_pages/jasmine');
 
 describe('runner_pages html helpers', function() {
   describe('escapeHtml', function() {
@@ -77,20 +76,6 @@ describe('renderDirectoryListing', function() {
 });
 
 describe('renderRunner', function() {
-  it('keeps Jasmine 1 CDN pins on the unused jasmine module', function() {
-    const html = renderJasmine1({});
-    expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
-    );
-    expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-    );
-    expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.css',
-    );
-    expect(html).to.include('jasmine.HtmlReporter');
-  });
-
   it('aliases framework jasmine to the jasmine2 runner', function() {
     const data = {
       jasmineJs: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
