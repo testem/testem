@@ -52,8 +52,7 @@
     "README.md",
     "testem.js",
     "assets",
-    "package.json",
-    "views"
+    "package.json"
   ],
   "scripts": {
     "test": "mocha tests/*_tests.js tests/**/*_tests.js",
