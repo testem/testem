@@ -310,23 +310,20 @@ describe('browser test runner', function() {
     it('fails when the browser fails to start', function(done) {
       launcher.settings.exe = 'not-found';
       runner.start(function() {
-        expect(reporter.results[0].result).to.shallowDeepEqual({
-          error: {},
-          failed: 1,
-          items: undefined,
-          launcherId: launcher.id,
-          logs: [{
-            type: 'error'
-          }],
-          passed: 0,
-          testContext: {}
-        });
+        const result = reporter.results[0].result;
+        expect(result.error).to.be.an('object');
+        expect(result.failed).to.equal(1);
+        expect(result.items).to.be.undefined();
+        expect(result.launcherId).to.equal(launcher.id);
+        expect(result.logs[0].type).to.equal('error');
+        expect(result.passed).to.equal(0);
+        expect(result.testContext).to.be.an('object');
         if (isWin) {
-          expect(reporter.results[0].result.error.message).to.match(/is not recognized/);
-          expect(reporter.results[0].result.logs.at(-1).text).to.match(/is not recognized/);
+          expect(result.error.message).to.match(/is not recognized/);
+          expect(result.logs.at(-1).text).to.match(/is not recognized/);
         } else {
-          expect(reporter.results[0].result.error.message).to.match(/ENOENT/);
-          expect(reporter.results[0].result.logs[0].text).to.match(/ENOENT/);
+          expect(result.error.message).to.match(/ENOENT/);
+          expect(result.logs[0].text).to.match(/ENOENT/);
         }
         done();
       });
