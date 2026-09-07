@@ -77,6 +77,15 @@ rest of Testem.
 
 * **`disable_watching: true`** — Disables the file watcher; Testem will not auto-rerun on file
   changes.
+* **`node_modules` / `.git`** — The watcher does not descend into these directories unless a
+  `src_files` or `watch_files` pattern names them. To watch a linked or local package:
+
+      {
+        "watch_files": ["node_modules/my-pkg/**/*.js"]
+      }
+
+  Name only the folders you need. A pattern containing `node_modules` lifts the default skip
+  for that tree; `.git` stays skipped unless you name it the same way.
 * **Unreliable watching** (e.g. Docker, NFS, some VMs): try setting the environment variable
   **`CHOKIDAR_USE_POLLING=1`** before starting Testem, or adjust **`CHOKIDAR_INTERVAL`**. See the
   chokidar documentation for supported variables.

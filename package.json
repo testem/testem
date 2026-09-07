@@ -23,7 +23,6 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.9.9",
     "backbone": "^1.6.1",
-    "charm": "^1.0.2",
     "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "compression": "^1.8.1",
@@ -39,8 +38,8 @@
     "proc-log": "^6.1.0",
     "rimraf": "^6.1.3",
     "socket.io": "^4.8.3",
-    "styled_string": "0.0.1",
     "tap-parser": "^18.3.0",
+    "terminal-kit": "^3.1.4",
     "toasted-notifier": "^10.1.0"
   },
   "files": [
@@ -58,12 +57,15 @@
     "cover": "cover run ./node_modules/.bin/_mocha tests/*_tests.js tests/**/*_tests.js; cover report html; open cover_html/index.html",
     "integration": "node ./bin/run-integration.js",
     "ci:safari-smoke": "node ./scripts/safari-ci-smoke.js",
+    "dogfood:tui": "node ./scripts/dogfood-tui.js",
+    "test:tui-e2e": "node ./tests/tui-e2e/run.mjs",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "eslint ."
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
+    "@microsoft/tui-test": "^0.1.0-beta.3",
     "chai": "^6.2.2",
     "cheerio": "^1.2.0",
     "dirty-chai": "^3.0.0",

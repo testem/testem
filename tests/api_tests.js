@@ -117,11 +117,14 @@ describe('Api', function() {
 
           let originalTimeout = global.clearTimeout;
           sandbox.stub(global, 'clearTimeout').callsFake(function(cookie) {
-            calledCookie = cookie;
             originalTimeout(cookie);
 
-            expect(calledCookie).to.not.be.undefined();
-            expect(calledCookie).to.eql(existingTimeout);
+            // Server teardown (socket.io, engine.io) clears its own timers here too;
+            // only the app's pending run timeout is under test.
+            if (cookie !== existingTimeout || calledCookie !== undefined) {
+              return;
+            }
+            calledCookie = cookie;
 
             expect(api.app.stopCurrentRun.callCount).to.equal(2);
             api.app.exit();

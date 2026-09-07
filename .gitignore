@@ -8,3 +8,4 @@ examples/*/package-lock.json
 .prettier*
 .tool-versions
 /tmp
+/artifacts
