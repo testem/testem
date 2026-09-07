@@ -131,7 +131,7 @@ describe('ProcessCtl', function() {
       processCtl = new ProcessCtl('test', config);
     });
 
-    beforeEach(function() {
+    afterEach(function() {
       sandbox.restore();
     });
 
@@ -148,8 +148,48 @@ describe('ProcessCtl', function() {
             expect(p.stdout).to.eq('hello world\n');
           }
           expect(processCtl.spawn).to.have.been.calledWith(
-            'echo', ['"hello world"'], { shell: true }
+            'echo "hello world"', [], { shell: true }
           );
+        });
+      });
+    });
+
+    it('passes the raw command string to spawn', function() {
+      sandbox.spy(processCtl, 'spawn');
+      return processCtl.exec('echo  hello').then(function(p) {
+        return new Promise(function(resolve) {
+          return p.on('processExit', resolve);
+        }).then(function(exitCode) {
+          expect(exitCode).to.eq(0);
+          expect(processCtl.spawn).to.have.been.calledWith(
+            'echo  hello', [], { shell: true }
+          );
+        });
+      });
+    });
+
+    it('joins adjacent quoted runs the way the shell does', function() {
+      if (isWin) {
+        this.skip();
+      }
+      return processCtl.exec('echo \'a\'"b"').then(function(p) {
+        return new Promise(function(resolve) {
+          return p.on('processExit', resolve);
+        }).then(function(exitCode) {
+          expect(exitCode).to.eq(0);
+          expect(p.stdout).to.eq('ab\n');
+        });
+      });
+    });
+
+    it('runs chained shell commands', function() {
+      return processCtl.exec('echo hello && echo world').then(function(p) {
+        return new Promise(function(resolve) {
+          return p.on('processExit', resolve);
+        }).then(function(exitCode) {
+          expect(exitCode).to.eq(0);
+          expect(p.stdout).to.include('hello');
+          expect(p.stdout).to.include('world');
         });
       });
     });
