@@ -125,7 +125,7 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     firefox_user_js:             [String]  path to firefox custom user.js file to be used
     framework:                   [String]  test framework to use; defaults to "jasmine2". Also: jasmine (alias), qunit, mocha, mocha+chai, custom, tap
     ignore_missing_launchers:    [Boolean] ignore missing launchers in ci mode
-    launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (shell) and optionally `protocol="tap"`
+    launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (a shell line, not tokenized; use `exe` + `args` for argv without a shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
     middleware                   [Array]   list of functions to be called with the express app instance
@@ -167,7 +167,7 @@ Testem allows the test page to be served via HTTPS. To enable HTTPS either the p
 
 Hooks can be defined as a string in which case they run as a shell command or as a function in which case they will be passed 3 arguments: the Testem config object, a data object if present (see below), and a callback which should be invoked with a falsey argument (or no arguments) to indicate a passing result or with a truthy argument (such as an `Error` object) to indicate a failing result.
 
-String hooks run with `shell: true` (cmd.exe on Windows, `/bin/sh` on Unix). On Windows, **do not rely on shell glob expansion** (`*.coffee`, `*.js`, etc.) in string hooks—cmd.exe does not expand wildcards for external programs, so tools like `coffee` receive a literal `*.coffee` argument. List files explicitly (`coffee -c hello.coffee tests.coffee`), use a JavaScript hook, or call a script. **Local npm CLI binaries** (for example `webpack`, `babel`, `tsc`) are usually not on PATH in cmd.exe either; use `npx` (`npx webpack`), an npm script (`npm run build`), or the path under `node_modules/.bin/`. Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
+String hooks run with `shell: true` (cmd.exe on Windows, `/bin/sh` on Unix). Testem does not parse the string; quoting, `&&`, and globs are the shell's. On Windows, **do not rely on shell glob expansion** (`*.coffee`, `*.js`, etc.) in string hooks—cmd.exe does not expand wildcards for external programs, so tools like `coffee` receive a literal `*.coffee` argument. List files explicitly (`coffee -c hello.coffee tests.coffee`), use a JavaScript hook, or call a script. **Local npm CLI binaries** (for example `webpack`, `babel`, `tsc`) are usually not on PATH in cmd.exe either; use `npx` (`npx webpack`), an npm script (`npm run build`), or the path under `node_modules/.bin/`. Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
 
     on_start:             Runs on suite startup
     on_change:            Runs when a (non-config) file being watched is changed. Has a data object with a `file` property set to the changed file's path
