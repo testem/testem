@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - master
-      - "0.6"
-      - "0.8.x"
+      - '0.6'
+      - '0.8.x'
       - v*
   pull_request:
   schedule:
-    - cron: "23 8 * * 4" # Thursdays 08:23 UTC
+    - cron: '23 8 * * 4' # Thursdays 08:23 UTC
   workflow_dispatch:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: package.json
       - run: npm i
       - run: npm run lint
@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [20, 22, 24, 26]
+        node: [22, 24, 26]
         include:
           - os: macos-latest
             node: 22
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: package.json
       - run: firefox --version
       - run: npm i
@@ -74,7 +74,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: package.json
       - run: npm i
       - run: npm run ci:safari-smoke
@@ -83,14 +83,14 @@ jobs:
     name: browser-tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    concurrency: "sauce"
+    concurrency: 'sauce'
 
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: package.json
       - run: npm i
       - run: npm run browser-tests
