@@ -82,7 +82,7 @@ rest of Testem.
   chokidar documentation for supported variables.
 
 * **serve_files** - the location of the source files to be served to the browser. If don't have a compilation step, don't set this option, and it will default to *src_files*. If you have a compilation step, you should set this to the `*.js` file(s) that result from the compilation.
-* **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `mocha.js`.
+* **test_page** - if you want to use a custom test page to run your tests, put its path here. In most cases, when you use this option, the *src_files* option becomes unnecessary because Testem simply adds all requested files into the watch list. You will also make sure that you include the `/testem.js` script in your test page if you use this option - simply include it with a script tag just below the include for your test framework, i.e. `mocha.js`. A `.mustache` test page is still interpolated, but that form is **deprecated** and will be removed in Testem 4. See [Dynamic Substitution](../README.md#dynamic-substitution-deprecated) for a static HTML migration.
 * **launchers** - this option allows you to set up custom process launchers which can be used to run Node programs and indeed any kind of process within Testem.
 
 ## Option Reference
