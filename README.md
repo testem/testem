@@ -122,14 +122,27 @@ relevant file is added, edited, or removed. Watching is implemented with
 
 * **`src_files`** — Glob patterns for source files whose changes should trigger a run (defaults to
   `*.js` when unset). This is the main *watch list*.
-* **`watch_files`** — Optional; if set, these patterns are watched instead of defaulting to
-  `src_files` (see `docs/config_file.md`).
-* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `node_modules`).
+* **`watch_files`** — Optional extra watch patterns (see `docs/config_file.md`).
+* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `dist/**`).
 * **`disable_watching`** — Set to `true` to turn off the file watcher entirely.
 
 Testem watches the **current working directory** and applies your include/ignore patterns to
 events from the watcher. You do not need to list every file explicitly; globs and ignores follow
 the same policy as in the config reference.
+
+By default the watcher does **not** descend into `node_modules` or `.git`. To rerun when a
+linked or local package changes, name that folder in `src_files` or `watch_files`:
+
+```json
+{
+  "src_files": ["lib/**/*.js", "tests/**/*.js"],
+  "watch_files": ["node_modules/my-pkg/**/*.js"]
+}
+```
+
+Name only the packages you need. A pattern that contains `node_modules` lifts the default skip
+for that tree (`.git` stays skipped unless you name it the same way). Do not use
+`node_modules/**` unless you really want every install to trigger a rerun.
 
 **Troubleshooting:** On some setups (Docker, network filesystems, VMs), native `fs.watch` can be
 flaky. Chokidar supports environment variables such as `CHOKIDAR_USE_POLLING=1` (force polling)
@@ -356,7 +369,17 @@ Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
 3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
 4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
-5. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
+5. File watching no longer descends into `node_modules` or `.git` by default. If you relied on reruns when a linked or `file:` package changed, add that folder to `src_files` or `watch_files` (see [File watching](#file-watching)):
+
+    ```json
+    {
+      "src_files": ["lib/**/*.js", "tests/**/*.js"],
+      "watch_files": ["node_modules/my-pkg/**/*.js"]
+    }
+    ```
+
+    Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
+6. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
