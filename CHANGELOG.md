@@ -8,6 +8,7 @@
 - **Default `framework` is `jasmine2`.** `"jasmine"` remains supported as an alias.
 - **CDN fallback removed.** Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load only from `/node_modules/` (including routed `/node_modules`). Install `mocha`, `chai`, `qunit`, or `jasmine-core` in your project, or map `"routes": { "/node_modules": "..." }` to an install root.
 - **Node 20 dropped.** Supported Node versions are `^22.12.0`, `^24.0.0`, and `>= 26.0.0`.
+- **Mustache test pages removed.** `.mustache` `test_page` files are no longer interpolated; leftover `.mustache` files are served as raw text. The `mustache` and `consolidate` dependencies are gone. `Config#getTemplateData` is removed.
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 
