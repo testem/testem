@@ -182,6 +182,21 @@ describe('ProcessCtl', function() {
       });
     });
 
+    it('treats an unbalanced quote as a shell error', function() {
+      if (isWin) {
+        this.skip();
+      }
+      return processCtl.exec('echo "unclosed').then(function(p) {
+        return new Promise(function(resolve) {
+          return p.on('processExit', resolve);
+        }).then(function(exitCode) {
+          expect(exitCode).to.not.eq(0);
+          // bash: "unexpected EOF while looking for matching"; dash: "Unterminated quoted string"
+          expect(p.stderr).to.match(/unexpected EOF|matching|Unterminated quoted string/i);
+        });
+      });
+    });
+
     it('runs chained shell commands', function() {
       return processCtl.exec('echo hello && echo world').then(function(p) {
         return new Promise(function(resolve) {
