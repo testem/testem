@@ -384,9 +384,11 @@ Or if you are using require.js or another loader, just make sure you load `/test
 
 '/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
 
-### Dynamic Substitution
+### Dynamic Substitution (deprecated)
 
-To enable dynamic substitutions within the JavaScript files in your custom test page, you must
+Naming `test_page` with a `.mustache` extension to interpolate `serve_files` / `css_files` is **deprecated** and will be removed in Testem 4. Prefer a static HTML page and include `<script src="/testem.js"></script>` as shown above.
+
+On Testem 3.x the old form still works:
 
 1. name your test page using `.mustache` as the extension
 2. use `{{#serve_files}}` to loop over the set of JavaScript files to be served, and then reference its `src` property to access their path (or `{{#css_files}}` for stylesheets)
@@ -400,6 +402,28 @@ Example:
     {{#css_files}}
     <link rel="stylesheet" href="{{src}}">
     {{/css_files}}
+
+To migrate, rename the page to `.html`, list the same scripts and styles as tags, and point `test_page` at that file. `serve_files` can stay in config for watching or compilation; it no longer needs to be injected.
+
+Before:
+
+```html
+{{#serve_files}}
+<script src="{{src}}"></script>
+{{/serve_files}}
+{{#css_files}}
+<link rel="stylesheet" href="{{src}}">
+{{/css_files}}
+```
+
+After, if config has `"serve_files": ["test-bundle.js"]` and `"css_files": ["app.css"]`:
+
+```html
+<script src="test-bundle.js"></script>
+<link rel="stylesheet" href="app.css">
+```
+
+Keep `/testem.js` and your test framework scripts in the same order as a normal custom page. If you interpolated other config keys (`{{port}}`, custom options), bake those values into the HTML or generate the page in `before_tests`.
 
 ### Multiple Test Pages
 
@@ -620,7 +644,7 @@ Simply add a `proxies` section to the `testem.json` configuration file.
 ```
 
 This functionality is implemented as a *transparent proxy*, hence a request to
-`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/http-party/node-http-proxy#options
+`http://localhost:7357/api/posts.json` will be proxied to `http://localhost:4200/api/posts.json` without removing the `/api` prefix. Setting the `secure` option to `false` as in the above `/xmlapi` configuration block will ignore TLS certificate validation and allow tests to successfully reach that URL even if testem was launched over HTTP. Other available options can be found here: https://github.com/unjs/httpxy#options
 
 To limit the functionality to only certain content types, use "onlyContentTypes".
 

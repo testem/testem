@@ -1,12 +1,8 @@
 const chai = require('chai');
 const sinonChai = require('sinon-chai').default;
-const chaiFiles = require('chai-files');
-const chaiShallowDeepEqual = require('chai-shallow-deep-equal');
 const dirtyChai = require('dirty-chai').default;
 
 chai.use(sinonChai);
-chai.use(chaiFiles);
-chai.use(chaiShallowDeepEqual);
 chai.use(dirtyChai);
 
 const path = require('path');

@@ -12,6 +12,12 @@ const http = require('http');
 const https = require('https');
 const ws = require('ws');
 const os = require('os');
+const sinon = require('sinon');
+const log = require('../lib/log');
+const {
+  MUSTACHE_TEST_PAGE_WARNING,
+  resetMustacheTestPageWarning
+} = require('../lib/utils/mustache_test_page_deprecation');
 
 describe('Server', function() {
   this.timeout(10000);
@@ -160,6 +166,36 @@ describe('Server', function() {
           ].join(os.EOL),
         );
         expectMiddlewareHeaders(res);
+      });
+
+      describe('mustache test page deprecation', function() {
+        let sandbox;
+
+        beforeEach(function() {
+          sandbox = sinon.createSandbox();
+          resetMustacheTestPageWarning();
+        });
+
+        afterEach(function() {
+          sandbox.restore();
+          resetMustacheTestPageWarning();
+        });
+
+        it('emits TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED once', async function() {
+          const logWarn = sandbox.stub(log, 'warn');
+          const emitWarning = sandbox.stub(process, 'emitWarning');
+          config.set('test_page', 'web/tests_template.mustache');
+
+          await httpRequest(baseUrl);
+          await httpRequest(baseUrl);
+
+          expect(logWarn).to.have.been.calledOnce();
+          expect(emitWarning).to.have.been.calledOnce();
+          expect(emitWarning).to.have.been.calledWith(
+            MUSTACHE_TEST_PAGE_WARNING,
+            sinon.match({ code: 'TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED' })
+          );
+        });
       });
 
       it('URL-encodes test_page path that starts with a slash', async function() {
@@ -440,6 +476,7 @@ describe('Server', function() {
         };
         const { res, text } = await httpRequest.get(options);
         expect(res.statusCode).to.eq(500);
+        expect(JSON.parse(text)).to.have.all.keys('error');
         expect(text).to.match(/ECONNREFUSED/);
         expectMiddlewareHeaders(res);
       });
