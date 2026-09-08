@@ -8,7 +8,7 @@ It also restarts the tests by refreshing the page when instructed by the server 
 
 */
 /* globals module */
-/* globals jasmine2Adapter, mochaAdapter */
+/* globals jasmine, jasmine2Adapter, mochaAdapter */
 /* globals qunitAdapter, decycle */
 /* exported Testem */
 'use strict';
@@ -84,7 +84,7 @@ function hookIntoTestFramework(socket) {
   }
 
   var found = true;
-  if (typeof getJasmineRequireObj === 'function') {
+  if (typeof jasmine === 'object' && jasmine && typeof jasmine.getEnv === 'function') {
     jasmine2Adapter(socket);
   } else if (typeof Mocha === 'function') {
     mochaAdapter(socket);
@@ -325,6 +325,11 @@ var Testem = {
 // to each custom adapter.
 function TestemSocket() {}
 TestemSocket.prototype = Testem;
+
+Testem.detectTestFramework = hookIntoTestFramework;
+Testem.resetTestFrameworkDetection = function() {
+  testFrameworkDidInit = false;
+};
 
 // Exporting this as a module so that it can be unit tested in Node.
 if (typeof module !== 'undefined') {
