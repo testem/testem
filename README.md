@@ -57,7 +57,7 @@ Development Mode
 The simplest way to use Testem, in the TDD spirit, is to start in an empty directory, install a test framework, and run the command
 
 ```bash
-npm install --save-dev jasmine-core
+npm install --save-dev jasmine-core@^7
 testem
 ```
 
@@ -331,7 +331,7 @@ Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load
 | `mocha` | `mocha` |
 | `mocha+chai` | `mocha` and `chai` |
 
-Recommended versions for new projects: `mocha@^12`, `chai@^6`, `jasmine-core@^5`, `qunit@^2`.
+Recommended versions for new projects: `mocha@^12`, `chai@^6`, `jasmine-core@^7`, `qunit@^2`. jasmine-core 5 and 6 still work.
 
 Run `npm install` in the project directory. In a monorepo, or when `cwd` is not the install root, map the path with `routes`:
 
@@ -345,7 +345,7 @@ Run `npm install` in the project directory. In a monorepo, or when `cwd` is not 
 
 The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses the UMD build `chai/chai.js` as a classic script. Chai 5+ (`"type": "module"`) is imported as an ES module, then your spec files load as classic scripts (`var expect = chai.expect` still works).
 
-`jasmine` / `jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4.
+`jasmine` / `jasmine2` uses jasmine-core 5/6 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4/7. Testem loads the `jasmine-core` you installed; it does not pick a version.
 
 ### Migrating from Testem 3.x
 

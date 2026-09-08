@@ -11,6 +11,10 @@
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 
+### Changed
+
+- **Recommended / repo-tested `jasmine-core` is 7.** jasmine-core 5 and 6 remain supported via boot-file detection (`boot0.js`/`boot1.js` vs `boot.js`). Custom `test_page` HTML that hardcodes `boot0.js`/`boot1.js` must switch to `boot.js` when that project upgrades. Load the framework before `/testem.js` (existing required order).
+
 ## Earlier releases
 
 See https://github.com/testem/testem/releases
