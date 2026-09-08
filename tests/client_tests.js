@@ -109,66 +109,47 @@ describe('Testem Client', function() {
   });
 
   describe('framework detection', function() {
-    function createHookTester() {
-      let testFrameworkDidInit = false;
-      const jasmine2Adapter = sinon.spy();
-      const mochaAdapter = sinon.spy();
-      const qunitAdapter = sinon.spy();
+    let jasmine2Adapter;
+    let mochaAdapter;
+    let qunitAdapter;
 
-      function hookIntoTestFramework(socket) {
-        if (testFrameworkDidInit) {
-          return true;
-        }
-
-        let found = true;
-        if (typeof getJasmineRequireObj === 'function') {
-          jasmine2Adapter(socket);
-        } else if (typeof Mocha === 'function') {
-          mochaAdapter(socket);
-        } else if (typeof QUnit === 'object') {
-          qunitAdapter(socket);
-        } else {
-          found = false;
-        }
-
-        testFrameworkDidInit = found;
-        return found;
-      }
-
-      return {
-        hookIntoTestFramework,
-        jasmine2Adapter,
-        mochaAdapter,
-        qunitAdapter,
-        reset() {
-          testFrameworkDidInit = false;
-        }
-      };
-    }
-
-    it('uses jasmine2Adapter when getJasmineRequireObj is present', function() {
-      const tester = createHookTester();
-      global.getJasmineRequireObj = function() {};
-      tester.hookIntoTestFramework({});
-      expect(tester.jasmine2Adapter).to.have.been.calledOnce();
-      delete global.getJasmineRequireObj;
+    beforeEach(function() {
+      Testem.resetTestFrameworkDetection();
+      jasmine2Adapter = sinon.spy();
+      mochaAdapter = sinon.spy();
+      qunitAdapter = sinon.spy();
+      global.jasmine2Adapter = jasmine2Adapter;
+      global.mochaAdapter = mochaAdapter;
+      global.qunitAdapter = qunitAdapter;
     });
 
-    it('does not hook legacy jasmine globals without getJasmineRequireObj', function() {
-      const tester = createHookTester();
-      global.jasmine = {};
-      expect(tester.hookIntoTestFramework({})).to.equal(false);
-      expect(tester.jasmine2Adapter).not.to.have.been.called();
+    afterEach(function() {
+      Testem.resetTestFrameworkDetection();
+      delete global.jasmine2Adapter;
+      delete global.mochaAdapter;
+      delete global.qunitAdapter;
       delete global.jasmine;
+      delete global.QUnit;
+      delete global.Mocha;
+    });
+
+    it('uses jasmine2Adapter when jasmine.getEnv is a function', function() {
+      global.jasmine = { getEnv: function() {} };
+      expect(Testem.detectTestFramework({})).to.equal(true);
+      expect(jasmine2Adapter).to.have.been.calledOnce();
+    });
+
+    it('does not hook a bare jasmine object without getEnv', function() {
+      global.jasmine = {};
+      expect(Testem.detectTestFramework({})).to.equal(false);
+      expect(jasmine2Adapter).not.to.have.been.called();
     });
 
     it('initializes the detected framework only once', function() {
-      const tester = createHookTester();
       global.QUnit = {};
-      expect(tester.hookIntoTestFramework({})).to.equal(true);
-      expect(tester.hookIntoTestFramework({})).to.equal(true);
-      expect(tester.qunitAdapter).to.have.been.calledOnce();
-      delete global.QUnit;
+      expect(Testem.detectTestFramework({})).to.equal(true);
+      expect(Testem.detectTestFramework({})).to.equal(true);
+      expect(qunitAdapter).to.have.been.calledOnce();
     });
   });
 });
