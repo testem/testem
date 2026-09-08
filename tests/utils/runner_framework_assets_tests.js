@@ -90,14 +90,14 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(warnStub.firstCall.args[0]).to.include('chai');
   });
 
-  it('uses jasmine-core 5 paths when boot0.js is present', function() {
+  it('uses split-boot jasmine-core 5/6 paths when boot0.js is present', function() {
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine-html.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/boot0.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/boot1.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine.css');
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'jasmine2');
-    expect(assets.jasmineCoreV5).to.equal(true);
+    expect(assets.jasmineSplitBoot).to.equal(true);
     expect(assets.jasmineJs).to.equal(
       '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js'
     );
@@ -105,13 +105,13 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(warnStub).not.to.have.been.called();
   });
 
-  it('uses jasmine-core 3/4 boot.js when boot0.js is absent', function() {
+  it('uses jasmine-core 3/4/7 boot.js when boot0.js is absent', function() {
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine-html.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/boot.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine.css');
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'jasmine2');
-    expect(assets.jasmineCoreV5).to.equal(false);
+    expect(assets.jasmineSplitBoot).to.equal(false);
     expect(assets.jasmineJs).to.equal(
       '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js'
     );
@@ -132,7 +132,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine-html.js');
     writeCwdFile('jasmine-core/lib/jasmine-core/jasmine.css');
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'jasmine2');
-    expect(assets.jasmineCoreV5).to.equal(false);
+    expect(assets.jasmineSplitBoot).to.equal(false);
     expect(assets.jasmineJs).to.equal(
       '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js'
     );

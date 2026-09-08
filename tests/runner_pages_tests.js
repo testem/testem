@@ -81,7 +81,7 @@ describe('renderRunner', function() {
       jasmineJs: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
       jasmineHtml: '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
       jasmineCss: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
-      jasmineCoreV5: true
+      jasmineSplitBoot: true
     });
     expect(html).to.include(
       '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
