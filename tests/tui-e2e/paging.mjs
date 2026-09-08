@@ -6,6 +6,10 @@ export async function run() {
   await withDashboard({ launch: 'Long', cols: 80, rows: 20 }, async (terminal) => {
     await waitStartup(terminal, 'Long');
     await terminal.getByText('TUI_E2E_PAGE_TOP').expect();
+    // PAGE_TOP appears on the first TAP line; Long still has 39 more.
+    // Wait until the run is done so later relayouts cannot cover the arrows.
+    await terminal.getByText('0/40').expect();
+    await terminal.waitIdle();
 
     // Named arrows work on the macOS CI PTY. Each TAP fail is a few lines.
     for (let i = 0; i < 8; i++) {
