@@ -69,7 +69,80 @@ describe('jasmine2Adapter', function() {
       name: 'example spec',
       passed: 1,
       failed: 0,
+      pending: 0,
       total: 1
+    }));
+  });
+
+  it('emits test-result for a pending spec', function() {
+    const { addReporter, emit, context } = loadAdapter();
+
+    context.jasmine2Adapter();
+    const reporter = addReporter.firstCall.args[0];
+    reporter.specDone({
+      id: 0,
+      fullName: 'pending spec',
+      status: 'pending',
+      failedExpectations: []
+    });
+
+    expect(emit).to.have.been.calledWith('test-result', sinon.match({
+      name: 'pending spec',
+      passed: 0,
+      failed: 0,
+      pending: 1,
+      total: 1
+    }));
+  });
+
+  it('treats notApplicable specs as pending', function() {
+    const { addReporter, emit, context } = loadAdapter();
+
+    context.jasmine2Adapter();
+    const reporter = addReporter.firstCall.args[0];
+    reporter.specDone({
+      id: 0,
+      fullName: 'not applicable spec',
+      status: 'notApplicable',
+      failedExpectations: []
+    });
+
+    expect(emit).to.have.been.calledWith('test-result', sinon.match({
+      name: 'not applicable spec',
+      passed: 0,
+      failed: 0,
+      pending: 1,
+      total: 1
+    }));
+  });
+
+  it('emits test-result for a failing spec', function() {
+    const { addReporter, emit, context } = loadAdapter();
+
+    context.jasmine2Adapter();
+    const reporter = addReporter.firstCall.args[0];
+    reporter.specDone({
+      id: 0,
+      fullName: 'failing spec',
+      status: 'failed',
+      failedExpectations: [{
+        passed: false,
+        message: 'Expected true to be false.',
+        stack: 'Error: Expected true to be false.\n    at spec.js:1:1'
+      }]
+    });
+
+    expect(emit).to.have.been.calledWith('test-result', sinon.match({
+      name: 'failing spec',
+      passed: 0,
+      failed: 1,
+      pending: 0,
+      total: 1,
+      items: [{
+        passed: false,
+        message: 'Expected true to be false.',
+        stack: 'Error: Expected true to be false.\n    at spec.js:1:1'
+      }]
     }));
   });
 
