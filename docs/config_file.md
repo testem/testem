@@ -63,7 +63,7 @@ Common Configuration Options
   * `jasmine` is an alias for modern Jasmine (`jasmine2` / `jasmine-core`).
   * Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load **only** from `/node_modules/` in `cwd` (install `mocha`, `chai`, `qunit`, or `jasmine-core` as appropriate). In a monorepo, remap with `"routes": { "/node_modules": "../node_modules" }` so both HTML URLs and static serving resolve to the install root.
   * `mocha+chai` loads Chai 4 via UMD `chai/chai.js`, and Chai 5+ as an ES module (`chai/index.js` when `package.json` has `"type": "module"`).
-  * `jasmine` / `jasmine2` uses jasmine-core 5 `boot0.js`/`boot1.js` when present, otherwise jasmine-core 3/4 `boot.js`.
+  * `jasmine` / `jasmine2` uses jasmine-core 5/6 `boot0.js`/`boot1.js` when present, otherwise jasmine-core 3/4/7 `boot.js`. Testem loads the installed `jasmine-core`; it does not pick a version.
 * **src_files** - the location of your source files. This should be the code that you author directly, and not generated source files. So, if you are writing in TypeScript, this should be your `.ts` files. If you are writing in JavaScript, this would just be your `.js` files, but if you have a compile step for your JS (e.g. Babel), this would be the `.js` file pre-compilation. The files matched here are what Testem watches for modification (the *watch list*) so that it promptly re-runs the tests when any of them are saved.
 
 ### File watching behavior
