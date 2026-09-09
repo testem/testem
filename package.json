@@ -82,6 +82,9 @@
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.8.3"
   },
+  "overrides": {
+    "encoding-sniffer": "^1.0.2"
+  },
   "bin": {
     "testem": "./testem.js"
   },
