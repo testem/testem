@@ -1,7 +1,6 @@
 
 
 const { fromCallback } = require('../../lib/utils/promises');
-const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -33,7 +32,7 @@ function createConfig() {
 }
 
 function findBrowser(browsers, browserName) {
-  return _.find(browsers, function(browser) {
+  return browsers.find(function(browser) {
     return browser.name === browserName;
   });
 }

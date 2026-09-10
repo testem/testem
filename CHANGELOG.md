@@ -12,6 +12,10 @@
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 
+### Changed
+
+- **`lodash` is no longer a dependency.** Remaining helpers use `Object.assign`, `Array.find`, and a `Set`-based uniq by `src`.
+
 ## Earlier releases
 
 See https://github.com/testem/testem/releases
