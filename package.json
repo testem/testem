@@ -17,7 +17,7 @@
     "url": "https://github.com/testem/testem/issues"
   },
   "engines": {
-    "node": "^22.12.0 || ^24.0.0 || >= 26.0.0"
+    "node": "^22.17.0 || ^24.0.0 || >= 26.0.0"
   },
   "license": "MIT",
   "dependencies": {
@@ -30,7 +30,6 @@
     "consolidate": "^1.0.4",
     "execa": "^9.6.1",
     "express": "^5.2.1",
-    "glob": "^13.0.6",
     "httpxy": "^0.5.5",
     "js-yaml": "^5.3.0",
     "lodash": "^4.18.1",
