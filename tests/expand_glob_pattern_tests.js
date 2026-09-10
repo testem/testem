@@ -37,6 +37,17 @@ describe('expandGlobPattern', function() {
     });
   });
 
+  it('expands ** across nested directories', function() {
+    const nestedPattern = convertToPosix(
+      path.join(__dirname, 'fixtures', 'nested_src_files', '**', '*.js'),
+    );
+    return expandGlobPattern(nestedPattern, []).then(function(files) {
+      expect(files).to.have.lengthOf(1);
+      expect(path.basename(files[0])).to.equal('file.js');
+      expect(convertToPosix(files[0])).to.match(/nested_src_files\/with\/nested\/file\.js$/);
+    });
+  });
+
   it('returns an empty array when the pattern matches no files', function() {
     const none = convertToPosix(
       path.join(__dirname, 'fixtures', 'no_such_prefix_zzzz', '*.js'),
