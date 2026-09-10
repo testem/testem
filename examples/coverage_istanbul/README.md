@@ -7,7 +7,7 @@ This is an example of how to generate a code coverage report using Testem + Ista
 
 This example stays on jasmine-core 5 because `tests.html` hardcodes `boot0.js`/`boot1.js`. jasmine-core 7 custom pages load `boot.js` only.
 
-First install dependencies (`istanbul`, `jasmine-core`, `rimraf`)
+First install dependencies (`istanbul`, `jasmine-core`)
 
     npm install
 
