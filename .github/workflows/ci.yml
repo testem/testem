@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
       - "0.6"
       - "0.8.x"
       - v*
