@@ -524,6 +524,8 @@ If your process outputs test results in [TAP](https://en.wikipedia.org/wiki/Test
 
 When this is done, Testem will read in the process's stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process's stdout output from the console log panel, although it will still display the stderr.
 
+Jest has no built-in TAP reporter, so the equivalent is a package such as [`jest-tap-reporter`](https://www.npmjs.com/package/jest-tap-reporter) plus `"protocol": "tap"`. See the [Jest example](examples/jest).
+
 Headless Chrome
 ---------------
 
@@ -709,6 +711,7 @@ I've created [examples](https://github.com/testem/testem/tree/main/examples/) fo
 * [Simple Mocha Project](https://github.com/testem/testem/tree/main/examples/mocha_simple)
 * [Mocha + Chai](https://github.com/testem/testem/tree/main/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/main/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Jest](https://github.com/testem/testem/tree/main/examples/jest) - Node Jest via a TAP process launcher (`jest-tap-reporter`).
 * [Custom Test Framework](https://github.com/testem/testem/tree/main/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/main/examples/tape_example)
 * [Browserify Project](https://github.com/testem/testem/tree/main/examples/browserify)
