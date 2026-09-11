@@ -24,7 +24,7 @@ module.exports = {
   // instrument files, spin up http server to write coverage data to disk
   before_tests: function(config, data, callback)
   {
-    exec('node ./node_modules/istanbul/lib/cli.js instrument --output instrumented src', function(err, stdout, stderr)
+    exec('node ./node_modules/nyc/bin/nyc.js instrument src instrumented', function(err, stdout, stderr)
     {
       if (err) {
         callback(err.code, stdout + stderr);
@@ -33,10 +33,11 @@ module.exports = {
 
       // if instrumented successfully
       // start the server
+      fs.mkdirSync(path.join(__dirname, '.nyc_output'), { recursive: true });
       server = http.createServer(function(req, res) {
         console.error('... Received coverage of', req.headers['content-length'], 'length');
         // need separate files per browser/client
-        req.pipe(fs.createWriteStream(path.join(__dirname, 'coverage-' + Math.random() + '.json')));
+        req.pipe(fs.createWriteStream(path.join(__dirname, '.nyc_output', 'coverage-' + Math.random() + '.json')));
         // make sure we've got it all
         req.on('end', res.end.bind(res));
       }).listen(port, function(serverErr) {
@@ -55,14 +56,14 @@ module.exports = {
     server.close();
 
     // generate report
-    exec('node ./node_modules/istanbul/lib/cli.js report', function(err, stdout, stderr) {
+    exec('node ./node_modules/nyc/bin/nyc.js report --reporter=lcov --reporter=html', function(err, stdout, stderr) {
       if (err) return callback(err.code, stdout + stderr);
 
       // check on generated report
       var lcov = fs.existsSync(path.join(__dirname, 'coverage/lcov.info')) &&
         fs.readFileSync(path.join(__dirname, 'coverage/lcov.info'), 'utf8').indexOf('end_of_record') !== -1;
-      var report = fs.existsSync(path.join(__dirname, 'coverage/lcov-report/index.html')) &&
-        fs.readFileSync(path.join(__dirname, 'coverage/lcov-report/index.html'), 'utf8').indexOf('src/index.html') !== -1;
+      var report = fs.existsSync(path.join(__dirname, 'coverage/index.html')) &&
+        fs.readFileSync(path.join(__dirname, 'coverage/index.html'), 'utf8').indexOf('hello.js') !== -1;
 
       if (!lcov || !report) {
         callback(new Error('Unable to generate report'));
