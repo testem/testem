@@ -19,6 +19,7 @@ const skipDefiningReporter = [
   'node_tap_example',
   'node_test',
   'vitest',
+  'jest',
   'electron'
 ];
 const examplesPath = path.join(__dirname, '../examples');

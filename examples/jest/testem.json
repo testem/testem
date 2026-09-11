@@ -1,0 +1,10 @@
+{
+  "launchers": {
+    "Jest": {
+      "command": "npm run jest",
+      "protocol": "tap"
+    }
+  },
+  "launch_in_dev": ["Jest"],
+  "launch_in_ci": ["Jest"]
+}
