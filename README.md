@@ -1,7 +1,7 @@
 Got Scripts? Test&rsquo;em!
 =================
 
-[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amaster) [![npm version](https://badge.fury.io/js/testem.svg)](https://badge.fury.io/js/testem)
+[![Build Status](https://github.com/testem/testem/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/testem/testem/actions/workflows/ci.yml?query=branch%3Amain) [![npm version](https://badge.fury.io/js/testem.svg)](https://badge.fury.io/js/testem)
 
 Testem is a **JavaScript test runner** that runs your tests in **real desktop browsers**—Chrome, Firefox, Safari, Edge, and others you launch—so your specs execute in the same browser engines and DOM your users get, not a pretend environment. It also runs tests in **[Node](https://nodejs.org/)**, **Chrome** (including **headless** runs via `browser_args`, e.g. `--headless`), or any launcher you configure. It is **framework-agnostic** and aimed at **any kind of tests** you want to run: unit, integration, end-to-end style suites, or custom setups—you pick the style; Testem wires it to the browser or process.
 
@@ -60,11 +60,11 @@ The simplest way to use Testem, in the TDD spirit, is to start in an empty direc
 
 You will see a terminal-based interface which looks like this
 
-![Initial interface](https://github.com/testem/testem/raw/master/images/initial.png)
+![Initial interface](https://github.com/testem/testem/raw/main/images/initial.png)
 
 Now open a **real browser** (the URL Testem prints is a normal page in Chrome, Firefox, Safari, etc.) and go to the specified URL. You should now see
 
-![Zero of zero](https://github.com/testem/testem/raw/master/images/zeros.png)
+![Zero of zero](https://github.com/testem/testem/raw/main/images/zeros.png)
 
 We see 0/0 for tests because at this point we haven't written any code. As we write them, Testem will pick up any `.js` files
 that were added, include them, and if there are tests, run them automatically. So let's first write `hello_spec.js` in the spirit of "test first" (written in Jasmine)
@@ -78,7 +78,7 @@ describe('hello', function(){
 ```
 Save that file and now you should see
 
-![Red](https://github.com/testem/testem/raw/master/images/red.png)
+![Red](https://github.com/testem/testem/raw/main/images/red.png)
 
 Testem should automatically pick up the new files you've added and also any changes that you make to them and rerun the tests. The test fails as we'd expect. Now we implement the spec like so in `hello.js`
 
@@ -90,7 +90,7 @@ function hello(){
 
 So you should now see
 
-![Green](https://github.com/testem/testem/raw/master/images/green.png)
+![Green](https://github.com/testem/testem/raw/main/images/green.png)
 
 ### Using the Text User Interface
 
@@ -143,7 +143,7 @@ To use Testem for continuous integration
 
     testem ci
 
-**GitHub Actions** is a common way to run Testem in CI: add a workflow job that runs `testem ci` (often with the **Headless Chrome** or **Chromium** launcher). This project’s own workflow is in [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml).
+**GitHub Actions** is a common way to run Testem in CI: add a workflow job that runs `testem ci` (often with the **Headless Chrome** or **Chromium** launcher). This project’s own workflow is in [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/main/.github/workflows/ci.yml).
 
 In CI mode, Testem runs your tests on all the browsers that are available on the system one after another.
 
@@ -178,9 +178,9 @@ When you run `testem ci` to run tests, it outputs the results in the [TAP](https
 
     # ok
 
-TAP is a human-readable and language-agnostic test result format. On **GitHub Actions**, a typical pattern is a step that runs `testem ci` and relies on the exit code to fail the job (see [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/master/.github/workflows/ci.yml) in this repository). For **Jenkins** and **TeamCity**, use TAP plugins:
+TAP is a human-readable and language-agnostic test result format. On **GitHub Actions**, a typical pattern is a step that runs `testem ci` and relies on the exit code to fail the job (see [`.github/workflows/ci.yml`](https://github.com/testem/testem/blob/main/.github/workflows/ci.yml) in this repository). For **Jenkins** and **TeamCity**, use TAP plugins:
 
-* [Jenkins TAP plugin](https://plugins.jenkins.io/tap/) - I've added [detailed instructions](https://github.com/testem/testem/blob/master/docs/use_with_jenkins.md) for setup with Jenkins.
+* [Jenkins TAP plugin](https://plugins.jenkins.io/tap/) - I've added [detailed instructions](https://github.com/testem/testem/blob/main/docs/use_with_jenkins.md) for setup with Jenkins.
 * [TeamCity TAP plugin](https://github.com/pavelsher/teamcity-tap-parser)
 
 ## TAP Options
@@ -606,7 +606,7 @@ Let's say you want to serve `tests.html` at the top level url `/tests.html`, all
 DIY: Use Any Test Framework
 ---------------------------
 
-If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/master/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
+If you want to use Testem with a test framework that's not supported out of the box, you can write your own custom test framework adapter. See [customAdapter.js](https://github.com/testem/testem/blob/main/examples/custom_adapter/customAdapter.js) for an example of how to write a custom adapter.
 
 Then, to use it, in your config file simply set
 
@@ -614,7 +614,7 @@ Then, to use it, in your config file simply set
 "framework": "custom"
 ```
 
-And then make sure you include the adapter code in your test suite and you are ready to go. See here for the [full example](https://github.com/testem/testem/tree/master/examples/custom_adapter).
+And then make sure you include the adapter code in your test suite and you are ready to go. See here for the [full example](https://github.com/testem/testem/tree/main/examples/custom_adapter).
 
 Native notifications
 --------------------------------
@@ -657,11 +657,11 @@ If you need to run a preprocessor (or indeed any shell command before the start 
 
 On Windows, list files explicitly in string hooks like this—cmd.exe does not expand `*` for external programs (see [Available hooks](docs/config_file.md#available-hooks) and the [coffeescript example](examples/coffeescript)). Testem's own `src_files` / `watch_files` globs are expanded by Testem, not by the hook shell.
 
-or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/master/examples/babel)):
+or, with Babel (see the [Babel example](https://github.com/testem/testem/tree/main/examples/babel)):
 
     "before_tests": "babel src --out-dir ."
 
-or, with a `tsconfig.json` that emits JavaScript next to your project (see the [TypeScript example](https://github.com/testem/testem/tree/master/examples/typescript)):
+or, with a `tsconfig.json` that emits JavaScript next to your project (see the [TypeScript example](https://github.com/testem/testem/tree/main/examples/typescript)):
 
     "before_tests": "tsc"
 
@@ -695,29 +695,29 @@ If you would prefer simply to clean up when Testem exits, you can use the `on_ex
 Example Projects
 ----------------
 
-I've created [examples](https://github.com/testem/testem/tree/master/examples/) for various setups
+I've created [examples](https://github.com/testem/testem/tree/main/examples/) for various setups
 
-* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/master/examples/vite)
-* [Electron](https://github.com/testem/testem/tree/master/examples/electron)
-* [TypeScript Project](https://github.com/testem/testem/tree/master/examples/typescript)
-* [ESLint Example](https://github.com/testem/testem/tree/master/examples/eslint)
-* [Babel Project](https://github.com/testem/testem/tree/master/examples/babel)
-* [Simple QUnit project](https://github.com/testem/testem/tree/master/examples/qunit_simple)
-* [Simple Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_simple)
-* [Jasmine 2](https://github.com/testem/testem/tree/master/examples/jasmine2)
-* [Custom Jasmine project](https://github.com/testem/testem/tree/master/examples/jasmine_custom)
-* [Simple Mocha Project](https://github.com/testem/testem/tree/master/examples/mocha_simple)
-* [Mocha + Chai](https://github.com/testem/testem/tree/master/examples/mocha_chai_simple)
-* [Hybrid Project](https://github.com/testem/testem/tree/master/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
-* [Custom Test Framework](https://github.com/testem/testem/tree/master/examples/custom_adapter)
-* [Tape Example](https://github.com/testem/testem/tree/master/examples/tape_example)
-* [Browserify Project](https://github.com/testem/testem/tree/master/examples/browserify)
-* [JSHint Example](https://github.com/testem/testem/tree/master/examples/jshint)
-* [Coffeescript Project](https://github.com/testem/testem/tree/master/examples/coffeescript)
-* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/master/examples/jasmine_requirejs)
-* [BrowserStack Integration](https://github.com/testem/testem/tree/master/examples/browserstack)
-* [SauceLabs Integration](https://github.com/testem/testem/tree/master/examples/saucelabs)
-* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/master/examples/coverage_istanbul)
+* [Vite (middleware + plugin)](https://github.com/testem/testem/tree/main/examples/vite)
+* [Electron](https://github.com/testem/testem/tree/main/examples/electron)
+* [TypeScript Project](https://github.com/testem/testem/tree/main/examples/typescript)
+* [ESLint Example](https://github.com/testem/testem/tree/main/examples/eslint)
+* [Babel Project](https://github.com/testem/testem/tree/main/examples/babel)
+* [Simple QUnit project](https://github.com/testem/testem/tree/main/examples/qunit_simple)
+* [Simple Jasmine project](https://github.com/testem/testem/tree/main/examples/jasmine_simple)
+* [Jasmine 2](https://github.com/testem/testem/tree/main/examples/jasmine2)
+* [Custom Jasmine project](https://github.com/testem/testem/tree/main/examples/jasmine_custom)
+* [Simple Mocha Project](https://github.com/testem/testem/tree/main/examples/mocha_simple)
+* [Mocha + Chai](https://github.com/testem/testem/tree/main/examples/mocha_chai_simple)
+* [Hybrid Project](https://github.com/testem/testem/tree/main/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
+* [Custom Test Framework](https://github.com/testem/testem/tree/main/examples/custom_adapter)
+* [Tape Example](https://github.com/testem/testem/tree/main/examples/tape_example)
+* [Browserify Project](https://github.com/testem/testem/tree/main/examples/browserify)
+* [JSHint Example](https://github.com/testem/testem/tree/main/examples/jshint)
+* [Coffeescript Project](https://github.com/testem/testem/tree/main/examples/coffeescript)
+* [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/main/examples/jasmine_requirejs)
+* [BrowserStack Integration](https://github.com/testem/testem/tree/main/examples/browserstack)
+* [SauceLabs Integration](https://github.com/testem/testem/tree/main/examples/saucelabs)
+* [Code Coverage with Istanbul](https://github.com/testem/testem/tree/main/examples/coverage_istanbul)
 
 Historical Screencasts
 ----------------------
@@ -731,7 +731,7 @@ These YouTube screencasts are from around **2012** and may not match the current
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/testem/testem/blob/master/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/main/CONTRIBUTING.md), I am going to do my best to stay out of your way.
 
 Core Maintainer(s)
 ------------------

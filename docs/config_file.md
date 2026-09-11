@@ -135,7 +135,7 @@ Generally supported but deprecated: IE 11, PhantomJS (using additional transpila
     phantomjs_args:              [Array]   custom arguments for the phantomjs launcher from https://phantomjs.org/api/command-line.html
     phantomjs_launch_script:     [String]  path of custom phantomjs launch script
     proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/unjs/httpxy#options
-    reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/master/docs/custom_reporter.md
+    reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/main/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     route or routes:             [Object]  overrides for assets paths
     socket_heartbeat_timeout     [Number]  heartbeat timeout on browser socket in seconds (defaults to `browser_disconnect_timeout` if `browser_disconnect_timeout` is provided. Else, 5s)
