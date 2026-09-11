@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "jasmine-core": "^5.1.0",
+    "jasmine-core": "^7",
     "nyc": "^18.0.0"
   },
   "scripts": {
