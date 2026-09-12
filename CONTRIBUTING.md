@@ -66,6 +66,7 @@ There are also integration tests that run every example in the `examples` folder
 
 * **`skipExamples`** — `browserstack` and `saucelabs` (need credentials; not run in CI).
 * **`skipOnWindows`** — none. The `coffeescript` example lists CoffeeScript sources explicitly instead of `*.coffee` (cmd.exe does not expand globs for external programs). The `webpack` example uses `npx webpack` so local `webpack-cli` runs without relying on PATH. See [`examples/coffeescript`](examples/coffeescript) and [Available hooks](docs/config_file.md#available-hooks).
+* **`skipDefiningReporter`** — Node-only examples (`node_example`, `node_tap_example`, `jest`) and `electron`. The runner otherwise appends `--launch "Headless Firefox"`, which these examples do not use.
 * **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
 
 Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
