@@ -83,6 +83,10 @@ jobs:
     name: legacy-phantomjs
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # PhantomJS 2.1.1 reads the system OpenSSL config. Ubuntu 24's
+    # openssl.cnf loads a providers module that the old binary cannot.
+    env:
+      OPENSSL_CONF: /dev/null
 
     steps:
       - uses: actions/checkout@v7

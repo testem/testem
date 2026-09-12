@@ -35,6 +35,11 @@ function requiredPhantom() {
 }
 
 async function main() {
+  // PhantomJS 2.1.1 cannot load OpenSSL 3's providers module (Ubuntu 24+).
+  if (process.platform === 'linux' && process.env.OPENSSL_CONF === undefined) {
+    process.env.OPENSSL_CONF = '/dev/null';
+  }
+
   const launchers = await getAvailableLaunchers();
   if (!launchers.phantomjs) {
     const message = 'PhantomJS is not installed.';
