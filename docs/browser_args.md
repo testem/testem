@@ -78,7 +78,7 @@ Below is a list of built-in launchers. Use the names of the launchers as keys in
 
 Note: This guide doesn't go into depth about the numerous command line arguments supported by each browser. It's a good idea to make sure the arguments you want to use work on the command line _before_ including them in the `browser_args` options.
 
-* Chrome — for **headless** runs, pass flags such as `--headless` here (this is the recommended approach instead of the legacy PhantomJS launcher)
+* Chrome — for **headless** runs, pass flags such as `--headless` here, or use the built-in **Headless Chrome** launcher
 * Chrome Canary
 * Chromium
 * Firefox
@@ -102,26 +102,3 @@ Potential warnings:
 * One or more of the values in the hash is an empty array or an empty string
 * One of the values in the hash is an array but contains non-string or empty string values
 * One or more of the values in the hash duplicates an argument for a given browser
-
-PhantomJS Args (Deprecated)
---------------
-
-Prior to the availability of the `browser_args` configuration option, Testem allowed for a `phantomjs_args` option. This option is still available; however, it has the same purpose as `browser_args`. New projects should avoid using this.
-
-These two example options are essentially the same:
-
-```javascript
-"phantom_args": [
-  "--remote-debugger-port=1234"
-],
-"browser_args": [
-  "PhantomJS": "--remote-debugger-port=1234"
-]
-```
-
-While it may be strange to include both, this is not invalid.
-
-Note:
-
-* If the two options contain different flags, they will be combined
-* If the two options produce duplicates, they will be deduped
