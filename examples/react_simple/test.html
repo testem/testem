@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em</title>
+<link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.1.0?dev",
+    "react-dom/client": "https://esm.sh/react-dom@19.1.0/client?dev&external=react"
+  }
+}
+</script>
+</head>
+<body>
+<div id="mocha"></div>
+<script src="/node_modules/mocha/mocha.js"></script>
+<script src="/testem.js"></script>
+<script>
+mocha.setup('bdd');
+Testem.hookIntoTestFramework();
+</script>
+<script type="module" src="counter_spec.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "test_page": "test.html",
+  "src_files": [
+    "*.js"
+  ]
+}
