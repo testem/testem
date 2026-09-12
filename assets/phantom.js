@@ -7,7 +7,12 @@ page.viewportSize = {
   width: 1024,
   height: 768
 };
-page.open(url);
+page.open(url, function(status) {
+  if (status !== 'success') {
+    console.log('Failed to load: ' + url);
+    phantom.exit(1);
+  }
+});
 page.onError = function(msg, trace) {
   console.log(msg);
   trace.forEach(function(item) {
