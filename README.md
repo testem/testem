@@ -707,6 +707,7 @@ I've created [examples](https://github.com/testem/testem/tree/main/examples/) fo
 * [Jasmine 2](https://github.com/testem/testem/tree/main/examples/jasmine2)
 * [Custom Jasmine project](https://github.com/testem/testem/tree/main/examples/jasmine_custom)
 * [Simple Mocha Project](https://github.com/testem/testem/tree/main/examples/mocha_simple)
+* [Simple React](https://github.com/testem/testem/tree/main/examples/react_simple) - React 19 in a real browser via import maps, no bundler.
 * [Mocha + Chai](https://github.com/testem/testem/tree/main/examples/mocha_chai_simple)
 * [Hybrid Project](https://github.com/testem/testem/tree/main/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
 * [Custom Test Framework](https://github.com/testem/testem/tree/main/examples/custom_adapter)
