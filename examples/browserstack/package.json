@@ -1,11 +1,8 @@
 {
   "devDependencies": {
-    "istanbul": "^0.4.5",
-    "jasmine-core": "^5.1.0",
-    "rimraf": "^6.1.3"
+    "jasmine-core": "^7"
   },
   "scripts": {
-    "pretest": "rimraf --glob coverage instrumented coverage*.json",
     "test": "node ../../testem.js ci -P 10"
   },
   "repository": {
