@@ -54,5 +54,24 @@ describe('Process', function() {
       expect(await killed).to.equal(0);
       expect(process._killTimer).to.be.null();
     });
+
+    it('reports processExit once when the child exits before the kill', async function() {
+      const child = createFakeChildProcess();
+      const process = new Process('test', { killTimeout: 50 }, child);
+      const exits = [];
+
+      process.on('processExit', (code, stdout) => exits.push([code, stdout]));
+
+      child.stdout.emit('data', 'buffered output');
+      child.emit('exit', 0);
+
+      // The child is gone but its stdio has not closed, so 'close' may never
+      // arrive. Runners wait on processExit to finish, so report it anyway.
+      expect(await process.kill()).to.equal(0);
+      expect(exits).to.deep.equal([[0, 'buffered output']]);
+
+      child.emit('close', 0);
+      expect(exits).to.have.lengthOf(1);
+    });
   });
 });

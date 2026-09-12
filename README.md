@@ -33,7 +33,7 @@ Features
 
 Installation
 ------------
-Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^20.19.0**, **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
+Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
 
 **Recommended:** install Testem **both** as a **dev dependency** (so your project pins a version) **and** **globally** (so the `testem` command is always available on your `PATH`):
 
@@ -54,9 +54,14 @@ As stated before, Testem supports two use cases: test-driven-development and con
 Development Mode
 ----------------
 
-The simplest way to use Testem, in the TDD spirit, is to start in an empty directory and run the command
+The simplest way to use Testem, in the TDD spirit, is to start in an empty directory, install a test framework, and run the command
 
-    testem
+```bash
+npm install --save-dev jasmine-core
+testem
+```
+
+The default runner uses modern Jasmine (`jasmine-core`). You can also use `mocha`, `qunit`, or `mocha` + `chai` by setting `"framework"` in `testem.json` and installing the matching packages (see [Browser framework dependencies](#browser-framework-dependencies)).
 
 You will see a terminal-based interface which looks like this
 
@@ -98,6 +103,7 @@ In development mode, Testem has a text-based graphical user interface which uses
 
 * ENTER : Run the tests
 * q : Quit
+* p : Pause / unpause file-watch reruns
 * ← LEFT ARROW  : Move to the next browser tab on the left
 * → RIGHT ARROW : Move to the next browser tab on the right
 * TAB : switch the target text panel between the top and bottom halves of the split panel (if a split is present)
@@ -116,14 +122,27 @@ relevant file is added, edited, or removed. Watching is implemented with
 
 * **`src_files`** — Glob patterns for source files whose changes should trigger a run (defaults to
   `*.js` when unset). This is the main *watch list*.
-* **`watch_files`** — Optional; if set, these patterns are watched instead of defaulting to
-  `src_files` (see `docs/config_file.md`).
-* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `node_modules`).
+* **`watch_files`** — Optional extra watch patterns (see `docs/config_file.md`).
+* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `dist/**`).
 * **`disable_watching`** — Set to `true` to turn off the file watcher entirely.
 
 Testem watches the **current working directory** and applies your include/ignore patterns to
 events from the watcher. You do not need to list every file explicitly; globs and ignores follow
 the same policy as in the config reference.
+
+By default the watcher does **not** descend into `node_modules` or `.git`. To rerun when a
+linked or local package changes, name that folder in `src_files` or `watch_files`:
+
+```json
+{
+  "src_files": ["lib/**/*.js", "tests/**/*.js"],
+  "watch_files": ["node_modules/my-pkg/**/*.js"]
+}
+```
+
+Name only the packages you need. A pattern that contains `node_modules` lifts the default skip
+for that tree (`.git` stays skipped unless you name it the same way). Do not use
+`node_modules/**` unless you really want every install to trigger a rerun.
 
 **Troubleshooting:** On some setups (Docker, network filesystems, VMs), native `fs.watch` can be
 flaky. Chokidar supports environment variables such as `CHOKIDAR_USE_POLLING=1` (force polling)
@@ -286,7 +305,7 @@ This calls for the `testem.json` configuration file (you can also alternatively 
 }
 ```
 
-The default `framework` is still `"jasmine"` (Jasmine 1.x). That default is **deprecated** and will be removed in the next version of Testem. New projects should use `"jasmine2"` with `jasmine-core` (see [Browser framework dependencies](#browser-framework-dependencies)).
+The default `framework` is `"jasmine2"` (modern Jasmine via `jasmine-core`). `"jasmine"` is an alias for the same runner. Install `jasmine-core` in your project (see [Browser framework dependencies](#browser-framework-dependencies)).
 
 The `src_files` can also be unix glob patterns.
 
@@ -317,14 +336,16 @@ Read [more details](docs/config_file.md) about the config options.
 Browser framework dependencies
 ------------------------------
 
-Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine2` runners **prefer** files from `/node_modules/` in the project `cwd`. If those packages are not installed, Testem still loads the previous CDN URLs (Mocha 2.3.4, Chai 3.4.1, QUnit 1.20.0, Jasmine 2.4.1). Installing the packages is optional on this version and required in the next major version.
+Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load **only** from `/node_modules/` in the project `cwd` (or from a routed `/node_modules` path). Install the matching npm packages; missing packages are logged and the browser receives 404s for those assets.
 
-| `framework` | Install for modern versions |
+| `framework` | Required packages |
 |---|---|
-| `jasmine2` | `jasmine-core` |
+| `jasmine` / `jasmine2` | `jasmine-core` |
 | `qunit` | `qunit` |
 | `mocha` | `mocha` |
 | `mocha+chai` | `mocha` and `chai` |
+
+Recommended versions for new projects: `mocha@^12`, `chai@^6`, `jasmine-core@^5`, `qunit@^2`.
 
 Run `npm install` in the project directory. In a monorepo, or when `cwd` is not the install root, map the path with `routes`:
 
@@ -338,23 +359,27 @@ Run `npm install` in the project directory. In a monorepo, or when `cwd` is not 
 
 The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses the UMD build `chai/chai.js` as a classic script. Chai 5+ (`"type": "module"`) is imported as an ES module, then your spec files load as classic scripts (`var expect = chai.expect` still works).
 
-`jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4. Incomplete installs fall back to the CDN pin.
+`jasmine` / `jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4.
 
-### Jasmine 1.x deprecation
+### Migrating from Testem 3.x
 
-`framework: "jasmine"` (the default) still runs Jasmine 1.3.1 from CDN. Testem logs a deprecation warning on the server, and the Jasmine 1 adapter logs a warning in the browser (including custom `test_page`s that still load Jasmine 1).
+Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 
-**The next version of Testem will not support Jasmine 1.** Migrate with:
+1. Install the framework packages listed above (`npm install --save-dev jasmine-core`, etc.).
+2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
+3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
+4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
+5. File watching no longer descends into `node_modules` or `.git` by default. If you relied on reruns when a linked or `file:` package changed, add that folder to `src_files` or `watch_files` (see [File watching](#file-watching)):
 
-```json
-{
-  "framework": "jasmine2"
-}
-```
+    ```json
+    {
+      "src_files": ["lib/**/*.js", "tests/**/*.js"],
+      "watch_files": ["node_modules/my-pkg/**/*.js"]
+    }
+    ```
 
-```bash
-npm install --save-dev jasmine-core
-```
+    Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
+6. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
@@ -374,7 +399,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page. Prefer loading those frameworks from `/node_modules/...` (see [examples/qunit_lazy](examples/qunit_lazy) and [examples/vite](examples/vite)); CDN URLs still work.
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page. Load those frameworks from `/node_modules/...` (see [examples/qunit_lazy](examples/qunit_lazy) and [examples/vite](examples/vite)).
 
 ```html
 <script src="/testem.js"></script>
@@ -731,7 +756,7 @@ These YouTube screencasts are from around **2012** and may not match the current
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/testem/testem/blob/main/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/main/CONTRIBUTING.md), I am going to do my best to stay out of your way. Dashboard logic is covered by `npm test`; a real-PTY smoke is `npm run test:tui-e2e` (see CONTRIBUTING).
 
 Core Maintainer(s)
 ------------------
@@ -749,7 +774,7 @@ Testem depends on the following great software
 * [Node](https://nodejs.org/)
 * [Socket.IO](https://socket.io/)
 * [tap-parser](https://github.com/tapjs/tap-parser)
-* [Charm](https://github.com/aheckmann/charm)
+* [terminal-kit](https://github.com/cronvel/terminal-kit)
 * [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
 * [Express](https://expressjs.com/)

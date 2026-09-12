@@ -508,12 +508,12 @@ describe('Config', function() {
     });
     it('respects order', function(done) {
       config.set('src_files', [
-        'ui/fake_screen.js',
+        'ui/keys_tests.js',
         'ci/ci_tests.js'
       ]);
       config.getSrcFiles(function(err, files) {
         expect(files).to.deep.equal([
-          fileEntry(path.join('ui', 'fake_screen.js')),
+          fileEntry(path.join('ui', 'keys_tests.js')),
           fileEntry(path.join('ci', 'ci_tests.js'))
         ]);
         done();

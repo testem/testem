@@ -7,7 +7,7 @@ Getting Started
 ---------------
 
 * Fork and checkout [github.com/testem/testem](https://github.com/testem/testem)
-* Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 20.19+, 22.12+, 24.x, or 26+).
+* Use a [Node.js](https://nodejs.org/) version that satisfies the `engines.node` range in [`package.json`](package.json) (currently Node 22.12+, 24.x, or 26+).
 * Run `npm install` and `npm test` to make sure you're off to a good start
 
 Brief Code Walk Through
@@ -51,6 +51,21 @@ Or in the spirit of eating our own dog food:
 
     testem
 
+Dashboard coverage is three layers. Do **not** add `tests/tui-e2e/**` to the Mocha glob (`npm test`).
+
+| Command | What it is | TTY | CI |
+|---|---|---|---|
+| `npm test` | Mocha, including `tests/ui/*` via `createTerminal` (no real TTY) | No | Yes (`test` job) |
+| `npm run test:tui-e2e` | `@microsoft/tui-test` black-box dashboard; real PTY/ConPTY; fixture TAP only | Child PTY | Yes (`tui-e2e` job, Ubuntu / macOS / Windows, Node 22, `fail-fast: false`) |
+| `npm run dogfood:tui` | Interactive `testem` + browsers + unit-suite Mocha tab | Your terminal | **No** |
+| `npm run integration` | `testem ci` on examples | No | Yes |
+
+`test:tui-e2e` uses port **7401** (`testem.tui-e2e.js`). Dogfood uses **7400**. `tests/ci/ci_tests.js` binds **7357**. Failures write `artifacts/tui-e2e/` (gitignored); CI uploads `tui-e2e-<os>`. Run one session with `TESTEM_TUI_E2E=tabs npm run test:tui-e2e`. Sessions: `startup`, `pause` (`p`, ENTER does not unpause), `tabs` (LEFT/RIGHT wrap across Alpha/Beta/Long, TAB stays on the tab), `paging` (UP/DOWN, SPACE via raw `write(' ')`, `b`/`u`/`d`), `rerun` (ENTER), `unbound`, `quit_lower`, `quit_upper`, `quit_ctrl_c`, `quit_twice`. SPACE is sent with `write(' ')`, not `press('Space')` or `type(' ')` — those never arrive on GitHub's macos-26 PTY. Split pane, browsers, file-watch, and the EMFILE popup stay on `dogfood:tui` / `createTerminal`. On Windows use the same command; ConPTY is automatic — do not wrap it in `script` or mintty. `@microsoft/tui-test` is a **devDependency** (`@beta`); do not add it to `dependencies` or published `files`.
+
+To check the dashboard on a real terminal (split pane, browsers):
+
+    npm run dogfood:tui
+
 To lint your code:
 
     npm run lint
@@ -68,7 +83,7 @@ There are also integration tests that run every example in the `examples` folder
 * **`skipOnWindows`** — none. The `coffeescript` example lists CoffeeScript sources explicitly instead of `*.coffee` (cmd.exe does not expand globs for external programs). The `webpack` example uses `npx webpack` so local `webpack-cli` runs without relying on PATH. See [`examples/coffeescript`](examples/coffeescript) and [Available hooks](docs/config_file.md#available-hooks).
 * **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
 
-Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
+Examples that use built-in runners must list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Custom `test_page` examples load frameworks from `/node_modules/` directly. `mocha_simple` uses local Mocha plus Chai 6 (ESM).
 
 Node + headless browser:
 

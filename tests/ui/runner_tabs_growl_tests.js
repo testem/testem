@@ -2,14 +2,12 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 const Backbone = require('backbone');
 
-const screen = require('./fake_screen');
 const Config = require('../../lib/config');
-const isWin = require('../../lib/utils/is-win')();
 const toastNotifyPath = require.resolve('../../lib/reporters/dev/toast_notify');
 const runnertabs = require('../../lib/reporters/dev/runner_tabs');
 const RunnerTab = runnertabs.RunnerTab;
 
-describe('RunnerTab growl / native notifications', !isWin ? function () {
+describe('RunnerTab growl / native notifications', function () {
   let sandbox;
   let notifyStub;
 
@@ -24,7 +22,6 @@ describe('RunnerTab growl / native notifications', !isWin ? function () {
   });
 
   function buildTab(progOptions, runnerAttrs) {
-    screen.$setSize(20, 8);
     const runner = new Backbone.Model(
       Object.assign(
         {
@@ -46,8 +43,7 @@ describe('RunnerTab growl / native notifications', !isWin ? function () {
       runner,
       appview,
       selected: true,
-      index: 0,
-      screen,
+      index: 0
     });
     return { runner, tab };
   }
@@ -79,6 +75,4 @@ describe('RunnerTab growl / native notifications', !isWin ? function () {
       message: 'Bob : finished',
     });
   });
-} : function () {
-  xit('TODO: Fix and re-enable for windows');
 });
