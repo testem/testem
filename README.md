@@ -33,7 +33,7 @@ Features
 
 Installation
 ------------
-Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^20.19.0**, **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
+Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
 
 **Recommended:** install Testem **both** as a **dev dependency** (so your project pins a version) **and** **globally** (so the `testem` command is always available on your `PATH`):
 
@@ -54,9 +54,14 @@ As stated before, Testem supports two use cases: test-driven-development and con
 Development Mode
 ----------------
 
-The simplest way to use Testem, in the TDD spirit, is to start in an empty directory and run the command
+The simplest way to use Testem, in the TDD spirit, is to start in an empty directory, install a test framework, and run the command
 
-    testem
+```bash
+npm install --save-dev jasmine-core
+testem
+```
+
+The default runner uses modern Jasmine (`jasmine-core`). You can also use `mocha`, `qunit`, or `mocha` + `chai` by setting `"framework"` in `testem.json` and installing the matching packages (see [Browser framework dependencies](#browser-framework-dependencies)).
 
 You will see a terminal-based interface which looks like this
 
@@ -286,7 +291,7 @@ This calls for the `testem.json` configuration file (you can also alternatively 
 }
 ```
 
-The default `framework` is still `"jasmine"` (Jasmine 1.x). That default is **deprecated** and will be removed in the next version of Testem. New projects should use `"jasmine2"` with `jasmine-core` (see [Browser framework dependencies](#browser-framework-dependencies)).
+The default `framework` is `"jasmine2"` (modern Jasmine via `jasmine-core`). `"jasmine"` is an alias for the same runner. Install `jasmine-core` in your project (see [Browser framework dependencies](#browser-framework-dependencies)).
 
 The `src_files` can also be unix glob patterns.
 
@@ -317,14 +322,16 @@ Read [more details](docs/config_file.md) about the config options.
 Browser framework dependencies
 ------------------------------
 
-Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine2` runners **prefer** files from `/node_modules/` in the project `cwd`. If those packages are not installed, Testem still loads the previous CDN URLs (Mocha 2.3.4, Chai 3.4.1, QUnit 1.20.0, Jasmine 2.4.1). Installing the packages is optional on this version and required in the next major version.
+Built-in `mocha`, `mocha+chai`, `qunit`, and `jasmine` / `jasmine2` runners load **only** from `/node_modules/` in the project `cwd` (or from a routed `/node_modules` path). Install the matching npm packages; missing packages are logged and the browser receives 404s for those assets.
 
-| `framework` | Install for modern versions |
+| `framework` | Required packages |
 |---|---|
-| `jasmine2` | `jasmine-core` |
+| `jasmine` / `jasmine2` | `jasmine-core` |
 | `qunit` | `qunit` |
 | `mocha` | `mocha` |
 | `mocha+chai` | `mocha` and `chai` |
+
+Recommended versions for new projects: `mocha@^12`, `chai@^6`, `jasmine-core@^5`, `qunit@^2`.
 
 Run `npm install` in the project directory. In a monorepo, or when `cwd` is not the install root, map the path with `routes`:
 
@@ -338,23 +345,16 @@ Run `npm install` in the project directory. In a monorepo, or when `cwd` is not 
 
 The `mocha+chai` runner loads local Chai when Mocha is also local. Chai 4 uses the UMD build `chai/chai.js` as a classic script. Chai 5+ (`"type": "module"`) is imported as an ES module, then your spec files load as classic scripts (`var expect = chai.expect` still works).
 
-`jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4. Incomplete installs fall back to the CDN pin.
+`jasmine` / `jasmine2` uses `jasmine-core` 5 `boot0.js`/`boot1.js` when those files are present, and `boot.js` for jasmine-core 3/4.
 
-### Jasmine 1.x deprecation
+### Migrating from Testem 3.x
 
-`framework: "jasmine"` (the default) still runs Jasmine 1.3.1 from CDN. Testem logs a deprecation warning on the server, and the Jasmine 1 adapter logs a warning in the browser (including custom `test_page`s that still load Jasmine 1).
+Testem 4.0 removes Jasmine 1.x and CDN fallbacks for built-in runners.
 
-**The next version of Testem will not support Jasmine 1.** Migrate with:
-
-```json
-{
-  "framework": "jasmine2"
-}
-```
-
-```bash
-npm install --save-dev jasmine-core
-```
+1. Install the framework packages listed above (`npm install --save-dev jasmine-core`, etc.).
+2. Use `"framework": "jasmine2"` or `"framework": "jasmine"` (alias) instead of relying on CDN Jasmine 1.
+3. Replace Jasmine 1 APIs (`waits`, `waitsFor`, `andReturn`, `HtmlReporter`, `TrivialReporter`) with modern Jasmine / async patterns.
+4. In monorepos, map `"routes": { "/node_modules": "../node_modules" }` so Testem can serve packages from the install root.
 
 Custom Test Pages
 -----------------
@@ -374,7 +374,7 @@ Next, the test page you use needs to have the adapter code installed on them, as
 
 ### Include Snippet
 
-Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page. Prefer loading those frameworks from `/node_modules/...` (see [examples/qunit_lazy](examples/qunit_lazy) and [examples/vite](examples/vite)); CDN URLs still work.
+Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` scripts to enable *Testem* with your test page. Load those frameworks from `/node_modules/...` (see [examples/qunit_lazy](examples/qunit_lazy) and [examples/vite](examples/vite)).
 
 ```html
 <script src="/testem.js"></script>
