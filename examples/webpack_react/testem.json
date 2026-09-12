@@ -1,0 +1,8 @@
+{
+  "framework": "mocha",
+  "src_files": ["src/**/*.jsx", "webpack.config.js"],
+  "serve_files": ["test-bundle.js"],
+  "before_tests": "npx webpack",
+  "launch_in_dev": ["Headless Firefox"],
+  "launch_in_ci": ["Headless Firefox"]
+}
