@@ -7,7 +7,7 @@ Instructions
 ------------
 
 1. Get a [SauceLabs](https://saucelabs.com/) account.
-2. Install dependencies from the testem repo root (`npm i`). The [saucie](https://github.com/johanneswuerbach/saucie) devDependency starts Sauce Connect and runs browsers on Sauce Labs.
+2. Install dependencies from the testem repo root (`npm i`). The [saucie](https://github.com/johanneswuerbach/saucie) devDependency starts Sauce Connect and runs browsers on Sauce Labs. `testem.json` maps `/node_modules` to `../../node_modules` so the built-in Jasmine runner loads `jasmine-core` from that root install (CI does not run `npm install` in this example).
 3. Make sure Sauce credentials are set in env:
     * **SAUCE_USERNAME** - your SauceLabs username
     * **SAUCE_ACCESS_KEY** - your SauceLabs API/Access key.
@@ -30,4 +30,6 @@ See the [saucie Sauce Connect tunnel options](https://github.com/johanneswuerbac
 Browser launchers
 -----------------
 
-`SL_Safari_Current` uses `-v latest` because fixed Safari versions (for example `17`) are retired on Sauce Labs over time. `SL_Safari_Last` pins an older release for regression coverage.
+`SL_Safari_Current` uses `-v latest` because fixed Safari versions are retired on Sauce Labs over time. `SL_Safari_Last` pins Safari **18** on **macOS 15** as compatibility coverage (jasmine-core 7 officially lists Safari 26.x; Sauce still offers 18). A pinned Safari version requires `-p`; without it Sauce rejects the session as `OS: 'unspecified'`.
+
+The CI `launch_in_ci` set targets browsers that run the repo-root **jasmine-core 7** install (Chrome, Firefox, Safari, Edge). Internet Explorer launchers remain defined for manual runs but are excluded from CI. `SL_Chrome_Current_No_Details` (TAP protocol without `--attach`) is also excluded from CI; it relied on legacy Sauce result scraping that does not work with the modern Jasmine runner.

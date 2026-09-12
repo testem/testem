@@ -76,18 +76,20 @@ describe('renderDirectoryListing', function() {
 });
 
 describe('renderRunner', function() {
-  it('keeps Jasmine 1 CDN pins', function() {
-    const html = renderRunner('jasmine', {});
+  it('aliases framework jasmine to the jasmine2 runner', function() {
+    const html = renderRunner('jasmine', {
+      jasmineJs: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+      jasmineHtml: '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+      jasmineCss: '/node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
+      jasmineSplitBoot: true
+    });
     expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+      '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
     );
-    expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
-    );
-    expect(html).to.include(
-      '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.css',
-    );
-    expect(html).to.include('jasmine.HtmlReporter');
+    expect(html).to.include('boot0.js');
+    expect(html).to.include('boot1.js');
+    expect(html).not.to.include('jasmine/1.3.1');
+    expect(html).not.to.include('jasmine.HtmlReporter');
   });
 
   it('returns null for an unknown framework', function() {

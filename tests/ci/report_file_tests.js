@@ -4,7 +4,6 @@ const fs = require('fs');
 const App = require('../../lib/app');
 const Config = require('../../lib/config');
 const expect = require('chai').expect;
-const rimraf = require('rimraf').rimraf;
 const os = require('os');
 const path = require('path');
 const { randomBytes } = require('crypto');
@@ -12,8 +11,6 @@ const PassThrough = require('stream').PassThrough;
 const ReportFile = require('../../lib/utils/report-file');
 
 const FakeReporter = require('../support/fake_reporter');
-
-const rimrafAsync = rimraf;
 
 describe('report file output', function() {
   this.timeout(30000);
@@ -26,7 +23,7 @@ describe('report file output', function() {
   });
 
   afterEach(function() {
-    return rimrafAsync(reportDir);
+    return fs.promises.rm(reportDir, { recursive: true, force: true });
   });
 
   it('allows passing in report_file from config', function(done) {
