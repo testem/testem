@@ -665,6 +665,10 @@ or, with a `tsconfig.json` that emits JavaScript next to your project (see the [
 
     "before_tests": "tsc"
 
+or, with Webpack + React (see the [Webpack + React example](https://github.com/testem/testem/tree/main/examples/webpack_react)):
+
+    "before_tests": "npx webpack"
+
 And Testem will run it before each test run. Point **`src_files`** at the sources you want
 watched (see **File watching** under Development Mode above).
 
@@ -712,6 +716,7 @@ I've created [examples](https://github.com/testem/testem/tree/main/examples/) fo
 * [Custom Test Framework](https://github.com/testem/testem/tree/main/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/main/examples/tape_example)
 * [Browserify Project](https://github.com/testem/testem/tree/main/examples/browserify)
+* [Webpack + React](https://github.com/testem/testem/tree/main/examples/webpack_react) - React Testing Library in a real browser via Webpack and Mocha.
 * [JSHint Example](https://github.com/testem/testem/tree/main/examples/jshint)
 * [Coffeescript Project](https://github.com/testem/testem/tree/main/examples/coffeescript)
 * [Custom Jasmine project using Require.js](https://github.com/testem/testem/tree/main/examples/jasmine_requirejs)
