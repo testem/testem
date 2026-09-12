@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "node ../../testem.js ci -P 10 --launch Vitest",
+    "vitest": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/testem/testem.git"
+  },
+  "license": "MIT"
+}

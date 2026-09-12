@@ -1,0 +1,10 @@
+{
+  "launchers": {
+    "Vitest": {
+      "command": "npm run vitest",
+      "protocol": "tap"
+    }
+  },
+  "launch_in_dev": ["Vitest"],
+  "launch_in_ci": ["Vitest"]
+}

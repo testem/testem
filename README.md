@@ -33,7 +33,7 @@ Features
 
 Installation
 ------------
-Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^20.19.0**, **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
+Testem needs a supported **[Node.js](https://nodejs.org/)** runtime. The required range is defined in [`package.json`](package.json) under `engines` (currently **^22.12.0**, **^24.0.0**, or **>= 26.0.0**).
 
 **Recommended:** install Testem **both** as a **dev dependency** (so your project pins a version) **and** **globally** (so the `testem` command is always available on your `PATH`):
 
@@ -522,6 +522,8 @@ If your process outputs test results in [TAP](https://en.wikipedia.org/wiki/Test
 }
 ```
 
+Vitest emits TAP with `--reporter=tap-flat` (use `vitest run`, not watch mode) plus `"protocol": "tap"`. See the [Vitest example](examples/vitest).
+
 When this is done, Testem will read in the process's stdout and parse it as TAP, and then display the test results in Testem's normal format. It will also hide the process's stdout output from the console log panel, although it will still display the stderr.
 
 Headless Chrome
@@ -698,6 +700,7 @@ Example Projects
 I've created [examples](https://github.com/testem/testem/tree/main/examples/) for various setups
 
 * [Vite (middleware + plugin)](https://github.com/testem/testem/tree/main/examples/vite)
+* [Vitest](https://github.com/testem/testem/tree/main/examples/vitest) - Vitest via a TAP process launcher (`tap-flat`).
 * [Electron](https://github.com/testem/testem/tree/main/examples/electron)
 * [TypeScript Project](https://github.com/testem/testem/tree/main/examples/typescript)
 * [ESLint Example](https://github.com/testem/testem/tree/main/examples/eslint)
