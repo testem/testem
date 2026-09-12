@@ -59,6 +59,7 @@
     "integration": "node ./bin/run-integration.js",
     "ci:safari-smoke": "node ./scripts/safari-ci-smoke.js",
     "ci:legacy-phantomjs": "node ./scripts/legacy-phantomjs-ci-smoke.js",
+    "ci:legacy-ie": "node ./scripts/legacy-ie-sauce-smoke.js",
     "browser-tests": "cd examples/saucelabs/ && ../../testem.js ci -d",
     "lint": "eslint ."
   },
