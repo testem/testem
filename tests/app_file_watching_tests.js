@@ -254,10 +254,11 @@ describe('App file watching', function() {
     });
     app.start(function() {
       const setErrorPopupMessage = sandbox.spy();
-      app.view = { setErrorPopupMessage };
+      app.reporter.reporters[0].setErrorPopupMessage = setErrorPopupMessage;
       app.fileWatcher.emit('EMFILE');
       expect(setErrorPopupMessage).to.have.been.calledOnce();
-      expect(setErrorPopupMessage.firstCall.args[0].toString()).to.contain('EMFILE');
+      expect(setErrorPopupMessage.firstCall.args[0]).to.be.a('string');
+      expect(setErrorPopupMessage.firstCall.args[0]).to.contain('EMFILE');
       app.exit();
     });
   });

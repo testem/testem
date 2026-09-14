@@ -128,6 +128,7 @@ function parseArgs(argv, { exitOverride = false } = {}) {
     console.log('  Keyboard Controls (in dev mode):\n');
     console.log('    ENTER                  run the tests');
     console.log('    q                      quit');
+    console.log('    p                      pause / unpause file-watch reruns');
     console.log(
       '    LEFT ARROW             move to the next browser tab on the left',
     );

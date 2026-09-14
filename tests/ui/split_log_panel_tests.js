@@ -4,19 +4,18 @@ const expect = require('chai').expect;
 const Backbone = require('backbone');
 const sinon = require('sinon');
 
-const screen = require('./fake_screen');
 const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
+const displayText = require('../../lib/reporters/dev/display_text');
 const Chars = require('../../lib/utils/chars');
 const TestResults = require('../../lib/reporters/dev/test_results');
-const isWin = require('../../lib/utils/is-win')();
+const plainText = displayText.plainText;
 
-describe('SplitLogPanel', !isWin ? function() {
+describe('SplitLogPanel', function() {
 
   let runner, panel, appview, results, messages, sandbox;
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
-    screen.$setSize(10, 20);
     results = new TestResults();
     messages = new Backbone.Collection();
     runner = new Backbone.Model({
@@ -32,8 +31,7 @@ describe('SplitLogPanel', !isWin ? function() {
     panel = new SplitLogPanel({
       runner: runner,
       appview: appview,
-      visible: true,
-      screen: screen
+      visible: true
     });
   });
 
@@ -43,20 +41,20 @@ describe('SplitLogPanel', !isWin ? function() {
 
   describe('getResultsDisplayText', function() {
     it('gets topLevelError', function() {
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('Please be patient :)');
       results.set('topLevelError', 'Shit happened.');
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('Top Level:\n    Shit happened.\n\n');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('Top Level:\n    Shit happened.\n\n');
     });
     it('says "Please be patient" if not all results are in', function() {
       let tests = new Backbone.Collection();
       results.set('tests', tests);
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('Please be patient :)');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('Please be patient :)');
     });
     it('says "No tests were run :(" when no tests but all is true', function() {
       let tests = new Backbone.Collection();
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('No tests were run :(');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('No tests were run :(');
     });
     it('gives result when has results and all is true', function() {
       results.set('total', 1);
@@ -66,7 +64,7 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.equal(Chars.success + ' 1 tests complete.');
+      expect(plainText(panel.getResultsDisplayText())).to.equal(Chars.success + ' 1 tests complete.');
     });
     it('shows pending tests in yellow when has results, all is true, no tests failed and there are pending tests', function() {
       results.set('total', 1);
@@ -77,18 +75,10 @@ describe('SplitLogPanel', !isWin ? function() {
       results.set('tests', tests);
       results.set('all', true);
 
-      let text = panel.getResultsDisplayText();
-
-      expect(text.children).to.have.length(2);
-
-      let resultText = text.children[0];
-      let pendingText = text.children[1];
-
-      expect(resultText.str).to.equal(Chars.success + ' 1 tests complete (1 pending).');
-      expect(resultText.attrs.foreground).to.equal('cyan');
-
-      expect(pendingText.str).to.equal('\n\n[PENDING] blah');
-      expect(pendingText.attrs.foreground).to.equal('yellow');
+      expect(panel.getResultsDisplayText()).to.deep.equal([
+        { text: Chars.success + ' 1 tests complete (1 pending).', color: 'cyan' },
+        { text: '\n\n[PENDING] blah', color: 'yellow' }
+      ]);
     });
     it('shows "failed" when failure', function() {
       results.set('total', 1);
@@ -99,7 +89,9 @@ describe('SplitLogPanel', !isWin ? function() {
         ]
       });
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] failed/);
+      expect(plainText(panel.getResultsDisplayText())).to.contain(
+        'blah\n    ' + Chars.fail + ' failed'
+      );
     });
     it('shows "failed" without items when failure', function() {
       results.set('total', 1);
@@ -107,7 +99,7 @@ describe('SplitLogPanel', !isWin ? function() {
         name: 'blah', passed: false, failed: 1
       });
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}/);
+      expect(plainText(panel.getResultsDisplayText())).to.contain('blah\n    ');
     });
     it('shows the error message', function() {
       results.set('total', 1);
@@ -121,7 +113,9 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] should not be null/);
+      expect(plainText(panel.getResultsDisplayText())).to.contain(
+        'blah\n    ' + Chars.fail + ' should not be null'
+      );
     });
     it('shows the stacktrace', function() {
       results.set('total', 1);
@@ -142,7 +136,7 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('blah\n    ' + Chars.fail + ' should not be null\n        AssertionError: \n            at Module._compile (module.js:437:25)\n            at Object.Module._extensions..js (module.js:467:10)');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('blah\n    ' + Chars.fail + ' should not be null\n        AssertionError: \n            at Module._compile (module.js:437:25)\n            at Object.Module._extensions..js (module.js:467:10)');
     });
     it('says "Looking good..." if all is false but all passed so far', function() {
       results.set('total', 1);
@@ -152,7 +146,7 @@ describe('SplitLogPanel', !isWin ? function() {
         })
       ]);
       results.set('tests', tests);
-      expect(panel.getResultsDisplayText().unstyled()).to.equal('Looking good...');
+      expect(plainText(panel.getResultsDisplayText())).to.equal('Looking good...');
     });
     it('prepends NOT to expected for negative assertions', function() {
       results.set('total', 1);
@@ -168,20 +162,22 @@ describe('SplitLogPanel', !isWin ? function() {
       ]);
       results.set('tests', tests);
       results.set('all', true);
-      expect(panel.getResultsDisplayText().unstyled()).to.match(/blah\n {4}[x✘] should not be foo\n {9}expected NOT foo/);
+      expect(plainText(panel.getResultsDisplayText())).to.contain(
+        'blah\n    ' + Chars.fail + ' should not be foo\n         expected NOT foo'
+      );
     });
   });
 
   describe('getMessagesText', function() {
 
     it('returns "" with no messages', function() {
-      expect(panel.getMessagesText().unstyled()).to.equal('');
+      expect(plainText(panel.getMessagesText())).to.equal('');
     });
 
     it('returns "" with empty collection', function() {
       let messages = new Backbone.Collection();
       runner.set('messages', messages);
-      expect(panel.getMessagesText().unstyled()).to.equal('');
+      expect(plainText(panel.getMessagesText())).to.equal('');
     });
 
     it('returns the messages', function() {
@@ -189,9 +185,9 @@ describe('SplitLogPanel', !isWin ? function() {
         new Backbone.Model({type: 'log', text: 'hello world'})
       ]);
       runner.set('messages', messages);
-      expect(panel.getMessagesText().unstyled()).to.equal('hello world');
+      expect(plainText(panel.getMessagesText())).to.equal('hello world');
       messages.add(new Backbone.Model({type: 'error', text: 'crap happens'}));
-      expect(panel.getMessagesText().unstyled()).to.equal('hello worldcrap happens');
+      expect(plainText(panel.getMessagesText())).to.equal('hello worldcrap happens');
     });
 
   });
@@ -264,37 +260,4 @@ describe('SplitLogPanel', !isWin ? function() {
     });
   });
 
-  describe('render', function() {
-    it('renders', function() {
-      sandbox.stub(panel, 'getResultsDisplayText').returns('1 tests passed.');
-      sandbox.stub(panel, 'getMessagesText').returns('This is a message.');
-      panel.syncResultsDisplay();
-      panel.syncMessages();
-      panel.render();
-      expect(screen.buffer).to.deep.equal([
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '1 tests pa',
-        'ssed.     ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        'This is a ',
-        'message.  ',
-        '          ',
-        '          ',
-        '          ',
-        '          ',
-        '          ']);
-    });
-  });
-
-} : function() {
-  xit('TODO: Fix and re-enable for windows');
 });

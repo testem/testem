@@ -101,9 +101,8 @@ describe('FileWatcher', function() {
       );
       expect(createWatcherStub).to.have.been.calledOnce();
       expect(createWatcherStub.firstCall.args[0]).to.equal('.');
-      expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
-        ignoreInitial: true,
-      });
+      expect(createWatcherStub.firstCall.args[1].ignoreInitial).to.equal(true);
+      expect(createWatcherStub.firstCall.args[1].ignored).to.be.a('function');
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
@@ -162,13 +161,12 @@ describe('FileWatcher', function() {
       expect(mockWatcher.add).to.not.have.been.called();
     });
 
-    it('passes ignored when src_files_ignore is set', async function() {
+    it('ignores paths matching src_files_ignore', async function() {
       await FileWatcher.create(makeConfig({ src_files_ignore: ['**/vendor/**'] }));
 
-      expect(createWatcherStub.firstCall.args[1]).to.deep.equal({
-        ignoreInitial: true,
-        ignored: ['**/vendor/**'],
-      });
+      const ignored = createWatcherStub.firstCall.args[1].ignored;
+      expect(ignored(path.resolve('vendor/jquery.js'))).to.equal(true);
+      expect(ignored(path.resolve('lib/app.js'))).to.equal(false);
     });
 
     it('rejects when the watcher emits a non-EMFILE error before ready', async function() {
@@ -246,11 +244,41 @@ describe('FileWatcher', function() {
       ]);
     });
 
-    it('passes src_files_ignore patterns unchanged (mixed separators)', async function() {
-      const ignore = ['**/node_modules/**', 'dist\\\\**', '!**/keep.js'];
-      await FileWatcher.create(makeConfig({ src_files_ignore: ignore }));
+    it('never descends into node_modules or .git by default', async function() {
+      await FileWatcher.create(makeConfig({ src_files: ['lib/**/*.js'] }));
 
-      expect(createWatcherStub.firstCall.args[1].ignored).to.deep.equal(ignore);
+      const ignored = createWatcherStub.firstCall.args[1].ignored;
+      expect(ignored(path.resolve('node_modules'))).to.equal(true);
+      expect(ignored(path.resolve('node_modules/chai/index.js'))).to.equal(true);
+      expect(ignored(path.resolve('.git'))).to.equal(true);
+      expect(ignored(path.resolve('lib/app.js'))).to.equal(false);
+      expect(ignored(path.resolve('.'))).to.equal(false);
+    });
+
+    it('keeps scanning node_modules when an include pattern asks for it', async function() {
+      await FileWatcher.create(
+        makeConfig({ src_files: ['node_modules/my-pkg/**/*.js'] }),
+      );
+
+      const ignored = createWatcherStub.firstCall.args[1].ignored;
+      expect(ignored(path.resolve('node_modules/my-pkg/index.js'))).to.equal(false);
+      // Claiming node_modules says nothing about .git.
+      expect(ignored(path.resolve('.git'))).to.equal(true);
+      expect(ignored(path.resolve('.git/objects/ab/cdef'))).to.equal(true);
+    });
+
+    it('keeps an explicitly added path watchable inside an ignored directory', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      const ignored = createWatcherStub.firstCall.args[1].ignored;
+      const target = 'node_modules/served/runtime.js';
+
+      expect(ignored(path.resolve(target))).to.equal(true);
+
+      await fw.add(target);
+
+      expect(ignored(path.resolve(target))).to.equal(false);
+      expect(ignored(path.resolve('node_modules/served'))).to.equal(false);
+      expect(ignored(path.resolve('node_modules/other/x.js'))).to.equal(true);
     });
 
     it('forwards add() using path.win32.join so Win32-shaped paths are preserved', async function() {
@@ -443,6 +471,29 @@ describe('FileWatcher', function() {
 
       expect(mockWatcher.add).to.have.been.calledWith('some-watched-dir');
       expect(mockWatcher.close).not.to.have.been.called();
+    });
+
+    it('does not attach a new all/error listener per add', async function() {
+      const fw = await FileWatcher.create(makeConfig());
+      const allBefore = mockWatcher.listenerCount('all');
+      const errorBefore = mockWatcher.listenerCount('error');
+
+      await Promise.all([
+        fw.add('a.js'),
+        fw.add('b.js'),
+        fw.add('c.js'),
+        fw.add('d.js'),
+        fw.add('e.js'),
+        fw.add('f.js'),
+        fw.add('g.js'),
+        fw.add('h.js'),
+        fw.add('i.js'),
+        fw.add('j.js'),
+        fw.add('k.js')
+      ]);
+
+      expect(mockWatcher.listenerCount('all')).to.equal(allBefore);
+      expect(mockWatcher.listenerCount('error')).to.equal(errorBefore);
     });
 
     it('settles add via fallback when the engine emits neither all nor error', async function() {

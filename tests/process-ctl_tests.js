@@ -121,6 +121,21 @@ describe('ProcessCtl', function() {
         expect(err.toString()).to.eq('Error: No executable found in: [ \'notFound\' ]');
       });
     });
+
+    it('captures stdout and stderr through pipes', function() {
+      const script = 'console.log("to-stdout"); console.error("to-stderr")';
+      return processCtl.spawn('node', ['-e', script]).then(function(p) {
+        return new Promise(function(resolve) {
+          return p.on('processExit', function(exitCode, stdout, stderr) {
+            resolve([exitCode, stdout, stderr]);
+          });
+        }).then(function([exitCode, stdout, stderr]) {
+          expect(exitCode).to.eq(0);
+          expect(stdout).to.eq('to-stdout\n');
+          expect(stderr).to.eq('to-stderr\n');
+        });
+      });
+    });
   });
 
   describe('exec', function() {

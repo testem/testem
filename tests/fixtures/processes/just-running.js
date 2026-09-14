@@ -1,3 +1,2 @@
 
-
-process.stdin.resume();
+setInterval(function() {}, 60000);
