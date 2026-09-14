@@ -41,8 +41,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     env:
-      # Shared cache for Electron's GitHub release zip (@electron/get).
-      electron_config_cache: ${{ runner.temp }}/electron-cache
       # Four Ubuntu Node versions would otherwise download the same zip at once
       # and 504. Electron is a native binary, so once per OS is enough.
       INTEGRATION_SKIP: ${{ matrix.node != 22 && 'electron' || '' }}
@@ -58,7 +56,10 @@ jobs:
       - uses: actions/cache@v4
         if: matrix.node == 22
         with:
-          path: ${{ runner.temp }}/electron-cache
+          path: |
+            ~/.cache/electron
+            ~/Library/Caches/electron
+            ~/AppData/Local/electron/Cache
           key: electron-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('examples/electron/package.json') }}
           restore-keys: |
             electron-${{ runner.os }}-${{ runner.arch }}-
