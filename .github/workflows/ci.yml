@@ -79,10 +79,40 @@ jobs:
       - run: npm i
       - run: npm run ci:safari-smoke
 
+  legacy-phantomjs:
+    name: legacy-phantomjs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # PhantomJS 2.1.1 reads the system OpenSSL config. Ubuntu 24's
+    # openssl.cnf loads a providers module that the old binary cannot.
+    env:
+      OPENSSL_CONF: /dev/null
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: package.json
+      - run: sudo apt-get install -y libfontconfig1
+      - name: Install PhantomJS 2.1.1
+        run: |
+          curl -fsSL -o /tmp/phantomjs.tar.bz2 \
+            https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.1.1-linux-x86_64.tar.bz2
+          echo "86dd9a4bf4aee45f1a84c9f61cf1947c1d6dce9b9e8d2a907105da7852460d2f  /tmp/phantomjs.tar.bz2" | sha256sum -c -
+          tar -xjf /tmp/phantomjs.tar.bz2 -C /tmp
+          sudo mv /tmp/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+          phantomjs -v
+      - run: npm i
+      - run: npm run ci:legacy-phantomjs
+        env:
+          LEGACY_BROWSERS_REQUIRED: PhantomJS
+
   browser-tests:
     name: browser-tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     concurrency: "sauce"
 
     steps:
@@ -94,6 +124,10 @@ jobs:
           cache-dependency-path: package.json
       - run: npm i
       - run: npm run browser-tests
+        env:
+          SAUCE_USERNAME: testem-ci
+          SAUCE_ACCESS_KEY: 1f00979e-0252-4d69-98ff-f6c85d1a746b
+      - run: npm run ci:legacy-ie
         env:
           SAUCE_USERNAME: testem-ci
           SAUCE_ACCESS_KEY: 1f00979e-0252-4d69-98ff-f6c85d1a746b
