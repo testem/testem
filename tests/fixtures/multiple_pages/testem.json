@@ -7,5 +7,8 @@
   "src_files": [
     "*.js"
   ],
-  "parallel": "-1"
+  "parallel": "-1",
+  "routes": {
+    "/node_modules": "../../../node_modules"
+  }
 }
