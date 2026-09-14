@@ -52,7 +52,7 @@ function jasmine2Adapter() {
         test.passed++;
         test.total++;
         results.passed++;
-      } else if (spec.status === 'pending') {
+      } else if (spec.status === 'pending' || spec.status === 'notApplicable') {
         test.pending++;
         test.total++;
         results.pending++;
