@@ -1,0 +1,10 @@
+{
+  "launchers": {
+    "NodeTest": {
+      "command": "node --test --test-reporter=tap tests.js",
+      "protocol": "tap"
+    }
+  },
+  "launch_in_dev": ["NodeTest"],
+  "launch_in_ci": ["NodeTest"]
+}

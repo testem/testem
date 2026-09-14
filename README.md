@@ -511,6 +511,8 @@ When you run `testem`, it will auto-launch the mocha process based on the specif
 Processes with TAP Output
 -------------------------
 
+Node's built-in test runner emits TAP with `node --test --test-reporter=tap` plus `"protocol": "tap"`. See the [node:test example](examples/node_test).
+
 If your process outputs test results in [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) format, you can tell that to testem via the `protocol` property. For example
 
 ```javascript
@@ -711,6 +713,7 @@ I've created [examples](https://github.com/testem/testem/tree/main/examples/) fo
 * [Hybrid Project](https://github.com/testem/testem/tree/main/examples/hybrid_simple) - Mocha tests running in both the browser and Node.
 * [Custom Test Framework](https://github.com/testem/testem/tree/main/examples/custom_adapter)
 * [Tape Example](https://github.com/testem/testem/tree/main/examples/tape_example)
+* [Node.js test runner](https://github.com/testem/testem/tree/main/examples/node_test) - `node:test` via a TAP process launcher.
 * [Browserify Project](https://github.com/testem/testem/tree/main/examples/browserify)
 * [JSHint Example](https://github.com/testem/testem/tree/main/examples/jshint)
 * [Coffeescript Project](https://github.com/testem/testem/tree/main/examples/coffeescript)

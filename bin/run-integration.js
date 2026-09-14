@@ -17,6 +17,7 @@ const skipOnWindows = [];
 const skipDefiningReporter = [
   'node_example',
   'node_tap_example',
+  'node_test',
   'electron'
 ];
 const examplesPath = path.join(__dirname, '../examples');
