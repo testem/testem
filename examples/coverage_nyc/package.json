@@ -1,10 +1,10 @@
 {
   "devDependencies": {
-    "@types/jasmine": "^6",
     "jasmine-core": "^7",
-    "typescript": "^5.7.0"
+    "nyc": "^18.0.0"
   },
   "scripts": {
+    "pretest": "node -e \"const fs=require('node:fs'); for (const p of ['coverage','instrumented','.nyc_output']) fs.rmSync(p,{recursive:true,force:true});\"",
     "test": "node ../../testem.js ci -P 10"
   },
   "repository": {

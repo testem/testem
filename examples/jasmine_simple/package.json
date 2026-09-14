@@ -1,4 +1,7 @@
 {
+  "devDependencies": {
+    "jasmine-core": "^7"
+  },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
   },

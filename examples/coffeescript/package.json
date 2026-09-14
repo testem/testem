@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "jasmine-core": "^5.1.0"
+    "jasmine-core": "^7"
   },
   "scripts": {
     "test": "node ../../testem.js ci -P 10"

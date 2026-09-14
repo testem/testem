@@ -7,7 +7,7 @@
     "unittest",
     "browser"
   ],
-  "version": "3.21.0",
+  "version": "4.0.0-beta.1",
   "author": "Toby Ho <airportyh@gmail.com>",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "url": "https://github.com/testem/testem/issues"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || ^24.0.0 || >= 26.0.0"
+    "node": "^22.12.0 || ^24.0.0 || >= 26.0.0"
   },
   "license": "MIT",
   "dependencies": {
@@ -74,7 +74,7 @@
     "eslint-plugin-chai-expect": "^4.0.0",
     "eslint-plugin-mocha": "^12.0.2",
     "fresh-tape": "^5.9.1",
-    "jasmine-core": "^5.1.0",
+    "jasmine-core": "^7.0.2",
     "mocha": "^12.0.0",
     "qunit": "^2.26.0",
     "saucie": "^4.1.0",
