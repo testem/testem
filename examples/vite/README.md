@@ -37,7 +37,7 @@ HMR is turned off in middleware mode here because Testem’s Express app would n
 
 ### Mocha + Vite
 
-`index.html` loads Mocha’s **prebuilt browser bundle** `mocha/mocha.js` (the UMD file shipped in the package) with plain `<script>` tags, then `/testem.js`, then `mocha.setup('bdd')`, matching Testem’s built-in Mocha runner (which prefers `/node_modules/mocha/...` and falls back to CDN if Mocha is not installed). The test file is a **module** so you can `import` Chai and your sources; it finishes with `mocha.run()`.
+`index.html` loads Mocha’s **prebuilt browser bundle** `mocha/mocha.js` (the UMD file shipped in the package) with plain `<script>` tags, then `/testem.js`, then `mocha.setup('bdd')`, matching Testem’s built-in Mocha runner (which loads `/node_modules/mocha/...`). The test file is a **module** so you can `import` Chai and your sources; it finishes with `mocha.run()`.
 
 Importing the package entry (`import mocha from 'mocha'`) pulls in code paths that expect Node’s `process` while Vite prebundles; using the prebuilt `mocha.js` avoids that.
 
