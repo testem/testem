@@ -401,6 +401,33 @@ describe('retry', function() {
     } catch { /* ignore */ }
     expect(calls).to.equal(3);
   });
+
+  it('waits interval between failed attempts when provided', async function() {
+    let calls = 0;
+    const start = Date.now();
+    try {
+      await retry(() => { calls++; throw new Error('fail'); }, { max_tries: 3, interval: 20 });
+    } catch { /* ignore */ }
+    expect(calls).to.equal(3);
+    expect(Date.now() - start).to.be.at.least(40);
+  });
+
+  it('applies backoff to the wait between failed attempts', async function() {
+    let calls = 0;
+    const start = Date.now();
+    try {
+      await retry(() => { calls++; throw new Error('fail'); }, { max_tries: 3, interval: 20, backoff: 2 });
+    } catch { /* ignore */ }
+    expect(calls).to.equal(3);
+    expect(Date.now() - start).to.be.at.least(60);
+  });
+
+  it('does not wait when the first attempt succeeds', async function() {
+    const start = Date.now();
+    const result = await retry(() => Promise.resolve('ok'), { max_tries: 3, interval: 50 });
+    expect(result).to.equal('ok');
+    expect(Date.now() - start).to.be.below(40);
+  });
 });
 
 describe('delay', function() {

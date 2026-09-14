@@ -9,9 +9,11 @@ const argv = process.argv.slice(2);
 const testFlags = (argv.length ? ` ${argv.join(' ')}` : '') + ' -p 0';
 const testCmd = `npm run test -- ${testFlags}`;
 
+const skipFromEnv = (process.env.INTEGRATION_SKIP || '').split(',').map(s => s.trim()).filter(Boolean);
 const skipExamples = [
   'browserstack', // requires credentials and doesn't work in CI
   'saucelabs',  // requires credentials and doesn't work in CI
+  ...skipFromEnv,
 ];
 const skipOnWindows = [];
 const skipDefiningReporter = [
@@ -26,6 +28,9 @@ const examplesPath = path.join(__dirname, '../examples');
 const DEFAULT_CONCURRENCY = os === 'Windows_NT' ? 1 : 5;
 const TIMEOUT = 180000; // npm install is sometimes really slow...
 const RETRIES = 3;
+const INSTALL_RETRIES = 5;
+const INSTALL_RETRY_INTERVAL = 2000;
+const INSTALL_RETRY_BACKOFF = 2;
 const concurrency = parseInt(process.env.INTEGRATION_TESTS_CONCURRENCY || DEFAULT_CONCURRENCY, 10);
 
 // show available launchers
@@ -33,6 +38,9 @@ execaSync('node', ['testem.js', 'launchers'], { stdio: 'inherit' });
 console.log('');
 console.log(`Testing with flags:${testFlags || '[no custom flags provided]'}`);
 console.log(`Running with concurrency: ${concurrency}`);
+if (skipFromEnv.length) {
+  console.log(`Skipping examples via INTEGRATION_SKIP: ${skipFromEnv.join(', ')}`);
+}
 console.log('');
 
 // run examples tests
@@ -74,7 +82,11 @@ async function testExample(example) {
   const runOpts = { silent: true, cwd: examplePath, timeout: TIMEOUT };
 
   try {
-    await retry(npmInstall(runOpts), { max_tries: RETRIES });
+    await retry(npmInstall(runOpts, example), {
+      max_tries: INSTALL_RETRIES,
+      interval: INSTALL_RETRY_INTERVAL,
+      backoff: INSTALL_RETRY_BACKOFF
+    });
 
     let cmd = testCmd;
     if (!skipDefiningReporter.includes(example)) {
@@ -96,8 +108,13 @@ function runExample(cmd, runOpts) {
   };
 }
 
-function npmInstall(runOpts) {
+function npmInstall(runOpts, example) {
+  let attempt = 0;
   return function() {
+    attempt++;
+    if (attempt > 1) {
+      console.log(`Retrying npm install for ${example} (attempt ${attempt}/${INSTALL_RETRIES})`);
+    }
     return shellExec('npm install', runOpts);
   };
 }

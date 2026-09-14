@@ -40,6 +40,12 @@ jobs:
       fail-fast: true
 
     runs-on: ${{ matrix.os }}
+    env:
+      # Shared cache for Electron's GitHub release zip (@electron/get).
+      electron_config_cache: ${{ runner.temp }}/electron-cache
+      # Four Ubuntu Node versions would otherwise download the same zip at once
+      # and 504. Electron is a native binary, so once per OS is enough.
+      INTEGRATION_SKIP: ${{ matrix.node != 22 && 'electron' || '' }}
 
     steps:
       - uses: browser-actions/setup-firefox@v1.7.2
@@ -49,6 +55,13 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: "npm"
           cache-dependency-path: package.json
+      - uses: actions/cache@v4
+        if: matrix.node == 22
+        with:
+          path: ${{ runner.temp }}/electron-cache
+          key: electron-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('examples/electron/package.json') }}
+          restore-keys: |
+            electron-${{ runner.os }}-${{ runner.arch }}-
       - run: firefox --version
       - run: npm i
       - uses: nick-invision/retry@v4.0.0
