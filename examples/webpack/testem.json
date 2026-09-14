@@ -1,6 +1,6 @@
 {
     "framework": "tap",
-    "test_page": "examples/index.mustache",
+    "test_page": "examples/index.html",
     "serve_files": [
         "test-bundle.js"
     ],

@@ -12,12 +12,6 @@ const http = require('http');
 const https = require('https');
 const ws = require('ws');
 const os = require('os');
-const sinon = require('sinon');
-const log = require('../lib/log');
-const {
-  MUSTACHE_TEST_PAGE_WARNING,
-  resetMustacheTestPageWarning
-} = require('../lib/utils/mustache_test_page_deprecation');
 
 describe('Server', function() {
   this.timeout(10000);
@@ -38,6 +32,7 @@ describe('Server', function() {
         routes: {
           '/direct-test': 'web/direct',
           '/fallback-test': ['web/direct', 'web/fallback'],
+          '/node_modules': '../node_modules',
         },
         cwd: 'tests',
         proxies: {
@@ -117,9 +112,11 @@ describe('Server', function() {
           })
           .get();
         expect(srcs).to.deep.equal([
-          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/boot0.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/boot1.js',
           '/testem.js',
-          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine-html.js',
           'web/hello.js',
           'web/hello_tst.js',
         ]);
@@ -131,71 +128,19 @@ describe('Server', function() {
         await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
       });
 
-      it('renders custom test page as template', async function() {
-        config.set('test_page', 'web/tests_template.mustache');
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
-        );
-        expectMiddlewareHeaders(res);
-      });
-
       it('renders the first test page by default when multiple are provided', async function() {
         config.set('test_page', [
-          'web/tests_template.mustache',
           'web/tests.html',
+          'web/tests_other.html',
         ]);
-        const { res, text } = await httpRequest(baseUrl);
-        expect(text).to.equal(
-          [
-            '<!doctype html>',
-            '<html>',
-            '<head>',
-            '    <script src="web/hello.js"></script>',
-            '    <script src="web/hello_tst.js" data-foo="true" data-bar></script>',
-            '</head>',
-            '',
-          ].join(os.EOL),
-        );
-        expectMiddlewareHeaders(res);
+        await assertUrlReturnsFileContents(baseUrl, 'tests/web/tests.html');
       });
 
-      describe('mustache test page deprecation', function() {
-        let sandbox;
-
-        beforeEach(function() {
-          sandbox = sinon.createSandbox();
-          resetMustacheTestPageWarning();
-        });
-
-        afterEach(function() {
-          sandbox.restore();
-          resetMustacheTestPageWarning();
-        });
-
-        it('emits TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED once', async function() {
-          const logWarn = sandbox.stub(log, 'warn');
-          const emitWarning = sandbox.stub(process, 'emitWarning');
-          config.set('test_page', 'web/tests_template.mustache');
-
-          await httpRequest(baseUrl);
-          await httpRequest(baseUrl);
-
-          expect(logWarn).to.have.been.calledOnce();
-          expect(emitWarning).to.have.been.calledOnce();
-          expect(emitWarning).to.have.been.calledWith(
-            MUSTACHE_TEST_PAGE_WARNING,
-            sinon.match({ code: 'TESTEM_MUSTACHE_TEST_PAGE_DEPRECATED' })
-          );
-        });
+      it('serves leftover .mustache files as raw text', async function() {
+        await assertUrlReturnsFileContents(
+          baseUrl + 'web/uninterpolated.mustache',
+          'tests/web/uninterpolated.mustache',
+        );
       });
 
       it('URL-encodes test_page path that starts with a slash', async function() {
@@ -213,12 +158,14 @@ describe('Server', function() {
         await httpRequest(baseUrl + '/testem.js');
       });
 
-      it('gets testem.js with expected content', async function() {
+      it('gets testem.js without the Jasmine 1 adapter', async function() {
         const { res, text } = await httpRequest(baseUrl + 'testem.js');
         expect(res.statusCode).to.eq(200);
         expect(res.headers['content-type']).to.match(/javascript/);
         expect(text).to.include('TestemConfig');
         expect(text).to.include('testem_client.js');
+        expect(text).to.include('jasmine2_adapter.js');
+        expect(text).not.to.include('jasmine_adapter.js');
       });
     });
 
@@ -659,7 +606,7 @@ describe('Server', function() {
       }
     });
 
-    it('keeps Jasmine 1 CDN pins for the default jasmine runner', async function() {
+    it('serves framework jasmine as the jasmine2 runner', async function() {
       const runnerServer = await startRunnerServer('jasmine');
       try {
         const { text } = await httpRequest(
@@ -667,14 +614,18 @@ describe('Server', function() {
         );
         const srcs = scriptSrcs(text);
         expect(srcs).to.include(
-          '//cdnjs.cloudflare.com/ajax/libs/jasmine/1.3.1/jasmine.js',
+          '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
         );
+        expect(srcs).to.include(
+          '/node_modules/jasmine-core/lib/jasmine-core/boot0.js',
+        );
+        expect(text).not.to.include('cdnjs.cloudflare.com');
       } finally {
         await runnerServer.stop();
       }
     });
 
-    it('falls back to CDN pins when cwd has no framework packages', async function() {
+    it('uses /node_modules URLs when cwd has no framework packages', async function() {
       const emptyCwd = path.join(__dirname);
       const runnerServer = await startRunnerServer('mocha', emptyCwd);
       try {
@@ -682,10 +633,8 @@ describe('Server', function() {
           'http://localhost:' + runnerPort + '/-1',
         );
         const srcs = scriptSrcs(text);
-        expect(srcs).to.include(
-          '//cdnjs.cloudflare.com/ajax/libs/mocha/2.3.4/mocha.js',
-        );
-        expect(srcs).to.not.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.include('/node_modules/mocha/mocha.js');
+        expect(srcs).to.not.include('cdnjs.cloudflare.com');
       } finally {
         await runnerServer.stop();
       }
@@ -846,6 +795,63 @@ describe('Server', function() {
         fs.rmSync(root, { recursive: true, force: true });
       }
     });
+
+    it('renders custom runner pages without framework assets', async function() {
+      const runnerServer = await startRunnerServer('custom', repoRoot, {
+        src_files: ['tests/web/hello.js']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include('/testem.js');
+        expect(text).to.include('tests/web/hello.js');
+        expect(text).not.to.include('/node_modules/mocha/mocha.js');
+        expect(text).not.to.include('/node_modules/jasmine-core/');
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('renders tap runner pages without framework assets', async function() {
+      const runnerServer = await startRunnerServer('tap', repoRoot, {
+        src_files: ['tests/web/hello.js']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(text).to.include('TAP');
+        expect(text).to.include('/testem.js');
+        expect(text).to.include('tests/web/hello.js');
+        expect(text).not.to.include('/node_modules/');
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
+    it('renders routed qunit assets from node_modules', async function() {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-qunit-routes-'));
+      const appDir = path.join(root, 'app');
+      fs.mkdirSync(appDir);
+      writeRunnerFixture(root, 'node_modules/qunit/qunit/qunit.js');
+      writeRunnerFixture(root, 'node_modules/qunit/qunit/qunit.css');
+
+      const runnerServer = await startRunnerServer('qunit', appDir, {
+        routes: { '/node_modules': '../node_modules' }
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        expect(scriptSrcs(text)).to.include('/node_modules/qunit/qunit/qunit.js');
+        expect(text).to.include('/node_modules/qunit/qunit/qunit.css');
+        expect(text).not.to.include('code.jquery.com');
+      } finally {
+        await runnerServer.stop();
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('a wildcard proxy', function() {
@@ -900,6 +906,9 @@ describe('Server', function() {
           { src: 'web/hello_tst.js', attrs: ['data-foo="true"', 'data-bar'] },
         ],
         cwd: 'tests',
+        routes: {
+          '/node_modules': '../node_modules',
+        },
       });
       baseUrl = 'https://localhost:' + port + '/';
 
@@ -923,6 +932,9 @@ describe('Server', function() {
         port: port,
         pfx: 'tests/fixtures/certs/localhost.pfx',
         cwd: 'tests',
+        routes: {
+          '/node_modules': '../node_modules',
+        },
       });
       baseUrl = 'https://localhost:' + port + '/';
 

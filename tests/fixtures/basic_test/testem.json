@@ -1,5 +1,8 @@
 {
     "src_files": [
         "*.js"
-    ]
+    ],
+    "routes": {
+        "/node_modules": "../../../node_modules"
+    }
 }
