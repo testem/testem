@@ -56,6 +56,17 @@ describe('HookRunner', function() {
       });
     });
 
+    it('runs a quoted string hook', function() {
+      hook = 'echo "hello world"';
+      return hookRunner.run('test_hook', {}).then(function(result) {
+        if (isWin) {
+          expect(result.stdout).to.eq('"hello world"' + os.EOL);
+        } else {
+          expect(result.stdout).to.eq('hello world' + os.EOL);
+        }
+      });
+    });
+
     it('adds the local node modules to the path', function() {
       hook = { exe: 'node', args: ['-e', 'console.log(process.env.PATH)'] };
 

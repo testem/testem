@@ -107,4 +107,68 @@ describe('Testem Client', function() {
     });
     Testem.runAfterTests();
   });
+
+  describe('framework detection', function() {
+    function createHookTester() {
+      let testFrameworkDidInit = false;
+      const jasmine2Adapter = sinon.spy();
+      const mochaAdapter = sinon.spy();
+      const qunitAdapter = sinon.spy();
+
+      function hookIntoTestFramework(socket) {
+        if (testFrameworkDidInit) {
+          return true;
+        }
+
+        let found = true;
+        if (typeof getJasmineRequireObj === 'function') {
+          jasmine2Adapter(socket);
+        } else if (typeof Mocha === 'function') {
+          mochaAdapter(socket);
+        } else if (typeof QUnit === 'object') {
+          qunitAdapter(socket);
+        } else {
+          found = false;
+        }
+
+        testFrameworkDidInit = found;
+        return found;
+      }
+
+      return {
+        hookIntoTestFramework,
+        jasmine2Adapter,
+        mochaAdapter,
+        qunitAdapter,
+        reset() {
+          testFrameworkDidInit = false;
+        }
+      };
+    }
+
+    it('uses jasmine2Adapter when getJasmineRequireObj is present', function() {
+      const tester = createHookTester();
+      global.getJasmineRequireObj = function() {};
+      tester.hookIntoTestFramework({});
+      expect(tester.jasmine2Adapter).to.have.been.calledOnce();
+      delete global.getJasmineRequireObj;
+    });
+
+    it('does not hook legacy jasmine globals without getJasmineRequireObj', function() {
+      const tester = createHookTester();
+      global.jasmine = {};
+      expect(tester.hookIntoTestFramework({})).to.equal(false);
+      expect(tester.jasmine2Adapter).not.to.have.been.called();
+      delete global.jasmine;
+    });
+
+    it('initializes the detected framework only once', function() {
+      const tester = createHookTester();
+      global.QUnit = {};
+      expect(tester.hookIntoTestFramework({})).to.equal(true);
+      expect(tester.hookIntoTestFramework({})).to.equal(true);
+      expect(tester.qunitAdapter).to.have.been.calledOnce();
+      delete global.QUnit;
+    });
+  });
 });

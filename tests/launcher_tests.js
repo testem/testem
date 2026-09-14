@@ -8,7 +8,6 @@ const path = require('path');
 const fs = require('fs');
 const sinon = require('sinon');
 const { execaNode } = require('execa');
-const _ = require('lodash');
 
 const os = require('os');
 const isWin = require('../lib/utils/is-win')();
@@ -314,8 +313,8 @@ describe('Launcher', function() {
 
     describe('on macOS (darwin)', function() {
       it('spawns /usr/bin/open with -a Safari and the test URL', function() {
-        const safari = _.find(knownBrowsers('darwin', config), { name: 'Safari' });
-        const settings = _.assign({}, safari, {
+        const safari = knownBrowsers('darwin', config).find((b) => b.name === 'Safari');
+        const settings = Object.assign({}, safari, {
           exe: '/usr/bin/open',
           protocol: 'browser',
           id: '42'
@@ -336,10 +335,10 @@ describe('Launcher', function() {
       });
 
       it('spawns /usr/bin/open with -a Safari Technology Preview and the test URL', function() {
-        const stp = _.find(knownBrowsers('darwin', config), {
-          name: 'Safari Technology Preview'
+        const stp = knownBrowsers('darwin', config).find((b) => {
+          return b.name === 'Safari Technology Preview';
         });
-        const settings = _.assign({}, stp, {
+        const settings = Object.assign({}, stp, {
           exe: '/usr/bin/open',
           protocol: 'browser',
           id: '99'
@@ -363,8 +362,8 @@ describe('Launcher', function() {
     describe('on non-macOS (win32 and linux use the start.html launcher)', function() {
       ['win32', 'linux'].forEach(function(platform) {
         it('spawns Safari exe with start.html for known-browsers platform ' + platform, function() {
-          const safari = _.find(knownBrowsers(platform, config), { name: 'Safari' });
-          const settings = _.assign({}, safari, {
+          const safari = knownBrowsers(platform, config).find((b) => b.name === 'Safari');
+          const settings = Object.assign({}, safari, {
             exe: 'C:\\Program Files\\Safari\\safari.exe',
             protocol: 'browser',
             id: '7'
