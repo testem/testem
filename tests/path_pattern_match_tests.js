@@ -3,6 +3,7 @@ const expect = require('chai').expect;
 const {
   pathMatchesPattern,
   pathMatchesAny,
+  patternHasGlobMagic,
 } = require('../lib/utils/path_pattern_match');
 
 describe('path_pattern_match', function() {
@@ -79,7 +80,7 @@ describe('path_pattern_match', function() {
     });
   });
 
-  describe('contract for swapping minimatch → picomatch later', function() {
+  describe('picomatch contract for Testem configs', function() {
     it('normalizes expectations: POSIX-style paths with forward slashes', function() {
       const p = 'deep/nested/dir/file.js';
       expect(pathMatchesPattern(p, '**/file.js')).to.be.true();
@@ -95,6 +96,28 @@ describe('path_pattern_match', function() {
       expect(
         pathMatchesPattern('ci/report_x.js', '**/report*.js'),
       ).to.be.true();
+    });
+  });
+
+  describe('patternHasGlobMagic', function() {
+    it('returns false for empty, null, or literal paths', function() {
+      expect(patternHasGlobMagic('')).to.be.false();
+      expect(patternHasGlobMagic(null)).to.be.false();
+      expect(patternHasGlobMagic('file.js')).to.be.false();
+    });
+
+    it('detects wildcards and globstar', function() {
+      expect(patternHasGlobMagic('*.js')).to.be.true();
+      expect(patternHasGlobMagic('src/**/*.js')).to.be.true();
+    });
+
+    it('treats brace expansion as magic only when magicalBraces is set', function() {
+      expect(patternHasGlobMagic('{a,b}.js')).to.be.false();
+      expect(patternHasGlobMagic('{a,b}.js', { magicalBraces: true })).to.be.true();
+    });
+
+    it('still detects other magic when the pattern also has braces', function() {
+      expect(patternHasGlobMagic('foo{a,b}*.js')).to.be.true();
     });
   });
 });
