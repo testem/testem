@@ -55,6 +55,14 @@ describe('Server', function() {
           '/api4': {
             target: 'http://localhost:13375',
           },
+          '/api5': {
+            target: 'http://localhost:13374',
+            onlyContentTypes: ['xml', 'json'],
+          },
+          '/api6': {
+            target: 'http://localhost:13374',
+            onlyContentTypes: 'json',
+          },
           '/wsapi': {
             target: 'ws://localhost:13376',
             ws: true,
@@ -454,6 +462,43 @@ describe('Server', function() {
         };
         const { res, text } = await httpRequest.post(options);
         expect(text).to.equal('{test: \'some value\'}');
+        expectMiddlewareHeaders(res);
+      });
+
+      it('proxies get request to api5 with several onlyContentTypes', async function() {
+        let options = {
+          url: baseUrl + 'api5/test',
+          headers: {
+            Accept: 'application/json',
+          },
+        };
+        const { res, text } = await httpRequest.get(options);
+        expect(text).to.equal('{"API":3}');
+        expectMiddlewareHeaders(res);
+      });
+
+      it('proxies get request to api6 with a string onlyContentTypes', async function() {
+        let options = {
+          url: baseUrl + 'api6/test',
+          headers: {
+            Accept: 'application/json',
+          },
+        };
+        const { res, text } = await httpRequest.get(options);
+        expect(text).to.equal('{"API":3}');
+        expectMiddlewareHeaders(res);
+      });
+
+      it('does not proxy to api3 when the request accepts none of the types', async function() {
+        let options = {
+          url: baseUrl + 'api3/test',
+          headers: {
+            Accept: 'image/png',
+          },
+        };
+        const { res, text } = await httpRequest.get(options);
+        expect(res.statusCode).to.eq(404);
+        expect(text).to.equal('Not found: /api3/test');
         expectMiddlewareHeaders(res);
       });
 
