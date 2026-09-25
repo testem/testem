@@ -64,7 +64,7 @@ If it isn't practical to write a test first, it might be my fault, feel free to 
 
 There are also integration tests that run every example in the `examples` folder by `cd`'ing into each and executing `testem ci`. CI runs them on Linux, macOS, and Windows (`windows-latest` in [`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The runner is [`bin/run-integration.js`](bin/run-integration.js):
 
-* **`skipExamples`** — `browserstack` and `saucelabs` (need credentials; not run in CI).
+* **`skipExamples`** — `browserstack` and `saucelabs` (need credentials; not run in CI). CI also sets `INTEGRATION_SKIP=electron` on Ubuntu Node 20/24/26 so only one Linux job downloads the Electron zip (parallel downloads 504 from GitHub Releases).
 * **`skipOnWindows`** — none. The `coffeescript` example lists CoffeeScript sources explicitly instead of `*.coffee` (cmd.exe does not expand globs for external programs). The `webpack` example uses `npx webpack` so local `webpack-cli` runs without relying on PATH. See [`examples/coffeescript`](examples/coffeescript) and [Available hooks](docs/config_file.md#available-hooks).
 * **`skipDefiningReporter`** — Node-only examples (`node_example`, `node_tap_example`, `node_test`, `vitest`, `jest`) and `electron`. The runner otherwise appends `--launch "Headless Firefox"`, which these examples do not use.
 * **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
