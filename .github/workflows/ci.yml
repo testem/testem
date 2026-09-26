@@ -53,7 +53,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: "npm"
           cache-dependency-path: package.json
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         if: matrix.node == 22
         with:
           path: |
