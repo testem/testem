@@ -1,6 +1,5 @@
 
 
-const { using } = require('../../lib/utils/promises');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const fs = require('fs');
@@ -82,15 +81,15 @@ describe('Reporter', function() {
   describe('"with"', function() {
     let app = mockApp();
 
-    it('can be used as a disposable which returns a reporter', function() {
-      return using(Reporter.with(app, stream), function(reporter) {
+    it('passes a reporter to the callback', function() {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         expect(reporter).to.be.an.instanceof(Reporter);
       });
     });
 
     it('closes the reporter when done', function() {
       let close;
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
         expect(close).to.have.been.called();
@@ -99,7 +98,7 @@ describe('Reporter', function() {
 
     it('closes the reporter when promise is rejected with error hidden from the reporter', function() {
       let close;
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         close = sandbox.spy(reporter, 'close');
 
         let mockError = new Error('Not all tests passed.');
@@ -113,7 +112,7 @@ describe('Reporter', function() {
     it('logs an error when the wrapped promise was rejected', function() {
       let report;
 
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         report = sandbox.spy(reporter, 'report');
         return Promise.reject(new Error('Tests failed.'));
       }).catch(function() {

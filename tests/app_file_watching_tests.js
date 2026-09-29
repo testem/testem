@@ -225,11 +225,11 @@ describe('App file watching', function() {
     });
     app.start(function() {
       const originalRunHook = app.runHook.bind(app);
-      sandbox.stub(app, 'runHook').callsFake(function(hook, data) {
+      sandbox.stub(app, 'runHook').callsFake(async function(hook, data, fn) {
         if (hook === 'on_change') {
-          return Promise.resolve();
+          return fn();
         }
-        return originalRunHook(hook, data);
+        return originalRunHook(hook, data, fn);
       });
       sandbox.spy(app, 'triggerRun');
       const changedPath = Path.join(process.cwd(), 'src', 'foo.js');

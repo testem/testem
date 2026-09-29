@@ -8,7 +8,6 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 
 var HookRunner = require('../../lib/runners/hook_runner');
-var { using } = require('../../lib/utils/promises');
 var isWin = require('../../lib/utils/is-win')();
 
 var { tmpNameAsync } = require('../support/tmp-name');
@@ -72,6 +71,16 @@ describe('HookRunner', function() {
 
       return hookRunner.run('test_hook', {}).then(function(result) {
         expect(result.stdout).to.contain(path.join(process.cwd(), 'node_modules', '.bin'));
+      });
+    });
+
+    it('rejects when no executable in an exe list exists', function() {
+      hook = { exe: ['testem-missing-exe-a', 'testem-missing-exe-b'] };
+
+      return hookRunner.run('test_hook', {}).then(function() {
+        expect('Should never be called').to.be.true();
+      }, function(err) {
+        expect(err.message).to.contain('No executable found in');
       });
     });
 
@@ -239,7 +248,7 @@ describe('HookRunner', function() {
           wait_for_text_timeout: 5000
         };
 
-        return using(HookRunner.with(config, 'test_hook'), function() {
+        return HookRunner.with(config, 'test_hook', undefined, function() {
           return fsStatAsync(tmpPath);
         }).then(function() {
           return fsReadFileAsync(tmpPath);

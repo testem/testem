@@ -11,7 +11,6 @@ var path = require('path');
 var http = require('http');
 var execa = require('execa').execa;
 var log = require('../../lib/log');
-const { asCallback } = require('../../lib/utils/promises');
 
 var FakeReporter = require('../support/fake_reporter');
 
@@ -383,8 +382,10 @@ describe('ci mode app', function() {
     });
     app.runners = [
       {
-        stop: function(cb) {
-          return Promise.resolve().then(...asCallback(cb));
+        stop: async function(cb) {
+          if (cb) {
+            cb(null);
+          }
         }
       }
     ];
