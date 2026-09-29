@@ -3,18 +3,18 @@
 var expect = require('chai').expect;
 
 var RunTimeout = require('../../lib/utils/run-timeout');
-var { using, delay } = require('../../lib/utils/promises');
+var { setTimeout: delay } = require('timers/promises');
 
 describe('RunTimeout', function() {
   describe('with', function() {
-    it('can be used as a disposable which returns a timeout', function() {
-      return using(RunTimeout.with(), function(timeout) {
+    it('passes a timeout to the callback', function() {
+      return RunTimeout.with(undefined, function(timeout) {
         expect(timeout).to.be.an.instanceof(RunTimeout);
       });
     });
 
     it('allows to timeout a task', function() {
-      return using(RunTimeout.with(0.1), function(timeout) {
+      return RunTimeout.with(0.1, function(timeout) {
         return timeout.try(function() {
           return Promise.resolve('within-timeout');
         }).then(function(result) {
@@ -35,7 +35,7 @@ describe('RunTimeout', function() {
     it('emits a timeout even on timeout', function() {
       var eventReceived = false;
 
-      return using(RunTimeout.with(0.1), function(timeout) {
+      return RunTimeout.with(0.1, function(timeout) {
         timeout.on('timeout', function() {
           eventReceived = true;
         });
@@ -46,10 +46,10 @@ describe('RunTimeout', function() {
       });
     });
 
-    it('cleans started timers when disposed', function() {
+    it('cleans started timers when the callback finishes', function() {
       var timeout;
 
-      return using(RunTimeout.with(1), function(_timeout) {
+      return RunTimeout.with(1, function(_timeout) {
         timeout = _timeout;
         expect(timeout.timeoutID).to.exist();
       }).then(function() {

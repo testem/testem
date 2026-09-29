@@ -4,7 +4,7 @@ const path = require('path');
 const sinon = require('sinon');
 const expect = require('chai').expect;
 
-const { delay } = require('../lib/utils/promises');
+const { setTimeout: delay } = require('timers/promises');
 const ProcessCtl = require('../lib/process-ctl');
 const Config = require('../lib/config');
 

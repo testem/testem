@@ -1,6 +1,6 @@
 
 
-const { fromCallback } = require('../../lib/utils/promises');
+const { promisify } = require('util');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
@@ -94,7 +94,7 @@ describe('knownBrowsers', function() {
       });
 
       it('creates a config file on setup', function() {
-        return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
+        return promisify(firefox.setup).call(launcher, config).then(function() {
           expect(fs.readFileSync(path.join(browserTmpDir, 'user.js'), 'utf8')).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
@@ -141,7 +141,7 @@ describe('knownBrowsers', function() {
           }
         };
 
-        return fromCallback(cb => firefox.setup.call(launcher, config, cb)).then(function() {
+        return promisify(firefox.setup).call(launcher, config).then(function() {
           expect(fs.readFileSync(path.join(browserTmpDir, 'user.js'), 'utf8')).to.equal([
             'user_pref("browser.shell.checkDefaultBrowser", false);',
             'user_pref("browser.cache.disk.smart_size.first_run", false);',
