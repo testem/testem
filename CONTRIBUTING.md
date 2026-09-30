@@ -79,3 +79,12 @@ Legacy browsers (IE 11 and PhantomJS) are not part of that Firefox matrix. Two s
 
 * **`npm run ci:legacy-phantomjs`** — [`scripts/legacy-phantomjs-ci-smoke.js`](scripts/legacy-phantomjs-ci-smoke.js). Skips (exit 0) when PhantomJS is not installed. CI sets `LEGACY_BROWSERS_REQUIRED=PhantomJS` so a missing binary fails the `legacy-phantomjs` job (Ubuntu installs PhantomJS 2.1.1). The job also sets `OPENSSL_CONF=/dev/null` so PhantomJS 2.1.1 can start on Ubuntu 24's OpenSSL 3.
 * **`npm run ci:legacy-ie`** — [`scripts/legacy-ie-sauce-smoke.js`](scripts/legacy-ie-sauce-smoke.js). Runs the same examples on Sauce Labs `SL_IE_11`. Skips locally when `SAUCE_USERNAME` / `SAUCE_ACCESS_KEY` are unset; in CI missing credentials fail. This is a second step on the `browser-tests` job (after `npm run browser-tests`), so it shares the `sauce` concurrency slot. The saucelabs example matrix still includes IE 10/11.
+
+## Releasing
+
+Releases are published to npm by [`.github/workflows/publish.yml`](.github/workflows/publish.yml) using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC, with provenance) — there is no `NPM_TOKEN` secret and maintainers should not `npm publish` locally.
+
+1. `npm version <patch|minor|major>` (bumps `package.json`, commits, and creates the `vX.Y.Z` tag).
+2. `git push --follow-tags`.
+
+Pushing the tag triggers the workflow, which checks the tag matches `package.json` and publishes. Prerelease versions (`X.Y.Z-foo`) go to the `next` dist-tag; everything else goes to `latest`.
