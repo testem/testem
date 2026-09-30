@@ -13,6 +13,12 @@ This document will go into more detail about the Testem configuration file and l
 * `.testem.mjs`
 * `testem.cjs`
 * `.testem.cjs`
+* `testem.ts`
+* `.testem.ts`
+* `testem.mts`
+* `.testem.mts`
+* `testem.cts`
+* `.testem.cts`
 
 The file is looked for in the user's current directory.
 
@@ -54,6 +60,21 @@ export default {
     ]
 };
 ```
+
+You can also author configs in TypeScript when Node's native type stripping is available (default in Node 22.18+ and 24+, `--experimental-strip-types` on 22.6-22.17). Use `testem.ts` for the ambient package type, `testem.mts` to force ESM, or `testem.cts` to force CommonJS:
+
+```typescript
+export default {
+    framework: 'mocha',
+    src_files: [
+        'src/*.js',
+        'tests/*_tests.js'
+    ]
+};
+```
+
+Testem does not run a TypeScript compiler; it relies on Node's built-in type stripping. On older Node versions the `.ts` config file will fail to load with a normal Node error.
+
 
 
 Common Configuration Options
