@@ -69,7 +69,7 @@ There are also integration tests that run every example in the `examples` folder
 * **`skipDefiningReporter`** — Node-only examples (`node_example`, `node_tap_example`, `node_test`, `vitest`, `jest`) and `electron`. The runner otherwise appends `--launch "Headless Firefox"`, which these examples do not use.
 * **Concurrency** — Windows runs examples one at a time (Headless Firefox is flaky in parallel); set `INTEGRATION_TESTS_CONCURRENCY` to override.
 
-Examples that opt into modern built-in runners list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Examples without those packages still use the CDN fallback. `mocha_simple` stays on CDN Mocha plus `expect.js`; `jshint` and `eslint` stay on CDN QUnit 1 so their global `test`/`equal` APIs keep working.
+Examples that use built-in runners must list `mocha`, `chai`, `jasmine-core`, or `qunit` in their own `package.json` (the integration runner already runs `npm install` in each example). Custom `test_page` examples load frameworks from `/node_modules/` directly. `mocha_simple` uses local Mocha plus Chai 6 (ESM).
 
 Node + headless browser:
 

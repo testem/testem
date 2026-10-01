@@ -1,3 +1,6 @@
 {
-    "framework": "jasmine"
+    "framework": "jasmine",
+    "routes": {
+        "/node_modules": "../../node_modules"
+    }
 }
