@@ -4,7 +4,7 @@ import { TuiTest } from '@microsoft/tui-test';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const testemJs = path.join(root, 'testem.js');
-const configFile = path.join(root, 'testem.tui-e2e.js');
+const configFile = path.join(root, 'testem.tui-e2e.cjs');
 const artifactDir = path.join(root, 'artifacts', 'tui-e2e');
 
 export async function startDashboard({

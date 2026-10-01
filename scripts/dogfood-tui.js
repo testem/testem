@@ -5,7 +5,7 @@ const { spawn } = require('child_process');
 const Config = require('../lib/config');
 
 const root = path.join(__dirname, '..');
-const configFile = path.join(root, 'testem.dogfood.js');
+const configFile = path.join(root, 'testem.dogfood.cjs');
 const BROWSERS = ['Chrome', 'Firefox', 'Safari'];
 const MOCHA = 'Mocha';
 
@@ -75,7 +75,7 @@ function main() {
       });
 
       if (launch.indexOf(MOCHA) === -1) {
-        console.error('Launcher "Mocha" is missing from testem.dogfood.js.');
+        console.error('Launcher "Mocha" is missing from testem.dogfood.cjs.');
         process.exit(1);
       }
       if (launch.length === 0) {

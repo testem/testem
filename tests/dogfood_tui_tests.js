@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const dogfoodConfig = require('../testem.dogfood.js');
+const dogfoodConfig = require('../testem.dogfood.cjs');
 const {
   parseDogfoodArgs,
   selectLaunchers

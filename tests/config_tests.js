@@ -136,7 +136,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: path.join(__dirname, 'testem.js')
+        file: path.join(__dirname, 'fixtures', 'cjs_js_config', 'testem.js')
       };
       config = new Config('dev', progOptions);
       config.read(done);

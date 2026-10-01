@@ -1,5 +1,3 @@
-
-
 module.exports = {
   framework: 'mocha',
   src_files: [
