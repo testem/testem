@@ -1,7 +1,7 @@
 var AjaxCountingReporter = require('./ajax_counting_reporter');
-var TapReporter = require('../../lib/reporters/tap_reporter');
+var TapReporter = require('../../lib/reporters/tap_reporter.js').default;
 const stream = require('stream').PassThrough;
-var Config = require('../../lib/config');
+var Config = require('../../lib/config.js').default;
 
 function Reporter() {
   this._ajaxCountingReporter = new AjaxCountingReporter();

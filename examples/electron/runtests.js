@@ -5,7 +5,7 @@ var url = require('url');
 var pathToFileURL = url.pathToFileURL;
 var { randomBytes } = require('crypto');
 var execFile = require('child_process').execFile;
-var { registerCleanup } = require('../../lib/utils/tmp-cleanup');
+var { registerCleanup } = require('../../lib/utils/tmp-cleanup.js');
 
 var baseObj = url.parse(process.argv[2]);
 var testPageObj = url.parse(process.argv[3], true);

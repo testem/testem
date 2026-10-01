@@ -1,8 +1,12 @@
-const { createTestemViteMiddleware } = require('vite-plugin-testem');
+import { createTestemViteMiddleware } from 'vite-plugin-testem';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let viteClose;
 
-module.exports = async function testemConfig() {
+export default async function testemConfig() {
   const { middleware, close } = await createTestemViteMiddleware({
     root: __dirname,
   });
@@ -24,4 +28,4 @@ module.exports = async function testemConfig() {
         .catch(callback);
     },
   };
-};
+}

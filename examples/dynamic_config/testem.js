@@ -1,14 +1,17 @@
-var fs = require('fs');
-var path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-var newTestFile = 'hello2_spec.js';
-var newTestBody = 'describe("hello2", function() {\n' +
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const newTestFile = 'hello2_spec.js';
+const newTestBody = 'describe("hello2", function() {\n' +
 '  it("should say hello 2", function() {\n' +
 '    expect(hello("2")).toBe("hello 2");\n' +
 '  });\n' +
 '});';
 
-module.exports = {
+export default {
   framework: 'jasmine',
 
   // executing js function as a hook
@@ -26,7 +29,7 @@ module.exports = {
   // by default it sends all js files
   // so `testem.js` won't conflict with framework resource
   // explicitly specify test files
-  "src_files": [
-    "hello*.js"
+  src_files: [
+    'hello*.js'
   ]
-}
+};

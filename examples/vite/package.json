@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "description": "Example: Testem with Vite (dev middleware + Mocha)",
   "scripts": {
     "test": "node ../../testem.js ci -P 10"
