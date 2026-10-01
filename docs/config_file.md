@@ -49,7 +49,7 @@ module.exports = {
 };
 ```
 
-You can author configs as ECMAScript modules. Use `testem.mjs`, or `testem.js` in a package with [`"type": "module"`](https://nodejs.org/api/packages.html#type) in `package.json`. Export the options object as the default export (or export an async function whose resolved value is the options object):
+You can author configs as ECMAScript modules. Use `testem.mjs`, or `testem.js` in a package with [`"type": "module"`](https://nodejs.org/api/packages.html#type) in `package.json`. Testem's own `"type": "module"` does not decide this: Node uses the config file's nearest `package.json` and its extension. `.cjs` and `.cts` are always CommonJS. `.js` follows that package. The fixtures are `tests/fixtures/cjs_js_config` and `tests/fixtures/esm_js_config`. Export the options object as the default export (or export an async function whose resolved value is the options object):
 
 ```javascript
 export default {
@@ -218,4 +218,18 @@ module.exports = async function() {
     framework: await getFramework(),
   }
 };
+```
+
+The same shape as an ES module:
+
+```javascript
+async function getFramework() {
+  return 'qunit';
+}
+
+export default async function() {
+  return {
+    framework: await getFramework(),
+  };
+}
 ```

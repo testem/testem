@@ -12,6 +12,8 @@
 - **Internet Explorer removed.** The built-in `IE` launcher and IE-specific client compatibility shims are gone. Use Edge (Chromium), Chrome, or Firefox locally. For legacy IE in the cloud, define a custom launcher.
 - **Command strings are no longer tokenized.** Custom launcher `command` and string / `{ command }` hooks are passed to the shell unchanged (`shell: true`). Most commands are unaffected. Adjacent quoted runs now follow shell rules (`echo 'a'"b"` prints `ab`, not `a b`), and an unbalanced quote is a shell error instead of being silently dropped. Use `exe` + `args` for argv without a shell.
 - **Mustache test pages removed.** `.mustache` `test_page` files are no longer interpolated; leftover `.mustache` files are served as raw text. The `mustache` and `consolidate` dependencies are gone. `Config#getTemplateData` is removed.
+- **The package is ESM.** `"type": "module"`. `import Api from 'testem'` and `require('testem')` return the same `Api` class (`lib/api.js` and the `lib/api.cjs` wrapper). Deep imports such as `testem/lib/...` are not exported. The library has no top-level await, so `require('testem')` stays synchronous.
+- **JS configs follow their own module format.** Testem's `"type"` does not decide yours. `.cjs` / `.cts` load with `require`. `.js`, `.mjs`, `.mts`, and `.ts` load with `import()`. See `tests/fixtures/cjs_js_config` and `tests/fixtures/esm_js_config`.
 
 See [README.md](README.md#migrating-from-testem-3x) for migration steps.
 

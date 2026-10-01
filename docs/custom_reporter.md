@@ -79,3 +79,5 @@ module.exports = {
   reporter: MyReporter,
 };
 ```
+
+`examples/coverage_nyc` and `examples/metadata_reporter` still use `require`. An ESM config is the same options object as a default export; see `examples/custom_reporter`.
