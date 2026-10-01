@@ -1,5 +1,5 @@
-const expect = require('chai').expect;
-const { actionForKey, actionForRawByte, KEY_ACTIONS } = require('../../lib/reporters/dev/keys');
+import { expect } from "chai";
+import { actionForKey, actionForRawByte, KEY_ACTIONS } from "../../lib/reporters/dev/keys.js";
 
 describe('dev key map', function () {
   const expected = {

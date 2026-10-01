@@ -1,5 +1,5 @@
-const { expect } = require('chai');
-const { parseArgs } = require('../testem');
+import { expect } from "chai";
+import { parseArgs } from "../testem.js";
 
 // Wrap argv as if coming from `node testem <args>`, with exitOverride so
 // commander throws instead of calling process.exit during tests.

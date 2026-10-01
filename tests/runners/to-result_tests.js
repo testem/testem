@@ -1,9 +1,7 @@
+import toResult from "../../lib/runners/to-result.js";
+import { assert } from "chai";
+import Config from "../../lib/config.js";
 
-
-const toResult = require('../../lib/runners/to-result');
-const assert = require('chai').assert;
-
-const Config = require('../../lib/config');
 const dummyChromeStderrOutput = `
 [0414/010630.566144:INFO:cpu_info.cc(53)] Available number of cores: 32
 [0414/010630.566233:VERBOSE1:zygote_main_linux.cc(217)] ZygoteMain: initializing 0 fork delegates

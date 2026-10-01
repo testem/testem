@@ -1,10 +1,8 @@
+import * as browserArgs from "../../lib/utils/browser-args.js";
+import { expect } from "chai";
+import log from "../../lib/log.js";
+import { EventEmitter } from "node:events";
 
-
-const browserArgs = require('../../lib/utils/browser-args');
-const expect = require('chai').expect;
-const log = require('../../lib/log');
-
-const EventEmitter = require('events').EventEmitter;
 const fakeStream = new EventEmitter();
 
 fakeStream.write = function() {};

@@ -1,8 +1,7 @@
-const { expect } = require('chai');
-const EventEmitter = require('events');
-
-const TapConsumer = require('../lib/tap_consumer');
-const BrowserTapConsumer = require('../lib/browser_tap_consumer');
+import { expect } from "chai";
+import EventEmitter from "node:events";
+import TapConsumer from "../lib/tap_consumer.js";
+import BrowserTapConsumer from "../lib/browser_tap_consumer.js";
 
 function collectTapResults(consumer, tapText) {
   return new Promise((resolve, reject) => {

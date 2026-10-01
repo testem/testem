@@ -1,11 +1,11 @@
-const chai = require('chai');
-const sinonChai = require('sinon-chai').default;
-const dirtyChai = require('dirty-chai').default;
+import * as chai from "chai";
+import sinonChai from "sinon-chai";
+import dirtyChai from "dirty-chai";
+import path from "node:path";
 
 chai.use(sinonChai);
 chai.use(dirtyChai);
 
-const path = require('path');
 let PATH = 'PATH';
 
 // windows calls it's path 'Path' usually, but this is not guaranteed.

@@ -1,9 +1,6 @@
-
-
-var expect = require('chai').expect;
-
-var RunTimeout = require('../../lib/utils/run-timeout');
-var { setTimeout: delay } = require('timers/promises');
+import { expect } from "chai";
+import RunTimeout from "../../lib/utils/run-timeout.js";
+import { setTimeout as delay } from "node:timers/promises";
 
 describe('RunTimeout', function() {
   describe('with', function() {

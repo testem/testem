@@ -1,5 +1,5 @@
-const { PassThrough } = require('stream');
-const termkit = require('terminal-kit');
+import { PassThrough } from "node:stream";
+import termkit from "terminal-kit";
 
 function createTestTerm(width, height) {
   const stdin = new PassThrough();
@@ -16,4 +16,4 @@ function createTestTerm(width, height) {
   return { term, stdin, stdout, stderr };
 }
 
-module.exports = { createTestTerm };
+export { createTestTerm };

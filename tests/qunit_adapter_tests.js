@@ -1,8 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
-const expect = require('chai').expect;
-const sinon = require('sinon');
+import fs from "node:fs";
+import path from "node:path";
+import vm from "vm";
+import { expect } from "chai";
+import sinon from "sinon";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const adapterSource = fs.readFileSync(
   path.join(__dirname, '../public/testem/qunit_adapter.js'),

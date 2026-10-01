@@ -1,7 +1,5 @@
-
-
-const LogEntry = require('../../lib/utils/log-entry');
-const expect = require('chai').expect;
+import LogEntry from "../../lib/utils/log-entry.js";
+import { expect } from "chai";
 
 describe('log-entry', function() {
   it('display correct output from toString() with no testContext', function() {

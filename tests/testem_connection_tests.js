@@ -1,9 +1,7 @@
-
-
-const patchEmitterForWildcard = require('../public/testem/testem_connection');
-const expect = require('chai').expect;
-const createServer = require('socket.io');
-const createClient = require('socket.io-client');
+import patchEmitterForWildcard from "../public/testem/testem_connection.js";
+import { expect } from "chai";
+import { Server } from "socket.io";
+import createClient from "socket.io-client";
 
 describe('Testem Connection', function() {
   var server, client;
@@ -17,7 +15,7 @@ describe('Testem Connection', function() {
   }
 
   before(function() {
-    server = createServer();
+    server = new Server();
     server.listen(8000);
 
     replaceGlobals({

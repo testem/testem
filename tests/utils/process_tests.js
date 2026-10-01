@@ -1,8 +1,7 @@
-const EventEmitter = require('events').EventEmitter;
-const sinon = require('sinon');
-const expect = require('chai').expect;
-
-const Process = require('../../lib/utils/process');
+import { EventEmitter } from "node:events";
+import sinon from "sinon";
+import { expect } from "chai";
+import Process from "../../lib/utils/process.js";
 
 function createFakeChildProcess() {
   const child = new EventEmitter();

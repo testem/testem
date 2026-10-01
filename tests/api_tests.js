@@ -1,14 +1,10 @@
-
-
-const sinon = require('sinon');
-const expect = require('chai').expect;
-
-const Api = require('../lib/api');
-const App = require('../lib/app');
-const Config = require('../lib/config');
-
-const FakeReporter = require('./support/fake_reporter');
-const { setTimeout: delay } = require('timers/promises');
+import sinon from "sinon";
+import { expect } from "chai";
+import Api from "../lib/api.js";
+import App from "../lib/app.js";
+import Config from "../lib/config.js";
+import FakeReporter from "./support/fake_reporter.js";
+import { setTimeout as delay } from "node:timers/promises";
 
 describe('Api', function() {
   let sandbox;

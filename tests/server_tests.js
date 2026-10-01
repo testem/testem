@@ -1,17 +1,18 @@
-const Server = require('../lib/server');
-const Config = require('../lib/config');
-const path = require('path');
-const { once } = require('node:events');
-const { httpRequest, listenPromise, closePromise } = require(
-  './utils/http_test_client',
-);
-const cheerio = require('cheerio');
-const fs = require('fs');
-const expect = require('chai').expect;
-const http = require('http');
-const https = require('https');
-const ws = require('ws');
-const os = require('os');
+import Server from "../lib/server/index.js";
+import Config from "../lib/config.js";
+import path from "node:path";
+import { once } from "node:events";
+import { httpRequest, listenPromise, closePromise } from "./utils/http_test_client.js";
+import * as cheerio from "cheerio";
+import fs from "node:fs";
+import { expect } from "chai";
+import http from "node:http";
+import https from "node:https";
+import ws from "ws";
+import os from "node:os";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Server', function() {
   this.timeout(10000);

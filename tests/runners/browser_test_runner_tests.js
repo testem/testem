@@ -1,16 +1,18 @@
+import BrowserTestRunner from "../../lib/runners/browser_test_runner.js";
+import FakeReporter from "../support/fake_reporter.js";
+import FakeSocket from "../support/fake_socket.js";
+import { expect } from "chai";
+import sinon from "sinon";
+import path from "node:path";
+import is_winMod from "../../lib/utils/is-win.js";
+import Config from "../../lib/config.js";
+import Launcher from "../../lib/launcher.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const isWin = is_winMod();
 
-const BrowserTestRunner = require('../../lib/runners/browser_test_runner');
-const FakeReporter = require('../support/fake_reporter');
-const FakeSocket = require('../support/fake_socket');
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
-const path = require('path');
-const isWin = require('../../lib/utils/is-win')();
-
-const Config = require('../../lib/config');
-const Launcher = require('../../lib/launcher.js');
 
 describe('browser test runner', function() {
   describe('parallel runners', function() {

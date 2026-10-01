@@ -1,17 +1,14 @@
-
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const fs = require('fs');
-const PassThrough = require('stream').PassThrough;
-
-const { tmpNameAsync } = require('../support/tmp-name');
-const readStream = require('../support/read-stream');
-
-const Reporter = require('../../lib/utils/reporter');
-const FakeReporter = require('../support/fake_reporter');
-const TapReporter = require('../../lib/reporters/tap_reporter');
-const XUnitReporter = require('../../lib/reporters/xunit_reporter');
+import { expect } from "chai";
+import sinon from "sinon";
+import fs from "node:fs";
+import { PassThrough } from "node:stream";
+import { tmpNameAsync } from "../support/tmp-name.js";
+import readStream from "../support/read-stream.js";
+import Reporter from "../../lib/utils/reporter.js";
+import FakeReporter from "../support/fake_reporter.js";
+import TapReporter from "../../lib/reporters/tap_reporter.js";
+import XUnitReporter from "../../lib/reporters/xunit_reporter.js";
+import reporters from "../../lib/reporters/index.js";
 
 const fsReadFileAsync = (path, enc) => fs.promises.readFile(path, enc);
 const fsUnlinkAsync = path => fs.promises.unlink(path);
@@ -61,7 +58,7 @@ describe('Reporter', function() {
 
     // Regresses https://github.com/testem/testem/issues/900
     it('uses file stream when reporting', function() {
-      let tapReporterSpy = sandbox.spy(require('../../lib/reporters'), 'tap');
+      let tapReporterSpy = sandbox.spy(reporters, 'tap');
       let reporter = new Reporter(mockApp('tap'), stream, 'report.xml');
 
       expect(reporter.reportFile).to.not.be.undefined();

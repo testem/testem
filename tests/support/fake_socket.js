@@ -1,6 +1,4 @@
-
-
-var EventEmitter = require('events').EventEmitter;
+import { EventEmitter } from "node:events";
 
 class FakeServer {
   set() {}
@@ -20,4 +18,4 @@ function FakeSocket() {
 
 FakeSocket.prototype.__proto__ = EventEmitter.prototype;
 
-module.exports = FakeSocket;
+export default FakeSocket

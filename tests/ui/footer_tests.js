@@ -1,5 +1,5 @@
-const expect = require('chai').expect;
-const { footerHelp } = require('../../lib/reporters/dev/footer');
+import { expect } from "chai";
+import { footerHelp } from "../../lib/reporters/dev/footer.js";
 
 describe('footerHelp', function () {
   it('starts off showing p to pause', function () {

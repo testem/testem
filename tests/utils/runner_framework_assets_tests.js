@@ -1,12 +1,10 @@
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const expect = require('chai').expect;
-const log = require('../../lib/log');
-const sinon = require('sinon');
-const {
-  resolveRunnerFrameworkAssets
-} = require('../../lib/utils/runner_framework_assets');
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { expect } from "chai";
+import log from "../../lib/log.js";
+import sinon from "sinon";
+import { resolveRunnerFrameworkAssets } from "../../lib/utils/runner_framework_assets.js";
 
 describe('resolveRunnerFrameworkAssets', function() {
   let tmpDir;

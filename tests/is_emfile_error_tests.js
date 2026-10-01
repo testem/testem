@@ -1,6 +1,5 @@
-const expect = require('chai').expect;
-
-const isEmfileError = require('../lib/utils/is_emfile_error');
+import { expect } from "chai";
+import isEmfileError from "../lib/utils/is_emfile_error.js";
 
 describe('isEmfileError', function() {
   it('returns true for Error with code EMFILE', function() {

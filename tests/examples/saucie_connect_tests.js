@@ -1,9 +1,12 @@
-
-var fs = require('fs');
-var path = require('path');
-
-var expect = require('chai').expect;
-var connect = require('saucie/lib/connect');
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+import { expect } from "chai";
+import { fileURLToPath } from "node:url";
+const require = createRequire(import.meta.url);
+const connect = require("saucie/lib/connect");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('saucie connect (4.0.2+)', function() {
   it('exports waitForApiReadiness', function() {

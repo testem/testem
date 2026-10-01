@@ -1,10 +1,5 @@
-const expect = require('chai').expect;
-
-const {
-  pathMatchesPattern,
-  pathMatchesAny,
-  patternHasGlobMagic,
-} = require('../lib/utils/path_pattern_match');
+import { expect } from "chai";
+import { pathMatchesPattern, pathMatchesAny, patternHasGlobMagic } from "../lib/utils/path_pattern_match.js";
 
 describe('path_pattern_match', function() {
   describe('pathMatchesPattern', function() {

@@ -1,9 +1,8 @@
-const expect = require('chai').expect;
-const Backbone = require('backbone');
-
-const AppView = require('../../lib/reporters/dev');
-const Config = require('../../lib/config');
-const { createTestTerm } = require('./create_test_term');
+import { expect } from "chai";
+import Backbone from "backbone";
+import AppView from "../../lib/reporters/dev/index.js";
+import Config from "../../lib/config.js";
+import { createTestTerm } from "./create_test_term.js";
 
 describe('AppView terminal-kit', function () {
   let app;

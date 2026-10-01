@@ -1,16 +1,19 @@
-const Launcher = require('../lib/launcher');
-const Config = require('../lib/config');
-const ProcessCtl = require('../lib/process-ctl');
-const knownBrowsers = require('../lib/utils/known-browsers');
-const expect = require('chai').expect;
-const assert = require('chai').assert;
-const path = require('path');
-const fs = require('fs');
-const sinon = require('sinon');
-const { execaNode } = require('execa');
+import Launcher from "../lib/launcher.js";
+import Config from "../lib/config.js";
+import ProcessCtl from "../lib/process-ctl.js";
+import knownBrowsers from "../lib/utils/known-browsers.js";
+import { expect, assert } from "chai";
+import path from "node:path";
+import fs from "node:fs";
+import sinon from "sinon";
+import { execaNode } from "execa";
+import os from "node:os";
+import is_winMod from "../lib/utils/is-win.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const os = require('os');
-const isWin = require('../lib/utils/is-win')();
+const isWin = is_winMod();
 
 describe('Launcher', function() {
   describe('via command', function() {

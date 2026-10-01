@@ -1,14 +1,6 @@
-const expect = require('chai').expect;
-const {
-  escapeHtml,
-  scriptTags,
-  styleTags,
-  loadScriptCalls
-} = require('../lib/runner_pages/html');
-const {
-  renderRunner,
-  renderDirectoryListing
-} = require('../lib/runner_pages');
+import { expect } from "chai";
+import { escapeHtml, scriptTags, styleTags, loadScriptCalls } from "../lib/runner_pages/html.js";
+import { renderRunner, renderDirectoryListing } from "../lib/runner_pages/index.js";
 
 describe('runner_pages html helpers', function() {
   describe('escapeHtml', function() {

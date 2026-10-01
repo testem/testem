@@ -1,9 +1,8 @@
-
-
-const expect = require('chai').expect;
-
-const browserLauncher = require('../lib/browser_launcher');
-const Config = require('../lib/config');
+import { expect } from "chai";
+import browserLauncher from "../lib/browser_launcher.js";
+import Config from "../lib/config.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
 
 const config = new Config('ci', {}, {});
 

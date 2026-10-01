@@ -1,8 +1,6 @@
-
-
-const LauncherFactory = require('../lib/launcher-factory');
-const Config = require('../lib/config');
-const expect = require('chai').expect;
+import LauncherFactory from "../lib/launcher-factory.js";
+import Config from "../lib/config.js";
+import { expect } from "chai";
 
 describe('Launcher Factory', function() {
   let settings, config, launcherFactory;

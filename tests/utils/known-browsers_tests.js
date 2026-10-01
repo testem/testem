@@ -1,13 +1,12 @@
-
-
-const { promisify } = require('util');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
-const expect = require('chai').expect;
-
-const knownBrowsers = require('../../lib/utils/known-browsers');
+import { promisify } from "node:util";
+import fs from "node:fs";
+import path from "node:path";
+import os from "node:os";
+import { expect } from "chai";
+import knownBrowsers from "../../lib/utils/known-browsers.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function addBrowserArgsToConfig(config, browserName) {
   config.get = function(name) {

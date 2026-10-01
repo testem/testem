@@ -1,9 +1,6 @@
-const expect = require('chai').expect;
-const dogfoodConfig = require('../testem.dogfood.cjs');
-const {
-  parseDogfoodArgs,
-  selectLaunchers
-} = require('../scripts/dogfood-tui');
+import { expect } from "chai";
+import dogfoodConfig from "../testem.dogfood.cjs";
+import { parseDogfoodArgs, selectLaunchers } from "../scripts/dogfood-tui.js";
 
 describe('dogfood-tui', function () {
   describe('parseDogfoodArgs', function () {

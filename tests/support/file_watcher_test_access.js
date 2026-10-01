@@ -9,4 +9,4 @@ function getWatchEngine(fw) {
   return fw._impl.fileWatcher;
 }
 
-module.exports = { getWatchEngine };
+export { getWatchEngine };

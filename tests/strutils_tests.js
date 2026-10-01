@@ -1,6 +1,6 @@
+import { expect } from "chai";
+import * as strutils from "../lib/utils/strutils.js";
 
-const expect = require('chai').expect;
-const strutils = require('../lib/utils/strutils');
 const splitLines = strutils.splitLines;
 const indent = strutils.indent;
 const template = strutils.template;

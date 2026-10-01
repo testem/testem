@@ -1,9 +1,8 @@
-const expect = require('chai').expect;
-const Backbone = require('backbone');
-
-const displayText = require('../../lib/reporters/dev/display_text');
-const Chars = require('../../lib/utils/chars');
-const TestResults = require('../../lib/reporters/dev/test_results');
+import { expect } from "chai";
+import Backbone from "backbone";
+import * as displayText from "../../lib/reporters/dev/display_text.js";
+import Chars from "../../lib/utils/chars.js";
+import TestResults from "../../lib/reporters/dev/test_results.js";
 
 describe('display_text', function () {
   describe('getResultsDisplayText', function () {

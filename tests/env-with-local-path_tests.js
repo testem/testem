@@ -1,12 +1,8 @@
-
-
-const path = require('path');
-const fs = require('fs');
-
-const expect = require('chai').expect;
-
-const envWithLocalPath = require('../lib/utils/env-with-local-path');
-const Config = require('../lib/config');
+import path from "node:path";
+import fs from "node:fs";
+import { expect } from "chai";
+import envWithLocalPath from "../lib/utils/env-with-local-path.js";
+import Config from "../lib/config.js";
 
 describe('envWithLocalPath', function() {
   it('returns the process env with the local node module path from the config added if it exists', function() {

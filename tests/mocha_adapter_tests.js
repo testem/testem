@@ -1,8 +1,6 @@
-
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const mochaAdapter = require('../public/testem/mocha_adapter');
+import { expect } from "chai";
+import sinon from "sinon";
+import mochaAdapter from "../public/testem/mocha_adapter.js";
 
 function Runner() {}
 Runner.prototype.emit = function() {};

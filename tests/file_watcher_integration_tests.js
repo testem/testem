@@ -1,3 +1,11 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { expect } from "chai";
+import sinon from "sinon";
+import FileWatcher from "../lib/file_watcher.js";
+import { getWatchEngine } from "./support/file_watcher_test_access.js";
+
 /**
  * Integration tests for `lib/file_watcher` (FileWatcher): real temp dirs and
  * `process.chdir`, no stubbed watch engine.
@@ -5,15 +13,8 @@
  * Each test uses a fresh empty directory from `fs.mkdtempSync` as cwd so the
  * watcher is not scoped to the repo tree.
  */
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
 
-const expect = require('chai').expect;
-const sinon = require('sinon');
 
-const FileWatcher = require('../lib/file_watcher');
-const { getWatchEngine } = require('./support/file_watcher_test_access');
 
 /** Node does not expose a public watcher count; used only to assert no fs.watch leaks. */
 function countActiveFsWatchers() {
