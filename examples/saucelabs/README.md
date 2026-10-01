@@ -30,6 +30,6 @@ See the [saucie Sauce Connect tunnel options](https://github.com/johanneswuerbac
 Browser launchers
 -----------------
 
-`SL_Safari_Current` uses `-v latest` because fixed Safari versions (for example `17`) are retired on Sauce Labs over time. `SL_Safari_Last` pins an older release for regression coverage.
+`SL_Safari_Current` uses `-v latest` because fixed Safari versions are retired on Sauce Labs over time. `SL_Safari_Last` pins Safari **18** on **macOS 15** as compatibility coverage (jasmine-core 7 officially lists Safari 26.x; Sauce still offers 18). A pinned Safari version requires `-p`; without it Sauce rejects the session as `OS: 'unspecified'`.
 
-The CI `launch_in_ci` set targets browsers that run **jasmine-core 5** (Chrome, Firefox, Safari, Edge). `SL_Chrome_Current_No_Details` (TAP protocol without `--attach`) is also excluded from CI; it relied on legacy Sauce result scraping that does not work with the modern Jasmine runner.
+The CI `launch_in_ci` set targets browsers that run the repo-root **jasmine-core 7** install (Chrome, Firefox, Safari, Edge). `SL_Chrome_Current_No_Details` (TAP protocol without `--attach`) is also excluded from CI; it relied on legacy Sauce result scraping that does not work with the modern Jasmine runner.

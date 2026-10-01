@@ -35,8 +35,9 @@
       "protocol": "browser"
     },
     "SL_Safari_Last": {
+      "-comment": "Safari 18 compatibility coverage; jasmine-core 7 officially lists Safari 26.x",
       "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "safari", "-v", "16", "--no-connect", "--attach", "-u"],
+      "args": ["-b", "safari", "-p", "macOS 15", "-v", "18", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
     },
     "SL_MS_Edge": {
