@@ -162,6 +162,51 @@ describe('Config', function() {
     });
   });
 
+  describe('read ts config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'testem.ts')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
+  describe('read mts config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'testem.mts')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
+  describe('read cts config file', function() {
+    let config;
+    beforeEach(function(done) {
+      let progOptions = {
+        file: path.join(__dirname, 'testem.cts')
+      };
+      config = new Config('dev', progOptions);
+      config.read(done);
+    });
+    it('gets properties from config file', function() {
+      expect(config.get('framework')).to.equal('mocha');
+      expect(String(config.get('src_files'))).to.equal('impl.js,tests.js');
+    });
+  });
+
   describe('read esm testem.js config file', function() {
     let config;
     beforeEach(function(done) {
