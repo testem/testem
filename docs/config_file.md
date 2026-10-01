@@ -7,18 +7,18 @@ This document will go into more detail about the Testem configuration file and l
 * `.testem.json`
 * `testem.yml`
 * `.testem.yml`
-* `testem.js`
-* `.testem.js`
-* `testem.mjs`
-* `.testem.mjs`
-* `testem.cjs`
-* `.testem.cjs`
 * `testem.ts`
 * `.testem.ts`
 * `testem.mts`
 * `.testem.mts`
 * `testem.cts`
 * `.testem.cts`
+* `testem.js`
+* `.testem.js`
+* `testem.mjs`
+* `.testem.mjs`
+* `testem.cjs`
+* `.testem.cjs`
 
 The file is looked for in the user's current directory.
 
