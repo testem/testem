@@ -103,6 +103,7 @@ In development mode, Testem has a text-based graphical user interface which uses
 
 * ENTER : Run the tests
 * q : Quit
+* p : Pause / unpause file-watch reruns
 * ← LEFT ARROW  : Move to the next browser tab on the left
 * → RIGHT ARROW : Move to the next browser tab on the right
 * TAB : switch the target text panel between the top and bottom halves of the split panel (if a split is present)
@@ -121,14 +122,27 @@ relevant file is added, edited, or removed. Watching is implemented with
 
 * **`src_files`** — Glob patterns for source files whose changes should trigger a run (defaults to
   `*.js` when unset). This is the main *watch list*.
-* **`watch_files`** — Optional; if set, these patterns are watched instead of defaulting to
-  `src_files` (see `docs/config_file.md`).
-* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `node_modules`).
+* **`watch_files`** — Optional extra watch patterns (see `docs/config_file.md`).
+* **`src_files_ignore`** — Patterns to exclude from the watch policy (e.g. `dist/**`).
 * **`disable_watching`** — Set to `true` to turn off the file watcher entirely.
 
 Testem watches the **current working directory** and applies your include/ignore patterns to
 events from the watcher. You do not need to list every file explicitly; globs and ignores follow
 the same policy as in the config reference.
+
+By default the watcher does **not** descend into `node_modules` or `.git`. To rerun when a
+linked or local package changes, name that folder in `src_files` or `watch_files`:
+
+```json
+{
+  "src_files": ["lib/**/*.js", "tests/**/*.js"],
+  "watch_files": ["node_modules/my-pkg/**/*.js"]
+}
+```
+
+Name only the packages you need. A pattern that contains `node_modules` lifts the default skip
+for that tree (`.git` stays skipped unless you name it the same way). Do not use
+`node_modules/**` unless you really want every install to trigger a rerun.
 
 **Troubleshooting:** On some setups (Docker, network filesystems, VMs), native `fs.watch` can be
 flaky. Chokidar supports environment variables such as `CHOKIDAR_USE_POLLING=1` (force polling)
@@ -396,6 +410,17 @@ Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache
    ```
 
    The generic form is the same: replace `{{#serve_files}}` / `{{#css_files}}` loops with explicit tags for each file you already list in config. If you interpolated other config keys (`{{port}}`, custom options) via `getTemplateData`, bake those values into the HTML or generate the page in `before_tests`.
+9. File watching no longer descends into `node_modules` or `.git` by default. If you relied on reruns when a linked or `file:` package changed, add that folder to `src_files` or `watch_files` (see [File watching](#file-watching)):
+
+    ```json
+    {
+      "src_files": ["lib/**/*.js", "tests/**/*.js"],
+      "watch_files": ["node_modules/my-pkg/**/*.js"]
+    }
+    ```
+
+    Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
+10. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 
 Custom Test Pages
 -----------------
@@ -746,7 +771,7 @@ These YouTube screencasts are from around **2012** and may not match the current
 Contributing
 ------------
 
-If you want to [contribute to the project](https://github.com/testem/testem/blob/main/CONTRIBUTING.md), I am going to do my best to stay out of your way.
+If you want to [contribute to the project](https://github.com/testem/testem/blob/main/CONTRIBUTING.md), I am going to do my best to stay out of your way. Dashboard logic is covered by `npm test`; a real-PTY smoke is `npm run test:tui-e2e` (see CONTRIBUTING).
 
 Core Maintainer(s)
 ------------------
@@ -764,7 +789,7 @@ Testem depends on the following great software
 * [Node](https://nodejs.org/)
 * [Socket.IO](https://socket.io/)
 * [tap-parser](https://github.com/tapjs/tap-parser)
-* [Charm](https://github.com/aheckmann/charm)
+* [terminal-kit](https://github.com/cronvel/terminal-kit)
 * [Commander.js](https://github.com/tj/commander.js)
 * [JS-Yaml](https://github.com/nodeca/js-yaml)
 * [Express](https://expressjs.com/)

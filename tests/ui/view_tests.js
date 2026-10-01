@@ -4,9 +4,8 @@ const expect = require('chai').expect;
 const View = require('../../lib/reporters/dev/view');
 const Backbone = require('backbone');
 const sinon = require('sinon');
-const isWin = require('../../lib/utils/is-win')();
 
-describe('view', !isWin ? function() {
+describe('view', function() {
   let view;
   let MyView;
   let model;
@@ -60,6 +59,4 @@ describe('view', !isWin ? function() {
     expect(onAgeChange).not.to.have.been.called();
   });
 
-} : function() {
-  xit('TODO: Fix and re-enable for windows');
 });

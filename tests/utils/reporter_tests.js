@@ -379,4 +379,39 @@ describe('Reporter', function() {
       expect(reporter.hasTests()).to.be.true();
     });
   });
+
+  describe('setErrorPopupMessage', function() {
+    it('forwards to the first reporter that implements it', function() {
+      const first = { setErrorPopupMessage: sandbox.spy() };
+      const second = { setErrorPopupMessage: sandbox.spy() };
+      const reporter = new Reporter(mockApp(first), stream);
+      reporter.reporters = [first, second];
+
+      reporter.setErrorPopupMessage('too many files');
+
+      expect(first.setErrorPopupMessage).to.have.been.calledOnce();
+      expect(first.setErrorPopupMessage).to.have.been.calledWith('too many files');
+      expect(second.setErrorPopupMessage).not.to.have.been.called();
+    });
+
+    it('skips reporters that do not implement it', function() {
+      const tapLike = {};
+      const popup = { setErrorPopupMessage: sandbox.spy() };
+      const reporter = new Reporter(mockApp(tapLike), stream);
+      reporter.reporters = [tapLike, popup];
+
+      reporter.setErrorPopupMessage('EMFILE');
+
+      expect(popup.setErrorPopupMessage).to.have.been.calledOnce();
+      expect(popup.setErrorPopupMessage).to.have.been.calledWith('EMFILE');
+    });
+
+    it('does nothing when no reporter implements it', function() {
+      const reporter = new Reporter(mockApp(), stream);
+
+      expect(function() {
+        reporter.setErrorPopupMessage('EMFILE');
+      }).not.to.throw();
+    });
+  });
 });

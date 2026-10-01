@@ -334,6 +334,23 @@ describe('Launcher', function() {
         });
       });
 
+      it('ignores stdin but keeps stdout and stderr piped for browsers', function() {
+        const settings = {
+          exe: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          protocol: 'browser',
+          id: '7'
+        };
+        const launcher = new Launcher('Chrome', settings, config);
+        sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
+
+        return launcher.start().then(function() {
+          const options = ProcessCtl.prototype.spawn.firstCall.args[2];
+          expect(options).to.include({ stdin: 'ignore' });
+          expect(options.stdout).to.equal(undefined);
+          expect(options.stderr).to.equal(undefined);
+        });
+      });
+
       it('spawns /usr/bin/open with -a Safari Technology Preview and the test URL', function() {
         const stp = knownBrowsers('darwin', config).find((b) => {
           return b.name === 'Safari Technology Preview';

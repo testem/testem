@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em dogfood</title>
+<link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+</head>
+<body>
+<div id="mocha"></div>
+<script src="/node_modules/mocha/mocha.js"></script>
+<script src="/testem.js"></script>
+<script>
+mocha.setup('bdd');
+Testem.hookIntoTestFramework();
+</script>
+<script type="module" src="dogfood_spec.js"></script>
+</body>
+</html>
