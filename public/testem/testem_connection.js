@@ -13,8 +13,6 @@ function syncConnectStatus() {
 }
 
 function serializeMessage(message) {
-  // stringify for browsers (IE <= 10) that do not support sending an
-  // object via postMessage
   // No need to decycle because the messages sent from iframe to parent
   // are known and will not include arbitrary objects.
   return JSON.stringify(message);
@@ -38,12 +36,8 @@ function sendMessageToParent(type, data) {
   parent.postMessage(message, '*');
 }
 
-var addListener;
 if (typeof window !== 'undefined') {
-  addListener = window.addEventListener ?
-    function(obj, evt, cb) { obj.addEventListener(evt, cb, false); } :
-    function(obj, evt, cb) { obj.attachEvent('on' + evt, cb); };
-  addListener(window, 'message', handleMessage);
+  window.addEventListener('message', handleMessage, false);
 }
 
 var messageListeners = {};
@@ -93,10 +87,6 @@ function initUI() {
 
 function getBrowserName(userAgent) {
   var regexs = [
-    /MS(?:(IE) (1?[0-9]\.[0-9]))/,
-    [/Trident\/.* rv:(1?[0-9]\.[0-9])/, function(m) {
-      return ['IE', m[1]].join(' ');
-    }],
     [/(OPR)\/([0-9]+\.[0-9]+)/, function(m) {
       return ['Opera', m[2]].join(' ');
     }],
@@ -152,7 +142,7 @@ function init() {
     } else {
       initSocket(id);
 
-      addListener(window, 'load', initUI);
+      window.addEventListener('load', initUI, false);
       addMessageListener('emit-message', function(item) {
         socket.emit.apply(socket, item);
       });

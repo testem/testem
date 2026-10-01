@@ -43,21 +43,6 @@
       "exe": "../../node_modules/.bin/saucie",
       "args": ["-b", "microsoftedge", "--no-connect", "--attach", "-u"],
       "protocol": "browser"
-    },
-    "SL_IE_11": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "11", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_10": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "10", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
-    },
-    "SL_IE_9": {
-      "exe": "../../node_modules/.bin/saucie",
-      "args": ["-b", "internet explorer", "-v", "9", "--no-connect", "--attach", "-u"],
-      "protocol": "browser"
     }
   },
   "launch_in_dev": ["SL_Firefox_Current"],
