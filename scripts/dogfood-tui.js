@@ -1,8 +1,23 @@
 #!/usr/bin/env node
+import path from "node:path";
+import { realpathSync } from "node:fs";
+import { spawn } from "node:child_process";
+import Config from "../lib/config.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const path = require('path');
-const { spawn } = require('child_process');
-const Config = require('../lib/config');
+function isCliEntry() {
+  const entry = process.argv[1];
+  if (!entry) {
+    return false;
+  }
+  try {
+    return realpathSync(__filename) === realpathSync(entry);
+  } catch {
+    return false;
+  }
+}
 
 const root = path.join(__dirname, '..');
 const configFile = path.join(root, 'testem.dogfood.cjs');
@@ -90,13 +105,11 @@ function main() {
   });
 }
 
-if (require.main === module) {
+if (isCliEntry()) {
   main();
 }
 
-module.exports = {
-  BROWSERS,
-  MOCHA,
-  parseDogfoodArgs,
-  selectLaunchers
-};
+export { BROWSERS };
+export { MOCHA };
+export { parseDogfoodArgs };
+export { selectLaunchers };

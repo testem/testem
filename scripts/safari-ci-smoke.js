@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+import path from "node:path";
+import { execa } from "execa";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Unattended Safari smoke for CI (macOS only).
@@ -7,8 +12,6 @@
  * (ignoreProcessExit on the Safari launcher) so the run is not marked as a failure.
  */
 
-const path = require('path');
-const { execa } = require('execa');
 
 const root = path.join(__dirname, '..');
 const exampleDir = path.join(root, 'examples', 'qunit_simple');
