@@ -237,6 +237,16 @@ describe('HookRunner', function() {
   });
 
   describe('try', function() {
+    var sandbox;
+
+    beforeEach(function() {
+      sandbox = sinon.createSandbox();
+    });
+
+    afterEach(function() {
+      sandbox.restore();
+    });
+
     it('cleans any running process', function() {
       this.timeout(10000);
 
@@ -260,6 +270,51 @@ describe('HookRunner', function() {
             expect(e.message).to.match(/ESRCH/); // Process shouldn't exist
           }
         });
+      });
+    });
+
+    it('keeps the callback error when stop fails', function() {
+      hook = function(cfg, data, callback) {
+        callback();
+      };
+      var err = new Error('callback failed');
+      var stop = sandbox.stub(HookRunner.prototype, 'stop').rejects(new Error('stop failed'));
+
+      return HookRunner.with(config, 'test_hook', undefined, function() {
+        throw err;
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(err);
+        expect(stop).to.have.been.calledOnce();
+      });
+    });
+
+    it('keeps the hook error when stop fails', function() {
+      hook = function(cfg, data, callback) {
+        callback(new Error('hook failed'));
+      };
+      var stop = sandbox.stub(HookRunner.prototype, 'stop').rejects(new Error('stop failed'));
+
+      return HookRunner.with(config, 'test_hook', undefined).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e.message).to.equal('hook failed');
+        expect(stop).to.have.been.calledOnce();
+      });
+    });
+
+    it('rejects with the stop error when the hook succeeds', function() {
+      hook = function(cfg, data, callback) {
+        callback();
+      };
+      var stopErr = new Error('stop failed');
+      sandbox.stub(HookRunner.prototype, 'stop').rejects(stopErr);
+
+      return HookRunner.with(config, 'test_hook', undefined).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(stopErr);
       });
     });
   });

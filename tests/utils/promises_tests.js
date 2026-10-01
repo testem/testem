@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { setTimeout: delay } = require('timers/promises');
-const { mapLimit, retry } = require('../../lib/utils/promises');
+const { using, mapLimit, retry } = require('../../lib/utils/promises');
 
 describe('mapLimit', function() {
   it('maps all items and returns results', async function() {
@@ -139,5 +139,245 @@ describe('retry', function() {
     const result = await retry(() => Promise.resolve('ok'), { max_tries: 3, interval: 50 });
     expect(result).to.equal('ok');
     expect(Date.now() - start).to.be.below(40);
+  });
+});
+
+describe('using', function() {
+  it('returns the value from run', async function() {
+    const result = await using(() => 42, () => {});
+    expect(result).to.equal(42);
+  });
+
+  it('returns the value from run when dispose is async', async function() {
+    const result = await using(
+      async () => 'ok',
+      async () => {
+        await Promise.resolve();
+      },
+    );
+    expect(result).to.equal('ok');
+  });
+
+  it('ignores the value returned by dispose', async function() {
+    const result = await using(() => 'run', () => 'dispose');
+    expect(result).to.equal('run');
+  });
+
+  it('calls dispose after run succeeds', async function() {
+    const order = [];
+    await using(
+      () => {
+        order.push('run');
+      },
+      () => {
+        order.push('dispose');
+      },
+    );
+    expect(order).to.deep.equal(['run', 'dispose']);
+  });
+
+  it('calls dispose with undefined when run succeeds', async function() {
+    let received;
+    await using(() => 'ok', (err) => {
+      received = err;
+    });
+    expect(received).to.equal(undefined);
+  });
+
+  it('calls dispose after run rejects and rethrows that error', async function() {
+    const err = new Error('run failed');
+    const order = [];
+    let received;
+
+    try {
+      await using(
+        () => {
+          order.push('run');
+          throw err;
+        },
+        (error) => {
+          order.push('dispose');
+          received = error;
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      order.push('caught');
+      expect(e).to.equal(err);
+    }
+
+    expect(received).to.equal(err);
+    expect(order).to.deep.equal(['run', 'dispose', 'caught']);
+  });
+
+  it('calls dispose once when run rejects', async function() {
+    let calls = 0;
+    try {
+      await using(
+        () => {
+          throw new Error('run failed');
+        },
+        () => {
+          calls++;
+        },
+      );
+    } catch {
+      /* expected */
+    }
+    expect(calls).to.equal(1);
+  });
+
+  it('awaits an async dispose before rethrowing the run error', async function() {
+    const err = new Error('run failed');
+    let disposed = false;
+
+    try {
+      await using(
+        () => {
+          throw err;
+        },
+        async () => {
+          await Promise.resolve();
+          disposed = true;
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+
+    expect(disposed).to.equal(true);
+  });
+
+  it('rejects with the dispose error when run succeeds', async function() {
+    const cleanupErr = new Error('cleanup failed');
+    try {
+      await using(() => 'ok', () => {
+        throw cleanupErr;
+      });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(cleanupErr);
+    }
+  });
+
+  it('rejects with an async dispose error when run succeeds', async function() {
+    const cleanupErr = new Error('cleanup failed');
+    try {
+      await using(() => 'ok', async () => {
+        await Promise.resolve();
+        throw cleanupErr;
+      });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(cleanupErr);
+    }
+  });
+
+  it('keeps the run error when dispose also fails', async function() {
+    const originalErr = new Error('original');
+    try {
+      await using(
+        () => {
+          throw originalErr;
+        },
+        () => {
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+  });
+
+  it('keeps the run error when an async dispose also fails', async function() {
+    const originalErr = new Error('original');
+    try {
+      await using(
+        () => {
+          throw originalErr;
+        },
+        async () => {
+          await Promise.resolve();
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+  });
+
+  it('keeps a falsy run rejection when dispose also fails', async function() {
+    try {
+      await using(
+        () => {
+          throw undefined;
+        },
+        () => {
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(undefined);
+    }
+  });
+
+  it('keeps the first error across nested cleanups', async function() {
+    const originalErr = new Error('original');
+    const order = [];
+
+    try {
+      await using(
+        () =>
+          using(
+            () => {
+              throw originalErr;
+            },
+            () => {
+              order.push('inner');
+              throw new Error('inner cleanup');
+            },
+          ),
+        () => {
+          order.push('outer');
+          throw new Error('outer cleanup');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+
+    expect(order).to.deep.equal(['inner', 'outer']);
+  });
+
+  it('keeps the first cleanup error when run succeeds and a later cleanup fails', async function() {
+    const innerErr = new Error('inner cleanup');
+    const order = [];
+
+    try {
+      await using(
+        () =>
+          using(
+            () => 'ok',
+            () => {
+              order.push('inner');
+              throw innerErr;
+            },
+          ),
+        () => {
+          order.push('outer');
+          throw new Error('outer cleanup');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(innerErr);
+    }
+
+    expect(order).to.deep.equal(['inner', 'outer']);
   });
 });

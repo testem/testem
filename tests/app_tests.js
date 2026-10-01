@@ -269,13 +269,42 @@ describe('App', function () {
   });
 
   describe('start with a failing on_exit hook', function () {
-    it('exits with the on_exit error after a test error', function (done) {
+    it('exits with the test error when on_exit fails', function (done) {
+      let calls = 0;
       config = new Config(
         'dev',
         {},
         {
           reporter: new FakeReporter(),
           on_exit: function (config, data, callback) {
+            calls++;
+            callback(new Error('on_exit failed'));
+          },
+          disable_watching: true,
+        },
+      );
+      app = new App(config, function (exitCode, err) {
+        expect(exitCode).to.eq(1);
+        expect(err.message).to.eq('waitForTests failed');
+        expect(calls).to.eq(1);
+        done();
+      });
+      sandbox
+        .stub(app, 'waitForTests')
+        .rejects(new Error('waitForTests failed'));
+      app.start();
+    });
+
+    it('exits with the on_exit error after a successful run', function (done) {
+      let calls = 0;
+      let testsError = false;
+      config = new Config(
+        'dev',
+        {},
+        {
+          reporter: new FakeReporter(),
+          on_exit: function (config, data, callback) {
+            calls++;
             callback(new Error('on_exit failed'));
           },
           disable_watching: true,
@@ -284,11 +313,37 @@ describe('App', function () {
       app = new App(config, function (exitCode, err) {
         expect(exitCode).to.eq(1);
         expect(err.message).to.eq('on_exit failed');
+        expect(calls).to.eq(1);
+        expect(testsError).to.eq(false);
+        done();
+      });
+      app.on('tests-error', function () {
+        testsError = true;
+      });
+      sandbox.stub(app, 'waitForTests').resolves();
+      app.start();
+    });
+  });
+
+  describe('start with a failing runner cleanup', function () {
+    it('exits with the test error when killing runners fails', function (done) {
+      config = new Config(
+        'dev',
+        {},
+        {
+          reporter: new FakeReporter(),
+          disable_watching: true,
+        },
+      );
+      app = new App(config, function (exitCode, err) {
+        expect(exitCode).to.eq(1);
+        expect(err.message).to.eq('waitForTests failed');
         done();
       });
       sandbox
         .stub(app, 'waitForTests')
         .rejects(new Error('waitForTests failed'));
+      sandbox.stub(app, 'killRunners').rejects(new Error('kill failed'));
       app.start();
     });
   });

@@ -121,6 +121,52 @@ describe('Reporter', function() {
         });
       });
     });
+
+    it('keeps the callback error when close fails', function() {
+      let err = new Error('Tests failed.');
+      let report;
+      let close;
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        report = sandbox.spy(reporter, 'report');
+        close = sandbox.stub(reporter, 'close').rejects(new Error('close failed'));
+        return Promise.reject(err);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(err);
+        expect(report).to.have.been.called();
+        expect(close).to.have.been.called();
+      });
+    });
+
+    it('keeps the callback error when report throws', function() {
+      let err = new Error('Tests failed.');
+      let close;
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        sandbox.stub(reporter, 'report').throws(new Error('report failed'));
+        close = sandbox.spy(reporter, 'close');
+        return Promise.reject(err);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(err);
+        expect(close).to.have.been.called();
+      });
+    });
+
+    it('rejects with the close error when the callback succeeds', function() {
+      let closeErr = new Error('close failed');
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        sandbox.stub(reporter, 'close').rejects(closeErr);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(closeErr);
+      });
+    });
   });
 
   describe('new', function() {
