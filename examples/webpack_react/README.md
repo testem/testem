@@ -30,6 +30,8 @@ This is distinct from [examples/webpack](../webpack) (Tape plus `buffer` / `proc
 
 The runner injects `serve_files` in `<head>`, so `document.body` is not available when the bundle first evaluates. Use the queries returned by `render()`, not Testing Library’s `screen` helper (that helper binds to `document.body` at import time).
 
+The click test calls the DOM `click()` inside `act()`. `@testing-library/user-event` waits on `setTimeout` between pointer events, and Headless Firefox on Windows sometimes does not deliver that before Mocha’s default 2 second limit.
+
 ## Config
 
 - [`testem.json`](testem.json) — `before_tests` is `npx webpack`, `serve_files` is `test-bundle.js`, and `src_files` watches the JSX sources plus `webpack.config.js`.
