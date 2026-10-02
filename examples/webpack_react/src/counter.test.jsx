@@ -13,14 +13,13 @@ describe('Counter', () => {
     expect(getByRole('button').textContent).to.equal('Count: 0');
   });
 
-  // A DOM click, not user-event. user-event waits on setTimeout between
-  // pointer events, and Headless Firefox on Windows sometimes does not
-  // deliver that before Mocha's 2s limit. The sibling react_simple example
-  // uses the same click and stays at a few milliseconds on that runner.
-  it('increments on click', async () => {
+  // Do not await act(). The await waits on a macrotask, and Headless
+  // Firefox on Windows sometimes does not run that task before Mocha's
+  // 2s limit. The state update is already flushed before act() returns.
+  it('increments on click', () => {
     const { getByRole } = render(<Counter />);
     const button = getByRole('button', { name: 'Count: 0' });
-    await act(() => {
+    act(() => {
       button.click();
     });
     expect(button.textContent).to.equal('Count: 1');
