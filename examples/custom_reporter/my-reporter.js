@@ -20,4 +20,4 @@ MyReporter.prototype = {
     }
 }
 
-module.exports = MyReporter;
+export default MyReporter;

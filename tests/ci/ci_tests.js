@@ -1,20 +1,17 @@
+import fs from "node:fs";
+import App from "../../lib/app.js";
+import TestReporter from "../../lib/reporters/tap_reporter.js";
+import Config from "../../lib/config.js";
+import sinon from "sinon";
+import { assert, expect } from "chai";
+import path from "node:path";
+import http from "node:http";
+import { execa } from "execa";
+import log from "../../lib/log.js";
+import FakeReporter from "../support/fake_reporter.js";
+import is_winMod from "../../lib/utils/is-win.js";
 
-
-var fs = require('fs');
-var App = require('../../lib/app');
-var TestReporter = require('../../lib/reporters/tap_reporter');
-var Config = require('../../lib/config');
-var sinon = require('sinon');
-var assert = require('chai').assert;
-var expect = require('chai').expect;
-var path = require('path');
-var http = require('http');
-var execa = require('execa').execa;
-var log = require('../../lib/log');
-
-var FakeReporter = require('../support/fake_reporter');
-
-var isWin = require('../../lib/utils/is-win')();
+var isWin = is_winMod();
 
 function makeTestReporter() {
   return new TestReporter(true, undefined, new Config('ci', {}));

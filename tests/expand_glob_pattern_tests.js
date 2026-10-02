@@ -1,9 +1,10 @@
-const path = require('path');
-
-const expect = require('chai').expect;
-
-const expandGlobPattern = require('../lib/utils/expand_glob_pattern');
-const { convertToPosix } = require('../lib/utils/posix');
+import path from "node:path";
+import { expect } from "chai";
+import expandGlobPattern from "../lib/utils/expand_glob_pattern.js";
+import { convertToPosix } from "../lib/utils/posix.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('expandGlobPattern', function() {
   const stylesPattern = convertToPosix(

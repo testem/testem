@@ -1,7 +1,5 @@
-
-
-const capitalize = require('../../lib/utils/capitalize');
-const expect = require('chai').expect;
+import capitalize from "../../lib/utils/capitalize.js";
+import { expect } from "chai";
 
 describe('capitalize', function() {
   it('capitalizes the first letter of a string', function() {

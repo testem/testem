@@ -1,8 +1,13 @@
-const os = require('os').type();
-const path = require('path');
-const fs = require('fs');
-const { execa, execaSync } = require('execa');
-const { mapLimit, retry } = require('../lib/utils/promises');
+import { type } from "node:os";
+import path from "node:path";
+import fs from "node:fs";
+import { execa, execaSync } from "execa";
+import { mapLimit, retry } from "../lib/utils/promises.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const os = type();
 
 // get extra params
 const argv = process.argv.slice(2);

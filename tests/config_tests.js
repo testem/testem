@@ -1,15 +1,17 @@
+import Config from "../lib/config.js";
+import log from "../lib/log.js";
+import * as chai from "chai";
+import browserLauncher from "../lib/browser_launcher.js";
+import path from "node:path";
+import os from "node:os";
+import sinon from "sinon";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-
-const Config = require('../lib/config.js');
-const log = require('../lib/log');
-const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
-const browserLauncher = require('../lib/browser_launcher');
-const path = require('path');
-const os = require('os');
 
-const sinon = require('sinon');
 
 describe('Config', function() {
   let config, appMode, progOptions, sandbox;
@@ -136,7 +138,7 @@ describe('Config', function() {
     let config;
     beforeEach(function(done) {
       let progOptions = {
-        file: path.join(__dirname, 'testem.js')
+        file: path.join(__dirname, 'fixtures', 'cjs_js_config', 'testem.js')
       };
       config = new Config('dev', progOptions);
       config.read(done);

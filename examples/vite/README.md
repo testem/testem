@@ -33,7 +33,7 @@ See the package README for full API details and the recommended **`on_exit`** ha
 
 HMR is turned off in middleware mode here because Testem’s Express app would need explicit wiring to Vite’s WebSocket server; you can still get fast feedback from Testem’s file watching and reloads.
 
-`testem.js` uses **`on_exit`** to call the Vite server’s `close()` hook so watchers and other resources shut down cleanly when Testem exits.
+`testem.js` and `vite.config.js` are ES modules (`"type": "module"` in this example's `package.json`). `testem.js` uses **`on_exit`** to call the Vite server’s `close()` hook so watchers and other resources shut down cleanly when Testem exits.
 
 ### Mocha + Vite
 

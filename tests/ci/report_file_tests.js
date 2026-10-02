@@ -1,16 +1,13 @@
-
-
-const fs = require('fs');
-const App = require('../../lib/app');
-const Config = require('../../lib/config');
-const expect = require('chai').expect;
-const os = require('os');
-const path = require('path');
-const { randomBytes } = require('crypto');
-const PassThrough = require('stream').PassThrough;
-const ReportFile = require('../../lib/utils/report-file');
-
-const FakeReporter = require('../support/fake_reporter');
+import fs from "node:fs";
+import App from "../../lib/app.js";
+import Config from "../../lib/config.js";
+import { expect } from "chai";
+import os from "node:os";
+import path from "node:path";
+import { randomBytes } from "node:crypto";
+import { PassThrough } from "node:stream";
+import ReportFile from "../../lib/utils/report-file.js";
+import FakeReporter from "../support/fake_reporter.js";
 
 describe('report file output', function() {
   this.timeout(30000);

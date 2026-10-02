@@ -1,11 +1,7 @@
-
-
-var expect = require('chai').expect;
-var EventEmitter = require('events').EventEmitter;
-
-var SignalListeners = require('../../lib/utils/signal-listeners');
-
-var isNodeLt400 = require('../support/is-node-lt-400');
+import { expect } from "chai";
+import { EventEmitter } from "node:events";
+import SignalListeners from "../../lib/utils/signal-listeners.js";
+import isNodeLt400 from "../support/is-node-lt-400.js";
 
 describe('SignalListeners', function() {
   describe('with', function() {

@@ -1,7 +1,5 @@
+import isNodeLt from "../../lib/utils/is-node-lt.js";
 
-
-var isNodeLt = require('../../lib/utils/is-node-lt');
-
-module.exports = function() {
+export default function() {
   return isNodeLt(4);
-};
+}

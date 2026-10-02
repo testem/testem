@@ -77,8 +77,16 @@
     "sinon-chai": "^4.0.1",
     "socket.io-client": "^4.8.3"
   },
+  "type": "module",
   "bin": {
     "testem": "./testem.js"
   },
-  "main": "./lib/api.js"
+  "main": "./lib/api.cjs",
+  "exports": {
+    ".": {
+      "require": "./lib/api.cjs",
+      "import": "./lib/api.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

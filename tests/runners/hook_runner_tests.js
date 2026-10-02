@@ -1,16 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
+import os from "node:os";
+import sinon from "sinon";
+import { expect } from "chai";
+import HookRunner from "../../lib/runners/hook_runner.js";
+import is_winMod from "../../lib/utils/is-win.js";
+import { tmpNameAsync } from "../support/tmp-name.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+var isWin = is_winMod();
 
-var fs = require('fs');
-var path = require('path');
-var os = require('os');
-
-var sinon = require('sinon');
-var expect = require('chai').expect;
-
-var HookRunner = require('../../lib/runners/hook_runner');
-var isWin = require('../../lib/utils/is-win')();
-
-var { tmpNameAsync } = require('../support/tmp-name');
 var fsStatAsync = path => fs.promises.stat(path);
 var fsReadFileAsync = path => fs.promises.readFile(path);
 

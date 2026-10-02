@@ -1,6 +1,6 @@
-const expect = require('chai').expect;
-const Backbone = require('backbone');
-const { tabColor } = require('../../lib/reporters/dev/tab_status');
+import { expect } from "chai";
+import Backbone from "backbone";
+import { tabColor } from "../../lib/reporters/dev/tab_status.js";
 
 describe('tab_status', function () {
   it('is green when all passed and none pending', function () {

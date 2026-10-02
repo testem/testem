@@ -13,7 +13,7 @@ Getting Started
 Brief Code Walk Through
 -----------------------
 
-`testem.js` is the main entry point of the program. It then delegates to either `lib/dev/index.js` or `lib/ci/index.js` depending on whether it's development mode `testem` or continuous integration mode `testem ci`. All of the rest of the Node application's source is under the `lib` folder. You can probably figure out the rest from there.
+`testem.js` is an ES module and the CLI entry. It calls `startDev`, `startCI`, or `startServer` on the `Api` class in `lib/api.js`. The rest of the Node application is under `lib`. The published package is `"type": "module"`, with `lib/api.cjs` so `require('testem')` returns that same class. Do not add top-level await under `lib`: `require('testem')` would then throw `ERR_REQUIRE_ASYNC_MODULE`.
 
 The source code for the browser side is under `public/testem`. Built-in runner HTML is generated from `lib/runner_pages/`.
 
@@ -27,9 +27,9 @@ Use the `-d` flag to turn on debug mode. This will allow you to use
 
     log.info('some log message')
 
-To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, require the local logger wrapper from `lib/log.js`:
+To log to the debug log, which is `testem.log`. If the `log` is not present in a module file, import the local logger wrapper from `lib/log.js`:
 
-    var log = require('./log')
+    import log from './log.js'
 
 Then, in a separate terminal you can tail the log and monitor debug messages
 
@@ -60,7 +60,7 @@ Dashboard coverage is three layers. Do **not** add `tests/tui-e2e/**` to the Moc
 | `npm run dogfood:tui` | Interactive `testem` + browsers + unit-suite Mocha tab | Your terminal | **No** |
 | `npm run integration` | `testem ci` on examples | No | Yes |
 
-`test:tui-e2e` uses port **7401** (`testem.tui-e2e.js`). Dogfood uses **7400**. `tests/ci/ci_tests.js` binds **7357**. Failures write `artifacts/tui-e2e/` (gitignored); CI uploads `tui-e2e-<os>`. Run one session with `TESTEM_TUI_E2E=tabs npm run test:tui-e2e`. Sessions: `startup`, `pause` (`p`, ENTER does not unpause), `tabs` (LEFT/RIGHT wrap across Alpha/Beta/Long, TAB stays on the tab), `paging` (UP/DOWN, SPACE via raw `write(' ')`, `b`/`u`/`d`), `rerun` (ENTER), `unbound`, `quit_lower`, `quit_upper`, `quit_ctrl_c`, `quit_twice`. SPACE is sent with `write(' ')`, not `press('Space')` or `type(' ')` — those never arrive on GitHub's macos-26 PTY. Split pane, browsers, file-watch, and the EMFILE popup stay on `dogfood:tui` / `createTerminal`. On Windows use the same command; ConPTY is automatic — do not wrap it in `script` or mintty. `@microsoft/tui-test` is a **devDependency** (`@beta`); do not add it to `dependencies` or published `files`.
+`test:tui-e2e` uses port **7401** (`testem.tui-e2e.cjs`). Dogfood uses **7400**. `tests/ci/ci_tests.js` binds **7357**. Failures write `artifacts/tui-e2e/` (gitignored); CI uploads `tui-e2e-<os>`. Run one session with `TESTEM_TUI_E2E=tabs npm run test:tui-e2e`. Sessions: `startup`, `pause` (`p`, ENTER does not unpause), `tabs` (LEFT/RIGHT wrap across Alpha/Beta/Long, TAB stays on the tab), `paging` (UP/DOWN, SPACE via raw `write(' ')`, `b`/`u`/`d`), `rerun` (ENTER), `unbound`, `quit_lower`, `quit_upper`, `quit_ctrl_c`, `quit_twice`. SPACE is sent with `write(' ')`, not `press('Space')` or `type(' ')` — those never arrive on GitHub's macos-26 PTY. Split pane, browsers, file-watch, and the EMFILE popup stay on `dogfood:tui` / `createTerminal`. On Windows use the same command; ConPTY is automatic — do not wrap it in `script` or mintty. `@microsoft/tui-test` is a **devDependency** (`@beta`); do not add it to `dependencies` or published `files`.
 
 To check the dashboard on a real terminal (split pane, browsers):
 

@@ -1,9 +1,7 @@
-
-
-const expect = require('chai').expect;
-const View = require('../../lib/reporters/dev/view');
-const Backbone = require('backbone');
-const sinon = require('sinon');
+import { expect } from "chai";
+import View from "../../lib/reporters/dev/view.js";
+import Backbone from "backbone";
+import sinon from "sinon";
 
 describe('view', function() {
   let view;

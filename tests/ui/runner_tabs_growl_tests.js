@@ -1,10 +1,10 @@
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const Backbone = require('backbone');
+import { expect } from "chai";
+import sinon from "sinon";
+import Backbone from "backbone";
+import Config from "../../lib/config.js";
+import * as runnertabs from "../../lib/reporters/dev/runner_tabs.js";
+import toastNotify from "../../lib/reporters/dev/toast_notify.js";
 
-const Config = require('../../lib/config');
-const toastNotifyPath = require.resolve('../../lib/reporters/dev/toast_notify');
-const runnertabs = require('../../lib/reporters/dev/runner_tabs');
 const RunnerTab = runnertabs.RunnerTab;
 
 describe('RunnerTab growl / native notifications', function () {
@@ -13,7 +13,6 @@ describe('RunnerTab growl / native notifications', function () {
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
-    const toastNotify = require(toastNotifyPath);
     notifyStub = sandbox.stub(toastNotify, 'notify');
   });
 

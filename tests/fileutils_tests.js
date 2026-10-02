@@ -1,12 +1,11 @@
-
-
-const path = require('path');
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
-const fileutils = require('../lib/utils/fileutils');
-const addToPATH = require('../lib/utils/add-to-PATH');
+import path from "node:path";
+import { expect } from "chai";
+import sinon from "sinon";
+import * as fileutils from "../lib/utils/fileutils.js";
+import addToPATH from "../lib/utils/add-to-PATH.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('fileutils', function() {
   let sandbox;

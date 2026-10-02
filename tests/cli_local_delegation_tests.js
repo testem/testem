@@ -1,11 +1,8 @@
-const { expect } = require('chai');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const {
-  findLocalTestemScript,
-  resolveLocalTestemCliOrNull,
-} = require('../lib/cli-local-delegation');
+import { expect } from "chai";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { findLocalTestemScript, resolveLocalTestemCliOrNull } from "../lib/cli-local-delegation.js";
 
 describe('CLI local delegation', function() {
   let tmp;

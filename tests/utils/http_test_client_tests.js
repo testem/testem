@@ -1,13 +1,12 @@
-const { expect } = require('chai');
-const http = require('http');
-const https = require('https');
-const path = require('path');
-const fs = require('fs');
-const {
-  httpRequest,
-  listenPromise,
-  closePromise,
-} = require('./http_test_client');
+import { expect } from "chai";
+import http from "node:http";
+import https from "node:https";
+import path from "node:path";
+import fs from "node:fs";
+import { httpRequest, listenPromise, closePromise } from "./http_test_client.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('http_test_client', function() {
   describe('listenPromise', function() {

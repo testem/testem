@@ -1,16 +1,15 @@
+import CurrentTime from "../../lib/utils/current-time.js";
+import TapReporter from "../../lib/reporters/tap_reporter.js";
+import DotReporter from "../../lib/reporters/dot_reporter.js";
+import XUnitReporter from "../../lib/reporters/xunit_reporter.js";
+import TeamcityReporter from "../../lib/reporters/teamcity_reporter.js";
+import Config from "../../lib/config.js";
+import { PassThrough } from "node:stream";
+import XmlDom from "@xmldom/xmldom";
+import { assert } from "chai";
+import { inspect } from "node:util";
+import readStream from "../support/read-stream.js";
 
-
-const CurrentTime = require('../../lib/utils/current-time');
-var TapReporter = require('../../lib/reporters/tap_reporter');
-var DotReporter = require('../../lib/reporters/dot_reporter');
-var XUnitReporter = require('../../lib/reporters/xunit_reporter');
-var TeamcityReporter = require('../../lib/reporters/teamcity_reporter');
-var Config = require('../../lib/config');
-var PassThrough = require('stream').PassThrough;
-var XmlDom = require('@xmldom/xmldom');
-var assert = require('chai').assert;
-var inspect = require('util').inspect;
-var readStream = require('../support/read-stream');
 var assertXmlIsValid = function(xmlString) {
   var failure = null;
   var parser = new XmlDom.DOMParser({

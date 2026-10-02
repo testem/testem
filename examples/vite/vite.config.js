@@ -1,7 +1,7 @@
-const { defineConfig } = require('vite');
-const { vitePluginTestem } = require('vite-plugin-testem');
+import { defineConfig } from 'vite';
+import { vitePluginTestem } from 'vite-plugin-testem';
 
-module.exports = defineConfig({
+export default defineConfig({
   plugins: [
     vitePluginTestem({
       framework: 'mocha',

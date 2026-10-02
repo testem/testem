@@ -1,4 +1,4 @@
-const { fetch, Agent } = require('undici');
+import { fetch, Agent } from "undici";
 
 const insecureFetchAgent = new Agent({ connect: { rejectUnauthorized: false } });
 
@@ -82,8 +82,6 @@ function closePromise(server) {
   });
 }
 
-module.exports = {
-  httpRequest,
-  listenPromise,
-  closePromise,
-};
+export { httpRequest };
+export { listenPromise };
+export { closePromise };

@@ -1,19 +1,15 @@
-const path = require('path');
-const { EventEmitter } = require('events');
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
-const fileWatcherImplModulePath = require.resolve('../lib/file_watcher_impl.js');
-const fileWatcherPublicModulePath = require.resolve('../lib/file_watcher.js');
-const { getWatchEngine } = require('./support/file_watcher_test_access');
+import path from "node:path";
+import { EventEmitter } from "node:events";
+import { expect } from "chai";
+import sinon from "sinon";
+import { getWatchEngine } from "./support/file_watcher_test_access.js";
+import FileWatcher from "../lib/file_watcher.js";
+import FileWatcherImpl from "../lib/file_watcher_impl.js";
 
 describe('FileWatcher', function() {
   let sandbox;
   let mockWatcher;
   let createWatcherStub;
-  let FileWatcher;
-  let FileWatcherImpl;
 
   function makeConfig(overrides) {
     const state = {
@@ -62,10 +58,6 @@ describe('FileWatcher', function() {
     mockWatcher.on = sandbox.stub().callsFake(function(...args) {
       return EventEmitter.prototype.on.apply(mockWatcher, args);
     });
-    delete require.cache[fileWatcherImplModulePath];
-    delete require.cache[fileWatcherPublicModulePath];
-    FileWatcher = require('../lib/file_watcher.js');
-    FileWatcherImpl = require('../lib/file_watcher_impl.js');
     createWatcherStub = sandbox
       .stub(FileWatcherImpl, 'createWatcher')
       .callsFake(function() {
@@ -74,8 +66,6 @@ describe('FileWatcher', function() {
   });
 
   afterEach(function() {
-    delete require.cache[fileWatcherImplModulePath];
-    delete require.cache[fileWatcherPublicModulePath];
     sandbox.restore();
   });
 
@@ -170,12 +160,10 @@ describe('FileWatcher', function() {
     });
 
     it('rejects when the watcher emits a non-EMFILE error before ready', async function() {
-      delete require.cache[fileWatcherImplModulePath];
-      delete require.cache[fileWatcherPublicModulePath];
+      createWatcherStub.restore();
       const emitter = new EventEmitter();
-      const Fw = require('../lib/file_watcher_impl.js');
-      const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
-      const promise = Fw.create(makeConfig());
+      const stub = sandbox.stub(FileWatcherImpl, 'createWatcher').returns(emitter);
+      const promise = FileWatcherImpl.create(makeConfig());
       emitter.emit('error', new Error('watch failed'));
       stub.restore();
 
@@ -190,12 +178,10 @@ describe('FileWatcher', function() {
     });
 
     it('resolves when EMFILE is emitted before ready then ready fires', async function() {
-      delete require.cache[fileWatcherImplModulePath];
-      delete require.cache[fileWatcherPublicModulePath];
+      createWatcherStub.restore();
       const emitter = new EventEmitter();
-      const Fw = require('../lib/file_watcher_impl.js');
-      const stub = sandbox.stub(Fw, 'createWatcher').returns(emitter);
-      const promise = Fw.create(makeConfig());
+      const stub = sandbox.stub(FileWatcherImpl, 'createWatcher').returns(emitter);
+      const promise = FileWatcherImpl.create(makeConfig());
       const emfile = new Error('too many open files');
       emfile.code = 'EMFILE';
       emitter.emit('error', emfile);
@@ -203,7 +189,7 @@ describe('FileWatcher', function() {
       const fw = await promise;
       stub.restore();
 
-      expect(fw).to.be.instanceOf(Fw);
+      expect(fw).to.be.instanceOf(FileWatcherImpl);
     });
   });
 

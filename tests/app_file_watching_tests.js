@@ -1,15 +1,15 @@
-const fs = require('fs');
-const os = require('os');
-const Path = require('path');
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
-const Config = require('../lib/config');
-const App = require('../lib/app');
-const FileWatcher = require('../lib/file_watcher');
-
-const FakeReporter = require('./support/fake_reporter');
+import fs from "node:fs";
+import os from "node:os";
+import Path from "node:path";
+import { expect } from "chai";
+import sinon from "sinon";
+import Config from "../lib/config.js";
+import App from "../lib/app.js";
+import FileWatcher from "../lib/file_watcher.js";
+import FakeReporter from "./support/fake_reporter.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = Path.dirname(__filename);
 
 describe('App file watching', function() {
   let app;

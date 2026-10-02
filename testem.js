@@ -1,13 +1,30 @@
 #!/usr/bin/env node
+import { tryDelegateToLocalTestem } from "./lib/cli-local-delegation.js";
+import { Command } from "commander";
+import Config from "./lib/config.js";
+import Api from "./lib/api.js";
+import { realpathSync } from "node:fs";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const require = createRequire(import.meta.url);
 
-const { tryDelegateToLocalTestem } = require('./lib/cli-local-delegation');
-if (require.main === module) {
+function isCliEntry() {
+  const entry = process.argv[1];
+  if (!entry) {
+    return false;
+  }
+  try {
+    return realpathSync(__filename) === realpathSync(entry);
+  } catch {
+    return false;
+  }
+}
+
+if (isCliEntry()) {
   tryDelegateToLocalTestem(__filename, process.argv, process.cwd(), process.env);
 }
 
-const { Command } = require('commander');
-const Config = require('./lib/config');
-const Api = require('./lib/api');
 
 // this is to workaround the weird behavior in commander where
 // if you provide additional command line arguments that aren't
@@ -44,7 +61,7 @@ function parseArgs(argv, { exitOverride = false } = {}) {
   }
 
   program
-    .version(require(__dirname + '/package').version)
+    .version(require('./package.json').version)
     .usage('[options]')
     .option(
       '-f, --file [file]',
@@ -171,9 +188,8 @@ function parseArgs(argv, { exitOverride = false } = {}) {
   return { progOptions, appMode };
 }
 
-module.exports = { parseArgs };
-
-if (require.main === module) {
+export { parseArgs };
+if (isCliEntry()) {
   main();
 }
 

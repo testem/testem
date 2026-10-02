@@ -1,8 +1,6 @@
-
-
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const Testem = require('../public/testem/testem_client');
+import { expect } from "chai";
+import sinon from "sinon";
+import Testem from "../public/testem/testem_client.js";
 
 describe('Testem Client', function() {
   it('passes new socket to each custom adapter', function() {

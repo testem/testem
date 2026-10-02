@@ -1,5 +1,5 @@
-const expect = require('chai').expect;
-const { clampRect, appViewRects, tabLabelRects, panelRect } = require('../../lib/reporters/dev/layout');
+import { expect } from "chai";
+import { clampRect, appViewRects, tabLabelRects, panelRect } from "../../lib/reporters/dev/layout.js";
 
 function assertInside(rect, cols, lines) {
   expect(rect.x).to.be.at.least(0);

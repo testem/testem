@@ -1,13 +1,16 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { execaNode } from "execa";
+import { expect } from "chai";
+import is_winMod from "../../lib/utils/is-win.js";
+import { registerCleanup, _registeredDirs } from "../../lib/utils/tmp-cleanup.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const isWin = is_winMod();
 
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const { execaNode } = require('execa');
-const expect = require('chai').expect;
-const isWin = require('../../lib/utils/is-win')();
-
-const { registerCleanup, _registeredDirs } = require('../../lib/utils/tmp-cleanup');
 
 describe('tmp-cleanup', function() {
   describe('registerCleanup', function() {

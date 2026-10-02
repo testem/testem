@@ -1,15 +1,11 @@
-const path = require('path');
-
-const expect = require('chai').expect;
-
-const Config = require('../lib/config.js');
-const {
-  buildWatchGlobPolicy,
-  flattenPatternList,
-  pathMatchesWatchTarget,
-  expandWatchableFilePaths,
-} = require('../lib/utils/file_watch_glob_policy.js');
-const { convertToPosix } = require('../lib/utils/posix.js');
+import path from "node:path";
+import { expect } from "chai";
+import Config from "../lib/config.js";
+import { buildWatchGlobPolicy, flattenPatternList, pathMatchesWatchTarget, expandWatchableFilePaths } from "../lib/utils/file_watch_glob_policy.js";
+import { convertToPosix } from "../lib/utils/posix.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('file_watch_glob_policy', function() {
   function mockConfig(overrides) {

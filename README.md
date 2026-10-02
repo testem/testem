@@ -46,6 +46,27 @@ When you run the global `testem` inside a project directory that has a local `te
 
 This README uses the `testem` command in examples; add it to npm scripts or invoke it as `testem` from a shell after the installs above.
 
+Programmatic use
+----------------
+
+Testem's package is an ES module. Both of these return the same `Api` class:
+
+```javascript
+import Api from 'testem';
+
+const api = new Api();
+api.startCI({ launch: 'Headless Chrome' });
+```
+
+```javascript
+const Api = require('testem');
+
+const api = new Api();
+api.startDev();
+```
+
+`startDev`, `startCI`, and `startServer` match the CLI modes. `require('testem')` stays synchronous. Deep paths such as `testem/lib/config.js` are not part of the package exports.
+
 Usage
 -----
 
@@ -421,6 +442,7 @@ Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache
 
     Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
 10. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
+11. Testem's own code is ESM. `import Api from 'testem'` and `require('testem')` both return the `Api` class. Your config file is not affected by Testem's `"type": "module"`: `.cjs` stays CommonJS, and `.js` follows the nearest `package.json`. See [Configuration file](docs/config_file.md).
 
 Custom Test Pages
 -----------------
@@ -448,7 +470,7 @@ Include this snippet directly after your `jasmine.js`, `qunit.js` or `mocha.js` 
 
 Or if you are using require.js or another loader, just make sure you load `/testem.js` as the next script after the test framework.
 
-'/testem.js' here is dynamically generated to be used client-side and it should not be confused with server-side 'testem.js'.
+`/testem.js` in the browser is a classic script Testem generates for the page. It is not the server entry `testem.js`, which is an ES module.
 
 ### Multiple Test Pages
 

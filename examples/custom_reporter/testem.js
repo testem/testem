@@ -1,9 +1,9 @@
-var MyReporter = require('./my-reporter');
+import MyReporter from './my-reporter.js';
 
-module.exports = {
-    "framework": "mocha+chai",
-    "src_files": [
-      "hello*.js",
-    ],
-    "reporter": new MyReporter()
+export default {
+  framework: 'mocha+chai',
+  src_files: [
+    'hello*.js',
+  ],
+  reporter: new MyReporter()
 };

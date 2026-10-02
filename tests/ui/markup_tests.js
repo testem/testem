@@ -1,5 +1,5 @@
-const expect = require('chai').expect;
-const { escapeMarkup, segmentsToMarkup } = require('../../lib/reporters/dev/markup');
+import { expect } from "chai";
+import { escapeMarkup, segmentsToMarkup } from "../../lib/reporters/dev/markup.js";
 
 describe('markup', function () {
   describe('escapeMarkup', function () {

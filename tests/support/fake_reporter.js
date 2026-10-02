@@ -1,5 +1,3 @@
-
-
 function FakeReporter() {
   this.results = [];
   this.total = 0;
@@ -22,4 +20,4 @@ FakeReporter.prototype.onStart = function() {};
 FakeReporter.prototype.onEnd = function() {};
 FakeReporter.prototype.reportMetadata = function() {};
 
-module.exports = FakeReporter;
+export default FakeReporter

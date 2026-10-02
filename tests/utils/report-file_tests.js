@@ -1,12 +1,10 @@
-const expect = require('chai').expect;
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const Writable = require('stream').Writable;
-
-const { tmpNameAsync } = require('../support/tmp-name');
-
-const ReportFile = require('../../lib/utils/report-file');
+import { expect } from "chai";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { Writable } from "node:stream";
+import { tmpNameAsync } from "../support/tmp-name.js";
+import ReportFile from "../../lib/utils/report-file.js";
 
 describe('ReportFile', function() {
   describe('close', function() {

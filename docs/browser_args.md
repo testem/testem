@@ -23,6 +23,8 @@ module.exports = {
 };
 ```
 
+When the config file is ESM, use `export default` with the same object. See [Configuration file](config_file.md).
+
 In this example the `--auto-open-devtools-for-tabs` argument will be added to the list of arguments Testem supplies to the Chrome browser when it launches.
 
 Conventions

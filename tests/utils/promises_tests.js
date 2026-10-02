@@ -1,6 +1,6 @@
-const { expect } = require('chai');
-const { setTimeout: delay } = require('timers/promises');
-const { using, mapLimit, retry } = require('../../lib/utils/promises');
+import { expect } from "chai";
+import { setTimeout as delay } from "node:timers/promises";
+import { using, mapLimit, retry } from "../../lib/utils/promises.js";
 
 describe('mapLimit', function() {
   it('maps all items and returns results', async function() {

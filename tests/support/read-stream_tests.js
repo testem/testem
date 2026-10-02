@@ -1,6 +1,6 @@
-const assert = require('chai').assert;
-const PassThrough = require('stream').PassThrough;
-const readStream = require('./read-stream');
+import { assert } from "chai";
+import { PassThrough } from "node:stream";
+import readStream from "./read-stream.js";
 
 describe('readStream', function() {
   it('returns all writes concatenated', function() {

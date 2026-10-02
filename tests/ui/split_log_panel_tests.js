@@ -1,13 +1,11 @@
+import { expect } from "chai";
+import Backbone from "backbone";
+import sinon from "sinon";
+import SplitLogPanel from "../../lib/reporters/dev/split_log_panel.js";
+import * as displayText from "../../lib/reporters/dev/display_text.js";
+import Chars from "../../lib/utils/chars.js";
+import TestResults from "../../lib/reporters/dev/test_results.js";
 
-
-const expect = require('chai').expect;
-const Backbone = require('backbone');
-const sinon = require('sinon');
-
-const SplitLogPanel = require('../../lib/reporters/dev/split_log_panel');
-const displayText = require('../../lib/reporters/dev/display_text');
-const Chars = require('../../lib/utils/chars');
-const TestResults = require('../../lib/reporters/dev/test_results');
 const plainText = displayText.plainText;
 
 describe('SplitLogPanel', function() {

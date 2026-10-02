@@ -1,8 +1,8 @@
+import { expect } from "chai";
+import Backbone from "backbone";
+import * as runnertabs from "../../lib/reporters/dev/runner_tabs.js";
+import Config from "../../lib/config.js";
 
-var expect = require('chai').expect;
-var Backbone = require('backbone');
-var runnertabs = require('../../lib/reporters/dev/runner_tabs');
-var Config = require('../../lib/config');
 var RunnerTab = runnertabs.RunnerTab;
 
 function makeRunnerTab(configOpts, runnerAttrs) {

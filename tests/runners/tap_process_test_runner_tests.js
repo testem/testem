@@ -1,14 +1,16 @@
+import { expect } from "chai";
+import path from "node:path";
+import Config from "../../lib/config.js";
+import Launcher from "../../lib/launcher.js";
+import TapProcessTestRunner from "../../lib/runners/tap_process_test_runner.js";
+import is_winMod from "../../lib/utils/is-win.js";
+import FakeReporter from "../support/fake_reporter.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const isWin = is_winMod();
 
-var expect = require('chai').expect;
-var path = require('path');
-
-var Config = require('../../lib/config');
-var Launcher = require('../../lib/launcher.js');
-var TapProcessTestRunner = require('../../lib/runners/tap_process_test_runner');
-const isWin = require('../../lib/utils/is-win')();
-
-var FakeReporter = require('../support/fake_reporter');
 
 describe('tap process test runner', function() {
   describe('onTestResult', function() {

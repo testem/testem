@@ -74,7 +74,6 @@ export default [
       "wrap-iife": 0,
       yoda: 2,
       semi: 2,
-      strict: [2, "global"],
       "no-undef": 2,
       "no-unused-vars": 2,
       "no-use-before-define": [2, "nofunc"],
@@ -110,6 +109,12 @@ export default [
       quotes: [2, "single"],
     },
   }),
+  {
+    files: ["tests/custom_configs/**/*.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+    },
+  },
   {
     files: [
       "tests/fixtures/tape/public/tap_adapter.js",

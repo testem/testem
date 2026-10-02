@@ -1,14 +1,10 @@
-
-
-var fs = require('fs');
-var expect = require('chai').expect;
-var path = require('path');
-var sinon = require('sinon');
-
-var App = require('../../lib/app');
-var Config = require('../../lib/config');
-
-var FakeReporter = require('../support/fake_reporter');
+import fs from "node:fs";
+import { expect } from "chai";
+import path from "node:path";
+import sinon from "sinon";
+import App from "../../lib/app.js";
+import Config from "../../lib/config.js";
+import FakeReporter from "../support/fake_reporter.js";
 
 describe('dev mode app', function() {
   this.timeout(90000);

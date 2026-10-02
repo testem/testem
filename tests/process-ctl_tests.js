@@ -1,15 +1,16 @@
+import path from "node:path";
+import sinon from "sinon";
+import { expect } from "chai";
+import { setTimeout as delay } from "node:timers/promises";
+import ProcessCtl from "../lib/process-ctl.js";
+import Config from "../lib/config.js";
+import is_winMod from "../lib/utils/is-win.js";
+import isNodeLt012 from "./support/is-node-lt-012.js";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-
-const path = require('path');
-const sinon = require('sinon');
-const expect = require('chai').expect;
-
-const { setTimeout: delay } = require('timers/promises');
-const ProcessCtl = require('../lib/process-ctl');
-const Config = require('../lib/config');
-
-const isWin = require('../lib/utils/is-win')();
-const isNodeLt012 = require('./support/is-node-lt-012');
+const isWin = is_winMod();
 const config = new Config('ci', {}, {});
 
 describe('ProcessCtl', function() {
