@@ -287,122 +287,111 @@ describe('browser test runner', function() {
     });
 
 
-    it('fails without command or exe', function(done) {
-      runner.start(function() {
-        expect(reporter.results[0].result).to.deep.eq({
-          error: {
-            message: 'Error: No command or exe/args specified for launcher ci\n'
-          },
-          failed: 1,
-          launcherId: launcher.id,
-          logs: [{
-            text: 'Error: No command or exe/args specified for launcher ci',
-            type: 'error'
-          }],
-          name: 'error',
-          passed: 0,
-          testContext: {}
-        });
-        done();
+    it('fails without command or exe', async function() {
+      await runner.start();
+      expect(reporter.results[0].result).to.deep.eq({
+        error: {
+          message: 'Error: No command or exe/args specified for launcher ci\n'
+        },
+        failed: 1,
+        launcherId: launcher.id,
+        logs: [{
+          text: 'Error: No command or exe/args specified for launcher ci',
+          type: 'error'
+        }],
+        name: 'error',
+        passed: 0,
+        testContext: {}
       });
     });
 
-    it('fails when the browser fails to start', function(done) {
+    it('fails when the browser fails to start', async function() {
       launcher.settings.exe = 'not-found';
-      runner.start(function() {
-        const result = reporter.results[0].result;
-        expect(result.error).to.be.an('object');
-        expect(result.failed).to.equal(1);
-        expect(result.items).to.be.undefined();
-        expect(result.launcherId).to.equal(launcher.id);
-        expect(result.logs[0].type).to.equal('error');
-        expect(result.passed).to.equal(0);
-        expect(result.testContext).to.be.an('object');
-        if (isWin) {
-          expect(result.error.message).to.match(/is not recognized/);
-          expect(result.logs.at(-1).text).to.match(/is not recognized/);
-        } else {
-          expect(result.error.message).to.match(/ENOENT/);
-          expect(result.logs[0].text).to.match(/ENOENT/);
-        }
-        done();
-      });
+      await runner.start();
+      const result = reporter.results[0].result;
+      expect(result.error).to.be.an('object');
+      expect(result.failed).to.equal(1);
+      expect(result.items).to.be.undefined();
+      expect(result.launcherId).to.equal(launcher.id);
+      expect(result.logs[0].type).to.equal('error');
+      expect(result.passed).to.equal(0);
+      expect(result.testContext).to.be.an('object');
+      if (isWin) {
+        expect(result.error.message).to.match(/is not recognized/);
+        expect(result.logs.at(-1).text).to.match(/is not recognized/);
+      } else {
+        expect(result.error.message).to.match(/ENOENT/);
+        expect(result.logs[0].text).to.match(/ENOENT/);
+      }
     });
 
-    it('fails when the browser fails to connect', function(done) {
+    it('fails when the browser fails to connect', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
-      runner.start(function() {
-        expect(reporter.results[0].result).to.deep.eq({
-          error: {
-            message: 'Error: Browser failed to connect within 2s. testem.js not loaded?\n'
-          },
-          failed: 1,
-          launcherId: launcher.id,
-          logs: [{
-            text: 'Error: Browser failed to connect within 2s. testem.js not loaded?',
-            type: 'error'
-          }],
-          name: 'error',
-          passed: 0,
-          testContext: {}
-        });
-        done();
+      await runner.start();
+      expect(reporter.results[0].result).to.deep.eq({
+        error: {
+          message: 'Error: Browser failed to connect within 2s. testem.js not loaded?\n'
+        },
+        failed: 1,
+        launcherId: launcher.id,
+        logs: [{
+          text: 'Error: Browser failed to connect within 2s. testem.js not loaded?',
+          type: 'error'
+        }],
+        name: 'error',
+        passed: 0,
+        testContext: {}
       });
     });
 
-    it('fails when the browser exits unexpectedly', function(done) {
+    it('fails when the browser exits unexpectedly', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = ['-e', 'console.log(\'test\')'];
-      runner.start(function() {
-        expect(reporter.results[0].result).to.deep.eq({
-          error: {
-            message: 'Error: Browser exited unexpectedly\nStdout: \n test\n\n'
-          },
-          failed: 1,
-          launcherId: launcher.id,
-          logs: [{
-            text: 'Error: Browser exited unexpectedly',
-            type: 'error'
-          }, {
-            text: 'test\n',
-            type: 'log'
-          }],
-          name: 'error',
-          passed: 0,
-          testContext: {}
-        });
-        done();
+      await runner.start();
+      expect(reporter.results[0].result).to.deep.eq({
+        error: {
+          message: 'Error: Browser exited unexpectedly\nStdout: \n test\n\n'
+        },
+        failed: 1,
+        launcherId: launcher.id,
+        logs: [{
+          text: 'Error: Browser exited unexpectedly',
+          type: 'error'
+        }, {
+          text: 'test\n',
+          type: 'log'
+        }],
+        name: 'error',
+        passed: 0,
+        testContext: {}
       });
     });
 
-    it('does not report unexpected exit when ignoreProcessExit is true (e.g. macOS open -a Safari)', function(done) {
+    it('does not report unexpected exit when ignoreProcessExit is true (e.g. macOS open -a Safari)', async function() {
       launcher.settings.ignoreProcessExit = true;
       launcher.settings.exe = 'node';
       launcher.settings.args = ['-e', 'console.log(\'test\')'];
-      runner.start(function() {
-        const unexpected = reporter.results.filter(function(r) {
-          return r.result && r.result.logs && r.result.logs.some(function(l) {
-            return l.text && l.text.indexOf('Browser exited unexpectedly') >= 0;
-          });
-        });
-        expect(unexpected).to.have.length(0);
-        done();
-      });
+      let run = runner.start();
 
       setTimeout(function() {
         runner.tryAttach('browser', launcher.id, socket);
         socket.emit('after-tests-complete');
       }, 50);
+
+      await run;
+      const unexpected = reporter.results.filter(function(r) {
+        return r.result && r.result.logs && r.result.logs.some(function(l) {
+          return l.text && l.text.indexOf('Browser exited unexpectedly') >= 0;
+        });
+      });
+      expect(unexpected).to.have.length(0);
     });
 
-    it('allows to cancel the timeout', function(done) {
+    it('allows to cancel the timeout', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
-      runner.start(function() {
-        expect(reporter.results.length).to.eq(0);
-        done();
-      });
+      let run = runner.start();
 
       setTimeout(function() {
         runner.tryAttach('browser', launcher.id, socket);
@@ -410,6 +399,13 @@ describe('browser test runner', function() {
           runner.finish();
         }, 100);
       }, 50);
+
+      await run;
+      expect(reporter.results.length).to.eq(0);
+    });
+
+    it('resolves when the runner finishes', function() {
+      return runner.start();
     });
 
     it('does not start the launcher when already connected', function(done) {
@@ -425,45 +421,6 @@ describe('browser test runner', function() {
     });
   });
 
-  describe('onFinish callback', function() {
-    let reporter, launcher, runner;
-
-    beforeEach(function() {
-      reporter = new FakeReporter();
-      let config = new Config('ci', { reporter: reporter, browser_start_timeout: 2 });
-      launcher = new Launcher('ci', { protocol: 'browser' }, config);
-      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
-    });
-
-    it('invokes the callback when the runner finishes', function(done) {
-      runner.start(function() {
-        done();
-      });
-      // trigger finish via launcher error (no exe configured)
-    });
-
-    it('calls the callback with null as the first argument on success', function(done) {
-      runner.start(function(err) {
-        expect(err).to.be.null();
-        done();
-      });
-    });
-
-    it('both the returned promise and the callback fire on the same run', function() {
-      var callbackCalled = false;
-      var p = runner.start(function() {
-        callbackCalled = true;
-      });
-      return p.then(function() {
-        expect(callbackCalled).to.equal(true);
-      });
-    });
-
-    it('resolves the promise even when no callback is provided', function() {
-      return runner.start();
-    });
-  });
-
   describe('stop', function() {
     let reporter, launcher, runner;
 
@@ -474,15 +431,8 @@ describe('browser test runner', function() {
       runner = new BrowserTestRunner(launcher, reporter, null, null, config);
     });
 
-    it('returns a resolved promise when no callback is provided', function() {
+    it('returns a resolved promise', function() {
       return runner.stop();
-    });
-
-    it('calls the callback with no error when provided', function(done) {
-      runner.stop(function(err) {
-        expect(err).to.be.null();
-        done();
-      });
     });
 
     it('emits stop-run on the socket when one is attached', function(done) {
@@ -515,18 +465,17 @@ describe('browser test runner', function() {
       socket = new FakeSocket();
     });
 
-    it('exceeding browser reconnect limit should not allow browser reconnect', function(done) {
-      let didReattach = true;
+    it('exceeding browser reconnect limit should not allow browser reconnect', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
-      runner.start(function() {
-        expect(didReattach).to.eq(false);
-        done();
-      });
+      let run = runner.start();
 
       runner.tryAttach('browser', launcher.id, socket);
       runner.onDisconnect();
-      didReattach = runner.tryAttach('browser', launcher.id, socket);
+      let didReattach = runner.tryAttach('browser', launcher.id, socket);
+
+      await run;
+      expect(didReattach).to.eq(false);
     });
   });
 
@@ -544,39 +493,36 @@ describe('browser test runner', function() {
       socket = new FakeSocket();
     });
 
-    it('fails when the browser fails to reconnect', function(done) {
+    it('fails when the browser fails to reconnect', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, '../fixtures/processes/just-running.js')];
-      runner.start(function() {
-        expect(reporter.results[0].result).to.deep.eq({
-          error: {
-            message: 'Error: Browser timeout exceeded: 0.1s\n'
-          },
-          failed: 1,
-          launcherId: launcher.id,
-          logs: [{
-            text: 'Error: Browser timeout exceeded: 0.1s',
-            type: 'error'
-          }],
-          name: 'error',
-          passed: 0,
-          testContext: {}
-        });
-        done();
-      });
+      let run = runner.start();
 
       runner.tryAttach('browser', launcher.id, socket);
 
       runner.onDisconnect();
+
+      await run;
+      expect(reporter.results[0].result).to.deep.eq({
+        error: {
+          message: 'Error: Browser timeout exceeded: 0.1s\n'
+        },
+        failed: 1,
+        launcherId: launcher.id,
+        logs: [{
+          text: 'Error: Browser timeout exceeded: 0.1s',
+          type: 'error'
+        }],
+        name: 'error',
+        passed: 0,
+        testContext: {}
+      });
     });
 
-    it('allows to cancel the timeout', function(done) {
+    it('allows to cancel the timeout', async function() {
       launcher.settings.exe = 'node';
       launcher.settings.args = [path.join(__dirname, 'fixtures/processes/just-running.js')];
-      runner.start(function() {
-        expect(reporter.results.length).to.eq(0);
-        done();
-      });
+      let run = runner.start();
 
       runner.tryAttach('browser', launcher.id, socket);
       runner.onDisconnect();
@@ -586,6 +532,9 @@ describe('browser test runner', function() {
           runner.finish();
         }, 100);
       }, 50);
+
+      await run;
+      expect(reporter.results.length).to.eq(0);
     });
   });
 
@@ -620,10 +569,14 @@ describe('browser test runner', function() {
       runner = new BrowserTestRunner(launcher, reporter, 1, true, config);
     });
 
-    it('ignores multiple finish calls', function(done) {
-      runner.start(done);
+    it('ignores multiple finish calls', async function() {
+      let run = runner.start();
+      let exit = sinon.spy(runner, 'exit');
       runner.finish();
       runner.finish();
+
+      await run;
+      expect(exit).to.have.been.calledOnce();
     });
   });
 });

@@ -8,7 +8,7 @@ const App = require('../lib/app');
 const Config = require('../lib/config');
 
 const FakeReporter = require('./support/fake_reporter');
-const { delay } = require('../lib/utils/promises');
+const { setTimeout: delay } = require('timers/promises');
 
 describe('Api', function() {
   let sandbox;

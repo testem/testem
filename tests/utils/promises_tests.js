@@ -1,305 +1,6 @@
 const { expect } = require('chai');
-const { fromCallback, filter, reduce, each, Disposer, disposer, using, mapLimit, retry, delay, asCallback } = require('../../lib/utils/promises');
-
-describe('fromCallback', function() {
-  it('resolves with the result when the callback is called without an error', async function() {
-    const result = await fromCallback(done => done(null, 42));
-    expect(result).to.equal(42);
-  });
-
-  it('rejects when the callback is called with an error', async function() {
-    const err = new Error('oops');
-    try {
-      await fromCallback(done => done(err));
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-  });
-
-  it('resolves with undefined when callback passes no result', async function() {
-    const result = await fromCallback(done => done(null));
-    expect(result).to.equal(undefined);
-  });
-});
-
-describe('filter', function() {
-  it('returns items for which the predicate resolves to true', async function() {
-    const result = await filter([1, 2, 3, 4], x => Promise.resolve(x % 2 === 0));
-    expect(result).to.deep.equal([2, 4]);
-  });
-
-  it('returns an empty array when no items match', async function() {
-    const result = await filter([1, 3, 5], x => Promise.resolve(x % 2 === 0));
-    expect(result).to.deep.equal([]);
-  });
-
-  it('returns all items when every item matches', async function() {
-    const result = await filter([2, 4, 6], x => Promise.resolve(x % 2 === 0));
-    expect(result).to.deep.equal([2, 4, 6]);
-  });
-
-  it('handles an empty array', async function() {
-    const result = await filter([], () => Promise.resolve(true));
-    expect(result).to.deep.equal([]);
-  });
-
-  it('supports synchronous predicates that return a truthy value', async function() {
-    const result = await filter(['a', '', 'b', ''], x => x);
-    expect(result).to.deep.equal(['a', 'b']);
-  });
-
-  it('runs all predicates in parallel', async function() {
-    const order = [];
-    await filter([1, 2, 3], async x => {
-      order.push(`start:${x}`);
-      await Promise.resolve();
-      order.push(`end:${x}`);
-      return true;
-    });
-    // All starts should appear before any ends because predicates are launched together
-    expect(order.slice(0, 3)).to.deep.equal(['start:1', 'start:2', 'start:3']);
-  });
-});
-
-describe('reduce', function() {
-  it('reduces an array to a single value', async function() {
-    const result = await reduce([1, 2, 3, 4], (acc, x) => acc + x, 0);
-    expect(result).to.equal(10);
-  });
-
-  it('resolves to the initial value for an empty array', async function() {
-    const result = await reduce([], (acc, x) => acc + x, 99);
-    expect(result).to.equal(99);
-  });
-
-  it('supports async reducers', async function() {
-    const result = await reduce(
-      [1, 2, 3],
-      async (acc, x) => {
-        await Promise.resolve();
-        return acc * x;
-      },
-      1
-    );
-    expect(result).to.equal(6);
-  });
-
-  it('processes items sequentially', async function() {
-    const order = [];
-    await reduce(
-      [1, 2, 3],
-      async (acc, x) => {
-        order.push(x);
-        await Promise.resolve();
-        return acc;
-      },
-      null
-    );
-    expect(order).to.deep.equal([1, 2, 3]);
-  });
-});
-
-describe('each', function() {
-  it('calls the function for each item in order', async function() {
-    const visited = [];
-    await each([1, 2, 3], x => visited.push(x));
-    expect(visited).to.deep.equal([1, 2, 3]);
-  });
-
-  it('resolves to the original array', async function() {
-    const arr = [1, 2, 3];
-    const result = await each(arr, () => {});
-    expect(result).to.equal(arr);
-  });
-
-  it('handles an empty array', async function() {
-    const result = await each([], () => {
-      throw new Error('should not be called');
-    });
-    expect(result).to.deep.equal([]);
-  });
-
-  it('processes items sequentially with async callbacks', async function() {
-    const order = [];
-    await each([1, 2, 3], async x => {
-      order.push(`start:${x}`);
-      await Promise.resolve();
-      order.push(`end:${x}`);
-    });
-    expect(order).to.deep.equal([
-      'start:1', 'end:1',
-      'start:2', 'end:2',
-      'start:3', 'end:3',
-    ]);
-  });
-
-  it('rejects if any callback rejects', async function() {
-    const err = new Error('fail');
-    try {
-      await each([1, 2, 3], x => {
-        if (x === 2) { throw err; }
-      });
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-  });
-});
-
-describe('disposer', function() {
-  it('creates a Disposer instance', function() {
-    const d = disposer(Promise.resolve(1), () => {});
-    expect(d).to.be.instanceOf(Disposer);
-  });
-
-  it('wraps a plain value in a resolved promise', async function() {
-    const d = disposer(Promise.resolve('resource'), () => {});
-    const value = await d.promise;
-    expect(value).to.equal('resource');
-  });
-});
-
-describe('using', function() {
-  it('passes the resolved resource to the callback', async function() {
-    const d = disposer(Promise.resolve(42), () => {});
-    const result = await using(d, value => value * 2);
-    expect(result).to.equal(84);
-  });
-
-  it('calls the cleanup function after the callback succeeds', async function() {
-    let cleaned = false;
-    const d = disposer(Promise.resolve('res'), () => { cleaned = true; });
-    await using(d, () => {});
-    expect(cleaned).to.equal(true);
-  });
-
-  it('calls the cleanup function after the callback rejects', async function() {
-    let cleaned = false;
-    const d = disposer(Promise.resolve('res'), () => { cleaned = true; });
-    try {
-      await using(d, () => { throw new Error('fail'); });
-    } catch { /* expected */ }
-    expect(cleaned).to.equal(true);
-  });
-
-  it('re-throws the callback error after cleanup', async function() {
-    const err = new Error('callback error');
-    const d = disposer(Promise.resolve('res'), () => {});
-    try {
-      await using(d, () => { throw err; });
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-  });
-
-  it('passes promise inspection to cleanup with isRejected()=false when callback succeeds', async function() {
-    let inspection;
-    const d = disposer(Promise.resolve('res'), (resource, p) => { inspection = p; });
-    await using(d, () => {});
-    expect(inspection.isRejected()).to.equal(false);
-    expect(inspection.reason()).to.equal(undefined);
-  });
-
-  it('passes promise inspection to cleanup with isRejected()=true and reason() when callback fails', async function() {
-    const err = new Error('oops');
-    let inspection;
-    const d = disposer(Promise.resolve('res'), (resource, p) => { inspection = p; });
-    try {
-      await using(d, () => { throw err; });
-    } catch { /* expected */ }
-    expect(inspection.isRejected()).to.equal(true);
-    expect(inspection.reason()).to.equal(err);
-  });
-
-  it('passes the resource as the first argument to cleanup', async function() {
-    let cleanedWith;
-    const d = disposer(Promise.resolve('myResource'), (resource) => { cleanedWith = resource; });
-    await using(d, () => {});
-    expect(cleanedWith).to.equal('myResource');
-  });
-
-  it('surfaces cleanup errors when the callback succeeds', async function() {
-    const cleanupErr = new Error('cleanup failed');
-    const d = disposer(Promise.resolve('res'), () => { throw cleanupErr; });
-    try {
-      await using(d, () => {});
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(cleanupErr);
-    }
-  });
-
-  it('suppresses cleanup errors when the callback already failed', async function() {
-    const originalErr = new Error('original');
-    const d = disposer(Promise.resolve('res'), () => { throw new Error('cleanup also failed'); });
-    try {
-      await using(d, () => { throw originalErr; });
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(originalErr);
-    }
-  });
-
-  it('supports async cleanup functions', async function() {
-    let cleaned = false;
-    const d = disposer(Promise.resolve('res'), async () => {
-      await Promise.resolve();
-      cleaned = true;
-    });
-    await using(d, () => {});
-    expect(cleaned).to.equal(true);
-  });
-
-  it('calls cleanup when the disposer setup promise rejects', async function() {
-    let cleaned = false;
-    const err = new Error('setup failed');
-    const d = disposer(Promise.reject(err), () => {
-      cleaned = true;
-    });
-    try {
-      await using(d, () => {});
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-    expect(cleaned).to.equal(true);
-  });
-
-  it('passes undefined resource and setup error to cleanup when setup rejects', async function() {
-    const err = new Error('setup failed');
-    let resourceArg;
-    let inspectionArg;
-    const d = disposer(Promise.reject(err), (resource, inspection) => {
-      resourceArg = resource;
-      inspectionArg = inspection;
-    });
-    try {
-      await using(d, () => {});
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-    expect(resourceArg).to.equal(undefined);
-    expect(inspectionArg.isRejected()).to.equal(true);
-    expect(inspectionArg.reason()).to.equal(err);
-  });
-
-  it('works with a plain promise (no cleanup)', async function() {
-    const result = await using(Promise.resolve('plain'), value => value + '!');
-    expect(result).to.equal('plain!');
-  });
-
-  it('re-throws when using a plain promise and the callback fails', async function() {
-    const err = new Error('plain fail');
-    try {
-      await using(Promise.resolve('plain'), () => { throw err; });
-      throw new Error('expected rejection');
-    } catch (e) {
-      expect(e).to.equal(err);
-    }
-  });
-});
+const { setTimeout: delay } = require('timers/promises');
+const { using, mapLimit, retry } = require('../../lib/utils/promises');
 
 describe('mapLimit', function() {
   it('maps all items and returns results', async function() {
@@ -321,6 +22,17 @@ describe('mapLimit', function() {
       return x;
     });
     expect(order.slice(0, 3)).to.deep.equal(['start:1', 'start:2', 'start:3']);
+  });
+
+  it('runs all items in parallel when concurrency is NaN', async function() {
+    const order = [];
+    const result = await mapLimit([1, 2, 3], NaN, async x => {
+      order.push(`start:${x}`);
+      await Promise.resolve();
+      return x;
+    });
+    expect(order).to.deep.equal(['start:1', 'start:2', 'start:3']);
+    expect(result).to.deep.equal([1, 2, 3]);
   });
 
   it('limits concurrency to the given number', async function() {
@@ -430,49 +142,242 @@ describe('retry', function() {
   });
 });
 
-describe('delay', function() {
-  it('resolves after approximately the given number of milliseconds', async function() {
-    const start = Date.now();
-    await delay(50);
-    const elapsed = Date.now() - start;
-    expect(elapsed).to.be.at.least(40);
+describe('using', function() {
+  it('returns the value from run', async function() {
+    const result = await using(() => 42, () => {});
+    expect(result).to.equal(42);
   });
 
-  it('resolves with undefined', async function() {
-    const result = await delay(0);
-    expect(result).to.be.undefined();
+  it('returns the value from run when dispose is async', async function() {
+    const result = await using(
+      async () => 'ok',
+      async () => {
+        await Promise.resolve();
+      },
+    );
+    expect(result).to.equal('ok');
   });
 
-  it('resolves immediately for 0ms', async function() {
-    const start = Date.now();
-    await delay(0);
-    expect(Date.now() - start).to.be.below(50);
-  });
-});
-
-describe('asCallback', function() {
-  it('calls cb with null and the result on fulfillment', function(done) {
-    Promise.resolve(42).then(...asCallback(function(err, result) {
-      expect(err).to.be.null();
-      expect(result).to.equal(42);
-      done();
-    }));
+  it('ignores the value returned by dispose', async function() {
+    const result = await using(() => 'run', () => 'dispose');
+    expect(result).to.equal('run');
   });
 
-  it('calls cb with the error on rejection', function(done) {
-    const err = new Error('oops');
-    Promise.reject(err).then(...asCallback(function(e) {
+  it('calls dispose after run succeeds', async function() {
+    const order = [];
+    await using(
+      () => {
+        order.push('run');
+      },
+      () => {
+        order.push('dispose');
+      },
+    );
+    expect(order).to.deep.equal(['run', 'dispose']);
+  });
+
+  it('calls dispose with undefined when run succeeds', async function() {
+    let received;
+    await using(() => 'ok', (err) => {
+      received = err;
+    });
+    expect(received).to.equal(undefined);
+  });
+
+  it('calls dispose after run rejects and rethrows that error', async function() {
+    const err = new Error('run failed');
+    const order = [];
+    let received;
+
+    try {
+      await using(
+        () => {
+          order.push('run');
+          throw err;
+        },
+        (error) => {
+          order.push('dispose');
+          received = error;
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      order.push('caught');
       expect(e).to.equal(err);
-      done();
-    }));
+    }
+
+    expect(received).to.equal(err);
+    expect(order).to.deep.equal(['run', 'dispose', 'caught']);
   });
 
-  it('does nothing when cb is null', function() {
-    return Promise.resolve(1).then(...asCallback(null));
+  it('calls dispose once when run rejects', async function() {
+    let calls = 0;
+    try {
+      await using(
+        () => {
+          throw new Error('run failed');
+        },
+        () => {
+          calls++;
+        },
+      );
+    } catch {
+      /* expected */
+    }
+    expect(calls).to.equal(1);
   });
 
-  it('does nothing when cb is undefined', function() {
-    return Promise.resolve(1).then(...asCallback(undefined));
+  it('awaits an async dispose before rethrowing the run error', async function() {
+    const err = new Error('run failed');
+    let disposed = false;
+
+    try {
+      await using(
+        () => {
+          throw err;
+        },
+        async () => {
+          await Promise.resolve();
+          disposed = true;
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(err);
+    }
+
+    expect(disposed).to.equal(true);
+  });
+
+  it('rejects with the dispose error when run succeeds', async function() {
+    const cleanupErr = new Error('cleanup failed');
+    try {
+      await using(() => 'ok', () => {
+        throw cleanupErr;
+      });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(cleanupErr);
+    }
+  });
+
+  it('rejects with an async dispose error when run succeeds', async function() {
+    const cleanupErr = new Error('cleanup failed');
+    try {
+      await using(() => 'ok', async () => {
+        await Promise.resolve();
+        throw cleanupErr;
+      });
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(cleanupErr);
+    }
+  });
+
+  it('keeps the run error when dispose also fails', async function() {
+    const originalErr = new Error('original');
+    try {
+      await using(
+        () => {
+          throw originalErr;
+        },
+        () => {
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+  });
+
+  it('keeps the run error when an async dispose also fails', async function() {
+    const originalErr = new Error('original');
+    try {
+      await using(
+        () => {
+          throw originalErr;
+        },
+        async () => {
+          await Promise.resolve();
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+  });
+
+  it('keeps a falsy run rejection when dispose also fails', async function() {
+    try {
+      await using(
+        () => {
+          throw undefined;
+        },
+        () => {
+          throw new Error('cleanup also failed');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(undefined);
+    }
+  });
+
+  it('keeps the first error across nested cleanups', async function() {
+    const originalErr = new Error('original');
+    const order = [];
+
+    try {
+      await using(
+        () =>
+          using(
+            () => {
+              throw originalErr;
+            },
+            () => {
+              order.push('inner');
+              throw new Error('inner cleanup');
+            },
+          ),
+        () => {
+          order.push('outer');
+          throw new Error('outer cleanup');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(originalErr);
+    }
+
+    expect(order).to.deep.equal(['inner', 'outer']);
+  });
+
+  it('keeps the first cleanup error when run succeeds and a later cleanup fails', async function() {
+    const innerErr = new Error('inner cleanup');
+    const order = [];
+
+    try {
+      await using(
+        () =>
+          using(
+            () => 'ok',
+            () => {
+              order.push('inner');
+              throw innerErr;
+            },
+          ),
+        () => {
+          order.push('outer');
+          throw new Error('outer cleanup');
+        },
+      );
+      throw new Error('expected rejection');
+    } catch (e) {
+      expect(e).to.equal(innerErr);
+    }
+
+    expect(order).to.deep.equal(['inner', 'outer']);
   });
 });
-

@@ -1,6 +1,5 @@
 
 
-const { using } = require('../../lib/utils/promises');
 const expect = require('chai').expect;
 const sinon = require('sinon');
 const fs = require('fs');
@@ -82,15 +81,15 @@ describe('Reporter', function() {
   describe('"with"', function() {
     let app = mockApp();
 
-    it('can be used as a disposable which returns a reporter', function() {
-      return using(Reporter.with(app, stream), function(reporter) {
+    it('passes a reporter to the callback', function() {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         expect(reporter).to.be.an.instanceof(Reporter);
       });
     });
 
     it('closes the reporter when done', function() {
       let close;
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
         expect(close).to.have.been.called();
@@ -99,7 +98,7 @@ describe('Reporter', function() {
 
     it('closes the reporter when promise is rejected with error hidden from the reporter', function() {
       let close;
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         close = sandbox.spy(reporter, 'close');
 
         let mockError = new Error('Not all tests passed.');
@@ -113,13 +112,59 @@ describe('Reporter', function() {
     it('logs an error when the wrapped promise was rejected', function() {
       let report;
 
-      return using(Reporter.with(app, stream), function(reporter) {
+      return Reporter.with(app, stream, undefined, function(reporter) {
         report = sandbox.spy(reporter, 'report');
         return Promise.reject(new Error('Tests failed.'));
       }).catch(function() {
         expect(report).to.have.been.calledWith(null, {
           error: { message: 'Tests failed.' }, name: 'Error', passed: false
         });
+      });
+    });
+
+    it('keeps the callback error when close fails', function() {
+      let err = new Error('Tests failed.');
+      let report;
+      let close;
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        report = sandbox.spy(reporter, 'report');
+        close = sandbox.stub(reporter, 'close').rejects(new Error('close failed'));
+        return Promise.reject(err);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(err);
+        expect(report).to.have.been.called();
+        expect(close).to.have.been.called();
+      });
+    });
+
+    it('keeps the callback error when report throws', function() {
+      let err = new Error('Tests failed.');
+      let close;
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        sandbox.stub(reporter, 'report').throws(new Error('report failed'));
+        close = sandbox.spy(reporter, 'close');
+        return Promise.reject(err);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(err);
+        expect(close).to.have.been.called();
+      });
+    });
+
+    it('rejects with the close error when the callback succeeds', function() {
+      let closeErr = new Error('close failed');
+
+      return Reporter.with(app, stream, undefined, function(reporter) {
+        sandbox.stub(reporter, 'close').rejects(closeErr);
+      }).then(function() {
+        expect('should have rejected').to.equal(false);
+      }).catch(function(e) {
+        expect(e).to.equal(closeErr);
       });
     });
   });
