@@ -71,7 +71,7 @@
     "fresh-tape": "^5.9.1",
     "jasmine-core": "^7.0.2",
     "mocha": "^12.0.0",
-    "qunit": "^2.26.0",
+    "qunit": "^3.0.0",
     "saucie": "^4.1.0",
     "sinon": "^21.0.3",
     "sinon-chai": "^4.0.1",
