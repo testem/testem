@@ -1089,6 +1089,47 @@ describe('Server', function() {
     });
   });
 
+  describe('unsafe directory handling with a sibling sharing the cwd prefix', function() {
+    let root;
+
+    before(async function() {
+      // Guard against https://github.com/testem/testem/issues/2016: the path of
+      // `app-secret` starts with the cwd path `app`, but it is outside of it.
+      root = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-unsafe-sibling-'));
+      fs.mkdirSync(path.join(root, 'app'));
+      fs.mkdirSync(path.join(root, 'app-secret'));
+      fs.writeFileSync(path.join(root, 'app', 'hello.js'), 'hello');
+      fs.writeFileSync(path.join(root, 'app-secret', 'secret.txt'), 'secret');
+      config = new Config('dev', {
+        port: port,
+        unsafe_file_serving: false,
+        cwd: path.join(root, 'app'),
+      });
+      baseUrl = 'http://localhost:' + port + '/';
+
+      server = new Server(config);
+      const started = once(server, 'server-start');
+      server.start();
+      await started;
+    });
+    after(async function() {
+      await server.stop();
+      fs.rmSync(root, { recursive: true, force: true });
+    });
+
+    it('handles a request for safe content', async function() {
+      const { res } = await httpRequest(baseUrl + 'hello.js');
+      expect(res.statusCode).to.eq(200);
+    });
+
+    it('rejects a request for a sibling directory that shares the cwd prefix', async function() {
+      const { res } = await httpRequest(
+        baseUrl + '%2E%2E%2Fapp-secret%2Fsecret.txt',
+      );
+      expect(res.statusCode).to.eq(403);
+    });
+  });
+
   describe('routes["/"] config', function() {
     let routesServer, routesBaseUrl;
 
