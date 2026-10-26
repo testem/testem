@@ -412,6 +412,13 @@ describe('Server', function() {
         expectMiddlewareHeaders(res);
       });
 
+      it('proxies a path that also exists locally when fallback is not set', async function() {
+        const { res, text } = await httpRequest.get(baseUrl + 'api4/hello.js');
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.equal('');
+        expectMiddlewareHeaders(res);
+      });
+
       it('proxies get request to api5 with several onlyContentTypes', async function() {
         let options = {
           url: baseUrl + 'api5/test',
@@ -1290,6 +1297,111 @@ describe('Server', function() {
       });
     });
   });
+
+  describe('fallback proxies', function() {
+    let fallbackServer, fallbackUrl, site, api;
+
+    async function startFallbackServer(proxies) {
+      const fallbackConfig = new Config('dev', {
+        port: 0,
+        cwd: 'tests',
+        src_files: ['web/hello.js'],
+        proxies,
+      });
+      fallbackServer = new Server(fallbackConfig);
+      const started = once(fallbackServer, 'server-start');
+      fallbackServer.start();
+      await started;
+      fallbackUrl = `http://localhost:${fallbackServer.server.address().port}/`;
+    }
+
+    before(async function() {
+      site = http.createServer(function(req, res) {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end(`site ${req.method} ${req.url}`);
+      });
+      api = http.createServer(function(req, res) {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end(`api ${req.method} ${req.url}`);
+      });
+      await listenPromise(site, 13390);
+      await listenPromise(api, 13391);
+    });
+
+    after(async function() {
+      await closePromise(site);
+      await closePromise(api);
+    });
+
+    afterEach(function() {
+      return fallbackServer.stop();
+    });
+
+    describe('proxying "/"', function() {
+      beforeEach(function() {
+        return startFallbackServer({
+          '/api4': { target: 'http://localhost:13391', fallback: true },
+          '/': { target: 'http://localhost:13390', fallback: true },
+        });
+      });
+
+      it('serves the Testem client instead of proxying it', async function() {
+        const { res, text } = await httpRequest.get(fallbackUrl + 'testem.js');
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.include('TestemConfig');
+      });
+
+      it('serves the runner page instead of proxying it', async function() {
+        const { text } = await httpRequest.get(fallbackUrl + '1234');
+        expect(text).to.not.match(/^site /);
+        expect(text).to.include('web/hello.js');
+      });
+
+      it('serves a local file instead of proxying it', async function() {
+        await assertFileContents(fallbackUrl + 'api4/hello.js', 'tests/api4/hello.js');
+      });
+
+      it('serves a local file under a browser id instead of proxying it', async function() {
+        await assertFileContents(fallbackUrl + '1234/web/hello.js', 'tests/web/hello.js');
+      });
+
+      it('proxies a missing file to the first matching fallback proxy', async function() {
+        const { res, text } = await httpRequest.get(fallbackUrl + 'api4/missing.js');
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.equal('api GET /api4/missing.js');
+      });
+
+      it('proxies other missing paths to the "/" fallback proxy', async function() {
+        const { res, text } = await httpRequest.get(fallbackUrl + 'assets/app.css');
+        expect(res.statusCode).to.eq(200);
+        expect(text).to.equal('site GET /assets/app.css');
+      });
+
+      it('proxies a missing path under a browser id with the id kept', async function() {
+        const { text } = await httpRequest.get(fallbackUrl + '1234/assets/app.css');
+        expect(text).to.equal('site GET /1234/assets/app.css');
+      });
+
+      it('proxies non-GET requests for missing paths', async function() {
+        const { text } = await httpRequest.post(fallbackUrl + 'form', { body: 'a=1' });
+        expect(text).to.equal('site POST /form');
+      });
+    });
+
+    describe('without a matching fallback proxy', function() {
+      beforeEach(function() {
+        return startFallbackServer({
+          '/api4': { target: 'http://localhost:13391', fallback: true },
+        });
+      });
+
+      it('returns 404 for a missing file', async function() {
+        const { res, text } = await httpRequest.get(fallbackUrl + 'missing.js');
+        expect(res.statusCode).to.eq(404);
+        expect(text).to.equal('Not found: /missing.js');
+      });
+    });
+  });
 });
 
 function middleware(app) {
@@ -1301,6 +1413,12 @@ function middleware(app) {
 
 function expectMiddlewareHeaders(res) {
   expect(res.headers['x-testem-middleware']).to.eq('success');
+}
+
+async function assertFileContents(url, file) {
+  const { res, text } = await httpRequest(url);
+  expect(res.statusCode).to.eq(200);
+  expect(text).to.equal(fs.readFileSync(file).toString());
 }
 
 async function assertUrlReturnsFileContents(url, file) {
