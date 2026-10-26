@@ -698,6 +698,42 @@ describe('Config', function() {
     });
   });
 
+  describe('default src_files with a js config file', function() {
+    let config;
+    beforeEach(function(done) {
+      config = new Config('dev', {
+        cwd: path.join(__dirname, 'fixtures', 'js_config_default_src_files')
+      });
+      config.read(done);
+    });
+
+    it('loads the config file', function() {
+      expect(config.get('framework')).to.equal('qunit');
+    });
+
+    it('excludes the config file from src files', function(done) {
+      config.getSrcFiles(function(err, files) {
+        expect(files).to.deep.equal([{ src: 'hello.js', attrs: [] }]);
+        done(err);
+      });
+    });
+
+    it('excludes the config file from serve files', function(done) {
+      config.getServeFiles(function(err, files) {
+        expect(files).to.deep.equal([{ src: 'hello.js', attrs: [] }]);
+        done(err);
+      });
+    });
+
+    it('keeps the config file when src_files is set explicitly', function(done) {
+      config.set('src_files', ['*.js']);
+      config.getSrcFiles(function(err, files) {
+        expect(files.map(f => f.src)).to.deep.equal(['hello.js', 'testem.js']);
+        done(err);
+      });
+    });
+  });
+
   describe('getServeFiles', function() {
     beforeEach(function() {
       config.set('cwd', 'tests');
