@@ -927,6 +927,23 @@ describe('Server', function() {
       }
     });
 
+    it('does not emit a relative testem.js script on the runner page', async function() {
+      const runnerServer = await startRunnerServer('custom', repoRoot, {
+        src_files: ['tests/web/hello.js', 'testem.js']
+      });
+      try {
+        const { text } = await httpRequest(
+          'http://localhost:' + runnerPort + '/-1',
+        );
+        const srcs = scriptSrcs(text);
+        expect(srcs).to.include('/testem.js');
+        expect(srcs).to.include('tests/web/hello.js');
+        expect(srcs).not.to.include('testem.js');
+      } finally {
+        await runnerServer.stop();
+      }
+    });
+
     it('renders tap runner pages without framework assets', async function() {
       const runnerServer = await startRunnerServer('tap', repoRoot, {
         src_files: ['tests/web/hello.js']

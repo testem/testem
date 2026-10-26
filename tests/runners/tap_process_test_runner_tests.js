@@ -169,6 +169,14 @@ describe('tap process test runner', function() {
         passed: false,
         stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n \n'
       });
+      expect(reporter.results[0].result.error).to.deep.equal({
+        message: 'hello() should be "hello world"',
+        operator: 'equal',
+        expected: 'hell world',
+        actual: 'hello world',
+        at: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)'
+      });
+      expect(reporter.results[1].result).to.not.have.property('error');
       expect(reporter.results[1].result).to.deep.include({
         failed: 0,
         id: 2,
@@ -223,6 +231,12 @@ describe('tap process test runner', function() {
       var stack = failingItems[0].stack;
       expect(typeof stack).to.equal('string');
       expect(stack).to.match(/Error:/);
+
+      var error = failingTest.result.error;
+      expect(error.message).to.equal('Error: blah');
+      expect(error.operator).to.equal('error');
+      expect(error.actual).to.deep.equal({});
+      expect(JSON.stringify(error.stack)).to.match(/blah at Test\._cb/);
     });
 
     it('reads tap output from mocha with stacktrace', async function() {
@@ -256,6 +270,9 @@ describe('tap process test runner', function() {
       var results = reporter.results;
       var failingTest = results[1];
       expect(failingTest.result.name).to.eq('hello should say hello to person');
+      expect(failingTest.result.error).to.deep.equal({
+        message: 'hello should say hello to person'
+      });
 
       var failingItems = failingTest.result.items;
       var error = failingItems[0];
