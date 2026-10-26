@@ -1380,30 +1380,41 @@ describe('test reporters', function() {
         ].join('\n'));
       });
 
-      it('interleaves suites by flowId when launchers run in parallel', function() {
-        var reporter = createReporter({ parallel: 2 });
+      [2, -1, '2'].forEach(function(parallel) {
+        it(`falls back to flat output with parallel: ${JSON.stringify(parallel)}`, function() {
+          var flatStream = new PassThrough();
+          var flat = new TeamcityReporter(false, flatStream, new Config('ci', {}, { parallel: parallel }));
+          var reporter = createReporter({ parallel: parallel });
 
-        reporter.report('Chrome 130', { name: 'a', passed: true, launcherId: '1' });
-        reporter.report('Firefox 128', { name: 'b', passed: true, launcherId: '2' });
-        reporter.report('Chrome 130', { name: 'c', passed: true, launcherId: '1' });
-        reporter.onEnd('Chrome', { launcherId: '1' });
-        reporter.finish();
+          [flat, reporter].forEach(function(r) {
+            r.report('Chrome 130', { name: 'a', passed: true, launcherId: '1', runDuration: 3 });
+            r.report('Firefox 128', { name: 'b', passed: false, launcherId: '2', error: { message: 'foo' } });
+            r.report('Chrome 130', { name: 'c', skipped: true, launcherId: '1' });
+            r.onEnd('Chrome', { launcherId: '1' });
+            r.report('testem', { name: 'testem', passed: false, launcherId: 0, error: { message: 'boom' } });
+            r.onEnd('testem', { launcherId: 0 });
+            r.finish();
+          });
 
-        assert.equal(readStream(stream), [
-          "##teamcity[testSuiteStarted name='Chrome 130' flowId='1']",
-          "##teamcity[testStarted name='a' flowId='1']",
-          "##teamcity[testFinished name='a' flowId='1']",
-          "##teamcity[testSuiteStarted name='Firefox 128' flowId='2']",
-          "##teamcity[testStarted name='b' flowId='2']",
-          "##teamcity[testFinished name='b' flowId='2']",
-          "##teamcity[testStarted name='c' flowId='1']",
-          "##teamcity[testFinished name='c' flowId='1']",
-          "##teamcity[testSuiteFinished name='Chrome 130' flowId='1']",
-          "##teamcity[testSuiteFinished name='Firefox 128' flowId='2']",
-          '',
-          '',
-          '',
-        ].join('\n'));
+          var output = readStream(stream);
+          assert.equal(output, readStream(flatStream));
+          assert.equal(output, [
+            "##teamcity[testStarted name='Chrome 130 - a']",
+            "##teamcity[testFinished name='Chrome 130 - a' duration='3']",
+            "##teamcity[testStarted name='Firefox 128 - b']",
+            "##teamcity[testFailed name='Firefox 128 - b' message='foo' details='']",
+            "##teamcity[testFinished name='Firefox 128 - b']",
+            "##teamcity[testStarted name='Chrome 130 - c']",
+            "##teamcity[testIgnored name='Chrome 130 - c' message='pending']",
+            "##teamcity[testFinished name='Chrome 130 - c']",
+            "##teamcity[testStarted name='testem - testem']",
+            "##teamcity[testFailed name='testem - testem' message='boom' details='']",
+            "##teamcity[testFinished name='testem - testem']",
+            '',
+            '',
+            '',
+          ].join('\n'));
+        });
       });
 
       it('reports testem errors outside of launcher suites', function() {

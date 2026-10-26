@@ -298,7 +298,7 @@ Note that the real output is not pretty printed.
 ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
 ```
 
-With `"teamcity_nest_by_launcher": true`, the tests of each launcher are grouped into a test suite, so TeamCity and IntelliJ show one tree node per browser. Results are still written as they arrive. Every message carries the launcher's `flowId`, so suites of launchers running in parallel (`parallel` > 1) can be told apart. TeamCity supports this, but IntelliJ's test runner may not nest interleaved suites correctly. Turning the option on changes the full test names TeamCity records (suite name plus test name), so test history starts over.
+With `"teamcity_nest_by_launcher": true`, the tests of each launcher are grouped into a test suite, so TeamCity and IntelliJ show one tree node per browser. Results are still written as they arrive, and every message carries the launcher's `flowId`. Nesting only applies with `parallel: 1` (the default), where launchers run one after another; with any other `parallel` value the output stays flat. Turning the option on changes the full test names TeamCity records (suite name plus test name), so test history starts over.
 
 ```text
 ##teamcity[testSuiteStarted name='Firefox 128' flowId='1234']
