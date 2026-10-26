@@ -752,6 +752,45 @@ describe('test reporters', function() {
       });
     });
 
+    context('reportLogs', function() {
+      it('writes logs that do not belong to a test as TAP comments', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(false, stream, config);
+        reporter.report('phantomjs', {
+          name: 'it does stuff',
+          passed: true,
+          logs: [],
+          runDuration: 3,
+        });
+        reporter.reportLogs('phantomjs', {
+          launcherId: 1,
+          logs: ['done', {type: 'log', text: 'multi\nline'}]
+        });
+        reporter.finish();
+        assert.deepEqual(readStream(stream).split('\n').slice(0, 5), [
+          'ok 1 phantomjs - [3 ms] - it does stuff',
+          '# phantomjs - browser log:',
+          '#     done',
+          '#     {"type":"log","text":"multi\\nline"}',
+          '',
+        ]);
+      });
+
+      it('writes nothing with tap_quiet_logs', function() {
+        config = new Config('ci', { tap_quiet_logs: true });
+        var reporter = new TapReporter(false, stream, config);
+        reporter.reportLogs('phantomjs', { launcherId: 1, logs: ['done'] });
+        assert.isNull(stream.read());
+      });
+
+      it('writes nothing when silent', function() {
+        config = new Config('ci', {});
+        var reporter = new TapReporter(true, stream, config);
+        reporter.reportLogs('phantomjs', { launcherId: 1, logs: ['done'] });
+        assert.isNull(stream.read());
+      });
+    });
+
   });
 
   describe('dot reporter', function() {

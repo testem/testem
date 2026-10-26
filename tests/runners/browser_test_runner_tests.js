@@ -159,6 +159,68 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('logs after the last test', function() {
+    let reporter, socket, runner;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+      reporter.reportLogs = sinon.spy();
+
+      let id = 1;
+      let config = new Config('ci', {
+        reporter: reporter
+      });
+      let launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
+
+      socket = new FakeSocket();
+
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+      runner.tryAttach('browser', id, socket);
+    });
+
+    it('attaches logs written during a test to its result', function() {
+      socket.emit('browser-console', 'log', 'in test');
+      socket.emit('test-result', { passed: 1, name: 'Test1' });
+      socket.emit('all-test-results');
+
+      expect(reporter.results[0].result.logs.map(l => l.text)).to.deep.equal(['in test']);
+      sinon.assert.notCalled(reporter.reportLogs);
+    });
+
+    it('reports logs written before all-test-results', function() {
+      socket.emit('test-result', { passed: 1, name: 'Test1' });
+      socket.emit('browser-console', 'log', 'done');
+      socket.emit('all-test-results');
+
+      sinon.assert.calledOnce(reporter.reportLogs);
+      let [browser, data] = reporter.reportLogs.firstCall.args;
+      expect(browser).to.equal('browser');
+      expect(data.launcherId).to.equal(runner.launcherId);
+      expect(data.logs.map(l => l.text)).to.deep.equal(['done']);
+    });
+
+    it('reports logs written before after-tests-complete', function() {
+      socket.emit('test-result', { passed: 1, name: 'Test1' });
+      socket.emit('all-test-results');
+      socket.emit('browser-console', 'warn', 'after tests');
+      socket.emit('after-tests-complete');
+
+      sinon.assert.calledOnce(reporter.reportLogs);
+      expect(reporter.reportLogs.firstCall.args[1].logs.map(l => l.type)).to.deep.equal(['warn']);
+      expect(reporter.total).to.equal(1);
+      expect(runner.finished).to.equal(true);
+    });
+
+    it('does not try to call an absent reporter hook', function() {
+      delete reporter.reportLogs;
+      socket.emit('browser-console', 'log', 'done');
+
+      expect(function() {
+        socket.emit('all-test-results');
+      }).not.to.throw();
+    });
+  });
+
   describe('onTestsStart', function() {
     let runner, reporter;
 

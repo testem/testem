@@ -9,6 +9,7 @@ import FakeReporter from "../support/fake_reporter.js";
 import TapReporter from "../../lib/reporters/tap_reporter.js";
 import XUnitReporter from "../../lib/reporters/xunit_reporter.js";
 import reporters from "../../lib/reporters/index.js";
+import log from "../../lib/log.js";
 
 const fsReadFileAsync = (path, enc) => fs.promises.readFile(path, enc);
 const fsUnlinkAsync = path => fs.promises.unlink(path);
@@ -290,6 +291,53 @@ describe('Reporter', function() {
       expect(reporter).to.be.ok();
       expect(reporter.reporters.length).to.equal(1);
       expect(reporter.reporters[0].quietLogs).to.be.true();
+    });
+
+    it('does not register a custom reporter instance twice when path is provided', function() {
+      return tmpNameAsync().then(function(path) {
+        let custom = { report: sinon.spy(), finish: sinon.spy() };
+        let warn = sandbox.stub(log, 'warn');
+        let reporter = new Reporter(mockApp(custom), stream, path);
+
+        expect(reporter.reporters).to.deep.equal([custom]);
+        expect(warn).to.have.been.calledOnce();
+        expect(warn.firstCall.args[0]).to.match(/report_file/);
+
+        reporter.report('Chrome', { name: 'a test', passed: true });
+
+        return reporter.close().then(function() {
+          expect(custom.report).to.have.been.calledOnce();
+          expect(custom.finish).to.have.been.calledOnce();
+        });
+      });
+    });
+
+    it('writes to stream and path with a custom reporter class when path is provided', function() {
+      class CustomReporter {
+        constructor(silent, out) {
+          this.out = out;
+        }
+
+        report(prefix, data) {
+          this.out.write(`${prefix} ${data.name}\n`);
+        }
+      }
+
+      return tmpNameAsync().then(function(path) {
+        let reporter = new Reporter(mockApp(CustomReporter), stream, path);
+
+        expect(reporter.reporters).to.have.lengthOf(2);
+
+        reporter.report('Chrome', { name: 'a test', passed: true });
+
+        return reporter.close().then(function() {
+          expect(readStream(stream)).to.equal('Chrome a test\n');
+
+          return fsReadFileAsync(path, 'utf-8');
+        }).then(function(output) {
+          expect(output).to.equal('Chrome a test\n');
+        });
+      });
     });
 
     it('writes xml to stream and file with xunit reporter and intermediate output is enabled', function() {
