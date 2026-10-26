@@ -296,8 +296,18 @@ Note that the real output is not pretty printed.
 ##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
 ##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
 ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
+```
 
-##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
+With `"teamcity_nest_by_launcher": true`, the tests of each launcher are grouped into a test suite, so TeamCity and IntelliJ show one tree node per browser. Results are still written as they arrive, and every message carries the launcher's `flowId`. Nesting only applies with `parallel: 1` (the default), where launchers run one after another; with any other `parallel` value the output stays flat. Turning the option on changes the full test names TeamCity records (suite name plus test name), so test history starts over.
+
+```text
+##teamcity[testSuiteStarted name='Firefox 128' flowId='1234']
+##teamcity[testStarted name='hello should say hello' flowId='1234']
+##teamcity[testFinished name='hello should say hello' flowId='1234']
+##teamcity[testStarted name='goodbye should say goodbye' flowId='1234']
+##teamcity[testFailed name='goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='...' flowId='1234']
+##teamcity[testFinished name='goodbye should say goodbye' flowId='1234']
+##teamcity[testSuiteFinished name='Firefox 128' flowId='1234']
 ```
 
 </details>

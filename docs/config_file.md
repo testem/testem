@@ -172,6 +172,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     stdout_stream                [Stream]  the stdout stream to use (defaults to `process.stdout`)
     tap_failed_tests_only        [Boolean] log only failed tests (`not ok`) in TAP reporting
     tap_quiet_logs               [Boolean] whether to suppress non-failing console logs (_not_ pass/fail info) in TAP reporting
+    teamcity_nest_by_launcher    [Boolean] group teamcity reporter output into one test suite per launcher, streamed as results arrive (false). Only applies with `parallel: 1`; otherwise the output stays flat
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
