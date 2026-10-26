@@ -1143,6 +1143,21 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
+    it('uses the test name as the message of an error without one', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'it fails',
+        passed: 0,
+        failed: 1,
+        error: { stack: 'Error: nope' }
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.match(output, /<error message="it fails"><!\[CDATA\[Source:\nError: nope\]\]><\/error>/);
+
+      assertXmlIsValid(output);
+    });
+
     it('serializes object values instead of printing [object Object]', function() {
       var reporter = new XUnitReporter(false, stream, config);
       reporter.report('tap', {
