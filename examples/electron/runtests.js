@@ -4,7 +4,7 @@ var fs = require('fs');
 var url = require('url');
 var pathToFileURL = url.pathToFileURL;
 var { randomBytes } = require('crypto');
-var execFile = require('child_process').execFile;
+var spawn = require('child_process').spawn;
 var { registerCleanup } = require('../../lib/utils/tmp-cleanup.js');
 
 var baseObj = url.parse(process.argv[2]);
@@ -43,16 +43,41 @@ var testUrl = url.format(tmpFileObj);
 
 var env = Object.assign({}, process.env);
 delete env.ELECTRON_RUN_AS_NODE;
+// Print Chromium's own errors and console messages to stderr. Testem shows a
+// launcher's output when the browser fails, so this explains failed starts.
+env.ELECTRON_ENABLE_LOGGING = '1';
 var electronArgs = [testUrl];
 if (platform === 'linux') {
   electronArgs.unshift('--no-sandbox');
 }
-var child = execFile(electronPath, electronArgs, { env: env }, function(error) {
-  if (error) {
-    throw error;
-  }
+// CI can ask for Chromium's verbose log in a file instead; the workflow prints
+// it when the job fails.
+if (process.env.ELECTRON_LOG_DIR) {
+  fs.mkdirSync(process.env.ELECTRON_LOG_DIR, { recursive: true });
+  delete env.ELECTRON_ENABLE_LOGGING;
+  var logFile = path.join(process.env.ELECTRON_LOG_DIR, 'electron-' + id + '-' + Date.now() + '.log');
+  electronArgs.unshift('--enable-logging=file', '--log-file=' + logFile, '--v=1');
+}
+console.error('Starting ' + electronPath + ' ' + electronArgs.join(' '));
+// Keep pipes rather than inheriting stdio: if this script is killed outright,
+// the closed pipes take Electron down with it.
+var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'pipe', 'pipe'] });
+child.stdout.pipe(process.stdout);
+child.stderr.pipe(process.stderr);
+
+child.on('error', function(error) {
+  throw error;
 });
 
-process.on('SIGTERM', function() {
-  child.kill();
+child.on('exit', function(code, signal) {
+  console.error('Electron exited with code ' + code + (signal ? ' (signal ' + signal + ')' : ''));
+  process.exitCode = code === null ? 1 : code;
+});
+
+// Testem stops this launcher with SIGTERM, and tmp-cleanup.js exits the process
+// on SIGTERM before any other handler runs. Stop Electron on exit instead.
+process.on('exit', function() {
+  if (child.exitCode === null && child.signalCode === null) {
+    child.kill();
+  }
 });

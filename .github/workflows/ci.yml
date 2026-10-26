@@ -75,8 +75,30 @@ jobs:
         if: runner.os == 'Linux'
       - name: npm run integration
         uses: GabrielBB/xvfb-action@v1.7
+        env:
+          ELECTRON_LOG_DIR: ${{ runner.os == 'macOS' && format('{0}/electron-logs', runner.temp) || '' }}
         with:
           run: npm run integration
+      # The Electron example sometimes hangs at startup on macOS runners
+      # without printing anything. Show what the system was doing.
+      - name: macOS diagnostics
+        if: failure() && runner.os == 'macOS'
+        run: |
+          sw_vers
+          for f in "$RUNNER_TEMP"/electron-logs/*.log; do
+            [ -f "$f" ] || continue
+            echo "== $f"
+            # Skip the histogram dump Chromium writes on exit.
+            grep -a '^\[' "$f" | tail -n 300
+          done
+          /usr/bin/log show --last 15m --style compact --predicate 'process == "syspolicyd" OR process == "XProtectPluginService" OR process == "amfid" OR process == "tccd" OR process == "nehelper" OR process BEGINSWITH "Electron"' | tail -n 800
+      - name: Upload Electron logs
+        if: failure() && runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-logs-macos
+          path: ${{ runner.temp }}/electron-logs
+          if-no-files-found: ignore
 
   safari-smoke:
     name: safari-ci-smoke
