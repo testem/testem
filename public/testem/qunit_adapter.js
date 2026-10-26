@@ -5,6 +5,7 @@ qunit_adapter.js
 
 Testem's QUnit adapter. Works by using QUnit's hooks:
 
+* `runStart` (via `QUnit.on`, QUnit >= 2.2, when available)
 * `testStart`
 * `testDone`
 * `moduleStart`
@@ -49,6 +50,18 @@ function qunitAdapter() {
       return e.stack;
     }
     return undefined;
+  }
+
+  if (typeof QUnit.on === 'function') {
+    // `runStart` reports how many tests will run, after `filter`, `module`
+    // and `only` are applied. `QUnit.begin`'s `totalTests` counts every
+    // registered test, filtered or not, so it would overstate the plan.
+    QUnit.on('runStart', function(runStart) {
+      var total = runStart && runStart.testCounts && runStart.testCounts.total;
+      if (typeof total === 'number') {
+        emit('tests-planned', { total: total });
+      }
+    });
   }
 
   QUnit.log(function(params, e) {

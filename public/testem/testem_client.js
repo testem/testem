@@ -317,6 +317,8 @@ Testem.detectTestFramework = hookIntoTestFramework;
 Testem.resetTestFrameworkDetection = function() {
   testFrameworkDidInit = false;
 };
+// Exposed for unit tests only.
+Testem._setupTestStats = setupTestStats;
 
 // Exporting this as a module so that it can be unit tested in Node.
 if (typeof module !== 'undefined') {
@@ -329,7 +331,7 @@ function init() {
   });
   interceptWindowOnError();
   takeOverConsole();
-  setupTestStats();
+  setupTestStats(Testem, document);
   Testem.hookIntoTestFramework = function() {
     if (!hookIntoTestFramework(Testem)) {
       throw new Error('Testem was unable to detect a test framework, please load it before invoking Testem.hookIntoTestFramework');
@@ -340,11 +342,16 @@ function init() {
   Testem.on('tap-all-test-results', Testem.runAfterTests);
 }
 
-function setupTestStats() {
-  var originalTitle = document.title;
+function setupTestStats(emitter, doc) {
+  var originalTitle = doc.title;
   var total = 0;
   var passed = 0;
-  Testem.on('test-result', function(test) {
+  var planned = 0;
+  emitter.on('tests-planned', function(data) {
+    planned = (data && typeof data.total === 'number') ? data.total : 0;
+    updateTitle();
+  });
+  emitter.on('test-result', function(test) {
     total++;
     if (test.failed === 0) {
       passed++;
@@ -356,7 +363,12 @@ function setupTestStats() {
     if (!total) {
       return;
     }
-    document.title = originalTitle + ' (' + passed + '/' + total + ')';
+    if (planned > 0 && total <= planned) {
+      // Show passed tests against the announced plan.
+      doc.title = originalTitle + ' (' + passed + '/' + planned + ')';
+    } else {
+      doc.title = originalTitle + ' (' + passed + '/' + total + ')';
+    }
   }
 }
 
