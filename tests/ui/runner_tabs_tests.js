@@ -2,6 +2,7 @@ import { expect } from "chai";
 import Backbone from "backbone";
 import * as runnertabs from "../../lib/reporters/dev/runner_tabs.js";
 import Config from "../../lib/config.js";
+import Chars from "../../lib/utils/chars.js";
 
 var RunnerTab = runnertabs.RunnerTab;
 
@@ -21,6 +22,42 @@ function makeRunnerTab(configOpts, runnerAttrs) {
     index: 0
   });
 }
+
+describe('RunnerTab status', function() {
+  function statusFor(attrs) {
+    var results = new Backbone.Model(Object.assign({
+      passed: 0,
+      pending: 0,
+      total: 0,
+      planned: 0,
+      all: false
+    }, attrs));
+    var tab = makeRunnerTab({}, {results: results});
+    var content;
+    tab.statusLabel = {
+      setContent: function(text) { content = text; }
+    };
+    tab.renderResults();
+    tab.stopSpinner();
+    return content.replace(/\^[^^]?/g, '').trim();
+  }
+
+  it('shows ran/planned while running when a plan is known', function() {
+    expect(statusFor({passed: 1, total: 2, planned: 5})).to.match(/^2\/5 /);
+  });
+
+  it('shows passed/total while running without a plan', function() {
+    expect(statusFor({passed: 1, total: 2})).to.match(/^1\/2 /);
+  });
+
+  it('falls back to passed/total when more results arrive than planned', function() {
+    expect(statusFor({passed: 6, total: 6, planned: 5})).to.match(/^6\/6 /);
+  });
+
+  it('shows passed/total and the result mark when done', function() {
+    expect(statusFor({passed: 5, total: 5, planned: 5, all: true})).to.equal('5/5 ' + Chars.success);
+  });
+});
 
 describe('RunnerTab color', function() {
   it('is red when fail_on_zero_tests and there are no tests', function() {
