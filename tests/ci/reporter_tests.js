@@ -316,6 +316,78 @@ describe('test reporters', function() {
       });
     });
 
+    context('with non-string error values', function() {
+      it('serializes objects instead of printing [object Object]', function() {
+        var circular = { name: 'circular' };
+        circular.self = circular;
+        var reporter = new TapReporter(false, stream, config);
+        reporter.report('phantomjs', {
+          name: 'it fails',
+          passed: false,
+          error: {
+            message: 'objects should match',
+            actual: { n: 'Seven' },
+            expected: { n: 7, list: [1, 2] },
+            negative: false,
+            circular: circular
+          },
+          runDuration: 5
+        });
+        reporter.finish();
+        assert.deepEqual(readStream(stream).split('\n').slice(0, 25), [
+          'not ok 1 phantomjs - [5 ms] - it fails',
+          '    ---',
+          '        message: >',
+          '            objects should match',
+          '        actual: >',
+          '            {',
+          '              "n": "Seven"',
+          '            }',
+          '        expected: >',
+          '            {',
+          '              "n": 7,',
+          '              "list": [',
+          '                1,',
+          '                2',
+          '              ]',
+          '            }',
+          '        negative: >',
+          '            false',
+          '        circular: >',
+          '            [object Object]',
+          '    ...',
+          '',
+          '1..1',
+          '# tests 1',
+          '# pass  0'
+        ]);
+      });
+    });
+
+    context('without runDuration', function() {
+      it('omits the duration instead of printing [undefined ms]', function() {
+        var reporter = new TapReporter(false, stream, config);
+        reporter.report('tap', {
+          name: 'it does stuff',
+          passed: true,
+          logs: []
+        });
+        reporter.report('tap', {
+          name: 'error',
+          passed: false,
+          error: { message: 'it crapped out' },
+          logs: []
+        });
+        reporter.finish();
+        var lines = readStream(stream).split('\n');
+        assert.deepEqual(lines.slice(0, 2), [
+          'ok 1 tap - it does stuff',
+          'not ok 2 tap - error'
+        ]);
+        assert.notInclude(lines.join('\n'), 'undefined');
+      });
+    });
+
     context('with error-only output', function() {
       beforeEach(function() {
         config = new Config('ci', { tap_failed_tests_only: true });
@@ -1030,6 +1102,19 @@ describe('test reporters', function() {
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs a zero time for results without runDuration', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'it does stuff',
+        passed: true
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.match(output, /<testcase classname="tap" name="it does stuff" time="0"\/>/);
 
       assertXmlIsValid(output);
     });
