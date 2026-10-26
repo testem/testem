@@ -466,6 +466,27 @@ describe('test reporters', function() {
             ''
           ]);
         });
+
+        it('writes out failures without error details, without an empty YAML block', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('tap', {
+            name: 'it does stuff',
+            passed: 1,
+            items: []
+          });
+          reporter.report('tap', {
+            name: 'it fails',
+            passed: 0,
+            failed: 1,
+            error: {}
+          });
+          reporter.finish();
+          assert.deepEqual(readStream(stream).split('\n').slice(0, 3), [
+            'not ok 1 tap - it fails',
+            '',
+            '1..2'
+          ]);
+        });
       });
 
       context('with todos', function() {
@@ -1118,6 +1139,60 @@ describe('test reporters', function() {
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="Assertion Failed">/);
       assert.match(output, /CDATA\[Expected:\n {4}bar\n\nResult:\n {4}NOT foo\n\nSource:\nError: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('uses the test name as the message of an error without one', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'it fails',
+        passed: 0,
+        failed: 1,
+        error: { stack: 'Error: nope' }
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.match(output, /<error message="it fails"><!\[CDATA\[Source:\nError: nope\]\]><\/error>/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('serializes object values instead of printing [object Object]', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'objects should match',
+        passed: false,
+        error: {
+          message: 'should be deeply equivalent',
+          actual: { a: 1 },
+          expected: { a: 2, list: [1, 2] },
+          stack: { at: 'tests.js:6:5' }
+        }
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.notInclude(output, '[object Object]');
+      assert.include(output, [
+        'CDATA[Expected:',
+        '    {',
+        '      "a": 2,',
+        '      "list": [',
+        '        1,',
+        '        2',
+        '      ]',
+        '    }',
+        '',
+        'Result:',
+        '    {',
+        '      "a": 1',
+        '    }',
+        '',
+        'Source:',
+        '{',
+        '  "at": "tests.js:6:5"',
+        '}'
+      ].join('\n'));
 
       assertXmlIsValid(output);
     });

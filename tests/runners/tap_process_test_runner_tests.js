@@ -167,10 +167,9 @@ describe('tap process test runner', function() {
         ok: false,
         operator: 'equal',
         passed: false,
-        stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n \n'
+        stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n'
       });
       expect(reporter.results[0].result.error).to.deep.equal({
-        message: 'hello() should be "hello world"',
         operator: 'equal',
         expected: 'hell world',
         actual: 'hello world',
@@ -233,7 +232,7 @@ describe('tap process test runner', function() {
       expect(stack).to.match(/Error:/);
 
       var error = failingTest.result.error;
-      expect(error.message).to.equal('Error: blah');
+      expect(error).to.not.have.property('message');
       expect(error.operator).to.equal('error');
       expect(error.actual).to.deep.equal({});
       expect(JSON.stringify(error.stack)).to.match(/blah at Test\._cb/);
@@ -270,14 +269,30 @@ describe('tap process test runner', function() {
       var results = reporter.results;
       var failingTest = results[1];
       expect(failingTest.result.name).to.eq('hello should say hello to person');
-      expect(failingTest.result.error).to.deep.equal({
-        message: 'hello should say hello to person'
-      });
+      var failingError = failingTest.result.error;
+      expect(failingError).to.have.all.keys('stack');
+      expect(failingError.stack).to.match(/^ReferenceError: ethueo is not defined\n {4}at Context\.<anonymous> \(/);
+      expect(failingError.stack).to.match(/\n {4}at processImmediate \[as _immediateCallback\] \(timers\.js:330:15\)$/);
 
       var failingItems = failingTest.result.items;
       var error = failingItems[0];
       expect(error.stack).to.match(/Error:/);
       expect(typeof error.stack).to.equal('string');
+    });
+
+    it('does not repeat the name as the message of a failure without details', async function() {
+      var tap = [
+        '1..1',
+        'not ok 1 hello should say hello',
+        '# tests 1',
+        '# fail 1'
+      ].join('\n');
+      launcher.processCtl.on('processStarted', function(process) {
+        process.process.stdin.end(tap);
+      });
+      await runner.start();
+      expect(reporter.results).to.have.length(1);
+      expect(reporter.results[0].result.error).to.deep.equal({});
     });
   });
 
