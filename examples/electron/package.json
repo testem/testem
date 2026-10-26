@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "electron": "^41.3.0",
+    "electron": "^45.0.0",
     "qunit": "^2.26.0"
   },
   "scripts": {
