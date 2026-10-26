@@ -5,6 +5,7 @@ qunit_adapter.js
 
 Testem's QUnit adapter. Works by using QUnit's hooks:
 
+* `runStart` (via `QUnit.on`, QUnit >= 2.2, when available)
 * `testStart`
 * `testDone`
 * `moduleStart`
@@ -29,7 +30,6 @@ function qunitAdapter() {
     tests: []
   };
   var currentTest;
-  var supportsTotalToRun = false;
   var id = 1;
 
   function lineNumber(e) {
@@ -52,14 +52,17 @@ function qunitAdapter() {
     return undefined;
   }
 
-  QUnit.begin(function(data) {
-    if ('totalToRun' in data) {
-      // Older versions of QUnit do not have this:
-      // https://github.com/qunitjs/qunit/pull/1256
-      results.total = data.totalToRun;
-      supportsTotalToRun = true;
-    }
-  });
+  if (typeof QUnit.on === 'function') {
+    // `runStart` reports how many tests will run, after `filter`, `module`
+    // and `only` are applied. `QUnit.begin`'s `totalTests` counts every
+    // registered test, filtered or not, so it would overstate the plan.
+    QUnit.on('runStart', function(runStart) {
+      var total = runStart && runStart.testCounts && runStart.testCounts.total;
+      if (typeof total === 'number') {
+        emit('tests-planned', { total: total });
+      }
+    });
+  }
 
   QUnit.log(function(params, e) {
     if (e) {
@@ -103,13 +106,11 @@ function qunitAdapter() {
     currentTest.passed = params.passed;
     currentTest.skipped = params.skipped;
     currentTest.todo = params.todo;
+    currentTest.total = params.total;
     currentTest.runDuration = params.runtime;
     currentTest.testId = params.testId;
 
-    if (!supportsTotalToRun) {
-      results.total++;
-      currentTest.total = params.total;
-    }
+    results.total++;
 
     if (currentTest.skipped) {
       results.skipped++;

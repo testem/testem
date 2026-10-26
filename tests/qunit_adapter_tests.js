@@ -21,7 +21,8 @@ function loadAdapter() {
       log: function(cb) { hooks.log = cb; },
       testStart: function(cb) { hooks.testStart = cb; },
       testDone: function(cb) { hooks.testDone = cb; },
-      done: function(cb) { hooks.done = cb; }
+      done: function(cb) { hooks.done = cb; },
+      on: function(evt, cb) { hooks[evt] = cb; }
     }
   };
 
@@ -43,6 +44,7 @@ describe('qunitAdapter', function() {
     expect(hooks.testStart).to.be.a('function');
     expect(hooks.testDone).to.be.a('function');
     expect(hooks.done).to.be.a('function');
+    expect(hooks.runStart).to.be.a('function');
   });
 
   it('emits tests-start and test-result for a completed test', function() {
@@ -69,6 +71,36 @@ describe('qunitAdapter', function() {
       failed: 0,
       total: 1
     }));
+  });
+
+  it('emits tests-planned with the runStart test count', function() {
+    const { emit, hooks, context } = loadAdapter();
+
+    context.qunitAdapter();
+    hooks.runStart({ testCounts: { total: 3 } });
+
+    expect(emit).to.have.been.calledWith('tests-planned', { total: 3 });
+  });
+
+  it('does not emit tests-planned without a runStart test count', function() {
+    const { emit, hooks, context } = loadAdapter();
+
+    context.qunitAdapter();
+    hooks.runStart({});
+
+    expect(emit).not.to.have.been.calledWith('tests-planned');
+  });
+
+  it('works with QUnit versions that lack QUnit.on', function() {
+    const { emit, hooks, context } = loadAdapter();
+    delete context.QUnit.on;
+
+    context.qunitAdapter();
+    hooks.testStart({ module: 'module', name: 'example' });
+    hooks.testDone({ failed: 0, passed: 1, skipped: 0, todo: 0, total: 1, runtime: 1, testId: 1 });
+
+    expect(hooks.runStart).to.equal(undefined);
+    expect(emit).to.have.been.calledWith('test-result', sinon.match({ total: 1 }));
   });
 
   it('emits all-test-results when QUnit finishes', function() {
