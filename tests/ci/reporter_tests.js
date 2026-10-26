@@ -1151,12 +1151,6 @@ describe('test reporters', function() {
 
   describe('teamcity reporter', function() {
     var stream;
-    var suiteTrailer = /\n\n##teamcity\[testSuiteFinished name='testem\.suite' duration='\d+'\]\n\n\n$/;
-
-    function withoutSuiteTrailer(output) {
-      assert.match(output, suiteTrailer);
-      return output.replace(suiteTrailer, '');
-    }
 
     beforeEach(function() {
       stream = new PassThrough();
@@ -1194,7 +1188,7 @@ describe('test reporters', function() {
       });
 
       reporter.finish();
-      var output = withoutSuiteTrailer(readStream(stream));
+      var output = readStream(stream);
 
       assert.equal(output, [
         "##teamcity[testStarted name='phantomjs - it does <cool> \"cool\" |'cool|' stuff']",
@@ -1209,7 +1203,19 @@ describe('test reporters', function() {
         "##teamcity[testFailed name='phantomjs - it handles undefined errors' message='' details='']",
         "##teamcity[testFinished name='phantomjs - it handles undefined errors' duration='42']",
         '',
+        '',
+        '',
       ].join('\n'));
+    });
+
+    it('does not emit an unmatched testSuiteFinished', function() {
+      var reporter = new TeamcityReporter(false, stream);
+      reporter.report('firefox', { name: 'a test', passed: true });
+      reporter.finish();
+      var output = readStream(stream);
+
+      assert.notInclude(output, 'testSuiteStarted');
+      assert.notInclude(output, 'testSuiteFinished');
     });
 
     it('does not nest when teamcity_nest_by_launcher is off', function() {
@@ -1219,9 +1225,11 @@ describe('test reporters', function() {
       reporter.onEnd('firefox', { launcherId: '1' });
       reporter.finish();
 
-      assert.equal(withoutSuiteTrailer(readStream(stream)), [
+      assert.equal(readStream(stream), [
         "##teamcity[testStarted name='firefox - a test']",
         "##teamcity[testFinished name='firefox - a test']",
+        '',
+        '',
         '',
       ].join('\n'));
     });

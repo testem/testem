@@ -296,8 +296,6 @@ Note that the real output is not pretty printed.
 ##teamcity[testStarted name='Firefox 128 - goodbye should say goodbye']
 ##teamcity[testFailed name='Firefox 128 - goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='AssertionError: expected |'hello world|' to equal |'goodbye world|'|n    at http://localhost:7357/testem/chai.js:873|n    at assertEqual (http://localhost:7357/testem/chai.js:1386)|n    at http://localhost:7357/testem/chai.js:3627|n    at http://localhost:7357/hello_spec.js:14|n    at callFn (http://localhost:7357/testem/mocha.js:4338)|n    at http://localhost:7357/testem/mocha.js:4331|n    at http://localhost:7357/testem/mocha.js:4728|n    at http://localhost:7357/testem/mocha.js:4819|n    at next (http://localhost:7357/testem/mocha.js:4653)|n    at http://localhost:7357/testem/mocha.js:4663|n    at next (http://localhost:7357/testem/mocha.js:4601)|n    at http://localhost:7357/testem/mocha.js:4630|n    at timeslice (http://localhost:7357/testem/mocha.js:5761)']
 ##teamcity[testFinished name='Firefox 128 - goodbye should say goodbye']
-
-##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
 ```
 
 With `"teamcity_nest_by_launcher": true`, the tests of each launcher are grouped into a test suite, so TeamCity and IntelliJ show one tree node per browser. Results are still written as they arrive. Every message carries the launcher's `flowId`, so suites of launchers running in parallel (`parallel` > 1) can be told apart. TeamCity supports this, but IntelliJ's test runner may not nest interleaved suites correctly. Turning the option on changes the full test names TeamCity records (suite name plus test name), so test history starts over.
