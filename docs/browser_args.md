@@ -73,6 +73,20 @@ Conventions
      }
     ```
 
+Private browsing
+----------------
+
+Browsers launched by Testem already use a fresh, temporary profile for every run, so cookies and storage don't leak between runs. If your tests specifically need a private (incognito) window, pass the browser's own flag through `browser_args`, for example for Chrome:
+
+```javascript
+"browser_args": {
+  "Chrome": ["--incognito"],
+  "Headless Chrome": ["--incognito"]
+}
+```
+
+Other browsers have their own flags for this; check that they work on the command line first (see the note below).
+
 Launchers
 ---------
 

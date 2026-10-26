@@ -67,7 +67,7 @@ function parseArgs(argv, { exitOverride = false } = {}) {
       '-f, --file [file]',
       'config file path (JSON, YAML, or JS: testem.js / testem.cjs / testem.mjs); when omitted, picks the first match among defaults (see docs)',
     )
-    .option('-p, --port [num]', 'server port - defaults to 7357', Number)
+    .option('-p, --port [num]', 'server port - defaults to 7357, 0 picks a free port', Number)
     .option('--host [hostname]', 'host name - defaults to localhost', String)
     .option(
       '-l, --launch [list]',

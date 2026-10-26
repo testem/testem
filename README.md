@@ -482,6 +482,8 @@ Or if you are using require.js or another loader, just make sure you load `/test
 
 `/testem.js` in the browser is a classic script Testem generates for the page. It is not the server entry `testem.js`, which is an ES module.
 
+`/testem.js` talks to the Testem server through a hidden iframe that it adds to `document.body`. Tests that replace the whole body (for example `document.body.innerHTML = ''`) remove that iframe and disconnect the browser. Render into a fixture element instead, such as `#qunit-fixture` or a container your tests create and clean up.
+
 ### Multiple Test Pages
 
 You can also specify multiple test pages to run by passing an array to the `test_page` option.
@@ -566,6 +568,35 @@ To run tests in Node you need to create a custom launcher which launches a proce
 `command` is a shell line (`/bin/sh` on Unix, `cmd.exe` on Windows). The `*` in `mocha tests/*_tests.js` expands on Unix and is literal on Windows. For portable argv without a shell, use `exe` and `args` instead.
 
 When you run `testem`, it will auto-launch the mocha process based on the specified command every time the tests are run. It will display the stdout and well as the stderr of the process inside of the "Mocha" tab in the UI. It will base the pass/fail status on the exit code of the process. In fact, because Testem can launch any arbitrary process for you, you could very well be using it to run programs in other languages.
+
+### Launcher placeholders
+
+`command`, `exe` and `args` can contain placeholders, which Testem replaces before starting the launcher:
+
+| Placeholder | Value |
+|---|---|
+| `<url>` | URL of the test page for this launcher, e.g. `http://localhost:7357/1234/tests.html` |
+| `<baseUrl>` | Testem server URL, e.g. `http://localhost:7357/` |
+| `<port>` | Testem server port (the actual port when `port` is `0`) |
+| `<id>` | ID Testem uses to recognize this launcher's browser (`-1` for process launchers) |
+| `<testPage>` | the launcher's `test_page`, if set |
+| `<cwd>` | Testem's working directory |
+
+To start a browser Testem doesn't know about, add `"protocol": "browser"` so Testem waits for it to connect, as it does for its built-in launchers. With `exe`, Testem appends the test page URL to `args` itself. With `command`, pass `<url>` yourself:
+
+```javascript
+"launchers": {
+  "My Browser": {
+    "exe": "/path/to/browser",
+    "args": ["--some-flag"],
+    "protocol": "browser"
+  },
+  "My Browser via shell": {
+    "command": "/path/to/browser --some-flag <url>",
+    "protocol": "browser"
+  }
+}
+```
 
 Processes with TAP Output
 -------------------------

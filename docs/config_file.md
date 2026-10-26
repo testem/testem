@@ -125,7 +125,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
 
     file:                    [String]  configuration file (testem.json, .testem.json, testem.yml, .testem.yml)
     host:                    [String]  server host to use (localhost)
-    port:                    [Number]  server port to use (7357)
+    port:                    [Number]  server port to use (7357). Use 0 to pick a free port automatically; launchers and `<port>` / `<url>` placeholders get the actual port
     launch:                  [Array]   Comma-delimited list of launchers to use for current runs (defaults to current mode)
     skip:                    [Array]   Comma-delimited list of launchers to skip
     debug:                   [Boolean] debug mode (false)
@@ -173,11 +173,11 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     tap_failed_tests_only        [Boolean] log only failed tests (`not ok`) in TAP reporting
     tap_quiet_logs               [Boolean] whether to suppress non-failing console logs (_not_ pass/fail info) in TAP reporting
     teamcity_nest_by_launcher    [Boolean] group teamcity reporter output into one test suite per launcher, streamed as results arrive (false). Only applies with `parallel: 1`; otherwise the output stays flat
-    timeout:                     [Number]  timeout for a browser
+    timeout:                     [Number]  maximum duration of a whole test run in seconds, across all launchers; when it is exceeded, Testem stops all runners and fails the run (no limit). For per-browser limits see `browser_start_timeout` and `browser_disconnect_timeout`
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
     user_data_dir:               [String]  directory to initialize the browser user data directories (default a temporary directory)
-    watch_files:                 [Array]   string or array list of files or file patterns to watch changes of (defaults to `src_files`)
+    watch_files:                 [Array]   string or array list of additional files or file patterns to watch for changes. Files matched by `src_files` are always watched; `watch_files` adds to them and cannot narrow them
     xunit_exclude_stack:         [Boolean] whether to exclude stack traces in xunit reporter
     xunit_intermediate_output    [Boolean] print tap output for the xunit reporter (false)
 
