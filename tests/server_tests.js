@@ -1290,6 +1290,47 @@ describe('Server', function() {
       });
     });
   });
+
+  describe('middleware arguments', function() {
+    let middlewareServer, received;
+
+    before(async function() {
+      received = [];
+      const middlewareConfig = new Config('dev', {
+        port: 0,
+        cwd: 'tests',
+        middleware: [
+          function(...args) {
+            received = args;
+          },
+          middleware,
+        ],
+      });
+      middlewareServer = new Server(middlewareConfig);
+      const started = once(middlewareServer, 'server-start');
+      middlewareServer.start();
+      await started;
+    });
+
+    after(function() {
+      return middlewareServer.stop();
+    });
+
+    it('passes the express app and the started http server', function() {
+      expect(received).to.have.lengthOf(2);
+      expect(received[0]).to.equal(middlewareServer.express);
+      expect(received[1]).to.be.an.instanceof(http.Server);
+      expect(received[1]).to.equal(middlewareServer.server);
+      expect(received[1].listening).to.equal(true);
+    });
+
+    it('still applies middleware that only takes the app', async function() {
+      const { port: middlewarePort } = middlewareServer.server.address();
+      const { res } = await httpRequest(`http://localhost:${middlewarePort}/testem.js`);
+      expect(res.statusCode).to.eq(200);
+      expectMiddlewareHeaders(res);
+    });
+  });
 });
 
 function middleware(app) {
