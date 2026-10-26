@@ -156,7 +156,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (a shell line, not tokenized; use `exe` + `args` for argv without a shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
-    middleware                   [Array]   list of functions to be called with the express app instance
+    middleware                   [Array]   list of functions called with the express app and testem's http(s) server (see Middleware below)
     parallel:                    [Number]  max number of parallel runners (1)
     proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/unjs/httpxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/main/docs/custom_reporter.md
@@ -187,6 +187,31 @@ Testem allows the test page to be served via HTTPS. To enable HTTPS either the p
     cert:                        [String]  path to a public x509 certificate to use
     key:                         [String]  path to a private key to use for SS
     pfx:                         [String]  path to certificate, private key and CA certificates to use for SSL
+
+### Middleware:
+
+Each function in `middleware` is called once as `middleware(app, server)`, before Testem registers its own routes, proxies and static files:
+
+- `app` is Testem's Express app. Handlers added with `app.use()` run before Testem's own handlers.
+- `server` is the `http.Server` (or `https.Server` when HTTPS is enabled) that Testem listens on. It is not listening yet when the function is called. Use it to handle WebSocket `upgrade` requests on Testem's port, for example a dev server's hot-reload socket.
+
+```javascript
+export default {
+  middleware: [
+    function(app, server) {
+      app.use((req, res, next) => {
+        res.setHeader('x-served-by', 'testem');
+        next();
+      });
+      server.on('upgrade', (req, socket, head) => {
+        // handle WebSocket upgrades that are not for /socket.io
+      });
+    }
+  ]
+};
+```
+
+Testem uses Socket.IO on `/socket.io` for its own connection; leave upgrades for that path to Testem.
 
 ### Available hooks:
 
