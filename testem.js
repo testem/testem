@@ -198,7 +198,14 @@ function main() {
 
   let config = new Config(appMode, progOptions);
   if (appMode === 'launchers') {
-    config.read(() => config.printLauncherInfo());
+    config.read((err) => {
+      if (err) {
+        console.error(err.message);
+        process.exitCode = 1;
+        return;
+      }
+      config.printLauncherInfo();
+    });
   } else {
     let api = new Api();
     if (appMode === 'ci') {

@@ -89,6 +89,20 @@ describe('Api', function() {
     });
   });
 
+  describe('config errors', function() {
+    it('calls the finalizer with exit code 1 and does not start the app', function() {
+      let err = new Error('Config file not found: missing.json');
+      Config.prototype.read.callsFake(function(cb) {
+        cb.call(this, err);
+      });
+      let finalizer = sandbox.spy();
+      let api = new Api();
+      api.startCI({ file: 'missing.json' }, finalizer);
+      expect(finalizer.calledOnceWith(1, err)).to.be.true();
+      expect(api.app).to.be.undefined();
+    });
+  });
+
   describe('restart', function() {
     // ensure pending timeouts are cancelled
     it('allows to restart the tests', function(done) {
