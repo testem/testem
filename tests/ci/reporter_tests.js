@@ -1122,6 +1122,45 @@ describe('test reporters', function() {
       assertXmlIsValid(output);
     });
 
+    it('serializes object values instead of printing [object Object]', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'objects should match',
+        passed: false,
+        error: {
+          message: 'should be deeply equivalent',
+          actual: { a: 1 },
+          expected: { a: 2, list: [1, 2] },
+          stack: { at: 'tests.js:6:5' }
+        }
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.notInclude(output, '[object Object]');
+      assert.include(output, [
+        'CDATA[Expected:',
+        '    {',
+        '      "a": 2,',
+        '      "list": [',
+        '        1,',
+        '        2',
+        '      ]',
+        '    }',
+        '',
+        'Result:',
+        '    {',
+        '      "a": 1',
+        '    }',
+        '',
+        'Source:',
+        '{',
+        '  "at": "tests.js:6:5"',
+        '}'
+      ].join('\n'));
+
+      assertXmlIsValid(output);
+    });
+
     it('outputs errors without stack traces', function() {
       var config = new Config('ci', {
         xunit_intermediate_output: false,
