@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "electron": "^44.9.3",
-    "qunit": "^2.26.0"
+    "qunit": "^3.0.0"
   },
   "scripts": {
     "pretest": "install-electron",
