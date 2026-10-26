@@ -158,7 +158,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     launch_in_ci:                [Array]   list of launchers to use for CI runs
     middleware                   [Array]   list of functions to be called with the express app instance
     parallel:                    [Number]  max number of parallel runners (1)
-    proxies                      [Object]  path to options including `onlyContentTypes` and https://github.com/unjs/httpxy#options
+    proxies                      [Object]  path to options including `onlyContentTypes`, `fallback` (see Proxies below) and https://github.com/unjs/httpxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/main/docs/custom_reporter.md
     report_file:                 [String]  file to write test results to (stdout)
     route or routes:             [Object]  overrides for assets paths
@@ -187,6 +187,26 @@ Testem allows the test page to be served via HTTPS. To enable HTTPS either the p
     cert:                        [String]  path to a public x509 certificate to use
     key:                         [String]  path to a private key to use for SS
     pfx:                         [String]  path to certificate, private key and CA certificates to use for SSL
+
+### Proxies:
+
+`proxies` maps a path prefix to [httpxy options](https://github.com/unjs/httpxy#options), for example `{ "/api": { "target": "http://localhost:4000" } }`. Testem adds two options of its own:
+
+- `onlyContentTypes`: only proxy requests whose `Accept` header prefers one of these types (for example `["json"]`). Other requests are served by Testem.
+- `fallback`: when `true`, Testem first tries its own routes (`/testem.js`, the runner page) and local files, and only proxies requests that none of them answered. Without it, a proxy takes precedence over Testem's routes and local files under its path.
+
+`fallback` lets you proxy a whole site at `/`, for example to load it in an iframe from your tests, while Testem still serves its client and your test files:
+
+```javascript
+export default {
+  test_page: 'tests.html',
+  proxies: {
+    '/': { target: 'http://localhost:4200', fallback: true }
+  }
+};
+```
+
+Fallback proxies are matched in the order they are listed, so list more specific paths before `/`. A request under a browser id (such as `/1234/assets/app.css`, which happens when a test page loaded from `/1234/tests.html` uses relative URLs) is first looked up locally without the id, but is proxied with the id kept. Requests that no fallback proxy matches return 404. `fallback` has no effect on WebSocket (`ws: true`) proxies.
 
 ### Available hooks:
 
