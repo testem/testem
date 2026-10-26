@@ -1,5 +1,4 @@
 import Config from "../lib/config.js";
-import log from "../lib/log.js";
 import * as chai from "chai";
 import browserLauncher from "../lib/browser_launcher.js";
 import path from "node:path";
@@ -268,16 +267,59 @@ describe('Config', function() {
   });
 
   describe('broken mjs config file (syntax error)', function() {
-    it('logs error, leaves fileOptions empty, and invokes callback', function(done) {
-      sandbox.stub(log, 'error');
-      let progOptions = {
-        file: path.join(__dirname, 'custom_configs', 'testem-syntax-error.mjs'),
-      };
-      let cfg = new Config('dev', progOptions);
-      cfg.read(function() {
-        expect(log.error.called).to.be.true();
+    it('passes an error to the callback and leaves fileOptions empty', function(done) {
+      let file = path.join(__dirname, 'custom_configs', 'testem-syntax-error.mjs');
+      let cfg = new Config('dev', { file: file });
+      cfg.read(function(err) {
+        expect(err).to.be.an.instanceof(Error);
+        expect(err.message).to.contain('Could not load config file ' + file);
         expect(cfg.fileOptions).to.deep.equal({});
         expect(cfg.get('framework')).to.be.undefined();
+        done();
+      });
+    });
+  });
+
+  describe('broken json config file', function() {
+    it('passes an error to the callback', function(done) {
+      let file = path.join(__dirname, 'custom_configs', 'testem-invalid.json');
+      let cfg = new Config('dev', { file: file });
+      cfg.read(function(err) {
+        expect(err).to.be.an.instanceof(Error);
+        expect(err.message).to.contain('Could not load config file ' + file + ': ');
+        done();
+      });
+    });
+  });
+
+  describe('non-existent config file', function() {
+    ['missing.json', 'missing.yml', 'missing.js', 'missing.mjs', 'missing.cjs'].forEach(function(name) {
+      it('passes a not found error to the callback for ' + name, function(done) {
+        let file = path.join(__dirname, 'custom_configs', name);
+        let cfg = new Config('dev', { file: file });
+        cfg.read(function(err) {
+          expect(err).to.be.an.instanceof(Error);
+          expect(err.message).to.equal('Config file not found: ' + file);
+          expect(cfg.fileOptions).to.deep.equal({});
+          done();
+        });
+      });
+    });
+
+    it('passes an error to the callback for an unrecognized format', function(done) {
+      let cfg = new Config('dev', { file: 'missing.txt' });
+      cfg.read(function(err) {
+        expect(err).to.be.an.instanceof(Error);
+        expect(err.message).to.equal('Unrecognized config file format for missing.txt');
+        done();
+      });
+    });
+
+    it('does not error when no config file is found', function(done) {
+      let cfg = new Config('dev', { cwd: path.join(__dirname, 'fixtures', 'basic_test', 'does-not-exist') });
+      cfg.read(function(err) {
+        expect(err).to.not.exist();
+        expect(cfg.fileOptions).to.deep.equal({});
         done();
       });
     });
