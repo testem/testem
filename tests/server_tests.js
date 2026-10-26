@@ -211,7 +211,36 @@ describe('Server', function() {
           baseUrl + 'web/does-not-exist.js',
         );
         expect(res.statusCode).to.eq(404);
-        expect(text).to.match(/Not found/);
+        expect(text).to.equal('Not found: /web/does-not-exist.js');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
+      });
+
+      it('serves the 404 for a missing file as text/plain so markup in the url is inert', async function() {
+        const { res, text } = await httpRequest(
+          baseUrl + 'web/does-not-exist.js?a=%3Cb%3E',
+        );
+        expect(res.statusCode).to.eq(404);
+        expect(text).to.equal('Not found: /web/does-not-exist.js?a=%3Cb%3E');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
+      });
+
+      it('does not reflect the error message for other file errors', async function() {
+        // ENOTDIR: a path segment below an existing file. The error message
+        // would contain the decoded path (`<b>`) and the absolute file path.
+        // Windows reports this path as ENOENT (and `<` is not a valid
+        // filename character there), so the 500 branch is not reached.
+        if (process.platform === 'win32') {
+          this.skip();
+        }
+        const { res, text } = await httpRequest(
+          baseUrl + 'web/hello.js/%3Cb%3E',
+        );
+        expect(res.statusCode).to.eq(500);
+        expect(text).to.equal('Internal Server Error');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
       });
 
       it('serves local content with browser ids', async function() {
@@ -1400,6 +1429,47 @@ describe('Server', function() {
         expect(res.statusCode).to.eq(404);
         expect(text).to.equal('Not found: /missing.js');
       });
+    });
+  });
+
+  describe('middleware arguments', function() {
+    let middlewareServer, received;
+
+    before(async function() {
+      received = [];
+      const middlewareConfig = new Config('dev', {
+        port: 0,
+        cwd: 'tests',
+        middleware: [
+          function(...args) {
+            received = args;
+          },
+          middleware,
+        ],
+      });
+      middlewareServer = new Server(middlewareConfig);
+      const started = once(middlewareServer, 'server-start');
+      middlewareServer.start();
+      await started;
+    });
+
+    after(function() {
+      return middlewareServer.stop();
+    });
+
+    it('passes the express app and the started http server', function() {
+      expect(received).to.have.lengthOf(2);
+      expect(received[0]).to.equal(middlewareServer.express);
+      expect(received[1]).to.be.an.instanceof(http.Server);
+      expect(received[1]).to.equal(middlewareServer.server);
+      expect(received[1].listening).to.equal(true);
+    });
+
+    it('still applies middleware that only takes the app', async function() {
+      const { port: middlewarePort } = middlewareServer.server.address();
+      const { res } = await httpRequest(`http://localhost:${middlewarePort}/testem.js`);
+      expect(res.statusCode).to.eq(200);
+      expectMiddlewareHeaders(res);
     });
   });
 });

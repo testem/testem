@@ -156,7 +156,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (a shell line, not tokenized; use `exe` + `args` for argv without a shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
-    middleware                   [Array]   list of functions to be called with the express app instance
+    middleware                   [Array]   list of functions called with the express app and testem's http(s) server (see Middleware below)
     parallel:                    [Number]  max number of parallel runners (1)
     proxies                      [Object]  path to options including `onlyContentTypes`, `fallback` (see Proxies below) and https://github.com/unjs/httpxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/main/docs/custom_reporter.md
@@ -172,6 +172,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     stdout_stream                [Stream]  the stdout stream to use (defaults to `process.stdout`)
     tap_failed_tests_only        [Boolean] log only failed tests (`not ok`) in TAP reporting
     tap_quiet_logs               [Boolean] whether to suppress non-failing console logs (_not_ pass/fail info) in TAP reporting
+    teamcity_nest_by_launcher    [Boolean] group teamcity reporter output into one test suite per launcher, streamed as results arrive (false). Only applies with `parallel: 1`; otherwise the output stays flat
     timeout:                     [Number]  timeout for a browser
     unsafe_file_serving:         [Boolean] allow serving directories that are not in your CWD (false)
     url:                         [String]  url server runs at (http://{host}:{port}/)
@@ -207,6 +208,31 @@ export default {
 ```
 
 Fallback proxies are matched in the order they are listed, so list more specific paths before `/`. A request under a browser id (such as `/1234/assets/app.css`, which happens when a test page loaded from `/1234/tests.html` uses relative URLs) is first looked up locally without the id, but is proxied with the id kept. Requests that no fallback proxy matches return 404. `fallback` has no effect on WebSocket (`ws: true`) proxies.
+
+### Middleware:
+
+Each function in `middleware` is called once as `middleware(app, server)`, before Testem registers its own routes, proxies and static files:
+
+- `app` is Testem's Express app. Handlers added with `app.use()` run before Testem's own handlers.
+- `server` is the `http.Server` (or `https.Server` when HTTPS is enabled) that Testem listens on. It is not listening yet when the function is called. Use it to handle WebSocket `upgrade` requests on Testem's port, for example a dev server's hot-reload socket.
+
+```javascript
+export default {
+  middleware: [
+    function(app, server) {
+      app.use((req, res, next) => {
+        res.setHeader('x-served-by', 'testem');
+        next();
+      });
+      server.on('upgrade', (req, socket, head) => {
+        // handle WebSocket upgrades that are not for /socket.io
+      });
+    }
+  ]
+};
+```
+
+Testem uses Socket.IO on `/socket.io` for its own connection; leave upgrades for that path to Testem.
 
 ### Available hooks:
 

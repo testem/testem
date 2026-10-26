@@ -456,4 +456,26 @@ describe('Reporter', function() {
       }).not.to.throw();
     });
   });
+
+  describe('testsPlanned', function() {
+    it('forwards to every reporter that implements it', function() {
+      const first = { testsPlanned: sandbox.spy() };
+      const plain = {};
+      const reporter = new Reporter(mockApp(first), stream);
+      reporter.reporters = [first, plain];
+
+      reporter.testsPlanned('Chrome', { launcherId: 1, total: 3 });
+
+      expect(first.testsPlanned).to.have.been.calledOnce();
+      expect(first.testsPlanned).to.have.been.calledWith('Chrome', { launcherId: 1, total: 3 });
+    });
+
+    it('does not change the reported totals', function() {
+      const reporter = new Reporter(mockApp(), stream);
+
+      reporter.testsPlanned('Chrome', { launcherId: 1, total: 3 });
+
+      expect(reporter.hasTests()).to.equal(false);
+    });
+  });
 });

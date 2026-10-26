@@ -11,18 +11,10 @@ var baseObj = url.parse(process.argv[2]);
 var testPageObj = url.parse(process.argv[3], true);
 var id = process.argv[4];
 
-// Find our electron binary
+// Find our electron binary. Requiring the package returns its path, and since
+// Electron 45 also downloads the binary on first use.
 var platform = os.platform();
-var electronModulePath = path.dirname(require.resolve('electron'));
-var electronPath;
-
-if (platform === 'darwin') {
-  electronPath = path.join(electronModulePath, 'dist', 'Electron.app', 'Contents', 'MacOS', 'Electron');
-} else if (platform === 'win32') {
-  electronPath = path.join(electronModulePath, 'dist', 'electron.exe');
-} else {
-  electronPath = path.join(electronModulePath, 'dist', 'electron');
-}
+var electronPath = require('electron');
 
 // Build testem.js URL
 baseObj.pathname = '/testem.js';

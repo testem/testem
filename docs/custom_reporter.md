@@ -31,6 +31,10 @@ emits a `test-result-metadata` event, allowing customized processing on metadata
 tests. To find out more, check out
 [an example](https://github.com/testem/testem/tree/main/examples/metadata_reporter).
 
+An optional `testsPlanned(launcherName, data)` method gets called when an adapter announces how
+many tests it is about to run (currently the QUnit adapter, with QUnit 2.2 or later). `data` has
+`launcherId` and `total`, the number of tests that will run after filters are applied.
+
 ## Example
 
 The constructor should take an (optional) output stream and initialize properties.

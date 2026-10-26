@@ -3,6 +3,7 @@ import Backbone from "backbone";
 import AppView from "../../lib/reporters/dev/index.js";
 import Config from "../../lib/config.js";
 import { createTestTerm } from "./create_test_term.js";
+import Chars from "../../lib/utils/chars.js";
 
 describe('AppView terminal-kit', function () {
   let app;
@@ -408,6 +409,51 @@ describe('AppView terminal-kit', function () {
     process.stdin.emit('data', Buffer.from([0x20, 0x62, 0x75, 0x64]));
     expect(calls).to.deep.equal([]);
     appview.cleanup();
+  });
+
+  it('shows progress against the planned test count while running', function () {
+    const { term } = createTestTerm(157, 38);
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const tab = appview.runnerTabs.at(0);
+    const status = () => widgetText(tab.statusLabel).replace(/\^[^^]?/g, '').trim();
+
+    appview.onStart('Chrome', { launcherId: 1 });
+    appview.testsPlanned('Chrome', { launcherId: 1, total: 3 });
+    appview.report('Chrome', { launcherId: 1, name: 'a', failed: 0 });
+    appview.report('Chrome', { launcherId: 1, name: 'b', failed: 1 });
+    tab.stopSpinner();
+    tab.renderResults();
+    expect(status()).to.match(/^1\/3 /);
+
+    appview.report('Chrome', { launcherId: 1, name: 'c', failed: 0 });
+    appview.onEnd('Chrome', { launcherId: 1 });
+    expect(status()).to.equal('2/3 ' + Chars.fail);
+    expect(appview.x[1].get('results').get('total')).to.equal(3);
+  });
+
+  it('resets the planned test count when a run starts', function () {
+    const { term } = createTestTerm(157, 38);
+    appview = new AppView(false, process.stdout, config, app, term);
+    addRunner(appview, 'Chrome', 1);
+    const results = () => appview.x[1].get('results');
+
+    appview.onStart('Chrome', { launcherId: 1 });
+    appview.testsPlanned('Chrome', { launcherId: 1, total: 3 });
+    expect(results().get('planned')).to.equal(3);
+
+    appview.runnerTabs.at(0).stopSpinner();
+    appview.onStart('Chrome', { launcherId: 1 });
+    appview.runnerTabs.at(0).stopSpinner();
+    expect(results().get('planned')).to.equal(0);
+  });
+
+  it('ignores a planned test count for an unknown runner', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    expect(function () {
+      appview.testsPlanned('Chrome', { launcherId: 42, total: 3 });
+    }).not.to.throw();
   });
 
   it('writes a startup error when no Document exists yet', function () {

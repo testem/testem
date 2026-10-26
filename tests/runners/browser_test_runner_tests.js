@@ -104,6 +104,61 @@ describe('browser test runner', function() {
     });
   });
 
+  describe('receiving \'tests-planned\' event', function() {
+    let reporter, socket, runner;
+
+    beforeEach(function() {
+      reporter = new FakeReporter();
+
+      let id = 1;
+      let config = new Config('ci', {
+        parallel: 2,
+        reporter: reporter
+      });
+      let launcher = new Launcher('ci', { id: id, protocol: 'browser' }, config);
+
+      socket = new FakeSocket();
+
+      runner = new BrowserTestRunner(launcher, reporter, null, null, config);
+      runner.tryAttach('browser', id, socket);
+    });
+
+    it('passes the planned count to the reporter', function() {
+      reporter.testsPlanned = sinon.spy();
+
+      socket.emit('tests-planned', { total: 3 });
+
+      sinon.assert.calledOnce(reporter.testsPlanned);
+      sinon.assert.calledWithExactly(reporter.testsPlanned, 'browser', {
+        launcherId: runner.launcherId,
+        total: 3
+      });
+    });
+
+    it('ignores a payload without a valid count', function() {
+      reporter.testsPlanned = sinon.spy();
+
+      socket.emit('tests-planned');
+      socket.emit('tests-planned', {});
+      socket.emit('tests-planned', { total: '3' });
+      socket.emit('tests-planned', { total: -1 });
+
+      sinon.assert.notCalled(reporter.testsPlanned);
+    });
+
+    it('does not try to call an absent reporter hook', function() {
+      expect(function() {
+        socket.emit('tests-planned', { total: 3 });
+      }).not.to.throw();
+    });
+
+    it('does not count as a test result', function() {
+      socket.emit('tests-planned', { total: 3 });
+
+      expect(reporter.total).to.equal(0);
+    });
+  });
+
   describe('onTestsStart', function() {
     let runner, reporter;
 
