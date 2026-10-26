@@ -50,6 +50,14 @@ var electronArgs = [testUrl];
 if (platform === 'linux') {
   electronArgs.unshift('--no-sandbox');
 }
+// CI can ask for Chromium's verbose log in a file instead; the workflow prints
+// it when the job fails.
+if (process.env.ELECTRON_LOG_DIR) {
+  fs.mkdirSync(process.env.ELECTRON_LOG_DIR, { recursive: true });
+  delete env.ELECTRON_ENABLE_LOGGING;
+  var logFile = path.join(process.env.ELECTRON_LOG_DIR, 'electron-' + id + '-' + Date.now() + '.log');
+  electronArgs.unshift('--enable-logging=file', '--log-file=' + logFile, '--v=1');
+}
 console.error('Starting ' + electronPath + ' ' + electronArgs.join(' '));
 // Keep pipes rather than inheriting stdio: if this script is killed outright,
 // the closed pipes take Electron down with it.
