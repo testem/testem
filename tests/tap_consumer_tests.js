@@ -113,6 +113,96 @@ describe('TapConsumer', function() {
     });
   });
 
+  describe('failures followed by extra lines', function() {
+    // Snapshots the failed item's stack when the result is emitted, as that's
+    // when reporters print it.
+    function collectStacksOnEmit(consumer, tapText) {
+      return new Promise((resolve, reject) => {
+        const results = [];
+        consumer.on('test-result', r => results.push({
+          name: r.name,
+          failed: r.failed,
+          stack: r.items[0] && r.items[0].stack
+        }));
+        consumer.once('all-test-results', () => resolve(results));
+        consumer.once('error', reject);
+        consumer.stream.end(tapText);
+      });
+    }
+
+    it('emits a failure only after the following extra lines are attached, in order', function() {
+      const tap = [
+        '1..4',
+        'ok 1 first',
+        'not ok 2 second',
+        '  ReferenceError: x is not defined',
+        '      at foo (bar.js:2:2)',
+        'not ok 3 third',
+        '  Error: nope',
+        'ok 4 fourth',
+        '# tests 4',
+        ''
+      ].join('\n');
+      return collectStacksOnEmit(new TapConsumer(), tap).then(results => {
+        expect(results.map(r => r.name)).to.deep.equal(['first', 'second', 'third', 'fourth']);
+        expect(results[1].stack).to.equal('  ReferenceError: x is not defined\n      at foo (bar.js:2:2)\n');
+        expect(results[2].stack).to.equal('  Error: nope\n');
+        expect(results[3].stack).to.equal(undefined);
+      });
+    });
+
+    it('emits a pending failure on a trailing plan', function() {
+      const tap = [
+        'not ok 1 broken',
+        '  Error: nope',
+        '1..1',
+        ''
+      ].join('\n');
+      return collectStacksOnEmit(new TapConsumer(), tap).then(results => {
+        expect(results).to.deep.equal([{ name: 'broken', failed: 1, stack: '  Error: nope\n' }]);
+      });
+    });
+
+    it('emits a pending failure when the stream ends without a plan', function() {
+      const tap = [
+        'ok 1 fine',
+        'not ok 2 broken',
+        '  Error: nope',
+        ''
+      ].join('\n');
+      return collectStacksOnEmit(new TapConsumer(), tap).then(results => {
+        expect(results.map(r => r.name)).to.deep.equal(['fine', 'broken']);
+        expect(results[1].stack).to.equal('  Error: nope\n');
+      });
+    });
+
+    it('emits a pending failure before the bailout result', function() {
+      const tap = [
+        'not ok 1 broken',
+        '  Error: nope',
+        'Bail out! stop',
+        ''
+      ].join('\n');
+      return collectStacksOnEmit(new TapConsumer(), tap).then(results => {
+        expect(results.map(r => r.name)).to.deep.equal(['broken', 'bailout']);
+        expect(results[0].stack).to.equal('  Error: nope\n');
+      });
+    });
+
+    it('does not attach extra lines after a passing assertion to an earlier failure', function() {
+      const tap = [
+        '1..2',
+        'not ok 1 broken',
+        'ok 2 fine',
+        '  some output',
+        ''
+      ].join('\n');
+      return collectTapResults(new TapConsumer(), tap).then(results => {
+        expect(results[0].items[0].stack).to.equal(undefined);
+      });
+    });
+  });
+
   it('includes YAML `at` diagnostic on the failed item stack when present', function() {
     const consumer = new TapConsumer();
     const tap = [
@@ -570,6 +660,25 @@ describe('BrowserTapConsumer', function() {
         todo: true,
         items: []
       });
+    });
+  });
+
+  it('attaches extra lines to a failure before emitting it', function() {
+    const socket = new EventEmitter();
+    const consumer = new BrowserTapConsumer(socket);
+    return new Promise((resolve, reject) => {
+      const stacks = [];
+      consumer.on('test-result', r => stacks.push(r.items[0] && r.items[0].stack));
+      consumer.once('error', reject);
+      consumer.once('all-test-results', () => {
+        try {
+          expect(stacks).to.deep.equal(['  Error: nope\n']);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+      ['1..1', 'not ok 1 broken', '  Error: nope', '# fail 1'].forEach(line => socket.emit('tap', line));
     });
   });
 

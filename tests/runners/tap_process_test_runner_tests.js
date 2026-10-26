@@ -167,7 +167,7 @@ describe('tap process test runner', function() {
         ok: false,
         operator: 'equal',
         passed: false,
-        stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n \n'
+        stack: 'Test._cb (/Users/david/git/testem/examples/tape_example/tests.js:6:7)\n'
       });
       expect(reporter.results[0].result.error).to.deep.equal({
         message: 'hello() should be "hello world"',
@@ -270,9 +270,11 @@ describe('tap process test runner', function() {
       var results = reporter.results;
       var failingTest = results[1];
       expect(failingTest.result.name).to.eq('hello should say hello to person');
-      expect(failingTest.result.error).to.deep.equal({
-        message: 'hello should say hello to person'
-      });
+      var failingError = failingTest.result.error;
+      expect(failingError).to.have.all.keys('message', 'stack');
+      expect(failingError.message).to.equal('hello should say hello to person');
+      expect(failingError.stack).to.match(/^ReferenceError: ethueo is not defined\n {4}at Context\.<anonymous> \(/);
+      expect(failingError.stack).to.match(/\n {4}at processImmediate \[as _immediateCallback\] \(timers\.js:330:15\)$/);
 
       var failingItems = failingTest.result.items;
       var error = failingItems[0];
