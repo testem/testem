@@ -1151,6 +1151,12 @@ describe('test reporters', function() {
 
   describe('teamcity reporter', function() {
     var stream;
+    var suiteTrailer = /\n\n##teamcity\[testSuiteFinished name='testem\.suite' duration='\d+'\]\n\n\n$/;
+
+    function withoutSuiteTrailer(output) {
+      assert.match(output, suiteTrailer);
+      return output.replace(suiteTrailer, '');
+    }
 
     beforeEach(function() {
       stream = new PassThrough();
@@ -1188,63 +1194,36 @@ describe('test reporters', function() {
       });
 
       reporter.finish();
-      var output = readStream(stream);
+      var output = withoutSuiteTrailer(readStream(stream));
 
-      assert.match(output, /##teamcity\[testSuiteStarted name='phantomjs']/);
-      assert.match(output, /##teamcity\[testSuiteFinished name='phantomjs']/);
-      assert.match(output, /##teamcity\[testStarted name='it does <cool> "cool" \|'cool\|' stuff']/);
-      assert.match(output, /##teamcity\[testFinished name='it does <cool> "cool" \|'cool\|' stuff' duration='1234']/);
-      assert.match(output, /##teamcity\[testStarted name='it skips stuff']/);
-      assert.match(output, /##teamcity\[testIgnored name='it skips stuff' message='pending']/);
-      assert.match(output, /##teamcity\[testFinished name='it skips stuff']/);
-      assert.match(output, /##teamcity\[testStarted name='it handles failures']/);
-      assert.match(output, /##teamcity\[testFailed name='it handles failures' message='foo' details='bar']/);
-      assert.match(output, /##teamcity\[testFinished name='it handles failures']/);
-      assert.match(output, /##teamcity\[testStarted name='it handles undefined errors']/);
-      assert.match(output, /##teamcity\[testFailed name='it handles undefined errors' message='' details='']/);
-      assert.match(output, /##teamcity\[testFinished name='it handles undefined errors' duration='42']/);
+      assert.equal(output, [
+        "##teamcity[testStarted name='phantomjs - it does <cool> \"cool\" |'cool|' stuff']",
+        "##teamcity[testFinished name='phantomjs - it does <cool> \"cool\" |'cool|' stuff' duration='1234']",
+        "##teamcity[testStarted name='phantomjs - it skips stuff']",
+        "##teamcity[testIgnored name='phantomjs - it skips stuff' message='pending']",
+        "##teamcity[testFinished name='phantomjs - it skips stuff']",
+        "##teamcity[testStarted name='phantomjs - it handles failures']",
+        "##teamcity[testFailed name='phantomjs - it handles failures' message='foo' details='bar']",
+        "##teamcity[testFinished name='phantomjs - it handles failures']",
+        "##teamcity[testStarted name='phantomjs - it handles undefined errors']",
+        "##teamcity[testFailed name='phantomjs - it handles undefined errors' message='' details='']",
+        "##teamcity[testFinished name='phantomjs - it handles undefined errors' duration='42']",
+        '',
+      ].join('\n'));
     });
 
-    it('uses prefix to nest tests', function() {
-      var reporter = new TeamcityReporter(false, stream);
-      reporter.report('firefox', {
-        name: 'test in firefox',
-        passed: true,
-      });
-      reporter.report('firefox', {
-        name: 'it handles failures',
-        passed: false,
-        error: {
-          passed: false,
-          message: 'foo',
-          stack: 'bar'
-        }
-      });
-      reporter.report('opera', {
-        name: 'ignored test in opera',
-        skipped: true,
-      });
-
+    it('does not nest when teamcity_nest_by_launcher is off', function() {
+      var config = new Config('ci', {});
+      var reporter = new TeamcityReporter(false, stream, config);
+      reporter.report('firefox', { name: 'a test', passed: true, launcherId: '1' });
+      reporter.onEnd('firefox', { launcherId: '1' });
       reporter.finish();
-      var output = readStream(stream);
 
-      assert.match(output, new RegExp([
-        "##teamcity\\[testSuiteStarted name='firefox']",
-        "##teamcity\\[testStarted name='test in firefox']",
-        "##teamcity\\[testFinished name='test in firefox']",
-        "##teamcity\\[testStarted name='it handles failures']",
-        "##teamcity\\[testFailed name='it handles failures' message='foo' details='bar']",
-        "##teamcity\\[testFinished name='it handles failures']",
-        "##teamcity\\[testSuiteFinished name='firefox']",
-      ].join('\n')));
-
-      assert.match(output, new RegExp([
-        "##teamcity\\[testSuiteStarted name='opera']",
-        "##teamcity\\[testStarted name='ignored test in opera']",
-        "##teamcity\\[testIgnored name='ignored test in opera' message='pending']",
-        "##teamcity\\[testFinished name='ignored test in opera']",
-        "##teamcity\\[testSuiteFinished name='opera']"
-      ].join('\n')));
+      assert.equal(withoutSuiteTrailer(readStream(stream)), [
+        "##teamcity[testStarted name='firefox - a test']",
+        "##teamcity[testFinished name='firefox - a test']",
+        '',
+      ].join('\n'));
     });
 
     it('uses comparisonFailure type for comparison errors', function() {
@@ -1263,7 +1242,7 @@ describe('test reporters', function() {
       reporter.finish();
       var output = readStream(stream);
 
-      assert.match(output, /##teamcity\[testFailed name='it handles failures' message='' details='' type='comparisonFailure' expected='foo' actual='bar']/);
+      assert.match(output, /##teamcity\[testFailed name='firefox - it handles failures' message='' details='' type='comparisonFailure' expected='foo' actual='bar']/);
     });
 
     it('generates teamcity lines', function() {
@@ -1291,8 +1270,172 @@ describe('test reporters', function() {
       reporter.finish();
       var output = readStream(stream);
 
-      assert.match(output, /##teamcity\[testFailed name='it negates' message='' details='' type='comparisonFailure' expected='NOT foo' actual='foo']/);
+      assert.match(output, /##teamcity\[testFailed name='firefox - it negates' message='' details='' type='comparisonFailure' expected='NOT foo' actual='foo']/);
     });
 
+    describe('with teamcity_nest_by_launcher', function() {
+      function createReporter(options) {
+        var config = new Config('ci', {}, Object.assign({ teamcity_nest_by_launcher: true }, options));
+        return new TeamcityReporter(false, stream, config);
+      }
+
+      it('streams one suite per launcher, using flowId', function() {
+        var reporter = createReporter();
+
+        reporter.report('Firefox 128', { name: 'passes', passed: true, launcherId: '1', runDuration: 5 });
+        var streamed = readStream(stream);
+        assert.equal(streamed, [
+          "##teamcity[testSuiteStarted name='Firefox 128' flowId='1']",
+          "##teamcity[testStarted name='passes' flowId='1']",
+          "##teamcity[testFinished name='passes' duration='5' flowId='1']",
+          '',
+        ].join('\n'), 'results are written as they arrive');
+
+        reporter.report('Firefox 128', {
+          name: 'fails',
+          passed: false,
+          launcherId: '1',
+          error: { message: 'foo', stack: 'bar' }
+        });
+        reporter.report('Firefox 128', { name: 'skips', skipped: true, launcherId: '1' });
+        reporter.onEnd('Firefox', { launcherId: '1' });
+
+        reporter.report('Chrome 130', { name: 'passes', passed: true, launcherId: '2' });
+        reporter.onEnd('Chrome', { launcherId: '2' });
+        reporter.onEnd('testem', { launcherId: 0 });
+        reporter.finish();
+
+        assert.equal(readStream(stream), [
+          "##teamcity[testStarted name='fails' flowId='1']",
+          "##teamcity[testFailed name='fails' message='foo' details='bar' flowId='1']",
+          "##teamcity[testFinished name='fails' flowId='1']",
+          "##teamcity[testStarted name='skips' flowId='1']",
+          "##teamcity[testIgnored name='skips' message='pending' flowId='1']",
+          "##teamcity[testFinished name='skips' flowId='1']",
+          "##teamcity[testSuiteFinished name='Firefox 128' flowId='1']",
+          "##teamcity[testSuiteStarted name='Chrome 130' flowId='2']",
+          "##teamcity[testStarted name='passes' flowId='2']",
+          "##teamcity[testFinished name='passes' flowId='2']",
+          "##teamcity[testSuiteFinished name='Chrome 130' flowId='2']",
+          '',
+          '',
+          '',
+        ].join('\n'));
+      });
+
+      it('closes suites of launchers that never call onEnd', function() {
+        var reporter = createReporter();
+
+        reporter.report('Chrome 130', { name: 'passes', passed: true, launcherId: '1' });
+        // e.g. a browser crash: the runner reports the error under the launcher name and never calls onEnd
+        reporter.report('Chrome', {
+          name: 'error',
+          passed: false,
+          launcherId: '1',
+          error: { message: 'Browser exited unexpectedly' }
+        });
+        reporter.finish();
+
+        assert.equal(readStream(stream), [
+          "##teamcity[testSuiteStarted name='Chrome 130' flowId='1']",
+          "##teamcity[testStarted name='passes' flowId='1']",
+          "##teamcity[testFinished name='passes' flowId='1']",
+          "##teamcity[testStarted name='error' flowId='1']",
+          "##teamcity[testFailed name='error' message='Browser exited unexpectedly' details='' flowId='1']",
+          "##teamcity[testFinished name='error' flowId='1']",
+          "##teamcity[testSuiteFinished name='Chrome 130' flowId='1']",
+          '',
+          '',
+          '',
+        ].join('\n'));
+      });
+
+      it('closes the previous suite when the next launcher starts reporting', function() {
+        var reporter = createReporter();
+
+        reporter.report('Chrome 130', { name: 'a', passed: true, launcherId: '1' });
+        reporter.report('Firefox 128', { name: 'b', passed: true, launcherId: '2' });
+        reporter.finish();
+
+        assert.equal(readStream(stream), [
+          "##teamcity[testSuiteStarted name='Chrome 130' flowId='1']",
+          "##teamcity[testStarted name='a' flowId='1']",
+          "##teamcity[testFinished name='a' flowId='1']",
+          "##teamcity[testSuiteFinished name='Chrome 130' flowId='1']",
+          "##teamcity[testSuiteStarted name='Firefox 128' flowId='2']",
+          "##teamcity[testStarted name='b' flowId='2']",
+          "##teamcity[testFinished name='b' flowId='2']",
+          "##teamcity[testSuiteFinished name='Firefox 128' flowId='2']",
+          '',
+          '',
+          '',
+        ].join('\n'));
+      });
+
+      it('interleaves suites by flowId when launchers run in parallel', function() {
+        var reporter = createReporter({ parallel: 2 });
+
+        reporter.report('Chrome 130', { name: 'a', passed: true, launcherId: '1' });
+        reporter.report('Firefox 128', { name: 'b', passed: true, launcherId: '2' });
+        reporter.report('Chrome 130', { name: 'c', passed: true, launcherId: '1' });
+        reporter.onEnd('Chrome', { launcherId: '1' });
+        reporter.finish();
+
+        assert.equal(readStream(stream), [
+          "##teamcity[testSuiteStarted name='Chrome 130' flowId='1']",
+          "##teamcity[testStarted name='a' flowId='1']",
+          "##teamcity[testFinished name='a' flowId='1']",
+          "##teamcity[testSuiteStarted name='Firefox 128' flowId='2']",
+          "##teamcity[testStarted name='b' flowId='2']",
+          "##teamcity[testFinished name='b' flowId='2']",
+          "##teamcity[testStarted name='c' flowId='1']",
+          "##teamcity[testFinished name='c' flowId='1']",
+          "##teamcity[testSuiteFinished name='Chrome 130' flowId='1']",
+          "##teamcity[testSuiteFinished name='Firefox 128' flowId='2']",
+          '',
+          '',
+          '',
+        ].join('\n'));
+      });
+
+      it('reports testem errors outside of launcher suites', function() {
+        var reporter = createReporter();
+
+        reporter.report('Chrome 130', { name: 'a', passed: true, launcherId: '1' });
+        reporter.report('testem', {
+          name: 'testem',
+          passed: false,
+          launcherId: 0,
+          error: { message: 'after_tests hook failed' }
+        });
+        reporter.report(null, { name: 'Error', passed: false, error: { message: 'boom' } });
+        reporter.finish();
+
+        assert.equal(readStream(stream), [
+          "##teamcity[testSuiteStarted name='Chrome 130' flowId='1']",
+          "##teamcity[testStarted name='a' flowId='1']",
+          "##teamcity[testFinished name='a' flowId='1']",
+          "##teamcity[testSuiteFinished name='Chrome 130' flowId='1']",
+          "##teamcity[testStarted name='testem - testem']",
+          "##teamcity[testFailed name='testem - testem' message='after_tests hook failed' details='']",
+          "##teamcity[testFinished name='testem - testem']",
+          "##teamcity[testStarted name='testem - Error']",
+          "##teamcity[testFailed name='testem - Error' message='boom' details='']",
+          "##teamcity[testFinished name='testem - Error']",
+          '',
+          '',
+          '',
+        ].join('\n'));
+      });
+
+      it('escapes suite names and flowIds', function() {
+        var reporter = createReporter();
+
+        reporter.report('Chrome [130]', { name: 'a', passed: true, launcherId: 'x\'1' });
+        reporter.finish();
+
+        assert.match(readStream(stream), /##teamcity\[testSuiteStarted name='Chrome \|\[130\|]' flowId='x\|'1']/);
+      });
+    });
   });
 });

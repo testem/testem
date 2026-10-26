@@ -300,6 +300,18 @@ Note that the real output is not pretty printed.
 ##teamcity[testSuiteFinished name='mocha.suite' duration='11091']
 ```
 
+With `"teamcity_nest_by_launcher": true`, the tests of each launcher are grouped into a test suite, so TeamCity and IntelliJ show one tree node per browser. Results are still written as they arrive. Every message carries the launcher's `flowId`, so suites of launchers running in parallel (`parallel` > 1) can be told apart. TeamCity supports this, but IntelliJ's test runner may not nest interleaved suites correctly. Turning the option on changes the full test names TeamCity records (suite name plus test name), so test history starts over.
+
+```text
+##teamcity[testSuiteStarted name='Firefox 128' flowId='1234']
+##teamcity[testStarted name='hello should say hello' flowId='1234']
+##teamcity[testFinished name='hello should say hello' flowId='1234']
+##teamcity[testStarted name='goodbye should say goodbye' flowId='1234']
+##teamcity[testFailed name='goodbye should say goodbye' message='expected |'hello world|' to equal |'goodbye world|'' details='...' flowId='1234']
+##teamcity[testFinished name='goodbye should say goodbye' flowId='1234']
+##teamcity[testSuiteFinished name='Firefox 128' flowId='1234']
+```
+
 </details>
 
 ### Command line options
