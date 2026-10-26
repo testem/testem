@@ -35,6 +35,10 @@ An optional `testsPlanned(launcherName, data)` method gets called when an adapte
 many tests it is about to run (currently the QUnit adapter, with QUnit 2.2 or later). `data` has
 `launcherId` and `total`, the number of tests that will run after filters are applied.
 
+An optional `reportLogs(launcherName, data)` method gets called with browser console logs that
+weren't reported with a test result, e.g. logs written after the last test (in `QUnit.done`, say).
+`data` has `launcherId` and `logs`, in the same format as the `logs` of a test result.
+
 ## Example
 
 The constructor gets `(silent, out, config, app)`. It should use the (optional) output stream `out` and initialize properties.
