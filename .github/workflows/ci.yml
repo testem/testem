@@ -127,7 +127,11 @@ jobs:
     name: browser-tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    concurrency: "sauce"
+    # One Sauce Labs run at a time. queue: max lets runs from other PRs wait
+    # instead of cancelling each other's pending browser-tests job.
+    concurrency:
+      group: sauce
+      queue: max
 
     steps:
       - uses: actions/checkout@v7
