@@ -169,14 +169,22 @@ describe('Testem Client', function() {
       expect(doc.title).to.equal('Tests (1/2)');
     });
 
-    it('shows ran/planned while a planned run is in progress', function() {
+    it('shows passed/planned while a planned run is in progress', function() {
       handlers['tests-planned']({ total: 3 });
       expect(doc.title).to.equal('Tests');
 
       handlers['test-result']({ failed: 0 });
       handlers['test-result']({ failed: 1 });
 
-      expect(doc.title).to.equal('Tests (2/3)');
+      expect(doc.title).to.equal('Tests (1/3)');
+    });
+
+    it('falls back to passed/total when more results arrive than planned', function() {
+      handlers['tests-planned']({ total: 1 });
+      handlers['test-result']({ failed: 0 });
+      handlers['test-result']({ failed: 0 });
+
+      expect(doc.title).to.equal('Tests (2/2)');
     });
 
     it('shows passed/total once the planned tests have run', function() {

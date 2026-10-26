@@ -42,8 +42,8 @@ describe('RunnerTab status', function() {
     return content.replace(/\^[^^]?/g, '').trim();
   }
 
-  it('shows ran/planned while running when a plan is known', function() {
-    expect(statusFor({passed: 1, total: 2, planned: 5})).to.match(/^2\/5 /);
+  it('shows passed/planned while running when a plan is known', function() {
+    expect(statusFor({passed: 1, total: 2, planned: 5})).to.match(/^1\/5 /);
   });
 
   it('shows passed/total while running without a plan', function() {

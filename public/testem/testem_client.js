@@ -363,9 +363,9 @@ function setupTestStats(emitter, doc) {
     if (!total) {
       return;
     }
-    if (total < planned) {
-      // Still running: show how far along the planned run is.
-      doc.title = originalTitle + ' (' + total + '/' + planned + ')';
+    if (planned > 0 && total <= planned) {
+      // Show passed tests against the announced plan.
+      doc.title = originalTitle + ' (' + passed + '/' + planned + ')';
     } else {
       doc.title = originalTitle + ' (' + passed + '/' + total + ')';
     }

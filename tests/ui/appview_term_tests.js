@@ -424,7 +424,7 @@ describe('AppView terminal-kit', function () {
     appview.report('Chrome', { launcherId: 1, name: 'b', failed: 1 });
     tab.stopSpinner();
     tab.renderResults();
-    expect(status()).to.match(/^2\/3 /);
+    expect(status()).to.match(/^1\/3 /);
 
     appview.report('Chrome', { launcherId: 1, name: 'c', failed: 0 });
     appview.onEnd('Chrome', { launcherId: 1 });
