@@ -37,13 +37,13 @@ many tests it is about to run (currently the QUnit adapter, with QUnit 2.2 or la
 
 ## Example
 
-The constructor should take an (optional) output stream and initialize properties.
+The constructor gets `(silent, out, config, app)`. It should use the (optional) output stream `out` and initialize properties.
 The `report` method should increment counters and output results as needed.
 The `finish` method should output summary information.
 
 ```js
 class MyReporter {
-  constructor(out) {
+  constructor(silent, out) {
     this.out = out || process.stdout;
     this.total = 0;
     this.pass = 0;
@@ -83,5 +83,10 @@ module.exports = {
   reporter: MyReporter,
 };
 ```
+
+Prefer configuring the reporter class (as above) over an instance (`reporter: new MyReporter()`).
+With `report_file` set, testem creates a second reporter from the class whose `out` is the report
+file. An instance can only write to one output, so `report_file` is ignored for it and a warning is
+logged.
 
 `examples/coverage_nyc` and `examples/metadata_reporter` still use `require`. An ESM config is the same options object as a default export; see `examples/custom_reporter`.
