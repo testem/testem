@@ -47,7 +47,19 @@ function decycle(object, maxDepth) {
   var paths = [];     // Keep the path to each unique object or array
 
   maxDepth = maxDepth || 5;
-  return (function derez(value, path, depth) {
+
+  // Reading a property, or walking its value, can throw (throwing getters,
+  // revoked or strict Proxies such as Ember's factory managers). Replace such
+  // values with a placeholder instead of failing the whole message.
+  function derezProperty(holder, key, path, depth) {
+    try {
+      return derez(holder[key], path, depth);
+    } catch (e) {
+      return '[unserializable: ' + (e && e.message ? e.message : String(e)) + ']';
+    }
+  }
+
+  function derez(value, path, depth) {
     if (depth > maxDepth) {
       return 'Decycle max depth reached at ' + maxDepth + '. You may override the default by setting "client_decycle_depth" in your testem config.';
     }
@@ -64,7 +76,7 @@ function decycle(object, maxDepth) {
     if (value === null || typeof value === 'undefined' || value instanceof Boolean || value instanceof Number) {
       return value;
     }
-    if (value instanceof Element) {
+    if (typeof value === 'object' && typeof value.nodeType === 'number') {
       return String(value);
     }
 
@@ -93,7 +105,7 @@ function decycle(object, maxDepth) {
       if (Object.prototype.toString.apply(value) === '[object Array]') {
         nu = [];
         for (i = 0; i < value.length; i += 1) {
-          nu[i] = derez(value[i], path + '[' + i + ']', depth + 1);
+          nu[i] = derezProperty(value, i, path + '[' + i + ']', depth + 1);
         }
       } else {
 
@@ -102,7 +114,7 @@ function decycle(object, maxDepth) {
         nu = {};
         for (name in value) {
           if (Object.prototype.hasOwnProperty.call(value, name)) {
-            nu[name] = derez(value[name],
+            nu[name] = derezProperty(value, name,
               path + '[' + JSON.stringify(name) + ']', depth + 1);
           }
         }
@@ -110,5 +122,8 @@ function decycle(object, maxDepth) {
       return nu;
     }
     return value;
-  }(object, '$', 0));
+  }
+
+  // Pass the root in a holder so it gets the same protection.
+  return derezProperty([object], 0, '$', 0);
 }
