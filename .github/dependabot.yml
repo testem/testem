@@ -15,3 +15,8 @@ updates:
     directory: "/examples/electron"
     schedule:
       interval: "weekly"
+    ignore:
+      # Electron 45's renderer hangs at startup on macOS CI runners:
+      # https://github.com/electron/electron/issues/55368 (#2117)
+      - dependency-name: "electron"
+        versions: [">=45"]
