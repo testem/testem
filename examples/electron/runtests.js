@@ -51,7 +51,11 @@ if (platform === 'linux') {
   electronArgs.unshift('--no-sandbox');
 }
 console.error('Starting ' + electronPath + ' ' + electronArgs.join(' '));
-var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'inherit', 'inherit'] });
+// Keep pipes rather than inheriting stdio: if this script is killed outright,
+// the closed pipes take Electron down with it.
+var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'pipe', 'pipe'] });
+child.stdout.pipe(process.stdout);
+child.stderr.pipe(process.stderr);
 
 child.on('error', function(error) {
   throw error;
@@ -62,6 +66,10 @@ child.on('exit', function(code, signal) {
   process.exitCode = code === null ? 1 : code;
 });
 
-process.on('SIGTERM', function() {
-  child.kill();
+// Testem stops this launcher with SIGTERM, and tmp-cleanup.js exits the process
+// on SIGTERM before any other handler runs. Stop Electron on exit instead.
+process.on('exit', function() {
+  if (child.exitCode === null && child.signalCode === null) {
+    child.kill();
+  }
 });
