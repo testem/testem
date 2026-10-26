@@ -150,4 +150,48 @@ describe('Testem Client', function() {
       expect(qunitAdapter).to.have.been.calledOnce();
     });
   });
+
+  describe('document title', function() {
+    let handlers, doc;
+
+    beforeEach(function() {
+      handlers = {};
+      doc = { title: 'Tests' };
+      Testem._setupTestStats({
+        on: function(evt, cb) { handlers[evt] = cb; }
+      }, doc);
+    });
+
+    it('shows passed/total without a planned count', function() {
+      handlers['test-result']({ failed: 0 });
+      handlers['test-result']({ failed: 1 });
+
+      expect(doc.title).to.equal('Tests (1/2)');
+    });
+
+    it('shows ran/planned while a planned run is in progress', function() {
+      handlers['tests-planned']({ total: 3 });
+      expect(doc.title).to.equal('Tests');
+
+      handlers['test-result']({ failed: 0 });
+      handlers['test-result']({ failed: 1 });
+
+      expect(doc.title).to.equal('Tests (2/3)');
+    });
+
+    it('shows passed/total once the planned tests have run', function() {
+      handlers['tests-planned']({ total: 2 });
+      handlers['test-result']({ failed: 0 });
+      handlers['test-result']({ failed: 1 });
+
+      expect(doc.title).to.equal('Tests (1/2)');
+    });
+
+    it('ignores a planned count that is not a number', function() {
+      handlers['tests-planned']({ total: '5' });
+      handlers['test-result']({ failed: 0 });
+
+      expect(doc.title).to.equal('Tests (1/1)');
+    });
+  });
 });
