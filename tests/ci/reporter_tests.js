@@ -466,6 +466,27 @@ describe('test reporters', function() {
             ''
           ]);
         });
+
+        it('writes out failures without error details, without an empty YAML block', function() {
+          var reporter = new TapReporter(false, stream, config);
+          reporter.report('tap', {
+            name: 'it does stuff',
+            passed: 1,
+            items: []
+          });
+          reporter.report('tap', {
+            name: 'it fails',
+            passed: 0,
+            failed: 1,
+            error: {}
+          });
+          reporter.finish();
+          assert.deepEqual(readStream(stream).split('\n').slice(0, 3), [
+            'not ok 1 tap - it fails',
+            '',
+            '1..2'
+          ]);
+        });
       });
 
       context('with todos', function() {
