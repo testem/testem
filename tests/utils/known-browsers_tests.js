@@ -370,6 +370,20 @@ describe('knownBrowsers', function() {
       });
     });
 
+    describe('Chromium', function() {
+      it('checks Chromium (not Google Chrome) install paths on win32', function() {
+        let chromium = findBrowser(knownBrowsers('win32', config), 'Chromium');
+
+        expect(chromium.possiblePath).to.deep.eq([
+          'home/dir\\AppData\\Local\\Chromium\\Application\\chrome.exe',
+          'C:\\Program Files\\Chromium\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Chromium\\Application\\chrome.exe',
+          process.env.HOME + '/Applications/Chromium.app/Contents/MacOS/Chromium',
+          '/Applications/Chromium.app/Contents/MacOS/Chromium'
+        ]);
+      });
+    });
+
     describe('Safari', function() {
       let browsers;
       let safari;
@@ -657,6 +671,18 @@ describe('knownBrowsers', function() {
 
       it('exists', function() {
         expect(opera).to.exist();
+      });
+
+      it('checks per-user and system install paths on win32', function() {
+        opera = findBrowser(knownBrowsers('win32', config), 'Opera');
+
+        expect(opera.possiblePath).to.deep.eq([
+          'home/dir\\AppData\\Local\\Programs\\Opera\\opera.exe',
+          'C:\\Program Files\\Opera\\opera.exe',
+          'C:\\Program Files (x86)\\Opera\\opera.exe',
+          process.env.HOME + '/Applications/Opera.app/Contents/MacOS/Opera',
+          '/Applications/Opera.app/Contents/MacOS/Opera'
+        ]);
       });
 
       it('constructs correct args', function() {
