@@ -4,7 +4,7 @@ var fs = require('fs');
 var url = require('url');
 var pathToFileURL = url.pathToFileURL;
 var { randomBytes } = require('crypto');
-var execFile = require('child_process').execFile;
+var spawn = require('child_process').spawn;
 var { registerCleanup } = require('../../lib/utils/tmp-cleanup.js');
 
 var baseObj = url.parse(process.argv[2]);
@@ -43,14 +43,23 @@ var testUrl = url.format(tmpFileObj);
 
 var env = Object.assign({}, process.env);
 delete env.ELECTRON_RUN_AS_NODE;
+// Print Chromium's own errors and console messages to stderr. Testem shows a
+// launcher's output when the browser fails, so this explains failed starts.
+env.ELECTRON_ENABLE_LOGGING = '1';
 var electronArgs = [testUrl];
 if (platform === 'linux') {
   electronArgs.unshift('--no-sandbox');
 }
-var child = execFile(electronPath, electronArgs, { env: env }, function(error) {
-  if (error) {
-    throw error;
-  }
+console.error('Starting ' + electronPath + ' ' + electronArgs.join(' '));
+var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'inherit', 'inherit'] });
+
+child.on('error', function(error) {
+  throw error;
+});
+
+child.on('exit', function(code, signal) {
+  console.error('Electron exited with code ' + code + (signal ? ' (signal ' + signal + ')' : ''));
+  process.exitCode = code === null ? 1 : code;
 });
 
 process.on('SIGTERM', function() {
