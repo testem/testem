@@ -264,7 +264,36 @@ describe('Server', function() {
           baseUrl + 'web/does-not-exist.js',
         );
         expect(res.statusCode).to.eq(404);
-        expect(text).to.match(/Not found/);
+        expect(text).to.equal('Not found: /web/does-not-exist.js');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
+      });
+
+      it('serves the 404 for a missing file as text/plain so markup in the url is inert', async function() {
+        const { res, text } = await httpRequest(
+          baseUrl + 'web/does-not-exist.js?a=%3Cb%3E',
+        );
+        expect(res.statusCode).to.eq(404);
+        expect(text).to.equal('Not found: /web/does-not-exist.js?a=%3Cb%3E');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
+      });
+
+      it('does not reflect the error message for other file errors', async function() {
+        // ENOTDIR: a path segment below an existing file. The error message
+        // would contain the decoded path (`<b>`) and the absolute file path.
+        // Windows reports this path as ENOENT (and `<` is not a valid
+        // filename character there), so the 500 branch is not reached.
+        if (process.platform === 'win32') {
+          this.skip();
+        }
+        const { res, text } = await httpRequest(
+          baseUrl + 'web/hello.js/%3Cb%3E',
+        );
+        expect(res.statusCode).to.eq(500);
+        expect(text).to.equal('Internal Server Error');
+        expect(res.headers['content-type']).to.match(/^text\/plain/);
+        expect(res.headers['x-content-type-options']).to.equal('nosniff');
       });
 
       it('serves local content with browser ids', async function() {
