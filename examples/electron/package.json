@@ -4,7 +4,6 @@
     "qunit": "^2.26.0"
   },
   "scripts": {
-    "pretest": "install-electron",
     "test": "node ../../testem.js ci -P 10"
   },
   "repository": {
