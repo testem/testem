@@ -316,6 +316,30 @@ describe('test reporters', function() {
       });
     });
 
+    context('without runDuration', function() {
+      it('omits the duration instead of printing [undefined ms]', function() {
+        var reporter = new TapReporter(false, stream, config);
+        reporter.report('tap', {
+          name: 'it does stuff',
+          passed: true,
+          logs: []
+        });
+        reporter.report('tap', {
+          name: 'error',
+          passed: false,
+          error: { message: 'it crapped out' },
+          logs: []
+        });
+        reporter.finish();
+        var lines = readStream(stream).split('\n');
+        assert.deepEqual(lines.slice(0, 2), [
+          'ok 1 tap - it does stuff',
+          'not ok 2 tap - error'
+        ]);
+        assert.notInclude(lines.join('\n'), 'undefined');
+      });
+    });
+
     context('with error-only output', function() {
       beforeEach(function() {
         config = new Config('ci', { tap_failed_tests_only: true });
@@ -1030,6 +1054,19 @@ describe('test reporters', function() {
       assert.match(output, /it didnt work/);
       assert.match(output, /<error message="it crapped out"\/>/);
       assert.notMatch(output, /CDATA\[Error: it crapped out/);
+
+      assertXmlIsValid(output);
+    });
+
+    it('outputs a zero time for results without runDuration', function() {
+      var reporter = new XUnitReporter(false, stream, config);
+      reporter.report('tap', {
+        name: 'it does stuff',
+        passed: true
+      });
+      reporter.finish();
+      var output = readStream(stream);
+      assert.match(output, /<testcase classname="tap" name="it does stuff" time="0"\/>/);
 
       assertXmlIsValid(output);
     });
