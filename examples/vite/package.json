@@ -13,6 +13,6 @@
     "chai": "^6.2.2",
     "mocha": "^12.0.0",
     "vite": "^8.0.0",
-    "vite-plugin-testem": "^1.0.0"
+    "vite-plugin-testem": "^1.1.0"
   }
 }

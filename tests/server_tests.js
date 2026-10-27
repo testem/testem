@@ -1474,12 +1474,54 @@ describe('Server', function() {
       return middlewareServer.stop();
     });
 
-    it('passes the express app and the started http server', function() {
-      expect(received).to.have.lengthOf(2);
+    it('passes the express app, the http server, and middleware hooks', function() {
+      expect(received).to.have.lengthOf(3);
       expect(received[0]).to.equal(middlewareServer.express);
       expect(received[1]).to.be.an.instanceof(http.Server);
       expect(received[1]).to.equal(middlewareServer.server);
       expect(received[1].listening).to.equal(true);
+      expect(received[2].onExit).to.be.a('function');
+      expect(received[2].notifyFileChange).to.be.a('function');
+      expect(received[2].releaseFileWatcher).to.be.a('function');
+      expect(received[2].singleRun).to.equal(false);
+      expect(received[2].watching).to.equal(false);
+    });
+
+    it('runs onExit handlers from stop and rejects when one fails', async function() {
+      const calls = [];
+      const exitConfig = new Config('dev', {
+        port: 0,
+        cwd: 'tests',
+        src_files: ['web/*.js'],
+        middleware: [
+          function(app, server, hooks) {
+            hooks.onExit(async () => {
+              calls.push('ok');
+            });
+            hooks.onExit(async () => {
+              throw new Error('exit failed');
+            });
+            hooks.onExit(async () => {
+              calls.push('after');
+            });
+          },
+        ],
+      });
+      const exitServer = new Server(exitConfig);
+      const started = once(exitServer, 'server-start');
+      exitServer.start();
+      await started;
+
+      let err;
+      try {
+        await exitServer.stop();
+      } catch (e) {
+        err = e;
+      }
+
+      expect(calls).to.deep.equal(['ok', 'after']);
+      expect(err).to.be.an.instanceof(Error);
+      expect(err.message).to.equal('exit failed');
     });
 
     it('still applies middleware that only takes the app', async function() {
