@@ -156,7 +156,7 @@ Fully supported: Chrome, Chrome Canary, Chromium, Firefox, Opera, Safari, Safari
     launchers:                   [Object]  a specification for all custom launchers (each launcher name mapped to an object with `command` (a shell line, not tokenized; use `exe` + `args` for argv without a shell) and optionally `protocol="tap"`
     launch_in_dev:               [Array]   list of launchers to use for dev runs
     launch_in_ci:                [Array]   list of launchers to use for CI runs
-    middleware                   [Array]   list of functions called with the express app and testem's http(s) server (see Middleware below)
+    middleware                   [Array]   list of functions called with the express app, testem's http(s) server, and hooks (see Middleware below)
     parallel:                    [Number]  max number of parallel runners (1)
     proxies                      [Object]  path to options including `onlyContentTypes`, `fallback` (see Proxies below) and https://github.com/unjs/httpxy#options
     reporter:                    [String]  name of the reporter to be used in ci mode ("tap" (default), "xunit", "dot", "teamcity") or an object implementing https://github.com/testem/testem/blob/main/docs/custom_reporter.md
@@ -211,10 +211,11 @@ Fallback proxies are matched in the order they are listed, so list more specific
 
 ### Middleware:
 
-Each function in `middleware` is called once as `middleware(app, server)`, before Testem registers its own routes, proxies and static files:
+Each function in `middleware` is called once as `middleware(app, server, hooks)`, before Testem registers its own routes, proxies and static files:
 
 - `app` is Testem's Express app. Handlers added with `app.use()` run before Testem's own handlers.
 - `server` is the `http.Server` (or `https.Server` when HTTPS is enabled) that Testem listens on. It is not listening yet when the function is called. Use it to handle WebSocket `upgrade` requests on Testem's port, for example a dev server's hot-reload socket.
+- `hooks.onExit(fn)` runs `fn` when Testem stops the server, before the HTTP server closes. Use it to shut down a dev server or other resources the middleware started. Every registered function is attempted. If one throws or rejects, `stop` rejects with that error after the HTTP server has been closed. Functions that only use `app` or `(app, server)` keep working.
 
 ```javascript
 export default {

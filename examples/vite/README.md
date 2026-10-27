@@ -29,11 +29,11 @@ The [`vite-plugin-testem`](https://www.npmjs.com/package/vite-plugin-testem) pac
 1. **`vitePluginTestem()`** — a Vite plugin that can inject `/testem.js` (and the TAP bridge for `framework: 'tap'`). This example loads `/testem.js` explicitly in `index.html` in the same order as Testem’s [Mocha runner page](../../lib/runner_pages/mocha.js), so the plugin does not add a second copy.
 2. **`createTestemViteMiddleware()`** — builds a Vite dev server in middleware mode and returns Express middleware for Testem’s `middleware` config. It skips URLs that belong to Testem so the client still loads from the same origin.
 
-See the package README for full API details and the recommended **`on_exit`** handler when using the middleware.
+See the package README for the full API. `createTestemViteMiddleware()` registers the Vite server’s `close()` on Testem’s middleware `hooks.onExit`, so this example does not set `on_exit`. A `vite-plugin-testem` release older than that registration still needs an `on_exit` hook that calls the returned `close()`.
 
 HMR is turned off in middleware mode here because Testem’s Express app would need explicit wiring to Vite’s WebSocket server; you can still get fast feedback from Testem’s file watching and reloads.
 
-`testem.js` and `vite.config.js` are ES modules (`"type": "module"` in this example's `package.json`). `testem.js` uses **`on_exit`** to call the Vite server’s `close()` hook so watchers and other resources shut down cleanly when Testem exits.
+`testem.js` and `vite.config.js` are ES modules (`"type": "module"` in this example's `package.json`).
 
 ### Mocha + Vite
 
