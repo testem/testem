@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Backbone from "backbone";
+import { Collection, Model } from "../../lib/reporters/dev/model.js";
 import sinon from "sinon";
 import SplitLogPanel from "../../lib/reporters/dev/split_log_panel.js";
 import * as displayText from "../../lib/reporters/dev/display_text.js";
@@ -15,12 +15,12 @@ describe('SplitLogPanel', function() {
   beforeEach(function() {
     sandbox = sinon.createSandbox();
     results = new TestResults();
-    messages = new Backbone.Collection();
-    runner = new Backbone.Model({
+    messages = new Collection();
+    runner = new Model({
       results: results,
       messages: messages
     });
-    appview = new Backbone.Model({
+    appview = new Model({
       cols: 10,
       lines: 20
     });
@@ -44,12 +44,12 @@ describe('SplitLogPanel', function() {
       expect(plainText(panel.getResultsDisplayText())).to.equal('Top Level:\n    Shit happened.\n\n');
     });
     it('says "Please be patient" if not all results are in', function() {
-      let tests = new Backbone.Collection();
+      let tests = new Collection();
       results.set('tests', tests);
       expect(plainText(panel.getResultsDisplayText())).to.equal('Please be patient :)');
     });
     it('says "No tests were run :(" when no tests but all is true', function() {
-      let tests = new Backbone.Collection();
+      let tests = new Collection();
       results.set('tests', tests);
       results.set('all', true);
       expect(plainText(panel.getResultsDisplayText())).to.equal('No tests were run :(');
@@ -57,8 +57,8 @@ describe('SplitLogPanel', function() {
     it('gives result when has results and all is true', function() {
       results.set('total', 1);
       results.set('pending', 0);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({ name: 'blah', passed: true })
+      let tests = new Collection([
+        new Model({ name: 'blah', passed: true })
       ]);
       results.set('tests', tests);
       results.set('all', true);
@@ -67,8 +67,8 @@ describe('SplitLogPanel', function() {
     it('shows pending tests in yellow when has results, all is true, no tests failed and there are pending tests', function() {
       results.set('total', 1);
       results.set('pending', 1);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({ name: 'blah', pending: true })
+      let tests = new Collection([
+        new Model({ name: 'blah', pending: true })
       ]);
       results.set('tests', tests);
       results.set('all', true);
@@ -101,8 +101,8 @@ describe('SplitLogPanel', function() {
     });
     it('shows the error message', function() {
       results.set('total', 1);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({
+      let tests = new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             { message: 'should not be null', passed: false }
@@ -117,8 +117,8 @@ describe('SplitLogPanel', function() {
     });
     it('shows the stacktrace', function() {
       results.set('total', 1);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({
+      let tests = new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             {
@@ -138,8 +138,8 @@ describe('SplitLogPanel', function() {
     });
     it('says "Looking good..." if all is false but all passed so far', function() {
       results.set('total', 1);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({
+      let tests = new Collection([
+        new Model({
           name: 'blah', passed: true
         })
       ]);
@@ -148,8 +148,8 @@ describe('SplitLogPanel', function() {
     });
     it('prepends NOT to expected for negative assertions', function() {
       results.set('total', 1);
-      let tests = new Backbone.Collection([
-        new Backbone.Model({
+      let tests = new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             {
@@ -173,18 +173,18 @@ describe('SplitLogPanel', function() {
     });
 
     it('returns "" with empty collection', function() {
-      let messages = new Backbone.Collection();
+      let messages = new Collection();
       runner.set('messages', messages);
       expect(plainText(panel.getMessagesText())).to.equal('');
     });
 
     it('returns the messages', function() {
-      let messages = new Backbone.Collection([
-        new Backbone.Model({type: 'log', text: 'hello world'})
+      let messages = new Collection([
+        new Model({type: 'log', text: 'hello world'})
       ]);
       runner.set('messages', messages);
       expect(plainText(panel.getMessagesText())).to.equal('hello world');
-      messages.add(new Backbone.Model({type: 'error', text: 'crap happens'}));
+      messages.add(new Model({type: 'error', text: 'crap happens'}));
       expect(plainText(panel.getMessagesText())).to.equal('hello worldcrap happens');
     });
 

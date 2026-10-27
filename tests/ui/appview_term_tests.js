@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Backbone from "backbone";
+import { Model } from "../../lib/reporters/dev/model.js";
 import AppView from "../../lib/reporters/dev/index.js";
 import Config from "../../lib/config.js";
 import { createTestTerm } from "./create_test_term.js";
@@ -11,13 +11,11 @@ describe('AppView terminal-kit', function () {
   let appview;
 
   beforeEach(function () {
-    app = new Backbone.Model();
+    app = new Model();
     app.paused = false;
     app.exit = function () {};
     app.triggerRun = function () {};
-    app.on = app.on.bind(app);
     config = app.config = new Config({}, { port: 1234 });
-    app.runners = new Backbone.Collection();
   });
 
   afterEach(function () {
@@ -155,6 +153,25 @@ describe('AppView terminal-kit', function () {
     expect(function () {
       appview.document.draw();
     }).not.to.throw();
+  });
+
+  it('drops a removed runner without copying launcher fields', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    const launcher = {
+      name: function () { return 'Chrome'; },
+      launcherId: 1,
+      extra: 'nope'
+    };
+    appview.runnerAdded(launcher);
+    const viewRunner = appview.runners().at(0);
+    expect(viewRunner.get('name')).to.equal('Chrome');
+    expect(viewRunner.get('runner')).to.equal(launcher);
+    expect(viewRunner.get('extra')).to.equal(undefined);
+    expect(appview.get('atLeastOneRunner')).to.equal(true);
+    appview.runnerRemoved(launcher);
+    expect(appview.runners().length).to.equal(0);
+    expect(appview.get('atLeastOneRunner')).to.equal(false);
   });
 
   it('quits when q is pressed', function () {

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Backbone from "backbone";
+import { Collection, Model } from "../../lib/reporters/dev/model.js";
 import * as runnertabs from "../../lib/reporters/dev/runner_tabs.js";
 import Config from "../../lib/config.js";
 import Chars from "../../lib/utils/chars.js";
@@ -7,12 +7,12 @@ import Chars from "../../lib/utils/chars.js";
 var RunnerTab = runnertabs.RunnerTab;
 
 function makeRunnerTab(configOpts, runnerAttrs) {
-  var runner = new Backbone.Model(Object.assign({
+  var runner = new Model(Object.assign({
     name: 'Bob',
-    messages: new Backbone.Collection()
+    messages: new Collection()
   }, runnerAttrs || {}));
   runner.hasMessages = function() { return false; };
-  var appview = new Backbone.Model({currentTab: 0});
+  var appview = new Model({currentTab: 0});
   appview.app = {config: new Config(null, configOpts || {})};
   appview.isPopupVisible = function() { return false; };
   return new RunnerTab({
@@ -25,7 +25,7 @@ function makeRunnerTab(configOpts, runnerAttrs) {
 
 describe('RunnerTab status', function() {
   function statusFor(attrs) {
-    var results = new Backbone.Model(Object.assign({
+    var results = new Model(Object.assign({
       passed: 0,
       pending: 0,
       total: 0,
@@ -61,7 +61,7 @@ describe('RunnerTab status', function() {
 
 describe('RunnerTab color', function() {
   it('is red when fail_on_zero_tests and there are no tests', function() {
-    var results = new Backbone.Model({
+    var results = new Model({
       all: true,
       passed: 0,
       total: 0,
@@ -72,7 +72,7 @@ describe('RunnerTab color', function() {
   });
 
   it('is green when no pending tests and all passed', function() {
-    var results = new Backbone.Model({
+    var results = new Model({
       passed: 1,
       pending: 0,
       total: 1,
@@ -83,7 +83,7 @@ describe('RunnerTab color', function() {
   });
 
   it('is yellow when pending tests and all accounted for', function() {
-    var results = new Backbone.Model({
+    var results = new Model({
       passed: 0,
       pending: 1,
       total: 1,
@@ -91,5 +91,31 @@ describe('RunnerTab color', function() {
     });
     var tab = makeRunnerTab({}, {results: results});
     expect(tab.color()).to.equal('yellow');
+  });
+});
+
+describe('RunnerTabs', function() {
+  it('destroys a removed tab and reindexes the rest', function() {
+    var appview = new Model({ currentTab: 1 });
+    appview.app = { config: new Config(null, {}) };
+    appview.isPopupVisible = function() { return false; };
+    var tabs = new runnertabs.RunnerTabs(appview);
+    var first = makeRunnerTab();
+    var second = makeRunnerTab();
+    var destroyed = false;
+    var originalDestroy = second.destroy.bind(second);
+    second.destroy = function() {
+      destroyed = true;
+      originalDestroy();
+    };
+    tabs.push(first);
+    tabs.push(second);
+    first.set({ index: 9, selected: false });
+    tabs.remove(second);
+    expect(destroyed).to.equal(true);
+    expect(tabs.length).to.equal(1);
+    expect(appview.get('currentTab')).to.equal(0);
+    expect(first.get('index')).to.equal(0);
+    expect(first.get('selected')).to.equal(true);
   });
 });

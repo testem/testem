@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import Backbone from "backbone";
+import { Collection, Model } from "../../lib/reporters/dev/model.js";
 import * as displayText from "../../lib/reporters/dev/display_text.js";
 import Chars from "../../lib/utils/chars.js";
 import TestResults from "../../lib/reporters/dev/test_results.js";
@@ -15,13 +15,13 @@ describe('display_text', function () {
 
     it('says "Please be patient" if not all results are in', function () {
       const results = new TestResults();
-      results.set('tests', new Backbone.Collection());
+      results.set('tests', new Collection());
       expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('Please be patient :)');
     });
 
     it('says "No tests were run :(" when no tests but all is true', function () {
       const results = new TestResults();
-      results.set('tests', new Backbone.Collection());
+      results.set('tests', new Collection());
       results.set('all', true);
       expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal('No tests were run :(');
     });
@@ -30,8 +30,8 @@ describe('display_text', function () {
       const results = new TestResults();
       results.set('total', 1);
       results.set('pending', 0);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({ name: 'blah', passed: true })
+      results.set('tests', new Collection([
+        new Model({ name: 'blah', passed: true })
       ]));
       results.set('all', true);
       expect(displayText.plainText(displayText.getResultsDisplayText(results))).to.equal(Chars.success + ' 1 tests complete.');
@@ -41,8 +41,8 @@ describe('display_text', function () {
       const results = new TestResults();
       results.set('total', 1);
       results.set('pending', 1);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({ name: 'blah', pending: true })
+      results.set('tests', new Collection([
+        new Model({ name: 'blah', pending: true })
       ]));
       results.set('all', true);
 
@@ -80,8 +80,8 @@ describe('display_text', function () {
     it('shows the error message', function () {
       const results = new TestResults();
       results.set('total', 1);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({
+      results.set('tests', new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             { message: 'should not be null', passed: false }
@@ -97,8 +97,8 @@ describe('display_text', function () {
     it('shows the stacktrace', function () {
       const results = new TestResults();
       results.set('total', 1);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({
+      results.set('tests', new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             {
@@ -121,8 +121,8 @@ describe('display_text', function () {
     it('says "Looking good..." if all is false but all passed so far', function () {
       const results = new TestResults();
       results.set('total', 1);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({
+      results.set('tests', new Collection([
+        new Model({
           name: 'blah', passed: true
         })
       ]));
@@ -132,8 +132,8 @@ describe('display_text', function () {
     it('prepends NOT to expected for negative assertions', function () {
       const results = new TestResults();
       results.set('total', 1);
-      results.set('tests', new Backbone.Collection([
-        new Backbone.Model({
+      results.set('tests', new Collection([
+        new Model({
           name: 'blah', passed: false, failed: 1,
           items: [
             {
@@ -151,15 +151,15 @@ describe('display_text', function () {
 
   describe('getMessagesText', function () {
     it('returns "" with no messages', function () {
-      expect(displayText.plainText(displayText.getMessagesText(new Backbone.Collection()))).to.equal('');
+      expect(displayText.plainText(displayText.getMessagesText(new Collection()))).to.equal('');
     });
 
     it('returns the messages', function () {
-      const messages = new Backbone.Collection([
-        new Backbone.Model({type: 'log', text: 'hello world'})
+      const messages = new Collection([
+        new Model({type: 'log', text: 'hello world'})
       ]);
       expect(displayText.plainText(displayText.getMessagesText(messages))).to.equal('hello world');
-      messages.add(new Backbone.Model({type: 'error', text: 'crap happens'}));
+      messages.add(new Model({type: 'error', text: 'crap happens'}));
       expect(displayText.plainText(displayText.getMessagesText(messages))).to.equal('hello worldcrap happens');
     });
 
@@ -168,9 +168,9 @@ describe('display_text', function () {
       expect(displayText.messageColor('warn')).to.equal('cyan');
       expect(displayText.messageColor('info')).to.equal('green');
       expect(displayText.messageColor('error')).to.equal('red');
-      const messages = new Backbone.Collection([
-        new Backbone.Model({type: 'log', text: 'hello'}),
-        new Backbone.Model({type: 'error', text: 'boom'})
+      const messages = new Collection([
+        new Model({type: 'log', text: 'hello'}),
+        new Model({type: 'error', text: 'boom'})
       ]);
       expect(displayText.getMessagesText(messages)).to.deep.equal([
         { text: 'hello', color: 'yellow' },
