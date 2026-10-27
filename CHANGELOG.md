@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **Backbone is no longer a dependency.** Dev-mode view-models are local `Model` and `Collection` classes. Keys, layout, and config are unchanged.
+
 ## 4.0.0-beta.3
 
 ### Changed
