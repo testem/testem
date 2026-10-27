@@ -216,6 +216,7 @@ Each function in `middleware` is called once as `middleware(app, server, hooks)`
 - `app` is Testem's Express app. Handlers added with `app.use()` run before Testem's own handlers.
 - `server` is the `http.Server` (or `https.Server` when HTTPS is enabled) that Testem listens on. It is not listening yet when the function is called. Use it to handle WebSocket `upgrade` requests on Testem's port, for example a dev server's hot-reload socket.
 - `hooks.onExit(fn)` runs `fn` when Testem stops the server, before the HTTP server closes. Use it to shut down a dev server or other resources the middleware started. Every registered function is attempted. If one throws or rejects, `stop` rejects with that error after the HTTP server has been closed. Functions that only use `app` or `(app, server)` keep working.
+- `hooks.notifyFileChange(filePath)` reports a change from an external watcher. Testem reruns only when the path matches `src_files` / `watch_files` (and is not ignored), or when it is the Testem config file. `hooks.releaseFileWatcher()` closes Testem's own chokidar. `hooks.watching` is true when that watcher was started. `hooks.singleRun` is true for a single run, including CI. `testem server` passes no-op file hooks and `watching: false`.
 
 ```javascript
 export default {

@@ -31,7 +31,7 @@ The [`vite-plugin-testem`](https://www.npmjs.com/package/vite-plugin-testem) pac
 
 See the package README for the full API. `createTestemViteMiddleware()` registers the Vite server’s `close()` on Testem’s middleware `hooks.onExit`, so this example does not set `on_exit`. A `vite-plugin-testem` release older than that registration still needs an `on_exit` hook that calls the returned `close()`.
 
-HMR is turned off in middleware mode here because Testem’s Express app would need explicit wiring to Vite’s WebSocket server; you can still get fast feedback from Testem’s file watching and reloads.
+HMR is turned off in middleware mode here because Testem’s Express app would need explicit wiring to Vite’s WebSocket server. In dev, Vite’s watcher is the only one: the plugin closes Testem’s chokidar and reruns tests from Vite’s `change`, `add`, and `unlink` events, still filtered by `src_files` / `watch_files`. `disable_watching: true` still skips those reruns. A single run, including CI, closes Vite’s watcher too.
 
 `testem.js` and `vite.config.js` are ES modules (`"type": "module"` in this example's `package.json`).
 

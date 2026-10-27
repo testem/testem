@@ -262,4 +262,89 @@ describe('App file watching', function() {
       app.exit();
     });
   });
+
+  it('releases Testem’s watcher and reruns from an external file change', function(done) {
+    config = new Config('dev', {}, {
+      src_files: ['src/**/*.js'],
+      reporter: new FakeReporter(),
+    });
+    app = new App(config, function() {
+      done();
+    });
+    app.start(function() {
+      const originalRunHook = app.runHook.bind(app);
+      sandbox.stub(app, 'runHook').callsFake(function(hook, data, fn) {
+        if (hook === 'on_change') {
+          return fn();
+        }
+        return originalRunHook(hook, data, fn);
+      });
+      sandbox.spy(app, 'triggerRun');
+      app.releaseFileWatcher().then(function() {
+        expect(app.fileWatcher).to.equal(undefined);
+        const changedPath = Path.join(process.cwd(), 'src', 'foo.js');
+        app.notifyFileChange(changedPath);
+        app.notifyFileChange(Path.join(process.cwd(), 'notes.txt'));
+        setImmediate(function() {
+          expect(app.runHook).to.have.been.calledWith('on_change', {
+            file: changedPath,
+          });
+          expect(app.triggerRun.calledWith('File changed: ' + changedPath)).to.be.true();
+          expect(app.triggerRun.calledOnce).to.be.true();
+          app.exit();
+        });
+      }).catch(function(err) {
+        done(err);
+      });
+    });
+  });
+
+  it('does not rerun from an external change while paused', function(done) {
+    config = new Config('dev', {}, {
+      src_files: ['src/**/*.js'],
+      reporter: new FakeReporter(),
+    });
+    app = new App(config, function() {
+      done();
+    });
+    app.start(function() {
+      sandbox.spy(app, 'triggerRun');
+      app.releaseFileWatcher().then(function() {
+        app.paused = true;
+        app.notifyFileChange(Path.join(process.cwd(), 'src', 'foo.js'));
+        setImmediate(function() {
+          expect(app.triggerRun).not.to.have.been.called();
+          app.exit();
+        });
+      }).catch(function(err) {
+        done(err);
+      });
+    });
+  });
+
+  it('reconfigures when an external change is the config file', function(done) {
+    const configPath = Path.join(tmpDir, 'testem.js');
+    config = new Config('dev', {}, {
+      file: configPath,
+      src_files: ['*.js'],
+      reporter: new FakeReporter(),
+    });
+    app = new App(config, function() {
+      done();
+    });
+    app.configure = sandbox.stub().callsFake(function(cb) {
+      if (cb) {
+        cb();
+      }
+    });
+    app.start(function() {
+      sandbox.spy(app, 'triggerRun');
+      app.notifyFileChange(configPath);
+      setImmediate(function() {
+        expect(app.configure).to.have.been.called();
+        expect(app.triggerRun.calledWith('Config changed')).to.be.true();
+        app.exit();
+      });
+    });
+  });
 });

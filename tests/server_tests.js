@@ -1481,6 +1481,10 @@ describe('Server', function() {
       expect(received[1]).to.equal(middlewareServer.server);
       expect(received[1].listening).to.equal(true);
       expect(received[2].onExit).to.be.a('function');
+      expect(received[2].notifyFileChange).to.be.a('function');
+      expect(received[2].releaseFileWatcher).to.be.a('function');
+      expect(received[2].singleRun).to.equal(false);
+      expect(received[2].watching).to.equal(false);
     });
 
     it('runs onExit handlers from stop and rejects when one fails', async function() {
