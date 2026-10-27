@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import { Collection, Model } from "../../lib/reporters/dev/model.js";
+import Runner from "../../lib/reporters/dev/runner.js";
+import TestResults from "../../lib/reporters/dev/test_results.js";
 
 describe('Model', function () {
   it('returns constructor attributes and undefined for a missing key', function () {
@@ -222,5 +224,56 @@ describe('Collection', function () {
     const collection = new Collection([], { model: Entry });
     collection.push({ text: 'hi' });
     expect(collection.at(0)).to.be.instanceOf(Entry);
+  });
+});
+
+describe('Runner', function () {
+  function launcher() {
+    return {
+      name() {
+        return 'Chrome';
+      },
+      extra: 1
+    };
+  }
+
+  it('stores the launcher without copying its other fields', function () {
+    const browser = launcher();
+    const runner = new Runner(browser);
+    expect(runner.get('name')).to.equal('Chrome');
+    expect(runner.get('runner')).to.equal(browser);
+    expect(runner.get('extra')).to.equal(undefined);
+    expect(runner.get('messages')).to.be.instanceOf(Collection);
+    expect(runner.get('results')).to.be.instanceOf(TestResults);
+  });
+
+  it('resets on start and marks the run complete on end', function () {
+    const runner = new Runner(launcher());
+    runner.get('messages').push({ type: 'log', text: 'hi' });
+    runner.report({ failed: 0 });
+    runner.setPlanned(4);
+    const seen = [];
+    runner.on('tests-start', () => seen.push('start'));
+    runner.on('tests-end', () => seen.push('end'));
+
+    expect(runner.hasMessages()).to.equal(true);
+    expect(runner.hasResults()).to.equal(true);
+
+    runner.onStart();
+    expect(runner.get('messages').length).to.equal(0);
+    expect(runner.get('results').get('total')).to.equal(0);
+    expect(runner.get('results').get('planned')).to.equal(0);
+    expect(runner.get('allPassed')).to.equal(undefined);
+    expect(runner.hasMessages()).to.equal(false);
+    expect(runner.hasResults()).to.equal(false);
+
+    runner.report({ failed: 1 });
+    runner.get('messages').push({ type: 'error', text: 'boom' });
+    expect(runner.hasResults()).to.equal(true);
+    expect(runner.hasMessages()).to.equal(true);
+
+    runner.onEnd();
+    expect(runner.get('results').get('all')).to.equal(true);
+    expect(seen).to.deep.equal(['start', 'end']);
   });
 });
