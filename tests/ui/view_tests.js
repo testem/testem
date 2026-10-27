@@ -10,9 +10,9 @@ describe('view', function() {
 
   before(function() {
     model = new Backbone.Model();
-    MyView = View.extend({
-      render: function() {}
-    });
+    MyView = class extends View {
+      render() {}
+    };
     view = new MyView();
   });
 
