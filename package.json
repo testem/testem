@@ -88,5 +88,9 @@
       "import": "./lib/api.js"
     },
     "./package.json": "./package.json"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "koffi@3.3.4": true
   }
 }
