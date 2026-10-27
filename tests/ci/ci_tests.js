@@ -84,7 +84,7 @@ describe('ci mode app', function() {
             return r.result.passed;
           }), 'process globals should pass');
 
-          expect(nodePlain[0]).to.exist();
+          expect(nodePlain[0]).to.exist;
           assert(!nodePlain[0].result.passed, 'node plain should fail');
 
           var launchers = reporter.results.map(function(r) {
@@ -98,7 +98,7 @@ describe('ci mode app', function() {
           var globalLauncher = reporter.results.filter(function(r) {
             return r.launcher === null;
           });
-          expect(globalLauncher).to.be.empty();
+          expect(globalLauncher).to.be.empty;
 
           if (process.env.TESTEM_VERBOSE) {
             log.verbose('reporter.results', JSON.stringify(reporter.results.map(function(r) {
@@ -374,7 +374,7 @@ describe('ci mode app', function() {
         return done(err);
       }
 
-      expect(app.runners[0].exit).to.have.been.called();
+      expect(app.runners[0].exit).to.have.been.called;
       done();
     });
     app.runners = [
@@ -390,7 +390,7 @@ describe('ci mode app', function() {
     sandbox.spy(app.runners[0], 'exit');
 
     app.exitRunners(function() {
-      expect(app.runners[0].exit).to.have.been.called();
+      expect(app.runners[0].exit).to.have.been.called;
 
       app.exit();
     });

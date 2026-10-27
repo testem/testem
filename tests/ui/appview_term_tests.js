@@ -37,7 +37,7 @@ describe('AppView terminal-kit', function () {
     const { term } = createTestTerm();
     appview = new AppView(false, process.stdout, config, app, term);
     expect(appview.disabled).to.equal(false);
-    expect(appview.document).to.exist();
+    expect(appview.document).to.exist;
     expect(appview.grabbedInput).to.equal(false);
     appview.setErrorPopupMessage('EMFILE');
     expect(appview.isPopupVisible()).to.equal(true);
@@ -150,7 +150,7 @@ describe('AppView terminal-kit', function () {
     expect(appview.runnerTabs.length).to.equal(0);
     const { term } = createTestTerm(157, 38);
     appview._startTui(term);
-    expect(appview.document).to.exist();
+    expect(appview.document).to.exist;
     expect(appview.runnerTabs.length).to.equal(1);
     expect(function () {
       appview.document.draw();

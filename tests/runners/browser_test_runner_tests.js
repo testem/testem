@@ -270,7 +270,7 @@ describe('browser test runner', function() {
       });
       expect(reporter.results.every(function(r) {
         return !r.result.passed;
-      })).to.be.true();
+      })).to.be.true;
     });
 
     it('does not count a test as passed if it has failures', function() {
@@ -282,7 +282,7 @@ describe('browser test runner', function() {
       });
       expect(reporter.results.every(function(r) {
         return !r.result.passed;
-      })).to.be.true();
+      })).to.be.true;
     });
 
     it('counts a test as skipped if it is skipped', function() {
@@ -318,7 +318,7 @@ describe('browser test runner', function() {
       });
       expect(reporter.results.every(function(r) {
         return r.result.passed;
-      })).to.be.true();
+      })).to.be.true;
     });
 
     it('reports the first failed item as error', function() {
@@ -402,7 +402,7 @@ describe('browser test runner', function() {
 
       runner.start();
       runner.start();
-      expect(launcher.start.calledOnce).to.be.true();
+      expect(launcher.start.calledOnce).to.be.true;
     });
 
 
@@ -430,7 +430,7 @@ describe('browser test runner', function() {
       const result = reporter.results[0].result;
       expect(result.error).to.be.an('object');
       expect(result.failed).to.equal(1);
-      expect(result.items).to.be.undefined();
+      expect(result.items).to.be.undefined;
       expect(result.launcherId).to.equal(launcher.id);
       expect(result.logs[0].type).to.equal('error');
       expect(result.passed).to.equal(0);
@@ -532,7 +532,7 @@ describe('browser test runner', function() {
 
       runner.socket = new FakeSocket();
       runner.socket.on('start-tests', function() {
-        expect(launcher.start).not.to.have.been.called();
+        expect(launcher.start).not.to.have.been.called;
         done();
       });
 
@@ -564,7 +564,7 @@ describe('browser test runner', function() {
     });
 
     it('does not throw when no socket is attached', function() {
-      expect(runner.socket).to.be.undefined();
+      expect(runner.socket).to.be.undefined;
       return runner.stop();
     });
   });
@@ -695,7 +695,7 @@ describe('browser test runner', function() {
       runner.finish();
 
       await run;
-      expect(exit).to.have.been.calledOnce();
+      expect(exit).to.have.been.calledOnce;
     });
   });
 });

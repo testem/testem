@@ -48,9 +48,9 @@ describe('RunTimeout', function() {
 
       return RunTimeout.with(1, function(_timeout) {
         timeout = _timeout;
-        expect(timeout.timeoutID).to.exist();
+        expect(timeout.timeoutID).to.exist;
       }).then(function() {
-        expect(timeout.timeoutID).not.to.exist();
+        expect(timeout.timeoutID).not.to.exist;
       });
     });
   });

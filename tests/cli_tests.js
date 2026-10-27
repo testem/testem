@@ -63,7 +63,7 @@ describe('CLI argument parsing (parseArgs)', function() {
 
     it('attaches _commander for internal option enumeration', function() {
       const { progOptions } = parseArgs(...argv());
-      expect(progOptions._commander).to.exist();
+      expect(progOptions._commander).to.exist;
       expect(progOptions._commander.options).to.be.an('array');
     });
 
@@ -192,7 +192,7 @@ describe('CLI argument parsing (parseArgs)', function() {
 
     it('attaches _commander for internal option enumeration', function() {
       const { progOptions } = parseArgs(...argv('ci'));
-      expect(progOptions._commander).to.exist();
+      expect(progOptions._commander).to.exist;
       expect(progOptions._commander.options).to.be.an('array');
     });
 
@@ -268,7 +268,7 @@ describe('CLI argument parsing (parseArgs)', function() {
 
     it('attaches _commander for internal option enumeration', function() {
       const { progOptions } = parseArgs(...argv('launchers'));
-      expect(progOptions._commander).to.exist();
+      expect(progOptions._commander).to.exist;
       expect(progOptions._commander.options).to.be.an('array');
     });
   });
@@ -298,7 +298,7 @@ describe('CLI argument parsing (parseArgs)', function() {
 
     it('attaches _commander for internal option enumeration', function() {
       const { progOptions } = parseArgs(...argv('server'));
-      expect(progOptions._commander).to.exist();
+      expect(progOptions._commander).to.exist;
       expect(progOptions._commander.options).to.be.an('array');
     });
   });

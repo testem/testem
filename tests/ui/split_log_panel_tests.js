@@ -229,7 +229,7 @@ describe('SplitLogPanel', function() {
         targetPanel[method] = sandbox.spy();
         sandbox.stub(panel, 'targetPanel').returns(targetPanel);
         panel[method]();
-        expect(targetPanel[method]).to.have.been.called();
+        expect(targetPanel[method]).to.have.been.called;
       });
     });
   });

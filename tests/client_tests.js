@@ -78,7 +78,7 @@ describe('Testem Client', function() {
       socket.emitMessage('browser-console', 'log', 'test');
     });
 
-    expect(Testem.emitMessageQueue).to.not.be.empty();
+    expect(Testem.emitMessageQueue).to.not.be.empty;
 
     Testem.drainMessageQueue();
 
@@ -99,8 +99,8 @@ describe('Testem Client', function() {
     });
 
     Testem.on('after-tests-complete', function() {
-      expect(firstCalled).to.be.true();
-      expect(secondCalled).to.be.true();
+      expect(firstCalled).to.be.true;
+      expect(secondCalled).to.be.true;
       done();
     });
     Testem.runAfterTests();
@@ -134,20 +134,20 @@ describe('Testem Client', function() {
     it('uses jasmine2Adapter when jasmine.getEnv is a function', function() {
       global.jasmine = { getEnv: function() {} };
       expect(Testem.detectTestFramework({})).to.equal(true);
-      expect(jasmine2Adapter).to.have.been.calledOnce();
+      expect(jasmine2Adapter).to.have.been.calledOnce;
     });
 
     it('does not hook a bare jasmine object without getEnv', function() {
       global.jasmine = {};
       expect(Testem.detectTestFramework({})).to.equal(false);
-      expect(jasmine2Adapter).not.to.have.been.called();
+      expect(jasmine2Adapter).not.to.have.been.called;
     });
 
     it('initializes the detected framework only once', function() {
       global.QUnit = {};
       expect(Testem.detectTestFramework({})).to.equal(true);
       expect(Testem.detectTestFramework({})).to.equal(true);
-      expect(qunitAdapter).to.have.been.calledOnce();
+      expect(qunitAdapter).to.have.been.calledOnce;
     });
   });
 

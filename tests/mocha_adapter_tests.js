@@ -206,7 +206,7 @@ describe('mochaAdapter', function() {
         });
 
         it('should not emit a "test-result" event', function() {
-          expect(_emit).not.to.have.been.called();
+          expect(_emit).not.to.have.been.called;
         });
 
         it('should not emit an "all-test-results" event', function() {
@@ -354,7 +354,7 @@ describe('mochaAdapter', function() {
         });
 
         it('should have emitted a "test-result" event just once', function() {
-          expect(_emit).to.have.been.calledOnce();
+          expect(_emit).to.have.been.calledOnce;
         });
       });
     });

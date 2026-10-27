@@ -38,7 +38,7 @@ describe('Config', function() {
   });
 
   it('ignores undefined progOptions', function() {
-    expect(config.get('port')).not.to.be.undefined();
+    expect(config.get('port')).not.to.be.undefined;
   });
 
   it('gives defaultOptions properties when got', function() {
@@ -100,7 +100,7 @@ describe('Config', function() {
 
   it('returns undefined for undefined keys', function() {
     let config = new Config();
-    expect(config.get('undefined')).to.be.undefined();
+    expect(config.get('undefined')).to.be.undefined;
   });
 
   describe('read json config file', function() {
@@ -274,7 +274,7 @@ describe('Config', function() {
         expect(err).to.be.an.instanceof(Error);
         expect(err.message).to.contain('Could not load config file ' + file);
         expect(cfg.fileOptions).to.deep.equal({});
-        expect(cfg.get('framework')).to.be.undefined();
+        expect(cfg.get('framework')).to.be.undefined;
         done();
       });
     });
@@ -318,7 +318,7 @@ describe('Config', function() {
     it('does not error when no config file is found', function(done) {
       let cfg = new Config('dev', { cwd: path.join(__dirname, 'fixtures', 'basic_test', 'does-not-exist') });
       cfg.read(function(err) {
-        expect(err).to.not.exist();
+        expect(err).to.not.exist;
         expect(cfg.fileOptions).to.deep.equal({});
         done();
       });
@@ -335,7 +335,7 @@ describe('Config', function() {
       config.read(done);
     });
     it('does not treat a named export as the config root', function() {
-      expect(config.get('framework')).to.be.undefined();
+      expect(config.get('framework')).to.be.undefined;
       expect(config.fileOptions.config.framework).to.equal('mocha');
       expect(config.fileOptions.config.src_files).to.deep.equal([
         'impl.js',
@@ -418,7 +418,7 @@ describe('Config', function() {
     sandbox.stub(config, 'get').callsFake(function() {
       return null;
     });
-    expect(config.isCwdMode()).to.be.ok();
+    expect(config.isCwdMode()).to.be.ok;
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
@@ -428,7 +428,7 @@ describe('Config', function() {
       }
       return null;
     });
-    expect(config.isCwdMode()).to.not.be.ok();
+    expect(config.isCwdMode()).to.not.be.ok;
   });
 
   it('returns whether isCwdMode (read js files from current dir)', function() {
@@ -438,7 +438,7 @@ describe('Config', function() {
       }
       return null;
     });
-    expect(config.isCwdMode()).to.not.be.ok();
+    expect(config.isCwdMode()).to.not.be.ok;
   });
 
   it('has fallbacks for host and port', function() {
@@ -458,7 +458,7 @@ describe('Config', function() {
     });
 
     config.getLaunchers(function(err, launchers) {
-      expect(err).to.be.null();
+      expect(err).to.be.null;
       expect(launchers.chrome.name).to.equal('Chrome');
       expect(launchers.chrome.settings.exe).to.equal('chrome.exe');
       expect(launchers.firefox.name).to.equal('Firefox');
@@ -488,7 +488,7 @@ describe('Config', function() {
     });
 
     config.getLaunchers(function(err, launchers) {
-      expect(err).to.be.null();
+      expect(err).to.be.null;
       expect(launchers.node.name).to.equal('Node');
       expect(launchers.node.settings.command).to.equal('node tests.js');
       done();
@@ -858,7 +858,7 @@ describe('Config', function() {
     it('lists files from css_files', function(done) {
       config.set('css_files', 'fixtures/styles/*.css');
       config.getCSSFiles(function(err, files) {
-        expect(err).to.not.exist();
+        expect(err).to.not.exist;
         expect(files).to.deep.equal([
           fileEntry(path.join('fixtures', 'styles', 'print.css')),
           fileEntry(path.join('fixtures', 'styles', 'screen.css'))
@@ -870,7 +870,7 @@ describe('Config', function() {
     it('returns an empty list when css_files is an empty array', function(done) {
       config.set('css_files', []);
       config.getCSSFiles(function(err, files) {
-        expect(err).to.not.exist();
+        expect(err).to.not.exist;
         expect(files).to.deep.equal([]);
         done();
       });
@@ -952,7 +952,7 @@ describe('Config', function() {
 
     it('returns an empty list when a glob matches no files', function(done) {
       config.getFileSet(['fixtures/no_such_prefix_zzzz/*.js'], '', function(err, files) {
-        expect(err).to.not.exist();
+        expect(err).to.not.exist;
         expect(files).to.deep.equal([]);
         done();
       });
@@ -963,7 +963,7 @@ describe('Config', function() {
         ['config_tests.js', path.join('ci', 'ci_tests.js')],
         '',
         function(err, files) {
-          expect(err).to.not.exist();
+          expect(err).to.not.exist;
           expect(files).to.deep.equal([
             fileEntry('config_tests.js'),
             fileEntry(path.join('ci', 'ci_tests.js'))
@@ -1019,7 +1019,7 @@ describe('Config', function() {
     describe('when unset', function() {
       it('is not defined', function() {
         let config = new Config('dev', {});
-        expect(config.get('debug')).not.to.exist();
+        expect(config.get('debug')).not.to.exist;
       });
     });
 

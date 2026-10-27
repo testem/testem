@@ -36,17 +36,17 @@ describe('Launcher', function() {
     });
     it('should be process if protocol is not browser', function() {
       settings.protocol = 'browser';
-      expect(launcher.isProcess()).not.to.be.ok();
+      expect(launcher.isProcess()).not.to.be.ok;
       settings.protocol = 'tap';
-      expect(launcher.isProcess()).to.be.ok();
+      expect(launcher.isProcess()).to.be.ok;
       delete settings.protocol;
-      expect(launcher.isProcess()).to.be.ok();
+      expect(launcher.isProcess()).to.be.ok;
     });
     it('should launch if not a process and started', function() {
       sandbox.stub(launcher, 'isProcess').returns(false);
       sandbox.stub(launcher, 'launch');
       launcher.start();
-      expect(launcher.launch).to.have.been.called();
+      expect(launcher.launch).to.have.been.called;
     });
     it('substitutes variables', function(done) {
       settings.command = 'echo <url> <port>';
@@ -271,15 +271,15 @@ describe('Launcher', function() {
     it('returns a path to an existing directory', function() {
       const dir = launcher.browserTmpDir();
       expect(dir).to.be.a('string');
-      expect(fs.existsSync(dir)).to.be.true();
-      expect(fs.statSync(dir).isDirectory()).to.be.true();
+      expect(fs.existsSync(dir)).to.be.true;
+      expect(fs.statSync(dir).isDirectory()).to.be.true;
     });
 
     it('directory is located under getUserDataDir()', function() {
       const dir = fs.realpathSync(launcher.browserTmpDir());
       const userDataDir = fs.realpathSync(config.getUserDataDir());
       const relative = path.relative(userDataDir, dir);
-      expect(!relative.startsWith('..') && !path.isAbsolute(relative)).to.be.true();
+      expect(!relative.startsWith('..') && !path.isAbsolute(relative)).to.be.true;
     });
 
     it('returns the same path on repeated calls', function() {
@@ -297,7 +297,7 @@ describe('Launcher', function() {
       const helperPath = path.join(__dirname, 'support', 'launcher_tmp_cleanup_helper.js');
       const { stdout } = await execaNode(helperPath);
       const dir = stdout.trim();
-      expect(fs.existsSync(dir)).to.be.false();
+      expect(fs.existsSync(dir)).to.be.false;
     });
   });
 
@@ -327,7 +327,7 @@ describe('Launcher', function() {
         sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
 
         return launcher.start().then(function() {
-          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce;
           expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal('/usr/bin/open');
           expect(ProcessCtl.prototype.spawn.firstCall.args[1]).to.deep.equal([
             '-a',
@@ -368,7 +368,7 @@ describe('Launcher', function() {
         sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
 
         return launcher.start().then(function() {
-          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+          expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce;
           expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal('/usr/bin/open');
           expect(ProcessCtl.prototype.spawn.firstCall.args[1]).to.deep.equal([
             '-a',
@@ -393,7 +393,7 @@ describe('Launcher', function() {
           sandbox.stub(ProcessCtl.prototype, 'spawn').resolves({ on() {} });
 
           return launcher.start().then(function() {
-            expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce();
+            expect(ProcessCtl.prototype.spawn).to.have.been.calledOnce;
             expect(ProcessCtl.prototype.spawn.firstCall.args[0]).to.equal(
               'C:\\Program Files\\Safari\\safari.exe'
             );

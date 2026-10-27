@@ -98,8 +98,8 @@ describe('Api', function() {
       let finalizer = sandbox.spy();
       let api = new Api();
       api.startCI({ file: 'missing.json' }, finalizer);
-      expect(finalizer.calledOnceWith(1, err)).to.be.true();
-      expect(api.app).to.be.undefined();
+      expect(finalizer.calledOnceWith(1, err)).to.be.true;
+      expect(api.app).to.be.undefined;
     });
   });
 
@@ -122,8 +122,8 @@ describe('Api', function() {
 
           let existingTimeout = api.app.timeoutID;
 
-          expect(calledCookie).to.be.undefined();
-          expect(existingTimeout).to.not.be.undefined();
+          expect(calledCookie).to.be.undefined;
+          expect(existingTimeout).to.not.be.undefined;
 
           let originalTimeout = global.clearTimeout;
           sandbox.stub(global, 'clearTimeout').callsFake(function(cookie) {

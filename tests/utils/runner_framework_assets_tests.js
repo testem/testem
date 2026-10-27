@@ -34,7 +34,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha');
     expect(assets.mochaJs).to.equal('/node_modules/mocha/mocha.js');
     expect(assets.mochaCss).to.equal('/node_modules/mocha/mocha.css');
-    expect(warnStub).to.have.been.calledOnce();
+    expect(warnStub).to.have.been.calledOnce;
     expect(warnStub.firstCall.args[0]).to.include('mocha');
     expect(warnStub.firstCall.args[0]).not.to.include('qunit');
   });
@@ -45,12 +45,12 @@ describe('resolveRunnerFrameworkAssets', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha');
     expect(assets.mochaJs).to.equal('/node_modules/mocha/mocha.js');
     expect(assets.mochaCss).to.equal('/node_modules/mocha/mocha.css');
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('does not warn about qunit or jasmine when resolving mocha', function() {
     resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha');
-    expect(warnStub).to.have.been.calledOnce();
+    expect(warnStub).to.have.been.calledOnce;
     expect(warnStub.firstCall.args[0]).to.include('mocha');
     expect(warnStub.firstCall.args[0]).not.to.include('qunit');
     expect(warnStub.firstCall.args[0]).not.to.include('jasmine-core');
@@ -64,7 +64,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha+chai');
     expect(assets.chaiLocal).to.equal(true);
     expect(assets.chaiJs).to.equal('/node_modules/chai/index.js');
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('uses Chai 4 UMD chai.js as a classic script when present', function() {
@@ -76,7 +76,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha+chai');
     expect(assets.chaiLocal).to.equal(false);
     expect(assets.chaiJs).to.equal('/node_modules/chai/chai.js');
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('warns about missing chai independently for mocha+chai', function() {
@@ -84,7 +84,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     writeCwdFile('mocha/mocha.css');
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'mocha+chai');
     expect(assets.chaiJs).to.equal('/node_modules/chai/chai.js');
-    expect(warnStub).to.have.been.calledOnce();
+    expect(warnStub).to.have.been.calledOnce;
     expect(warnStub.firstCall.args[0]).to.include('chai');
   });
 
@@ -100,7 +100,7 @@ describe('resolveRunnerFrameworkAssets', function() {
       '/node_modules/jasmine-core/lib/jasmine-core/jasmine.js'
     );
     expect(assets.jasmineBoot).to.equal(null);
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('uses jasmine-core 3/4/7 boot.js when boot0.js is absent', function() {
@@ -122,7 +122,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(assets.jasmineBoot).to.equal(
       '/node_modules/jasmine-core/lib/jasmine-core/boot.js'
     );
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('returns /node_modules jasmine URLs when boot files are missing', function() {
@@ -137,7 +137,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(assets.jasmineBoot).to.equal(
       '/node_modules/jasmine-core/lib/jasmine-core/boot.js'
     );
-    expect(warnStub).to.have.been.calledOnce();
+    expect(warnStub).to.have.been.calledOnce;
     expect(warnStub.firstCall.args[0]).to.include('jasmine-core');
   });
 
@@ -147,14 +147,14 @@ describe('resolveRunnerFrameworkAssets', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'qunit');
     expect(assets.qunitJs).to.equal('/node_modules/qunit/qunit/qunit.js');
     expect(assets.qunitCss).to.equal('/node_modules/qunit/qunit/qunit.css');
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('returns /node_modules qunit URLs when qunit is missing', function() {
     const assets = resolveRunnerFrameworkAssets(tmpDir, {}, 'qunit');
     expect(assets.qunitJs).to.equal('/node_modules/qunit/qunit/qunit.js');
     expect(assets.qunitCss).to.equal('/node_modules/qunit/qunit/qunit.css');
-    expect(warnStub).to.have.been.calledOnce();
+    expect(warnStub).to.have.been.calledOnce;
     expect(warnStub.firstCall.args[0]).to.include('qunit');
     expect(warnStub.firstCall.args[0]).not.to.include('mocha');
   });
@@ -171,7 +171,7 @@ describe('resolveRunnerFrameworkAssets', function() {
     expect(assets.mochaJs).to.equal('/node_modules/mocha/mocha.js');
     expect(assets.mochaCss).to.equal('/node_modules/mocha/mocha.css');
     expect(fs.existsSync(path.join(parentNm, 'mocha/mocha.js'))).to.equal(true);
-    expect(warnStub).not.to.have.been.called();
+    expect(warnStub).not.to.have.been.called;
   });
 
   it('resolves all runner assets through a trailing-slash array route', function() {

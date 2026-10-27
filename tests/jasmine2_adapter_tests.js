@@ -38,7 +38,7 @@ describe('jasmine2Adapter', function() {
 
     context.jasmine2Adapter();
 
-    expect(addReporter).to.have.been.calledOnce();
+    expect(addReporter).to.have.been.calledOnce;
     const reporter = addReporter.firstCall.args[0];
     expect(reporter).to.respondTo('jasmineStarted');
     expect(reporter).to.respondTo('specStarted');

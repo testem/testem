@@ -72,7 +72,7 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.fileWatcher.onFileChanged.call(app.fileWatcher, 'test.js');
       setImmediate(function() {
-        expect(app.triggerRun.calledWith('File changed: test.js')).to.be.true();
+        expect(app.triggerRun.calledWith('File changed: test.js')).to.be.true;
         app.exit();
       });
     });
@@ -104,7 +104,7 @@ describe('App file watching', function() {
     app.start(function() {
       const addSpy = sandbox.spy(app.fileWatcher, 'add');
       app.onFileRequested(Path.join('some', 'path.js'));
-      expect(addSpy).to.have.been.calledOnce();
+      expect(addSpy).to.have.been.calledOnce;
       expect(addSpy).to.have.been.calledWith(Path.join('some', 'path.js'));
       app.exit();
     });
@@ -122,7 +122,7 @@ describe('App file watching', function() {
     app.start(function() {
       const addSpy = sandbox.spy(app.fileWatcher, 'add');
       app.onFileRequested(Path.join('public', 'app.js'));
-      expect(addSpy).not.to.have.been.called();
+      expect(addSpy).not.to.have.been.called;
       app.exit();
     });
   });
@@ -146,8 +146,8 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.fileWatcher.emit('fileChanged', Path.resolve(configPath));
       setImmediate(function() {
-        expect(app.configure).to.have.been.called();
-        expect(app.triggerRun.calledWith('Config changed')).to.be.true();
+        expect(app.configure).to.have.been.called;
+        expect(app.triggerRun.calledWith('Config changed')).to.be.true;
         app.exit();
       });
     });
@@ -170,8 +170,8 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.fileWatcher.emit('fileChanged', process.cwd());
       setImmediate(function() {
-        expect(app.configure).to.have.been.called();
-        expect(app.triggerRun.calledWith('Config changed')).to.be.true();
+        expect(app.configure).to.have.been.called;
+        expect(app.triggerRun.calledWith('Config changed')).to.be.true;
         app.exit();
       });
     });
@@ -190,7 +190,7 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.fileWatcher.emit('fileChanged', Path.join(process.cwd(), 'test.js'));
       setImmediate(function() {
-        expect(app.triggerRun).not.to.have.been.called();
+        expect(app.triggerRun).not.to.have.been.called;
         app.exit();
       });
     });
@@ -209,7 +209,7 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.fileWatcher.emit('fileChanged', Path.join(process.cwd(), 'test.js'));
       setImmediate(function() {
-        expect(app.triggerRun).not.to.have.been.called();
+        expect(app.triggerRun).not.to.have.been.called;
         app.exit();
       });
     });
@@ -238,7 +238,7 @@ describe('App file watching', function() {
         expect(app.runHook).to.have.been.calledWith('on_change', {
           file: changedPath,
         });
-        expect(app.triggerRun.calledWith('File changed: ' + changedPath)).to.be.true();
+        expect(app.triggerRun.calledWith('File changed: ' + changedPath)).to.be.true;
         app.exit();
       });
     });
@@ -256,7 +256,7 @@ describe('App file watching', function() {
       const setErrorPopupMessage = sandbox.spy();
       app.reporter.reporters[0].setErrorPopupMessage = setErrorPopupMessage;
       app.fileWatcher.emit('EMFILE');
-      expect(setErrorPopupMessage).to.have.been.calledOnce();
+      expect(setErrorPopupMessage).to.have.been.calledOnce;
       expect(setErrorPopupMessage.firstCall.args[0]).to.be.a('string');
       expect(setErrorPopupMessage.firstCall.args[0]).to.contain('EMFILE');
       app.exit();
@@ -289,8 +289,8 @@ describe('App file watching', function() {
           expect(app.runHook).to.have.been.calledWith('on_change', {
             file: changedPath,
           });
-          expect(app.triggerRun.calledWith('File changed: ' + changedPath)).to.be.true();
-          expect(app.triggerRun.calledOnce).to.be.true();
+          expect(app.triggerRun.calledWith('File changed: ' + changedPath)).to.be.true;
+          expect(app.triggerRun.calledOnce).to.be.true;
           app.exit();
         });
       }).catch(function(err) {
@@ -313,7 +313,7 @@ describe('App file watching', function() {
         app.paused = true;
         app.notifyFileChange(Path.join(process.cwd(), 'src', 'foo.js'));
         setImmediate(function() {
-          expect(app.triggerRun).not.to.have.been.called();
+          expect(app.triggerRun).not.to.have.been.called;
           app.exit();
         });
       }).catch(function(err) {
@@ -341,8 +341,8 @@ describe('App file watching', function() {
       sandbox.spy(app, 'triggerRun');
       app.notifyFileChange(configPath);
       setImmediate(function() {
-        expect(app.configure).to.have.been.called();
-        expect(app.triggerRun.calledWith('Config changed')).to.be.true();
+        expect(app.configure).to.have.been.called;
+        expect(app.triggerRun.calledWith('Config changed')).to.be.true;
         app.exit();
       });
     });
