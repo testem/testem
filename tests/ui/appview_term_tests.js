@@ -169,9 +169,37 @@ describe('AppView terminal-kit', function () {
     expect(viewRunner.get('runner')).to.equal(launcher);
     expect(viewRunner.get('extra')).to.equal(undefined);
     expect(appview.get('atLeastOneRunner')).to.equal(true);
+    expect(appview.runnerTabs.length).to.equal(1);
     appview.runnerRemoved(launcher);
     expect(appview.runners().length).to.equal(0);
+    expect(appview.runnerTabs.length).to.equal(0);
+    expect(appview.x[launcher.launcherId]).to.equal(undefined);
     expect(appview.get('atLeastOneRunner')).to.equal(false);
+  });
+
+  it('destroys the tab for a removed runner and keeps the rest', function () {
+    const { term } = createTestTerm();
+    appview = new AppView(false, process.stdout, config, app, term);
+    const chrome = {
+      name: function () { return 'Chrome'; },
+      launcherId: 1
+    };
+    const firefox = {
+      name: function () { return 'Firefox'; },
+      launcherId: 2
+    };
+    appview.runnerAdded(chrome);
+    appview.runnerAdded(firefox);
+    appview.set('currentTab', 1);
+    const kept = appview.runnerTabs.at(0);
+    appview.runnerRemoved(firefox);
+    expect(appview.runners().length).to.equal(1);
+    expect(appview.runnerTabs.length).to.equal(1);
+    expect(appview.runnerTabs.at(0)).to.equal(kept);
+    expect(kept.get('index')).to.equal(0);
+    expect(kept.get('selected')).to.equal(true);
+    expect(appview.get('currentTab')).to.equal(0);
+    expect(appview.get('atLeastOneRunner')).to.equal(true);
   });
 
   it('quits when q is pressed', function () {
