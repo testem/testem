@@ -1,5 +1,36 @@
 # Changelog
 
+## 4.0.0-beta.3
+
+### Changed
+
+- **A missing config file fails the run.** A path passed with `-f` or `file` that does not exist or cannot be parsed exits non-zero (`Config file not found: …`). Running with no config file is unchanged.
+- **The default `*.js` set skips the JS config file.** When `src_files` and `serve_files` are unset, the loaded JS config (`testem.js` and the dotted, `.mjs`, and `.cjs` variants) is not part of that set. The built-in runner also skips a script whose `src` is exactly `testem.js`, because `/<id>/testem.js` loads the Testem client a second time. Rename a test file that uses that name.
+
+### Fixed
+
+- **TAP and xunit print failure details.** Object values are serialized instead of `[object Object]`. Results without a duration no longer print `[undefined ms]`. A TAP failure no longer repeats the test name as its message. Output that follows a failed TAP assertion is attached to that failure.
+- **Logs written after the last test are reported.** The dev reporter shows them, and the TAP reporter prints them as comments. Custom reporters can implement optional `reportLogs` and `testsPlanned`.
+- **`report_file` with a reporter instance no longer reports twice.** Pass a reporter class so the report file gets its own instance. An instance logs a warning and the file is skipped.
+- **Chromium and a per-user Opera install are found on Windows.**
+
+## 4.0.0-beta.2
+
+### Added
+
+- **Proxies accept `fallback: true`.** Testem serves its own routes and local files first, and proxies only what those did not answer. See [docs/config_file.md](docs/config_file.md).
+- **Middleware receives the HTTP server.** Each function is called as `middleware(app, server)`. A function that only takes `app` still works.
+- **`teamcity_nest_by_launcher` groups TeamCity output by launcher.** It is off unless set. Turning it on changes the full test names TeamCity records, so history starts over. Nesting applies only when `parallel` is 1; otherwise the output stays flat.
+
+### Changed
+
+- **QUnit progress shows passed/planned while tests run.** With QUnit 2.2 or later, the dev-mode tab and the browser title use the announced test count until the run finishes. The finished `passed/total` display is unchanged.
+
+### Fixed
+
+- **Files outside `cwd` are no longer served because their path contains the `cwd` string.** With `unsafe_file_serving` off, a request such as `/tmp/app-secret` is not served when `cwd` is `/tmp/app`. `unsafe_file_serving: true` still allows paths outside `cwd`.
+- **404 and 500 bodies are `text/plain`.** The 500 body no longer includes `err.message`.
+
 ## 4.0.0-beta.1
 
 ### Breaking changes
