@@ -65,23 +65,26 @@ var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'pip
 child.stdout.pipe(process.stdout);
 child.stderr.pipe(process.stderr);
 
-// On macOS CI, a launch that is still running after 10s is probably hung.
-// Save a screenshot and stack samples of Electron and its helpers next to the
-// logs, so we can see what they are waiting on.
+// On macOS CI, save a screenshot and stack samples of Electron and its helpers
+// next to the logs. A launch that is still running after 10s is probably hung,
+// so that snapshot shows what it is waiting on. The one at 2s is taken on every
+// launch, to compare against a healthy one.
 if (process.env.ELECTRON_LOG_DIR && platform === 'darwin') {
-  var snapshotTimer = setTimeout(function() {
-    var prefix = path.join(process.env.ELECTRON_LOG_DIR, 'electron-' + id + '-' + Date.now());
-    spawn('screencapture', ['-x', prefix + '-screen.png'], { stdio: 'ignore' });
-    // The helpers (GPU, network, renderer) are children of the main process.
-    execFile('pgrep', ['-P', String(child.pid)], function(error, stdout) {
-      var pids = [child.pid].concat(stdout.split('\n').filter(Boolean));
-      pids.forEach(function(pid) {
-        spawn('sample', [String(pid), '3', '-file', prefix + '-sample-' + pid + '.txt'], { stdio: 'ignore' });
+  var snapshotTimers = [2, 10].map(function(seconds) {
+    return setTimeout(function() {
+      var prefix = path.join(process.env.ELECTRON_LOG_DIR, 'electron-' + id + '-' + Date.now() + '-' + seconds + 's');
+      spawn('screencapture', ['-x', prefix + '-screen.png'], { stdio: 'ignore' });
+      // The helpers (GPU, network, renderer) are children of the main process.
+      execFile('pgrep', ['-P', String(child.pid)], function(error, stdout) {
+        var pids = [child.pid].concat(stdout.split('\n').filter(Boolean));
+        pids.forEach(function(pid) {
+          spawn('sample', [String(pid), '3', '-file', prefix + '-sample-' + pid + '.txt'], { stdio: 'ignore' });
+        });
       });
-    });
-  }, 10000);
+    }, seconds * 1000);
+  });
   child.on('exit', function() {
-    clearTimeout(snapshotTimer);
+    snapshotTimers.forEach(clearTimeout);
   });
 }
 
