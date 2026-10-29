@@ -4,7 +4,7 @@ var fs = require('fs');
 var url = require('url');
 var pathToFileURL = url.pathToFileURL;
 var { randomBytes } = require('crypto');
-var spawn = require('child_process').spawn;
+var { spawn, execFile } = require('child_process');
 var { registerCleanup } = require('../../lib/utils/tmp-cleanup.js');
 
 var baseObj = url.parse(process.argv[2]);
@@ -64,6 +64,26 @@ console.error('Starting ' + electronPath + ' ' + electronArgs.join(' '));
 var child = spawn(electronPath, electronArgs, { env: env, stdio: ['ignore', 'pipe', 'pipe'] });
 child.stdout.pipe(process.stdout);
 child.stderr.pipe(process.stderr);
+
+// On macOS CI, a launch that is still running after 10s is probably hung.
+// Save a screenshot and stack samples of Electron and its helpers next to the
+// logs, so we can see what they are waiting on.
+if (process.env.ELECTRON_LOG_DIR && platform === 'darwin') {
+  var snapshotTimer = setTimeout(function() {
+    var prefix = path.join(process.env.ELECTRON_LOG_DIR, 'electron-' + id + '-' + Date.now());
+    spawn('screencapture', ['-x', prefix + '-screen.png'], { stdio: 'ignore' });
+    // The helpers (GPU, network, renderer) are children of the main process.
+    execFile('pgrep', ['-P', String(child.pid)], function(error, stdout) {
+      var pids = [child.pid].concat(stdout.split('\n').filter(Boolean));
+      pids.forEach(function(pid) {
+        spawn('sample', [String(pid), '3', '-file', prefix + '-sample-' + pid + '.txt'], { stdio: 'ignore' });
+      });
+    });
+  }, 10000);
+  child.on('exit', function() {
+    clearTimeout(snapshotTimer);
+  });
+}
 
 child.on('error', function(error) {
   throw error;
