@@ -22,7 +22,7 @@ export async function startDashboard({
       dir: artifactDir,
       onFailure: 'text'
     },
-    recording: {
+    trace: {
       mode: 'on-failure',
       directory: artifactDir
     }

@@ -453,6 +453,8 @@ Testem 4.0 removes Jasmine 1.x, CDN fallbacks for built-in runners, and Mustache
     Name only the packages you need. Naming `node_modules` in a pattern re-enables that tree only; `.git` stays skipped unless you name it too.
 10. Interactive `testem` (dev mode) still has the same keys and layout. Only the rendering library changed (Charm → terminal-kit). No user action.
 11. Testem's own code is ESM. `import Api from 'testem'` and `require('testem')` both return the `Api` class. Your config file is not affected by Testem's `"type": "module"`: `.cjs` stays CommonJS, and `.js` follows the nearest `package.json`. See [Configuration file](docs/config_file.md).
+12. A config path passed with `-f` or `file` that is missing or cannot be parsed now exits non-zero. Running with no config file is unchanged.
+13. When `src_files` and `serve_files` are unset, the default `*.js` set no longer includes the JS config file (`testem.js`, or a dotted, `.mjs`, or `.cjs` variant). The built-in runner also will not inject a script whose `src` is exactly `testem.js`, because that URL loads the Testem client a second time. Rename a test file that uses that name.
 
 Custom Test Pages
 -----------------

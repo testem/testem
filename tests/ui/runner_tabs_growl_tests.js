@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import Backbone from "backbone";
+import { Collection, Model } from "../../lib/reporters/dev/model.js";
 import Config from "../../lib/config.js";
 import * as runnertabs from "../../lib/reporters/dev/runner_tabs.js";
 import toastNotify from "../../lib/reporters/dev/toast_notify.js";
@@ -21,11 +21,11 @@ describe('RunnerTab growl / native notifications', function () {
   });
 
   function buildTab(progOptions, runnerAttrs) {
-    const runner = new Backbone.Model(
+    const runner = new Model(
       Object.assign(
         {
           name: 'Bob',
-          messages: new Backbone.Collection(),
+          messages: new Collection(),
         },
         runnerAttrs || {},
       ),
@@ -33,7 +33,7 @@ describe('RunnerTab growl / native notifications', function () {
     runner.hasMessages = function () {
       return false;
     };
-    const appview = new Backbone.Model({ currentTab: 0 });
+    const appview = new Model({ currentTab: 0 });
     appview.app = { config: new Config(null, progOptions || {}) };
     appview.isPopupVisible = function () {
       return false;
@@ -54,7 +54,7 @@ describe('RunnerTab growl / native notifications', function () {
   });
 
   it('notifies with results summary when growl is enabled', function () {
-    const results = new Backbone.Model();
+    const results = new Model();
     const { runner } = buildTab({ growl: true }, { results });
     results.set({ passed: 3, total: 5 });
     runner.trigger('tests-end');

@@ -1,10 +1,10 @@
 import { expect } from "chai";
-import Backbone from "backbone";
+import { Model } from "../../lib/reporters/dev/model.js";
 import { tabColor } from "../../lib/reporters/dev/tab_status.js";
 
 describe('tab_status', function () {
   it('is green when all passed and none pending', function () {
-    const results = new Backbone.Model({
+    const results = new Model({
       passed: 1,
       pending: 0,
       total: 1
@@ -13,7 +13,7 @@ describe('tab_status', function () {
   });
 
   it('is yellow when pending and all accounted for', function () {
-    const results = new Backbone.Model({
+    const results = new Model({
       passed: 0,
       pending: 1,
       total: 1
@@ -22,7 +22,7 @@ describe('tab_status', function () {
   });
 
   it('is red when fail_on_zero_tests and there are no tests', function () {
-    const results = new Backbone.Model({
+    const results = new Model({
       passed: 0,
       pending: 0,
       total: 0
@@ -35,7 +35,7 @@ describe('tab_status', function () {
   });
 
   it('is red when some tests failed', function () {
-    const results = new Backbone.Model({
+    const results = new Model({
       passed: 1,
       pending: 0,
       total: 2

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import View from "../../lib/reporters/dev/view.js";
-import Backbone from "backbone";
+import { Model } from "../../lib/reporters/dev/model.js";
 import sinon from "sinon";
 
 describe('view', function() {
@@ -9,10 +9,10 @@ describe('view', function() {
   let model;
 
   before(function() {
-    model = new Backbone.Model();
-    MyView = View.extend({
-      render: function() {}
-    });
+    model = new Model();
+    MyView = class extends View {
+      render() {}
+    };
     view = new MyView();
   });
 
@@ -55,6 +55,18 @@ describe('view', function() {
     model.set({name: 'Alice', age: 12});
     expect(onNameChange).not.to.have.been.called;
     expect(onAgeChange).not.to.have.been.called;
+  });
+
+  it('drops a space-separated subscription on destroy', function() {
+    const onResize = sandbox.spy();
+    view.observe(model, 'change:lines change:cols', onResize);
+    model.set('lines', 30);
+    model.set('cols', 80);
+    expect(onResize).to.have.been.calledTwice();
+    onResize.resetHistory();
+    view.destroy();
+    model.set({ lines: 20, cols: 40 });
+    expect(onResize).not.to.have.been.called();
   });
 
 });
