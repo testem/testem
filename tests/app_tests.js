@@ -50,7 +50,7 @@ describe('App', function () {
     });
 
     it('triggers a run on start', function () {
-      expect(app.triggerRun.calledWith('Start')).to.be.true();
+      expect(app.triggerRun.calledWith('Start')).to.be.true;
     });
 
     it('can only be executed once at the same time', function () {
@@ -58,7 +58,7 @@ describe('App', function () {
 
       app.triggerRun('one');
       app.triggerRun('two');
-      expect(app.stopRunners).to.have.been.calledOnce();
+      expect(app.stopRunners).to.have.been.calledOnce;
     });
   });
 
@@ -106,13 +106,13 @@ describe('App', function () {
         return app.singleRun(timeout);
       }).then(
         function () {
-          expect('Should never be called').to.be.true();
+          expect('Should never be called').to.be.true;
         },
         function (err) {
           expect(err.message).to.eq('Killed');
-          expect(err.hideFromReporter).not.to.exist();
-          expect(runner.start).to.have.been.called();
-          expect(runner.exit).to.have.been.called();
+          expect(err.hideFromReporter).not.to.exist;
+          expect(runner.start).to.have.been.called;
+          expect(runner.exit).to.have.been.called;
         },
       );
     });
@@ -127,13 +127,13 @@ describe('App', function () {
         return app.singleRun(timeout);
       }).then(
         function () {
-          expect('Should never be called').to.be.true();
+          expect('Should never be called').to.be.true;
         },
         function (err) {
           expect(err.message).to.eq('Run timed out.');
-          expect(err.hideFromReporter).not.to.exist();
-          expect(runner.start).to.not.have.been.called();
-          expect(runner.exit).to.have.been.called();
+          expect(err.hideFromReporter).not.to.exist;
+          expect(runner.start).to.not.have.been.called;
+          expect(runner.exit).to.have.been.called;
         },
       );
     });
@@ -150,8 +150,8 @@ describe('App', function () {
           return app.singleRun(timeout);
         },
       ).then(function () {
-        expect(runner.start).to.not.have.been.called();
-        expect(runner.exit).to.not.have.been.called();
+        expect(runner.start).to.not.have.been.called;
+        expect(runner.exit).to.not.have.been.called;
       });
     });
 
@@ -169,13 +169,13 @@ describe('App', function () {
         },
       ).then(
         function () {
-          expect('Should never be called').to.be.true();
+          expect('Should never be called').to.be.true;
         },
         function (err) {
           expect(err.message).to.eq('Run canceled.');
-          expect(err.hideFromReporter).to.be.true();
-          expect(runner.start).to.not.have.been.called();
-          expect(runner.exit).to.not.have.been.called();
+          expect(err.hideFromReporter).to.be.true;
+          expect(runner.start).to.not.have.been.called;
+          expect(runner.exit).to.not.have.been.called;
         },
       );
     });
@@ -200,7 +200,7 @@ describe('App', function () {
     });
 
     it('starts off not paused', function () {
-      expect(app.paused).to.be.false();
+      expect(app.paused).to.be.false;
     });
 
     it("doesn't run tests when reset and paused", function () {
@@ -208,7 +208,7 @@ describe('App', function () {
       let runHook = sandbox.spy(app, 'runHook');
 
       return app.runTests().then(function () {
-        expect(runHook.called).to.be.false();
+        expect(runHook.called).to.be.false;
       });
     });
 
@@ -216,7 +216,7 @@ describe('App', function () {
       let runHook = sandbox.spy(app, 'runHook');
 
       return app.runTests().then(function () {
-        expect(runHook.called).to.be.true();
+        expect(runHook.called).to.be.true;
       });
     });
   });
@@ -244,8 +244,8 @@ describe('App', function () {
         },
       );
       app = new App(config, function () {
-        expect(onExitCb.called).to.be.true();
-        expect(onExitFinished).to.be.true();
+        expect(onExitCb.called).to.be.true;
+        expect(onExitFinished).to.be.true;
         finish();
       });
       app.once('testRun', app.exit);
@@ -388,12 +388,12 @@ describe('App', function () {
 
     it('does not call tryAttach for an existing browser with existing socket', function () {
       app.onBrowserRelogin('fakeBrowser', 1, {});
-      expect(tryAttachCalled).to.be.false();
+      expect(tryAttachCalled).to.be.false;
     });
 
     it('calls tryAttach for an existing browser with null socket', function () {
       app.onBrowserRelogin('fakeBrowser', 2, {});
-      expect(tryAttachCalled).to.be.true();
+      expect(tryAttachCalled).to.be.true;
     });
   });
 });

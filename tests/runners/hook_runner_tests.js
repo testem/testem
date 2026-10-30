@@ -79,7 +79,7 @@ describe('HookRunner', function() {
       hook = { exe: ['testem-missing-exe-a', 'testem-missing-exe-b'] };
 
       return hookRunner.run('test_hook', {}).then(function() {
-        expect('Should never be called').to.be.true();
+        expect('Should never be called').to.be.true;
       }, function(err) {
         expect(err.message).to.contain('No executable found in');
       });
@@ -266,7 +266,7 @@ describe('HookRunner', function() {
         }).then(function(pid) {
           try {
             process.kill(parseInt(pid.toString(), 10));
-            expect('true').to.be.false(); // The above should throw
+            expect('true').to.be.false; // The above should throw
           } catch (e) {
             expect(e.message).to.match(/ESRCH/); // Process shouldn't exist
           }
@@ -287,7 +287,7 @@ describe('HookRunner', function() {
         expect('should have rejected').to.equal(false);
       }).catch(function(e) {
         expect(e).to.equal(err);
-        expect(stop).to.have.been.calledOnce();
+        expect(stop).to.have.been.calledOnce;
       });
     });
 
@@ -301,7 +301,7 @@ describe('HookRunner', function() {
         expect('should have rejected').to.equal(false);
       }).catch(function(e) {
         expect(e.message).to.equal('hook failed');
-        expect(stop).to.have.been.calledOnce();
+        expect(stop).to.have.been.calledOnce;
       });
     });
 

@@ -54,12 +54,12 @@ describe('Process', function() {
 
       await clock.tickAsync(999);
 
-      expect(settled).to.be.false();
+      expect(settled).to.be.false;
 
       await clock.tickAsync(1);
 
       expect(await killed).to.equal(0);
-      expect(process._killTimer).to.be.null();
+      expect(process._killTimer).to.be.null;
     });
 
     it('reports processExit once when the child exits before the kill', async function() {

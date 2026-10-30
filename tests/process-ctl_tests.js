@@ -33,7 +33,7 @@ describe('ProcessCtl', function() {
           return p.on('processExit', resolve);
         }).then(function(exitCode) {
           expect(exitCode).to.eq(0);
-          expect(processStartedEvent).to.be.true();
+          expect(processStartedEvent).to.be.true;
         });
       });
     });
@@ -243,9 +243,9 @@ describe('ProcessCtl', function() {
             } else if (isWin) {
               expect(exitCode).to.be.eq(1);
             } else {
-              expect(exitCode).to.be.null();
+              expect(exitCode).to.be.null;
             }
-            expect(p._killTimer).to.be.null();
+            expect(p._killTimer).to.be.null;
           });
         });
       });
@@ -259,9 +259,9 @@ describe('ProcessCtl', function() {
             if (isWin) {
               expect(exitCode).to.be.eq(1);
             } else {
-              expect(exitCode).to.be.null();
+              expect(exitCode).to.be.null;
             }
-            expect(p._killTimer).to.be.null();
+            expect(p._killTimer).to.be.null;
           });
         });
       });

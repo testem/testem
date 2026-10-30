@@ -110,6 +110,13 @@ export default [
     },
   }),
   {
+    files: ["tests/**/*.js"],
+    rules: {
+      // Chai and sinon-chai property assertions (`expect(x).to.be.true`) are expressions.
+      "no-unused-expressions": "off",
+    },
+  },
+  {
     files: ["tests/custom_configs/**/*.js"],
     languageOptions: {
       sourceType: "commonjs",

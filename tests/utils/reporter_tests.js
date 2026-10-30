@@ -47,13 +47,13 @@ describe('Reporter', function() {
       tmpNameAsync().then(function(path) {
         return new Reporter(mockApp(), stream, path);
       }).then(function(reporter) {
-        expect(reporter.reportFile).to.exist();
+        expect(reporter.reportFile).to.exist;
 
         close = sandbox.spy(reporter.reportFile, 'close');
 
         return reporter.close();
       }).then(function() {
-        expect(close).to.have.been.called();
+        expect(close).to.have.been.called;
       });
     });
 
@@ -62,7 +62,7 @@ describe('Reporter', function() {
       let tapReporterSpy = sandbox.spy(reporters, 'tap');
       let reporter = new Reporter(mockApp('tap'), stream, 'report.xml');
 
-      expect(reporter.reportFile).to.not.be.undefined();
+      expect(reporter.reportFile).to.not.be.undefined;
 
       sinon.assert.calledWithMatch(tapReporterSpy,
         sinon.match.any,
@@ -90,7 +90,7 @@ describe('Reporter', function() {
       return Reporter.with(app, stream, undefined, function(reporter) {
         close = sandbox.spy(reporter, 'close');
       }).then(function() {
-        expect(close).to.have.been.called();
+        expect(close).to.have.been.called;
       });
     });
 
@@ -103,7 +103,7 @@ describe('Reporter', function() {
         mockError.hideFromReporter = true;
         return Promise.reject(mockError);
       }).catch(function() {
-        expect(close).to.have.been.called();
+        expect(close).to.have.been.called;
       });
     });
 
@@ -133,8 +133,8 @@ describe('Reporter', function() {
         expect('should have rejected').to.equal(false);
       }).catch(function(e) {
         expect(e).to.equal(err);
-        expect(report).to.have.been.called();
-        expect(close).to.have.been.called();
+        expect(report).to.have.been.called;
+        expect(close).to.have.been.called;
       });
     });
 
@@ -150,7 +150,7 @@ describe('Reporter', function() {
         expect('should have rejected').to.equal(false);
       }).catch(function(e) {
         expect(e).to.equal(err);
-        expect(close).to.have.been.called();
+        expect(close).to.have.been.called;
       });
     });
 
@@ -288,9 +288,9 @@ describe('Reporter', function() {
       let app = { config: config };
       let reporter = new Reporter(app, stream);
 
-      expect(reporter).to.be.ok();
+      expect(reporter).to.be.ok;
       expect(reporter.reporters.length).to.equal(1);
-      expect(reporter.reporters[0].quietLogs).to.be.true();
+      expect(reporter.reporters[0].quietLogs).to.be.true;
     });
 
     it('does not register a custom reporter instance twice when path is provided', function() {
@@ -300,14 +300,14 @@ describe('Reporter', function() {
         let reporter = new Reporter(mockApp(custom), stream, path);
 
         expect(reporter.reporters).to.deep.equal([custom]);
-        expect(warn).to.have.been.calledOnce();
+        expect(warn).to.have.been.calledOnce;
         expect(warn.firstCall.args[0]).to.match(/report_file/);
 
         reporter.report('Chrome', { name: 'a test', passed: true });
 
         return reporter.close().then(function() {
-          expect(custom.report).to.have.been.calledOnce();
-          expect(custom.finish).to.have.been.calledOnce();
+          expect(custom.report).to.have.been.calledOnce;
+          expect(custom.finish).to.have.been.calledOnce;
         });
       });
     });
@@ -418,7 +418,7 @@ describe('Reporter', function() {
     it('returns true when all tests passed', function() {
       reporter.report('test', { passed: 1 });
 
-      expect(reporter.hasPassed()).to.be.true();
+      expect(reporter.hasPassed()).to.be.true;
     });
 
     it('returns true when all tests skipped', function() {
@@ -426,7 +426,7 @@ describe('Reporter', function() {
 
       reporter.report('test', { skipped: 1 });
 
-      expect(reporter.hasPassed()).to.be.true();
+      expect(reporter.hasPassed()).to.be.true;
     });
 
     it('returns true when all tests skipped or passed', function() {
@@ -435,7 +435,7 @@ describe('Reporter', function() {
       reporter.report('test', { passed: 1 });
       reporter.report('test', { skipped: 1 });
 
-      expect(reporter.hasPassed()).to.be.true();
+      expect(reporter.hasPassed()).to.be.true;
     });
 
     it('returns false when not all passed / skipped', function() {
@@ -445,7 +445,7 @@ describe('Reporter', function() {
       reporter.report('test', { skipped: 1 });
       reporter.report('test', { });
 
-      expect(reporter.hasPassed()).to.be.false();
+      expect(reporter.hasPassed()).to.be.false;
     });
   });
 
@@ -460,13 +460,13 @@ describe('Reporter', function() {
     it('returns false without reported tests', function() {
       let reporter = new Reporter(app, stream);
 
-      expect(reporter.hasTests()).to.be.false();
+      expect(reporter.hasTests()).to.be.false;
     });
 
     it('returns true when tests were reported', function() {
       reporter.report('test', {});
 
-      expect(reporter.hasTests()).to.be.true();
+      expect(reporter.hasTests()).to.be.true;
     });
   });
 
@@ -479,9 +479,9 @@ describe('Reporter', function() {
 
       reporter.setErrorPopupMessage('too many files');
 
-      expect(first.setErrorPopupMessage).to.have.been.calledOnce();
+      expect(first.setErrorPopupMessage).to.have.been.calledOnce;
       expect(first.setErrorPopupMessage).to.have.been.calledWith('too many files');
-      expect(second.setErrorPopupMessage).not.to.have.been.called();
+      expect(second.setErrorPopupMessage).not.to.have.been.called;
     });
 
     it('skips reporters that do not implement it', function() {
@@ -492,7 +492,7 @@ describe('Reporter', function() {
 
       reporter.setErrorPopupMessage('EMFILE');
 
-      expect(popup.setErrorPopupMessage).to.have.been.calledOnce();
+      expect(popup.setErrorPopupMessage).to.have.been.calledOnce;
       expect(popup.setErrorPopupMessage).to.have.been.calledWith('EMFILE');
     });
 
@@ -514,7 +514,7 @@ describe('Reporter', function() {
 
       reporter.testsPlanned('Chrome', { launcherId: 1, total: 3 });
 
-      expect(first.testsPlanned).to.have.been.calledOnce();
+      expect(first.testsPlanned).to.have.been.calledOnce;
       expect(first.testsPlanned).to.have.been.calledWith('Chrome', { launcherId: 1, total: 3 });
     });
 

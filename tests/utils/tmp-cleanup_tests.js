@@ -25,7 +25,7 @@ describe('tmp-cleanup', function() {
     it('does not remove the directory immediately', function() {
       dir = fs.mkdtempSync(path.join(os.tmpdir(), 'testem-cleanup-test-'));
       registerCleanup(dir);
-      expect(fs.existsSync(dir)).to.be.true();
+      expect(fs.existsSync(dir)).to.be.true;
     });
 
     it('is idempotent when called multiple times with the same path', function() {
@@ -44,7 +44,7 @@ describe('tmp-cleanup', function() {
       );
       const { stdout } = await execaNode(helperPath);
       dir = stdout.trim(); // afterEach uses this; force:true means no-op if already gone
-      expect(fs.existsSync(dir)).to.be.false();
+      expect(fs.existsSync(dir)).to.be.false;
     });
 
     it('removes the directory when the process receives SIGTERM', async function() {
@@ -56,7 +56,7 @@ describe('tmp-cleanup', function() {
       });
       subprocess.kill('SIGTERM');
       await subprocess.catch(() => {});
-      expect(fs.existsSync(dir)).to.be.false();
+      expect(fs.existsSync(dir)).to.be.false;
     });
 
     it('removes the directory when the process receives SIGINT', async function() {
@@ -68,7 +68,7 @@ describe('tmp-cleanup', function() {
       });
       subprocess.kill('SIGINT');
       await subprocess.catch(() => {});
-      expect(fs.existsSync(dir)).to.be.false();
+      expect(fs.existsSync(dir)).to.be.false;
     });
   });
 });

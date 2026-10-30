@@ -50,7 +50,7 @@ describe('RunnerTab growl / native notifications', function () {
   it('does not notify when growl is disabled', function () {
     const { runner } = buildTab({});
     runner.trigger('tests-end');
-    expect(notifyStub).not.to.have.been.called();
+    expect(notifyStub).not.to.have.been.called;
   });
 
   it('notifies with results summary when growl is enabled', function () {
@@ -58,7 +58,7 @@ describe('RunnerTab growl / native notifications', function () {
     const { runner } = buildTab({ growl: true }, { results });
     results.set({ passed: 3, total: 5 });
     runner.trigger('tests-end');
-    expect(notifyStub).to.have.been.calledOnce();
+    expect(notifyStub).to.have.been.calledOnce;
     expect(notifyStub).to.have.been.calledWith({
       title: "Test'em",
       message: 'Bob : 3/5',
@@ -68,7 +68,7 @@ describe('RunnerTab growl / native notifications', function () {
   it('notifies with "finished" when there is no results model', function () {
     const { runner } = buildTab({ growl: true });
     runner.trigger('tests-end');
-    expect(notifyStub).to.have.been.calledOnce();
+    expect(notifyStub).to.have.been.calledOnce;
     expect(notifyStub).to.have.been.calledWith({
       title: "Test'em",
       message: 'Bob : finished',

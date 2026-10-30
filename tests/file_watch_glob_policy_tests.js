@@ -89,8 +89,8 @@ describe('file_watch_glob_policy', function() {
           src_files_ignore: ['**/vendor/**'],
         }),
       );
-      expect(pathMatchesWatchTarget('src/app.js', policy)).to.be.true();
-      expect(pathMatchesWatchTarget('vendor/pkg/x.js', policy)).to.be.false();
+      expect(pathMatchesWatchTarget('src/app.js', policy)).to.be.true;
+      expect(pathMatchesWatchTarget('vendor/pkg/x.js', policy)).to.be.false;
     });
 
     it('exclude wins when both could match', function() {
@@ -100,15 +100,15 @@ describe('file_watch_glob_policy', function() {
           src_files_ignore: ['**/report*.js'],
         }),
       );
-      expect(pathMatchesWatchTarget('ci/report_x.js', policy)).to.be.false();
-      expect(pathMatchesWatchTarget('ci/dev_tests.js', policy)).to.be.true();
+      expect(pathMatchesWatchTarget('ci/report_x.js', policy)).to.be.false;
+      expect(pathMatchesWatchTarget('ci/dev_tests.js', policy)).to.be.true;
     });
 
     it('matches POSIX paths with forward slashes', function() {
       const policy = buildWatchGlobPolicy(
         mockConfig({ src_files: ['**/*.js'] }),
       );
-      expect(pathMatchesWatchTarget('src/sub/file.js', policy)).to.be.true();
+      expect(pathMatchesWatchTarget('src/sub/file.js', policy)).to.be.true;
     });
 
     it('portable matching uses forward slashes; convertToPosix only rewrites \\ on Windows', function() {
@@ -118,7 +118,7 @@ describe('file_watch_glob_policy', function() {
       expect(convertToPosix('src\\sub\\file.js')).to.equal(
         path.sep === '\\' ? 'src/sub/file.js' : 'src\\sub\\file.js',
       );
-      expect(pathMatchesWatchTarget('src/sub/file.js', policy)).to.be.true();
+      expect(pathMatchesWatchTarget('src/sub/file.js', policy)).to.be.true;
     });
   });
 
@@ -161,7 +161,7 @@ describe('file_watch_glob_policy', function() {
       const files = await expandWatchableFilePaths(config);
       expect(files.some(function(f) {
         return f.indexOf('https://cdn.example.com/lib.css') === 0;
-      })).to.be.true();
+      })).to.be.true;
     });
   });
 });

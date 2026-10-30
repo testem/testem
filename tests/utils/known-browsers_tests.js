@@ -82,7 +82,7 @@ describe('knownBrowsers', function() {
       });
 
       it('exists', function() {
-        expect(firefox).to.exist();
+        expect(firefox).to.exist;
       });
 
       it('constructs correct args', function() {
@@ -246,7 +246,7 @@ describe('knownBrowsers', function() {
       });
 
       it('exists', function() {
-        expect(chrome).to.exist();
+        expect(chrome).to.exist;
       });
 
       it('constructs correct args', function() {
@@ -407,7 +407,7 @@ describe('knownBrowsers', function() {
         });
 
         it('exists', function() {
-          expect(safari).to.exist();
+          expect(safari).to.exist;
         });
 
         it('constructs correct args (opens test URL via Launch Services)', function() {
@@ -417,7 +417,7 @@ describe('knownBrowsers', function() {
         });
 
         it('does not use a local start.html redirect', function() {
-          expect(safari.setup).to.be.undefined();
+          expect(safari.setup).to.be.undefined;
         });
 
         it('sets ignoreProcessExit because /usr/bin/open exits after handoff', function() {
@@ -485,7 +485,7 @@ describe('knownBrowsers', function() {
         });
 
         it('exists', function() {
-          expect(safari).to.exist();
+          expect(safari).to.exist;
         });
 
         it('constructs correct args', function() {
@@ -496,7 +496,7 @@ describe('knownBrowsers', function() {
 
         it('creates a config file on setup', function(done) {
           safari.setup.call(launcher, config, function(err) {
-            expect(err).to.be.null();
+            expect(err).to.be.null;
             expect(fs.readFileSync(path.join(browserTmpDir, 'start.html'), 'utf8')).to.equal(
               '<script>window.location = \'http://localhost:7357\'</script>'
             );
@@ -579,8 +579,8 @@ describe('knownBrowsers', function() {
       });
 
       it('exists on macOS only', function() {
-        expect(safariTP).to.exist();
-        expect(findBrowser(knownBrowsers('linux', config), 'Safari Technology Preview')).to.be.undefined();
+        expect(safariTP).to.exist;
+        expect(findBrowser(knownBrowsers('linux', config), 'Safari Technology Preview')).to.be.undefined;
       });
 
       it('constructs correct args (opens test URL via Launch Services)', function() {
@@ -590,7 +590,7 @@ describe('knownBrowsers', function() {
       });
 
       it('does not use a local start.html redirect', function() {
-        expect(safariTP.setup).to.be.undefined();
+        expect(safariTP.setup).to.be.undefined;
       });
 
       it('sets ignoreProcessExit because /usr/bin/open exits after handoff', function() {
@@ -670,7 +670,7 @@ describe('knownBrowsers', function() {
       });
 
       it('exists', function() {
-        expect(opera).to.exist();
+        expect(opera).to.exist;
       });
 
       it('checks per-user and system install paths on win32', function() {

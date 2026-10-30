@@ -183,7 +183,7 @@ describe('FileWatcher integration', function () {
 
     await delay(400);
 
-    expect(getWatchEngine(fw)).to.be.ok();
+    expect(getWatchEngine(fw)).to.be.ok;
 
     await fw.close();
 

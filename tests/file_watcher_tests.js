@@ -89,11 +89,11 @@ describe('FileWatcher', function() {
         'ready',
         sinon.match.func,
       );
-      expect(createWatcherStub).to.have.been.calledOnce();
+      expect(createWatcherStub).to.have.been.calledOnce;
       expect(createWatcherStub.firstCall.args[0]).to.equal('.');
       expect(createWatcherStub.firstCall.args[1].ignoreInitial).to.equal(true);
       expect(createWatcherStub.firstCall.args[1].ignored).to.be.a('function');
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('registers change, add, unlink, unlinkDir, and error listeners', async function() {
@@ -122,25 +122,25 @@ describe('FileWatcher', function() {
       await FileWatcher.create(makeConfig());
 
       expect(createWatcherStub.firstCall.args[0]).to.equal('.');
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('does not pass glob src_files to engine add (policy filter instead)', async function() {
       await FileWatcher.create(makeConfig({ src_files: ['a.js', 'b.js'] }));
 
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('does not add() glob patterns when file and src_files are set', async function() {
       await FileWatcher.create(makeConfig({ file: 'testem.json' }));
 
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('does not add() cwd/src glob literals (policy filter instead)', async function() {
       await FileWatcher.create(makeConfig({ cwdMode: true, src_files: ['tests.js'] }));
 
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('does not add() when watch_files and src_files are globs under cwd', async function() {
@@ -148,7 +148,7 @@ describe('FileWatcher', function() {
         makeConfig({ watch_files: ['extra/**/*.js'], src_files: ['main.js'] }),
       );
 
-      expect(mockWatcher.add).to.not.have.been.called();
+      expect(mockWatcher.add).to.not.have.been.called;
     });
 
     it('ignores paths matching src_files_ignore', async function() {
@@ -340,7 +340,7 @@ describe('FileWatcher', function() {
       err.code = 'EMFILE';
       getHandler('error')(err);
 
-      expect(spy).to.have.been.calledOnce();
+      expect(spy).to.have.been.calledOnce;
     });
 
     it('onEMFILE emits EMFILE', async function() {
@@ -350,7 +350,7 @@ describe('FileWatcher', function() {
 
       fw.onEMFILE();
 
-      expect(spy).to.have.been.calledOnce();
+      expect(spy).to.have.been.calledOnce;
     });
   });
 
@@ -374,7 +374,7 @@ describe('FileWatcher', function() {
       }
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
       expect(getWatchEngine(fw)).to.equal(null);
     });
 
@@ -389,7 +389,7 @@ describe('FileWatcher', function() {
       }
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
       expect(getWatchEngine(fw)).to.equal(null);
     });
 
@@ -404,7 +404,7 @@ describe('FileWatcher', function() {
       }
       expect(err).to.be.instanceOf(TypeError);
       expect(err.message).to.match(/glob patterns/);
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
       expect(getWatchEngine(fw)).to.equal(null);
     });
 
@@ -421,7 +421,7 @@ describe('FileWatcher', function() {
 
       expect(err).to.be.instanceOf(Error);
       expect(err.message).to.equal('chokidar add failed');
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
       expect(getWatchEngine(fw)).to.equal(null);
     });
 
@@ -442,7 +442,7 @@ describe('FileWatcher', function() {
 
       expect(err).to.be.instanceOf(Error);
       expect(err.message).to.equal('async watch error');
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
       expect(getWatchEngine(fw)).to.equal(null);
     });
 
@@ -456,7 +456,7 @@ describe('FileWatcher', function() {
       await fw.add('some-watched-dir');
 
       expect(mockWatcher.add).to.have.been.calledWith('some-watched-dir');
-      expect(mockWatcher.close).not.to.have.been.called();
+      expect(mockWatcher.close).not.to.have.been.called;
     });
 
     it('does not attach a new all/error listener per add', async function() {
@@ -494,7 +494,7 @@ describe('FileWatcher', function() {
         await sandbox.clock.tickAsync(1000);
         await p;
 
-        expect(mockWatcher.close).not.to.have.been.called();
+        expect(mockWatcher.close).not.to.have.been.called;
       } finally {
         sandbox.clock.restore();
       }
@@ -507,7 +507,7 @@ describe('FileWatcher', function() {
 
       await fw.close();
 
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
     });
 
     it('removes listeners on this instance after the watcher closes', async function() {
@@ -525,7 +525,7 @@ describe('FileWatcher', function() {
       await fw.close();
       await fw.close();
 
-      expect(mockWatcher.close).to.have.been.calledOnce();
+      expect(mockWatcher.close).to.have.been.calledOnce;
     });
 
     it('returns a promise', async function() {

@@ -20,7 +20,7 @@ describe('ReportFile', function() {
       return tmpNameAsync().then(function(path) {
         return new ReportFile(path, noopStream);
       }).then(function(reportFile) {
-        expect(reportFile.closePromise).to.exist();
+        expect(reportFile.closePromise).to.exist;
 
         reportFile.outputStream.on('finish', function() {
           finished = true;
@@ -28,7 +28,7 @@ describe('ReportFile', function() {
 
         return reportFile.close();
       }).then(function() {
-        expect(finished).to.be.true();
+        expect(finished).to.be.true;
       });
     });
 

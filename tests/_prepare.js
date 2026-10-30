@@ -1,10 +1,8 @@
 import * as chai from "chai";
 import sinonChai from "sinon-chai";
-import dirtyChai from "dirty-chai";
 import path from "node:path";
 
 chai.use(sinonChai);
-chai.use(dirtyChai);
 
 let PATH = 'PATH';
 
