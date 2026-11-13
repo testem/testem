@@ -62,11 +62,11 @@ describe('view', function() {
     view.observe(model, 'change:lines change:cols', onResize);
     model.set('lines', 30);
     model.set('cols', 80);
-    expect(onResize).to.have.been.calledTwice();
+    expect(onResize).to.have.been.calledTwice;
     onResize.resetHistory();
     view.destroy();
     model.set({ lines: 20, cols: 40 });
-    expect(onResize).not.to.have.been.called();
+    expect(onResize).not.to.have.been.called;
   });
 
 });
