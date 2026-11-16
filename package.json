@@ -23,7 +23,7 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.9.9",
     "chokidar": "^6.0.0",
-    "commander": "^14.0.3",
+    "commander": "^15.1.0",
     "compression": "^1.8.1",
     "execa": "^10.0.1",
     "express": "^5.2.1",
